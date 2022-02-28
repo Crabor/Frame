@@ -1,4 +1,4 @@
-package frame.resource.actor;
+package frame.struct.actor;
 
 public class Actor {
     public Dir dir;
@@ -11,7 +11,7 @@ public class Actor {
         this.time = time;
     }
 
-    public Actor(String dir, Double speed, Double time) {
-        this(Dir.valueOf(dir.toUpperCase()), speed, time);
+    public Actor(String dir, String speed, String time) {
+        this(Dir.valueOf(dir.toUpperCase()), Double.valueOf(speed), Double.valueOf(time));
     }
 }

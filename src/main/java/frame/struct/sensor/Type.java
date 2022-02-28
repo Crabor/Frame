@@ -1,4 +1,4 @@
-package frame.resource.sensor;
+package frame.struct.sensor;
 
 public enum Type {
     INTEGER,

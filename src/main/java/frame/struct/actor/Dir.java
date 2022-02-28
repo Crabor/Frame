@@ -1,4 +1,4 @@
-package frame.resource.actor;
+package frame.struct.actor;
 
 public enum Dir {
     X, //向前向后

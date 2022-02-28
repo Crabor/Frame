@@ -7,4 +7,8 @@ public class App {
         this.func = config.func;
         // TODO
     }
+
+    void run() {
+        func.run();
+    }
 }
