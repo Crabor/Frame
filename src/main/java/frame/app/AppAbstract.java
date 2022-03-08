@@ -1,6 +1,11 @@
 package frame.app;
 
-public abstract class AppAbstract {
-//    private List<Sensor> sensors = new ArrayList<>();
-//    private Actor actor;
+public abstract class AppAbstract implements App {
+    protected AppSubThread appSubThread;
+
+    @Override
+    public void init() {
+        appSubThread = new AppSubThread(this);
+
+    }
 }
