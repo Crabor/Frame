@@ -19,9 +19,10 @@ public class Frame {
         service = new Service(config.serviceConfig);
         ui = new UI(config.uiConfig);
         app = config.app;
-        app.init();
+        app.init(app);
     }
 
     public static void Start() {
+
     }
 }

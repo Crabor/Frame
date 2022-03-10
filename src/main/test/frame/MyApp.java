@@ -4,7 +4,7 @@ import frame.app.AppAbstract;
 
 public class MyApp extends AppAbstract {
     @Override
-    public void run() {
+    public void start() {
 
     }
 }

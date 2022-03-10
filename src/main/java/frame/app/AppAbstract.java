@@ -4,8 +4,8 @@ public abstract class AppAbstract implements App {
     protected AppSubThread appSubThread;
 
     @Override
-    public void init() {
-        appSubThread = new AppSubThread(this);
+    public void init(App app) {
+        appSubThread = new AppSubThread(app);
 
     }
 }

@@ -1,6 +1,6 @@
 package frame.app;
 
 public interface App {
-    void run();
-    void init();
+    void start();
+    void init(App app);
 }
