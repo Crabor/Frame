@@ -1,4 +1,4 @@
-package frame.resource.pubsub;
+package frame.pubsub;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;

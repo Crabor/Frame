@@ -1,4 +1,4 @@
-package frame.struct.sensor;
+package frame.resource.sensor;
 
 public class Sensor {
     public String name;

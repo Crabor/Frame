@@ -1,8 +1,7 @@
 package frame.app;
 
 import com.alibaba.fastjson.JSONObject;
-import frame.app.App;
-import frame.resource.pubsub.Subscriber;
+import frame.pubsub.Subscriber;
 import redis.clients.jedis.Jedis;
 
 public class AppSubThread extends Subscriber implements Runnable {

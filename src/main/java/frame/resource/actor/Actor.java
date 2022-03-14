@@ -1,4 +1,4 @@
-package frame.struct.actor;
+package frame.resource.actor;
 
 public class Actor {
     public Dir dir;

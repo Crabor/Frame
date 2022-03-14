@@ -1,4 +1,4 @@
-package frame.resource.pubsub;
+package frame.pubsub;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;

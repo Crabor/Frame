@@ -1,7 +1,7 @@
 package frame.service;
 
 import com.alibaba.fastjson.JSONObject;
-import frame.resource.pubsub.Subscriber;
+import frame.pubsub.Subscriber;
 import redis.clients.jedis.Jedis;
 
 public class SerSubThread extends Subscriber implements Runnable {
