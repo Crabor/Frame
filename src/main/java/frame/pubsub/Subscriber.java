@@ -25,11 +25,11 @@ public abstract class Subscriber extends JedisPubSub {
         }
     }
 
-    protected abstract void onSensorChannel(JSONObject message);
+    public abstract void onSensorChannel(JSONObject message);
 
-    protected abstract void onActorChannel(JSONObject message);
+    public abstract void onActorChannel(JSONObject message);
 
-    protected abstract void onDumpChannel(JSONObject message);
+    public abstract void onDumpChannel(JSONObject message);
 //
 //    public void onSubscribe(String channel, int subscribedChannels) {
 //    }

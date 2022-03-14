@@ -13,17 +13,17 @@ public class AppSubThread extends Subscriber implements Runnable {
     }
 
     @Override
-    protected void onSensorChannel(JSONObject message) {
+    public void onSensorChannel(JSONObject message) {
         // TODO
     }
 
     @Override
-    protected void onActorChannel(JSONObject message) {
+    public void onActorChannel(JSONObject message) {
 
     }
 
     @Override
-    protected void onDumpChannel(JSONObject message) {
+    public void onDumpChannel(JSONObject message) {
 
     }
 
