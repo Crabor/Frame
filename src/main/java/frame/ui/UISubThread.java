@@ -5,11 +5,11 @@ import frame.pubsub.Subscriber;
 import redis.clients.jedis.Jedis;
 
 public class UISubThread extends Subscriber implements Runnable {
-    UIMgrThread ui;
+    UIMgrThread uiMgr;
     Thread t;
 
-    public UISubThread(UIMgrThread ui) {
-        this.ui = ui;
+    public UISubThread(UIMgrThread uiMgr) {
+        this.uiMgr = uiMgr;
     }
 
     @Override

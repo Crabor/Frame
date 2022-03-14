@@ -5,11 +5,11 @@ import frame.pubsub.Subscriber;
 import redis.clients.jedis.Jedis;
 
 public class AppSubThread extends Subscriber implements Runnable {
-    AppMgrThread app;
+    AppMgrThread appMgr;
     Thread t;
 
-    public AppSubThread(AppMgrThread app) {
-        this.app = app;
+    public AppSubThread(AppMgrThread appMgr) {
+        this.appMgr = appMgr;
     }
 
     @Override

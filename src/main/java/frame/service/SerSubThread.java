@@ -5,11 +5,11 @@ import frame.pubsub.Subscriber;
 import redis.clients.jedis.Jedis;
 
 public class SerSubThread extends Subscriber implements Runnable {
-    SerMgrThread service;
+    SerMgrThread serMgr;
     Thread t;
 
-    public SerSubThread(SerMgrThread service) {
-        this.service = service;
+    public SerSubThread(SerMgrThread serMgr) {
+        this.serMgr = serMgr;
     }
 
     @Override
