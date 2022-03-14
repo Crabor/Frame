@@ -2,13 +2,13 @@ package frame.service;
 
 import com.alibaba.fastjson.JSONObject;
 import frame.resource.pubsub.Subscriber;
-import frame.service.Service;
 import redis.clients.jedis.Jedis;
 
-public class ServiceSubThread extends Subscriber implements Runnable {
-    Service service;
+public class SerSubThread extends Subscriber implements Runnable {
+    SerMgrThread service;
+    Thread t;
 
-    public ServiceSubThread(Service service) {
+    public SerSubThread(SerMgrThread service) {
         this.service = service;
     }
 
@@ -32,5 +32,12 @@ public class ServiceSubThread extends Subscriber implements Runnable {
         Jedis jedis = jedisPool.getResource();
         jedis.subscribe(this, "SENSOR", "ACTOR");
         jedis.close();
+    }
+
+    public void start() {
+        if (t == null) {
+            t = new Thread (this, "SerSubThread");
+            t.start ();
+        }
     }
 }

@@ -1,8 +1,11 @@
 package frame.service;
 
+import frame.ui.UISubThread;
+
 public class SerMgrThread implements Runnable{
     private static SerMgrThread instance;
     private static Thread t;
+    private static SerSubThread sub;
 
     // 构造方法私有化
     private SerMgrThread() {}
@@ -30,6 +33,10 @@ public class SerMgrThread implements Runnable{
         if (t == null) {
             t = new Thread (this, "SerMgrThread");
             t.start ();
+        }
+        if (sub == null) {
+            sub = new SerSubThread(this);
+            sub.start ();
         }
     }
 }

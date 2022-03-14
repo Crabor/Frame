@@ -1,16 +1,11 @@
 package frame;
 
-import frame.app.App;
 import frame.app.AppMgrThread;
 import frame.resource.ResMgrThread;
-import frame.resource.Resource;
 import frame.service.SerMgrThread;
-import frame.service.Service;
-import frame.ui.UI;
 import frame.ui.UIMgrThread;
 
 import java.io.IOException;
-import java.util.List;
 
 public class Frame {
     private static ResMgrThread resMgr;
@@ -18,7 +13,7 @@ public class Frame {
     private static AppMgrThread appMgr;
     private static UIMgrThread uiMgr;
 
-    public static void Init(FrameConfig config) throws IOException {
+    public static void Init() throws IOException {
         resMgr = ResMgrThread.getInstance();
         serMgr = SerMgrThread.getInstance();
         appMgr = AppMgrThread.getInstance();

@@ -1,8 +1,11 @@
 package frame.app;
 
+import frame.ui.UISubThread;
+
 public class AppMgrThread implements Runnable{
     private static AppMgrThread instance;
     private static Thread t;
+    private static AppSubThread sub;
 
     // 构造方法私有化
     private AppMgrThread() {}
@@ -30,6 +33,10 @@ public class AppMgrThread implements Runnable{
         if (t == null) {
             t = new Thread (this, "AppMgrThread");
             t.start ();
+        }
+        if (sub == null) {
+            sub = new AppSubThread(this);
+            sub.start ();
         }
     }
 }

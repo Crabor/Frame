@@ -6,9 +6,10 @@ import frame.resource.pubsub.Subscriber;
 import redis.clients.jedis.Jedis;
 
 public class AppSubThread extends Subscriber implements Runnable {
-    App app;
+    AppMgrThread app;
+    Thread t;
 
-    public AppSubThread(App app) {
+    public AppSubThread(AppMgrThread app) {
         this.app = app;
     }
 
@@ -32,5 +33,12 @@ public class AppSubThread extends Subscriber implements Runnable {
         Jedis jedis = jedisPool.getResource();
         jedis.subscribe(this, "SENSOR");
         jedis.close();
+    }
+
+    public void start() {
+        if (t == null) {
+            t = new Thread (this, "AppSubThread");
+            t.start ();
+        }
     }
 }

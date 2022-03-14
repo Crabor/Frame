@@ -2,13 +2,13 @@ package frame.ui;
 
 import com.alibaba.fastjson.JSONObject;
 import frame.resource.pubsub.Subscriber;
-import frame.ui.UI;
 import redis.clients.jedis.Jedis;
 
 public class UISubThread extends Subscriber implements Runnable {
-    UI ui;
+    UIMgrThread ui;
+    Thread t;
 
-    public UISubThread(UI ui) {
+    public UISubThread(UIMgrThread ui) {
         this.ui = ui;
     }
 
@@ -32,5 +32,12 @@ public class UISubThread extends Subscriber implements Runnable {
         Jedis jedis = jedisPool.getResource();
         jedis.subscribe(this, "SENSOR", "ACTOR", "DUMP");
         jedis.close();
+    }
+
+    public void start() {
+        if (t == null) {
+            t = new Thread (this, "UISubThread");
+            t.start ();
+        }
     }
 }

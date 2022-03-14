@@ -4,6 +4,7 @@ public class ResMgrThread implements Runnable{
     private static ResMgrThread instance;
     private static Thread t;
 
+
     // 构造方法私有化
     private ResMgrThread() {}
 
@@ -32,4 +33,6 @@ public class ResMgrThread implements Runnable{
             t.start ();
         }
     }
+
+
 }
