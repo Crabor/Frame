@@ -1,28 +1,34 @@
 package frame;
 
 import frame.app.App;
+import frame.app.AppMgrThread;
+import frame.resource.ResMgrThread;
 import frame.resource.Resource;
+import frame.service.SerMgrThread;
 import frame.service.Service;
 import frame.ui.UI;
+import frame.ui.UIMgrThread;
 
 import java.io.IOException;
 import java.util.List;
 
 public class Frame {
-    private static Resource resource;
-    private static Service service;
-    private static UI ui;
-    private static App app;
+    private static ResMgrThread resMgr;
+    private static SerMgrThread serMgr;
+    private static AppMgrThread appMgr;
+    private static UIMgrThread uiMgr;
 
     public static void Init(FrameConfig config) throws IOException {
-        resource = new Resource(config.resourceConfig);
-        service = new Service(config.serviceConfig);
-        ui = new UI(config.uiConfig);
-        app = config.app;
-        app.init(app);
+        resMgr = ResMgrThread.getInstance();
+        serMgr = SerMgrThread.getInstance();
+        appMgr = AppMgrThread.getInstance();
+        uiMgr = UIMgrThread.getInstance();
     }
 
     public static void Start() {
-
+        resMgr.start();
+        serMgr.start();
+        appMgr.start();
+        uiMgr.start();
     }
 }
