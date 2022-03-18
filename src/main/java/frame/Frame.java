@@ -3,10 +3,10 @@ package frame;
 import frame.app.AppMgrThread;
 import frame.resource.ResMgrThread;
 import frame.pubsub.Publisher;
-import frame.pubsub.Subscriber;
+import frame.pubsub.AbstractSubscriber;
 import frame.service.SerMgrThread;
 import frame.ui.UIMgrThread;
-import redis.clients.jedis.JedisPool;
+import io.lettuce.core.RedisClient;
 
 import java.io.IOException;
 
@@ -24,9 +24,9 @@ public class Frame {
         uiMgr = UIMgrThread.getInstance();
 
         //init database
-        JedisPool pool = new JedisPool("127.0.0.1", 6379);
-        Publisher.Init(pool);
-        Subscriber.Init(pool);
+        RedisClient client = RedisClient.create("redis://localhost:6379");
+        Publisher.Init(client);
+        AbstractSubscriber.Init(client);
     }
 
     public static void Start() {
@@ -34,5 +34,10 @@ public class Frame {
         serMgr.start();
         appMgr.start();
         uiMgr.start();
+    }
+
+    public static void Close() {
+        Publisher.Close();
+        AbstractSubscriber.Close();
     }
 }

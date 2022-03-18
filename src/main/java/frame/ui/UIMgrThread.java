@@ -3,7 +3,6 @@ package frame.ui;
 public class UIMgrThread implements Runnable{
     private static UIMgrThread instance;
     private static Thread t;
-    private static UISubThread sub;
 
     // 构造方法私有化
     private UIMgrThread() {}
@@ -31,10 +30,6 @@ public class UIMgrThread implements Runnable{
         if (t == null) {
             t = new Thread (this, "UIMgrThread");
             t.start ();
-        }
-        if (sub == null) {
-            sub = new UISubThread(this);
-            sub.start ();
         }
     }
 }

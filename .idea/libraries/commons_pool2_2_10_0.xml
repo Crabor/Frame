@@ -1,11 +1,17 @@
 <component name="libraryTable">
   <library name="commons-pool2-2.10.0">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/commons-pool2-2.10.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/fastjson-1.2.79.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/jedis-3.7.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/slf4j-api-1.7.30.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/slf4j-nop-1.7.30.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lettuce-core-6.1.6.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/reactive-streams-1.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-handler-4.1.72.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-common-4.1.72.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-codec-4.1.72.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-tcnative-classes-2.0.46.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-transport-4.1.72.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-buffer-4.1.72.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-resolver-4.1.72.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/reactor-core-3.3.22.RELEASE.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
