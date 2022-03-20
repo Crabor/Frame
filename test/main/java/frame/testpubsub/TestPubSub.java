@@ -7,43 +7,41 @@ import frame.pubsub.Publisher;
 import frame.struct.GrpPrioPair;
 import io.lettuce.core.RedisClient;
 
+import java.util.concurrent.CountDownLatch;
+
 public class TestPubSub {
+    private static final int M = 1;
+    private static final int N = 1000;
+    public static final CountDownLatch latch = new CountDownLatch(M * N);
     public static void main(String[] args) throws InterruptedException {
         //init
         RedisClient client = RedisClient.create("redis://localhost:6379");
         Publisher.Init(client);
         AbstractSubscriber.Init(client);
-        // channels
+
         Channel sensor = new Channel("sensor");
-        Channel front = new Channel("front");
-        Channel back = new Channel("back");
-        //sensor subscriber
         SensorSubscriber ss = new SensorSubscriber();
+
         ss.subscribe(sensor);
-        //front subscriber
-        FrontSubscriber2 fs2 = new FrontSubscriber2();
-        fs2.subscribe(front);
-        //front2 subscriber
-        FrontSubscriber fs = new FrontSubscriber();
-        GrpPrioPair p = front.getGrpPrio(fs2);
-        fs.subscribe(front, p.groupId, p.priorityId + 1);
-        //back subscriber
-        BackSubscriber bs = new BackSubscriber();
-        bs.subscribe(back);
+        for (int i = 0; i < M; i++) {
+            Channel tmp = new Channel(String.valueOf(i));
+            CommSubscriber cs = new CommSubscriber();
+            cs.subscribe(tmp);
+        }
+
         //publisher
-        Publisher pr = new Publisher();
-        int max = 10000;
+        Publisher publisher = new Publisher();
 
         long startTime = System.currentTimeMillis();
-        for (int i = 0; i < max; i++) {
-//            Thread.sleep(3000);
+        for (int i = 0; i < N; i++) {
             JSONObject jo = new JSONObject();
-            jo.put("front", i);
-            jo.put("back", max - i);
-            pr.publish(sensor, jo.toString());
+            for (int j = 0; j < M; j++) {
+                jo.put(String.valueOf(j), "hello");
+            }
+            publisher.publish(sensor, jo.toString());
         }
+        latch.await();//等待所有子线程结束
         long endTime = System.currentTimeMillis();
         System.out.println("程序运行时间：" + (endTime - startTime) + "ms");    //输出程序运行时间
-        while (true);
     }
 }

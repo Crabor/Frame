@@ -2,10 +2,9 @@ package frame.testpubsub;
 
 import frame.pubsub.AbstractSubscriber;
 
-public class FrontSubscriber extends AbstractSubscriber {
+public class CommSubscriber extends AbstractSubscriber {
     @Override
     public void message(String s, String s2) {
-//        System.out.println("I am FrontSubscriber, I get msg from '" + s + "' : " + s2);
         TestPubSub.latch.countDown();
     }
 

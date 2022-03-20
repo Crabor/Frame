@@ -14,6 +14,7 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
     private final StatefulRedisPubSubConnection<String, String> conn;
     private final Set<Channel> channels = new HashSet<>();
     private Runnable thread;
+    protected Publisher publisher = new Publisher();
 
     public static void Init(RedisClient client) {
         AbstractSubscriber.client = client;

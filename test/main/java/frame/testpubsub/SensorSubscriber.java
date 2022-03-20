@@ -7,18 +7,12 @@ import frame.pubsub.Publisher;
 public class SensorSubscriber extends AbstractSubscriber {
     @Override
     public void message(String s, String s2) {
-        System.out.println("I am SensorSubscriber, I get msg from '" + s + "' : " + s2);
-        System.out.println("I am SensorSubscriber, I am going to decompose and forward the message to channel 'front, back'");
-
         JSONObject jo = JSONObject.parseObject(s2);
-        JSONObject front = new JSONObject();
-        front.put("front", jo.getString("front"));
-        JSONObject back = new JSONObject();
-        back.put("back", jo.getString("back"));
-
-//        Publisher p = new Publisher();
-//        p.publish("front", front.toString());
-//        p.publish("back", back.toString());
+        jo.forEach((key, value) -> {
+            JSONObject j = new JSONObject();
+            j.put(key, value.toString());
+            publisher.publish(key, j.toString());
+        });
     }
 
     @Override
