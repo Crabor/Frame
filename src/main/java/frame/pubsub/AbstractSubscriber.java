@@ -36,23 +36,10 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
         objs.add(this);
     }
 
-    public AbstractSubscriber(Channel... channels) {
-        this();
-        for (Channel channel : channels) {
-            subscribe(channel);
-        }
-    }
-
-    public AbstractSubscriber(String... channels) {
-        this();
-        for (String channel : channels) {
-            subscribe(channel);
-        }
-    }
-
     public void subscribe(Channel channel, int groupId, int priorityId) {
         this.channels.add(channel);
         channel.addSubscriber(this, groupId, priorityId);
+
         conn.addListener(this);
         RedisPubSubCommands<String, String> sync = conn.sync();
         sync.subscribe(
@@ -70,10 +57,15 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
     public void subscribe(Channel channel, int groupId) {
         this.channels.add(channel);
         GrpPrioPair pair = channel.addSubscriber(this, groupId);
+
+        conn.addListener(this);
         RedisPubSubCommands<String, String> sync = conn.sync();
-        sync.subscribe(String.join(
-                "-", channel.getName(),
-                String.valueOf(groupId), String.valueOf(pair.priorityId)));
+        sync.subscribe(
+                String.join(
+                        "-",
+                        channel.getName(),
+                        String.valueOf(groupId),
+                        String.valueOf(pair.priorityId)));
     }
 
     public void subscribe(String channel, int groupId) {
@@ -83,10 +75,11 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
     public void subscribe(Channel channel) {
         this.channels.add(channel);
         GrpPrioPair pair = channel.addSubscriber(this);
+
+        conn.addListener(this);
         RedisPubSubCommands<String, String> sync = conn.sync();
-        sync.subscribe(String.join(
-                "-", channel.getName(),
-                String.valueOf(pair.groupId), String.valueOf(pair.priorityId)));
+        String realChannel = String.join("-", channel.getName(), String.valueOf(pair.groupId), String.valueOf(pair.priorityId));
+        sync.subscribe(realChannel);
     }
 
     public void subscribe(String channel) {

@@ -22,7 +22,11 @@ public class Channel {
     }
     
     public static Channel getChannel(String channelName) {
-        return objs.getOrDefault(channelName, new Channel(channelName));
+        Channel ret = objs.get(channelName);
+        if (ret == null) {
+            ret = new Channel(channelName);
+        }
+        return ret;
     }
 
     public Map<Integer, Map<Integer, List<AbstractSubscriber>>> getSubscribers() {
