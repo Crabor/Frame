@@ -8,11 +8,11 @@ import io.lettuce.core.pubsub.api.sync.RedisPubSubCommands;
 
 import java.util.*;
 
-public abstract class AbstractSubscriber implements RedisPubSubListener {
+public abstract class AbstractSubscriber implements RedisPubSubListener<String, String> {
     private static RedisClient client;
-    private static List<AbstractSubscriber> objs = new ArrayList<>();
-    private StatefulRedisPubSubConnection<String, String> conn;
-    private Set<Channel> channels = new HashSet<>();
+    private static final List<AbstractSubscriber> objs = new ArrayList<>();
+    private final StatefulRedisPubSubConnection<String, String> conn;
+    private final Set<Channel> channels = new HashSet<>();
     private Runnable thread;
 
     public static void Init(RedisClient client) {

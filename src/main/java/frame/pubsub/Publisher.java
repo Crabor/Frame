@@ -10,8 +10,8 @@ import java.util.Map;
 
 public class Publisher {
     private static RedisClient client;
-    private static List<Publisher> objs = new ArrayList<>();
-    private StatefulRedisConnection<String, String> conn;
+    private static final List<Publisher> objs = new ArrayList<>();
+    private final StatefulRedisConnection<String, String> conn;
 
     public static void Init(RedisClient client) {
         Publisher.client = client;

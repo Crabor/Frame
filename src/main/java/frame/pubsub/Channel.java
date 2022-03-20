@@ -1,6 +1,7 @@
 package frame.pubsub;
 
 import frame.struct.GrpPrioPair;
+import reactor.util.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,14 +9,12 @@ import java.util.List;
 import java.util.Map;
 
 public class Channel {
-    private Map<Integer, Map<Integer, List<AbstractSubscriber>>> subscribers;
+    private final Map<Integer, Map<Integer, List<AbstractSubscriber>>> subscribers = new HashMap<>();
     private final String channelBaseName;
-    private static Map<String, Channel> objs;
+    private static final Map<String, Channel> objs = new HashMap<>();
 
     public static final int DEFAULT_GRP_ID = 0;
     public static final int DEFAULT_PRIO_ID = 0;
-    public static final int GRP_ID_NOT_EXIST = Integer.MIN_VALUE;
-    public static final int PRIO_ID_NOT_EXIST = Integer.MIN_VALUE;
 
     public Channel(String name) {
         channelBaseName = name;
@@ -45,49 +44,29 @@ public class Channel {
     public String getName() {
         return channelBaseName;
     }
-    
-    public int getGroupId(AbstractSubscriber s) {
+
+    @Nullable
+    public GrpPrioPair getGrpPrio(AbstractSubscriber s) {
         for (Map.Entry<Integer, Map<Integer, List<AbstractSubscriber>>> entry : subscribers.entrySet()) {
-            Integer grpId = entry.getKey();
+            int grpId = entry.getKey();
             Map<Integer, List<AbstractSubscriber>> grp = entry.getValue();
             for (Map.Entry<Integer, List<AbstractSubscriber>> e : grp.entrySet()) {
+                int prioId = e.getKey();
                 List<AbstractSubscriber> subs = e.getValue();
                 if (subs.contains(s)) {
-                    return grpId;
+                    return new GrpPrioPair(grpId, prioId);
                 }
             }
         }
-        return GRP_ID_NOT_EXIST;
-    }
-    
-    public static int getGroupId(Channel c, AbstractSubscriber s) {
-        return c.getGroupId(s);
+        return null;
     }
 
-    public static int getGroupId(String c, AbstractSubscriber s) {
-        return getChannel(c).getGroupId(s);
-    }
-    
-    public int getPriorityId(AbstractSubscriber s) {
-        for (Map.Entry<Integer, Map<Integer, List<AbstractSubscriber>>> entry : subscribers.entrySet()) {
-            Map<Integer, List<AbstractSubscriber>> grp = entry.getValue();
-            for (Map.Entry<Integer, List<AbstractSubscriber>> e : grp.entrySet()) {
-                Integer prioId = entry.getKey();
-                List<AbstractSubscriber> subs = e.getValue();
-                if (subs.contains(s)) {
-                    return prioId;
-                }
-            }
-        }
-        return PRIO_ID_NOT_EXIST;
+    public static GrpPrioPair getGrpPrio(Channel c, AbstractSubscriber s) {
+        return c.getGrpPrio(s);
     }
 
-    public static int getPriorityId(Channel c, AbstractSubscriber s) {
-        return c.getPriorityId(s);
-    }
-
-    public static int getPriorityId(String c, AbstractSubscriber s) {
-        return getChannel(c).getPriorityId(s);
+    public static GrpPrioPair getGrpPrio(String c, AbstractSubscriber s) {
+        return getChannel(c).getGrpPrio(s);
     }
 
     public GrpPrioPair addSubscriber(AbstractSubscriber subscriber, int groupId, int priorityId) {
