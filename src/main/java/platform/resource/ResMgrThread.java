@@ -1,4 +1,4 @@
-package frame.resource;
+package platform.resource;
 
 public class ResMgrThread implements Runnable{
     private static ResMgrThread instance;

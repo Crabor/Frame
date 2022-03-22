@@ -1,4 +1,4 @@
-package frame.service;
+package platform.service;
 
 public class SerMgrThread implements Runnable{
     private static SerMgrThread instance;

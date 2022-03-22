@@ -1,8 +1,8 @@
-package frame.testpubsub;
+package platform.testpubsub;
 
-import frame.pubsub.AbstractSubscriber;
-import frame.pubsub.Channel;
-import frame.pubsub.Publisher;
+import platform.pubsub.AbstractSubscriber;
+import platform.pubsub.Channel;
+import platform.pubsub.Publisher;
 import io.lettuce.core.RedisClient;
 
 public class TestPubSub2 {

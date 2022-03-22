@@ -1,16 +1,16 @@
-package frame;
+package platform;
 
-import frame.app.AppMgrThread;
-import frame.resource.ResMgrThread;
-import frame.pubsub.Publisher;
-import frame.pubsub.AbstractSubscriber;
-import frame.service.SerMgrThread;
-import frame.ui.UIMgrThread;
+import platform.app.AppMgrThread;
+import platform.resource.ResMgrThread;
+import platform.pubsub.Publisher;
+import platform.pubsub.AbstractSubscriber;
+import platform.service.SerMgrThread;
+import platform.ui.UIMgrThread;
 import io.lettuce.core.RedisClient;
 
 import java.io.IOException;
 
-public class Frame {
+public class Platform {
     private static ResMgrThread resMgr;
     private static SerMgrThread serMgr;
     private static AppMgrThread appMgr;

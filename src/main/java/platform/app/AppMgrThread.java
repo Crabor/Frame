@@ -1,20 +1,20 @@
-package frame.ui;
+package platform.app;
 
-public class UIMgrThread implements Runnable{
-    private static UIMgrThread instance;
+public class AppMgrThread implements Runnable{
+    private static AppMgrThread instance;
     private static Thread t;
 
     // 构造方法私有化
-    private UIMgrThread() {}
+    private AppMgrThread() {}
 
     // 静态方法返回该实例
-    public static UIMgrThread getInstance() {
+    public static AppMgrThread getInstance() {
         // 第一次检查instance是否被实例化出来，如果没有进入if块
         if(instance == null) {
-            synchronized (UIMgrThread.class) {
+            synchronized (AppMgrThread.class) {
                 // 某个线程取得了类锁，实例化对象前第二次检查instance是否已经被实例化出来，如果没有，才最终实例出对象
                 if (instance == null) {
-                    instance = new UIMgrThread();
+                    instance = new AppMgrThread();
                 }
             }
         }
@@ -23,12 +23,12 @@ public class UIMgrThread implements Runnable{
 
     @Override
     public void run() {
-        //TODO
+        //TODO 
     }
 
     public void start() {
         if (t == null) {
-            t = new Thread (this, "UIMgrThread");
+            t = new Thread (this, "AppMgrThread");
             t.start ();
         }
     }

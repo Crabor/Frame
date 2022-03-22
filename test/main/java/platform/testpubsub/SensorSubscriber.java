@@ -1,12 +1,17 @@
-package frame.testpubsub;
+package platform.testpubsub;
 
-import frame.pubsub.AbstractSubscriber;
+import com.alibaba.fastjson.JSONObject;
+import platform.pubsub.AbstractSubscriber;
 
-public class FrontSubscriber extends AbstractSubscriber {
+public class SensorSubscriber extends AbstractSubscriber {
     @Override
     public void message(String s, String s2) {
-//        System.out.println("I am FrontSubscriber, I get msg from '" + s + "' : " + s2);
-        TestPubSub.latch.countDown();
+        JSONObject jo = JSONObject.parseObject(s2);
+        jo.forEach((key, value) -> {
+            JSONObject j = new JSONObject();
+            j.put(key, value.toString());
+            publisher.publish(key, j.toString());
+        });
     }
 
     @Override

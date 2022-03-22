@@ -1,8 +1,4 @@
-package frame;
-
-import com.alibaba.fastjson.JSONObject;
-import frame.pubsub.Channel;
-import frame.testpubsub.SensorSubscriber;
+package platform;
 
 import java.io.IOException;
 

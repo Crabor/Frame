@@ -1,10 +1,9 @@
-package frame.testpubsub;
+package platform.testpubsub;
 
 import com.alibaba.fastjson.JSONObject;
-import frame.pubsub.AbstractSubscriber;
-import frame.pubsub.Channel;
-import frame.pubsub.Publisher;
-import frame.struct.GrpPrioPair;
+import platform.pubsub.AbstractSubscriber;
+import platform.pubsub.Channel;
+import platform.pubsub.Publisher;
 import io.lettuce.core.RedisClient;
 
 import java.util.concurrent.CountDownLatch;

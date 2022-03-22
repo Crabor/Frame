@@ -1,11 +1,12 @@
-package frame.testpubsub;
+package platform.testpubsub;
 
-import frame.pubsub.AbstractSubscriber;
+import platform.pubsub.AbstractSubscriber;
 
-public class FrontSubscriber2 extends AbstractSubscriber {
+public class FrontSubscriber extends AbstractSubscriber {
     @Override
     public void message(String s, String s2) {
-        System.out.println("I am FrontSubscriber2, I get msg from '" + s + "' : " + s2);
+//        System.out.println("I am FrontSubscriber, I get msg from '" + s + "' : " + s2);
+        TestPubSub.latch.countDown();
     }
 
     @Override

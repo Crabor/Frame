@@ -1,6 +1,6 @@
-package frame.pubsub;
+package platform.pubsub;
 
-import frame.struct.GrpPrioPair;
+import platform.struct.GrpPrioPair;
 import reactor.util.annotation.Nullable;
 
 import java.util.ArrayList;

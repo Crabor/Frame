@@ -1,4 +1,4 @@
-package frame.struct;
+package platform.struct;
 
 public class GrpPrioPair {
     public int groupId;

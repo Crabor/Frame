@@ -1,8 +1,7 @@
-package frame.pubsub;
+package platform.pubsub;
 
-import frame.struct.GrpPrioPair;
+import platform.struct.GrpPrioPair;
 import io.lettuce.core.RedisClient;
-import io.lettuce.core.api.sync.RedisCommands;
 import io.lettuce.core.pubsub.RedisPubSubListener;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import io.lettuce.core.pubsub.api.sync.RedisPubSubCommands;
