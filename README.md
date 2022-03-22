@@ -138,7 +138,7 @@ public class TestPubSub {
         RedisClient client = RedisClient.create("redis://localhost:6379");
         Publisher.Init(client);
         AbstractSubscriber.Init(client);
-
+        
         Channel channel = new Channel("channel");
         Subscriber1 s1 = new Subscriber1();
         s1.subscribe(channel);
@@ -150,6 +150,10 @@ public class TestPubSub {
 
         Publisher p = new Publisher();
         p.publish(channel, "hello");
+
+        //close
+        Publisher.Close();
+        AbstractSubscriber.Close();
     }
 }
 ```
