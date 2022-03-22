@@ -39,6 +39,9 @@ public class Channel {
 
     public int genNewGroupId() {
         int max = DEFAULT_GRP_ID;
+        if (subscribers.isEmpty()) {
+            return max;
+        }
         for (Integer grpId : subscribers.keySet()) {
             max = Math.max(max, grpId);
         }

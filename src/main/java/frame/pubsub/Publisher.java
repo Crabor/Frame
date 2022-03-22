@@ -42,8 +42,13 @@ public class Publisher {
                 maxPrio = Math.max(maxPrio, prio);
             }
             if (maxPrio != Integer.MIN_VALUE) {
-                String realChannel = String.join("-", channel.getName(), String.valueOf(groupId), String.valueOf(maxPrio));
-                commands.publish(realChannel, message);
+                commands.publish(
+                        String.join(
+                                "-",
+                                channel.getName(),
+                                String.valueOf(groupId),
+                                String.valueOf(maxPrio)),
+                        message);
             }
         }
     }
