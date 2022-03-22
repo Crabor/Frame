@@ -107,9 +107,6 @@ public class Subscriber1 extends AbstractSubscriber {
 ### pubsub示例代码
 
 ```java
-import platform.pubsub.Publisher;
-import platform.struct.GrpPrioPair;
-
 //Subscriber1
 public class Subscriber1 extends AbstractSubscriber {
     @Override
