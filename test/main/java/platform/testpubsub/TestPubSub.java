@@ -42,5 +42,8 @@ public class TestPubSub {
         latch.await();//等待所有子线程结束
         long endTime = System.currentTimeMillis();
         System.out.println("程序运行时间：" + (endTime - startTime) + "ms");    //输出程序运行时间
+
+        Publisher.Close();
+        AbstractSubscriber.Close();
     }
 }
