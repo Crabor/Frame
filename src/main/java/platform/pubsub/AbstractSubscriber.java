@@ -37,27 +37,27 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
         objs.add(this);
     }
 
-    public void publish(Channel channel, int groupId, int priorityId, String message) {
+    protected void publish(Channel channel, int groupId, int priorityId, String message) {
         publisher.publish(channel, groupId, priorityId, message);
     }
 
-    public void publish(String channel, int groupId, int priorityId, String message) {
+    protected void publish(String channel, int groupId, int priorityId, String message) {
         publisher.publish(channel, groupId, priorityId, message);
     }
 
-    public void publish(Channel channel, int groupId, String message) {
+    protected void publish(Channel channel, int groupId, String message) {
         publisher.publish(channel, groupId, message);
     }
 
-    public void publish(String channel, int groupId, String message) {
+    protected void publish(String channel, int groupId, String message) {
         publisher.publish(channel, groupId, message);
     }
 
-    public void publish(Channel channel, String message) {
+    protected void publish(Channel channel, String message) {
         publisher.publish(channel, message);
     }
 
-    public void publish(String channel, String message) {
+    protected void publish(String channel, String message) {
         publisher.publish(channel, message);
     }
 
@@ -113,5 +113,20 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
 
     public void subscribe(String channel) {
         subscribe(Channel.getChannel(channel));
+    }
+
+    @Override
+    public void message(String s, String k1, String s2) {
+
+    }
+
+    @Override
+    public void psubscribed(String s, long l) {
+
+    }
+
+    @Override
+    public void punsubscribed(String s, long l) {
+
     }
 }
