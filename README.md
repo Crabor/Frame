@@ -165,6 +165,6 @@ public class TestPubSub {
 最终输出结果：
 
 ```bash
-Subscriber1: channel, hello
-Subscriber3: channel, hello
+Subscriber1: channel-0-0, hello
+Subscriber3: channel-1-1, hello
 ```
