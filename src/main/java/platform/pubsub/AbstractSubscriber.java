@@ -1,5 +1,7 @@
 package platform.pubsub;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import platform.struct.GrpPrioPair;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.pubsub.RedisPubSubListener;
@@ -8,13 +10,13 @@ import io.lettuce.core.pubsub.api.sync.RedisPubSubCommands;
 
 import java.util.*;
 
-public abstract class AbstractSubscriber implements RedisPubSubListener<String, String> {
+public abstract class AbstractSubscriber implements RedisPubSubListener<String, String>, InterfaceSubscriber {
     private static final List<AbstractSubscriber> objs = new ArrayList<>();
     private final Set<Channel> channels = new HashSet<>();
     protected Publisher publisher = new Publisher();
-    private Runnable thread;
-    private static RedisClient client;
-    private final StatefulRedisPubSubConnection<String, String> conn;
+    protected Runnable thread = null;
+    private static RedisClient client = null;
+    private StatefulRedisPubSubConnection<String, String> conn = null;
 
     public static void Init(RedisClient client) {
         AbstractSubscriber.client = client;
@@ -25,7 +27,9 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
     }
 
     public void close() {
-        conn.close();
+        if (conn != null) {
+            conn.close();
+        }
     }
 
     public void bind(Runnable thread) {
@@ -113,6 +117,21 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
 
     public void subscribe(String channel) {
         subscribe(Channel.getChannel(channel));
+    }
+
+    @Override
+    public void message(String s, String s2) {
+        onMessage(s.substring(0, s.indexOf('-')), s2);
+    }
+
+    @Override
+    public void subscribed(String s, long l) {
+        onSubscribed(s.substring(0, s.indexOf('-')), l);
+    }
+
+    @Override
+    public void unsubscribed(String s, long l) {
+        onUnsubscribed(s.substring(0, s.indexOf('-')), l);
     }
 
     @Override

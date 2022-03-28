@@ -5,17 +5,17 @@ import platform.pubsub.AbstractSubscriber;
 public class CommSubscriber extends AbstractSubscriber {
 
     @Override
-    public void message(String s, String s2) {
+    public void onMessage(String s, String s2) {
         TestPubSub.latch.countDown();
     }
 
     @Override
-    public void subscribed(String s, long l) {
+    public void onSubscribed(String s, long l) {
 
     }
 
     @Override
-    public void unsubscribed(String s, long l) {
+    public void onUnsubscribed(String s, long l) {
 
     }
 }

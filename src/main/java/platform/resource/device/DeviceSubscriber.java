@@ -1,12 +1,14 @@
-package platform.testpubsub;
+package platform.resource.device;
 
 import platform.pubsub.AbstractSubscriber;
 
-public class FrontSubscriber extends AbstractSubscriber {
-
+public class DeviceSubscriber extends AbstractSubscriber {
     @Override
     public void onMessage(String s, String s2) {
-        TestPubSub.latch.countDown();
+        if (thread != null) {
+            DeviceRTThread dt = (DeviceRTThread) thread;
+            dt.transmit(s2);
+        }
     }
 
     @Override

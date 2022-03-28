@@ -16,17 +16,17 @@ public class Platform {
     private static AppMgrThread appMgr;
     private static UIMgrThread uiMgr;
 
-    public static void Init() throws IOException {
+    public static void Init() {
+        //init database
+        RedisClient client = RedisClient.create("redis://localhost:6379");
+        Publisher.Init(client);
+        AbstractSubscriber.Init(client);
+
         //init mgr
         resMgr = ResMgrThread.getInstance();
         serMgr = SerMgrThread.getInstance();
         appMgr = AppMgrThread.getInstance();
         uiMgr = UIMgrThread.getInstance();
-
-        //init database
-        RedisClient client = RedisClient.create("redis://localhost:6379");
-        Publisher.Init(client);
-        AbstractSubscriber.Init(client);
     }
 
     public static void Start() {

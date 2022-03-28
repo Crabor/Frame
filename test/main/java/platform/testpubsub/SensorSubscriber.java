@@ -5,7 +5,7 @@ import platform.pubsub.AbstractSubscriber;
 
 public class SensorSubscriber extends AbstractSubscriber {
     @Override
-    public void message(String s, String s2) {
+    public void onMessage(String s, String s2) {
         JSONObject jo = JSONObject.parseObject(s2);
         jo.forEach((key, value) -> {
             JSONObject j = new JSONObject();
@@ -15,12 +15,12 @@ public class SensorSubscriber extends AbstractSubscriber {
     }
 
     @Override
-    public void subscribed(String s, long l) {
+    public void onSubscribed(String s, long l) {
 
     }
 
     @Override
-    public void unsubscribed(String s, long l) {
+    public void onUnsubscribed(String s, long l) {
 
     }
 }
