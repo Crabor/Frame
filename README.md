@@ -82,17 +82,17 @@ import platform.pubsub.AbstractSubscriber;
 public class Subscriber1 extends AbstractSubscriber {
     
     @Override
-    public void message(String s, String s2) {
+    public void onMessage(String s, String s2) {
         //接收消息时触发，s为channel，s2为message
     }
     
     @Override
-    public void subscribed(String s, long l) {
+    public void onSubscribed(String s, long l) {
         //当订阅频道时触发，s为channel，l为该subscriber已订阅频道数量
     }
 
     @Override
-    public void unsubscribed(String s, long l) {
+    public void onUnsubscribed(String s, long l) {
         //当取消订阅时触发，s为channel，l为该subscriber已订阅频道数量
     }
 }
@@ -110,7 +110,7 @@ public class Subscriber1 extends AbstractSubscriber {
 //Subscriber1
 public class Subscriber1 extends AbstractSubscriber {
     @Override
-    public void message(String s, String s2) {
+    public void onMessage(String s, String s2) {
         System.out.println("Subscriber1: " + s + ", " + s2);
     }
 }
@@ -118,7 +118,7 @@ public class Subscriber1 extends AbstractSubscriber {
 //Subscriber2
 public class Subscriber2 extends AbstractSubscriber {
     @Override
-    public void message(String s, String s2) {
+    public void onMessage(String s, String s2) {
         System.out.println("Subscriber2: " + s + ", " + s2);
     }
 }
@@ -126,7 +126,7 @@ public class Subscriber2 extends AbstractSubscriber {
 //Subscriber3
 public class Subscriber3 extends AbstractSubscriber {
     @Override
-    public void message(String s, String s2) {
+    public void onMessage(String s, String s2) {
         System.out.println("Subscriber3: " + s + ", " + s2);
     }
 }
@@ -165,6 +165,6 @@ public class TestPubSub {
 最终输出结果：
 
 ```bash
-Subscriber1: channel-0-0, hello
-Subscriber3: channel-1-1, hello
+Subscriber1: channel, hello
+Subscriber3: channel, hello
 ```
