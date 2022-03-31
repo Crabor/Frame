@@ -2,23 +2,18 @@ package platform.testcarapp;
 
 import platform.Platform;
 import platform.pubsub.Channel;
-import platform.resource.device.DeviceRTThread;
-import platform.resource.device.DeviceSubscriber;
-
-import java.awt.*;
+import platform.resource.device.DeviceDriver;
 
 public class testcarapp {
     public static void main(String[] args) {
         Platform.Init();
         Channel sensor = new Channel("sensor");
         Channel actor = new Channel("actor");
-        DeviceSubscriber ds = new DeviceSubscriber();
-        ds.subscribe(actor);
-        DeviceRTThread dt = DeviceRTThread.getInstance();
-        ds.bind(dt);
+        DeviceDriver dd = new DeviceDriver(8080, "127.0.0.1", 8081);
+        dd.subscribe(actor);
+        dd.start();
         MyAppSubscriber my = new MyAppSubscriber();
         my.subscribe(sensor);
-
-        dt.start();
+        while(true);
     }
 }

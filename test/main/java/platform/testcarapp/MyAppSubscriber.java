@@ -13,6 +13,8 @@ public class MyAppSubscriber extends AbstractSubscriber {
             Double front = jo.getDouble("front");
             if (front > 10) {
                 publish("actor", new Actor(0, 10).toString());
+            } else {
+                publish("actor", new Actor(0, 0).toString());
             }
         }
     }

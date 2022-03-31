@@ -1,9 +1,5 @@
 package platform.resource;
 
-import platform.pubsub.Channel;
-import platform.resource.device.DeviceRTThread;
-import platform.resource.device.DeviceSubscriber;
-
 public class ResMgrThread implements Runnable{
     private static ResMgrThread instance;
     private static Thread t;
@@ -29,6 +25,7 @@ public class ResMgrThread implements Runnable{
     @Override
     public void run() {
         //TODO
+
     }
 
     public void start() {
