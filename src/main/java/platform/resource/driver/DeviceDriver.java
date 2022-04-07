@@ -1,4 +1,4 @@
-package platform.resource.device;
+package platform.resource.driver;
 
 import platform.pubsub.AbstractSubscriber;
 
@@ -24,29 +24,6 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
     }
 
     @Override
-    public void onMessage(String s, String s2) {
-        System.out.println("send: " + s2);
-        //receive msg from actor channel than transmit to car
-        try {
-            byte[] data = s2.getBytes();
-            DatagramPacket packet = new DatagramPacket(data, data.length, clientAddress, clientPort);
-            socket.send(packet);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onSubscribed(String s, long l) {
-
-    }
-
-    @Override
-    public void onUnsubscribed(String s, long l) {
-
-    }
-
-    @Override
     public void run() {
         //receive msg from car than publish to sensor channel
         while (true) {
@@ -65,9 +42,31 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
 
     public void start() {
         if (t == null) {
-            t = new Thread (this, "ResMgrThread");
+            t = new Thread (this, getClass().getSimpleName());
             t.start ();
         }
     }
 
+    @Override
+    public void onMessage(String channel, String msg) {
+//        System.out.println("send: " + s2);
+        //receive msg from actor channel than transmit to car
+        try {
+            byte[] data = msg.getBytes();
+            DatagramPacket packet = new DatagramPacket(data, data.length, clientAddress, clientPort);
+            socket.send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onSubscribed(String channel, long subChannelCount) {
+
+    }
+
+    @Override
+    public void onUnsubscribed(String channel, long subChannelCount) {
+
+    }
 }

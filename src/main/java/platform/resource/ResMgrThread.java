@@ -1,5 +1,9 @@
 package platform.resource;
 
+import platform.pubsub.Channel;
+import platform.resource.driver.DeviceDriver;
+import platform.resource.driver.UIDriver;
+
 public class ResMgrThread implements Runnable{
     private static ResMgrThread instance;
     private static Thread t;
@@ -24,8 +28,16 @@ public class ResMgrThread implements Runnable{
 
     @Override
     public void run() {
-        //TODO
-
+        //init resource
+        Channel sensor = new Channel("sensor");
+        Channel actor = new Channel("actor");
+        DeviceDriver dd = new DeviceDriver(8080, "127.0.0.1", 8081);
+        dd.subscribe("actor");
+        dd.start();
+        UIDriver ud = new UIDriver(8082, "127.0.0.1", 8083);
+        ud.subscribe("sensor");
+        ud.subscribe("actor");
+        ud.start();
     }
 
     public void start() {

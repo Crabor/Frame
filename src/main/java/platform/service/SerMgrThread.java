@@ -1,5 +1,10 @@
 package platform.service;
 
+import platform.pubsub.AbstractSubscriber;
+import platform.pubsub.Channel;
+import platform.service.cxt.CxtSubscriber;
+import platform.struct.GrpPrioPair;
+
 public class SerMgrThread implements Runnable{
     private static SerMgrThread instance;
     private static Thread t;
@@ -23,7 +28,11 @@ public class SerMgrThread implements Runnable{
 
     @Override
     public void run() {
-        //TODO
+        //init cxt & inv
+//        CxtSubscriber cxtSubscriber = new CxtSubscriber();
+//        GrpPrioPair grpPrioPair = Channel.getGrpPrio("sensor", AbstractSubscriber.getSubscriber("MySyncApp"));
+//        System.out.println(grpPrioPair);
+//        cxtSubscriber.subscribe("sensor", grpPrioPair.groupId, grpPrioPair.priorityId + 1);
     }
 
     public void start() {

@@ -8,4 +8,12 @@ public class GrpPrioPair {
         this.groupId = groupId;
         this.priorityId = priorityId;
     }
+
+    @Override
+    public String toString() {
+        return "GrpPrioPair{" +
+                "groupId=" + groupId +
+                ", priorityId=" + priorityId +
+                '}';
+    }
 }

@@ -1,21 +1,20 @@
 package platform.pubsub;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import platform.struct.GrpPrioPair;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.pubsub.RedisPubSubListener;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import io.lettuce.core.pubsub.api.sync.RedisPubSubCommands;
+import reactor.util.annotation.Nullable;
 
 import java.util.*;
 
-public abstract class AbstractSubscriber implements RedisPubSubListener<String, String>, InterfaceSubscriber {
+public abstract class AbstractSubscriber implements RedisPubSubListener<String, String>, Subscriber {
     private static final List<AbstractSubscriber> objs = new ArrayList<>();
-    private final Set<Channel> channels = new HashSet<>();
+    private final Map<Channel, GrpPrioPair> channels = new HashMap<>();
     protected Publisher publisher = new Publisher();
-    protected Runnable thread = null;
     private static RedisClient client = null;
+    protected Runnable thread = null;
     private StatefulRedisPubSubConnection<String, String> conn = null;
 
     public static void Init(RedisClient client) {
@@ -32,13 +31,28 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
         }
     }
 
+    public AbstractSubscriber() {
+        conn = client.connectPubSub();
+        objs.add(this);
+    }
+
     public void bind(Runnable thread) {
         this.thread = thread;
     }
 
-    public AbstractSubscriber() {
-        conn = client.connectPubSub();
-        objs.add(this);
+    @Nullable
+    public static AbstractSubscriber getSubscriber(String name) {
+        return objs.stream().filter(s -> s.getClass().getSimpleName().equals(name)).findFirst().orElse(null);
+    }
+
+    @Nullable
+    public GrpPrioPair getGrpPrioPair(Channel channel) {
+        return channels.get(channel);
+    }
+
+    @Nullable
+    public GrpPrioPair getGrpPrioPair(String channel) {
+        return getGrpPrioPair(Channel.getChannel(channel));
     }
 
     protected void publish(Channel channel, int groupId, int priorityId, String message) {
@@ -66,8 +80,7 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
     }
 
     public void subscribe(Channel channel, int groupId, int priorityId) {
-        this.channels.add(channel);
-        channel.addSubscriber(this, groupId, priorityId);
+        channels.put(channel, channel.addSubscriber(this, groupId, priorityId));
 
         conn.addListener(this);
         RedisPubSubCommands<String, String> sync = conn.sync();
@@ -84,8 +97,8 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
     }
 
     public void subscribe(Channel channel, int groupId) {
-        this.channels.add(channel);
         GrpPrioPair pair = channel.addSubscriber(this, groupId);
+        channels.put(channel, pair);
 
         conn.addListener(this);
         RedisPubSubCommands<String, String> sync = conn.sync();
@@ -102,8 +115,8 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
     }
 
     public void subscribe(Channel channel) {
-        this.channels.add(channel);
         GrpPrioPair pair = channel.addSubscriber(this);
+        channels.put(channel, pair);
 
         conn.addListener(this);
         RedisPubSubCommands<String, String> sync = conn.sync();

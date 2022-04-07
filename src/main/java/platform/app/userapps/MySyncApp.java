@@ -1,15 +1,17 @@
-package platform.testcarapp;
+package platform.app.userapps;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import platform.pubsub.AbstractSubscriber;
+import platform.app.AbstractSyncApp;
 import platform.struct.Actor;
 
-public class MyAppSubscriber extends AbstractSubscriber {
+public class MySyncApp extends AbstractSyncApp {
+
     @Override
-    public void onMessage(String s, String s2) {
-        if (s.equals("sensor")) {
-            JSONObject jo = JSON.parseObject(s2);
+    public void iter(String channel, String msg) {
+        System.out.println("myapp recv: " + msg);
+        if (channel.equals("sensor")) {
+            JSONObject jo = JSON.parseObject(msg);
             Double front = jo.getDouble("front");
             if (front > 10) {
                 publish("actor", new Actor(0, 10).toString());
@@ -28,4 +30,5 @@ public class MyAppSubscriber extends AbstractSubscriber {
     public void onUnsubscribed(String s, long l) {
 
     }
+
 }

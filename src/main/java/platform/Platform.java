@@ -5,16 +5,12 @@ import platform.resource.ResMgrThread;
 import platform.pubsub.Publisher;
 import platform.pubsub.AbstractSubscriber;
 import platform.service.SerMgrThread;
-import platform.ui.UIMgrThread;
 import io.lettuce.core.RedisClient;
-
-import java.io.IOException;
 
 public class Platform {
     private static ResMgrThread resMgr;
     private static SerMgrThread serMgr;
     private static AppMgrThread appMgr;
-    private static UIMgrThread uiMgr;
 
     public static void Init() {
         //init database
@@ -24,16 +20,14 @@ public class Platform {
 
         //init mgr
         resMgr = ResMgrThread.getInstance();
-        serMgr = SerMgrThread.getInstance();
         appMgr = AppMgrThread.getInstance();
-        uiMgr = UIMgrThread.getInstance();
+        serMgr = SerMgrThread.getInstance();
     }
 
     public static void Start() {
         resMgr.start();
-        serMgr.start();
         appMgr.start();
-        uiMgr.start();
+        serMgr.start();
     }
 
     public static void Close() {
