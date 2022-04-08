@@ -9,7 +9,7 @@ public class MySyncApp extends AbstractSyncApp {
 
     @Override
     public void iter(String channel, String msg) {
-        //System.out.println("myapp recv: " + msg);
+        System.out.println("myapp recv: " + msg);
         if (channel.equals("sensor")) {
             JSONObject jo = JSON.parseObject(msg);
             Double front = jo.getDouble("front");
