@@ -9,6 +9,7 @@ public class CxtSubscriber extends AbstractSubscriber {
     @Override
     public void onMessage(String channel, String msg) {
         // 接收原始sensor数据进行处理
+        // wang hui yan
         JSONObject jo = JSON.parseObject(msg);
         jo.put("cxt", "yes");
         String msgNew = jo.toString();

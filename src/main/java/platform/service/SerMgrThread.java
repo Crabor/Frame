@@ -29,6 +29,7 @@ public class SerMgrThread implements Runnable{
     @Override
     public void run() {
         //init cxt & inv
+        // wang hui yan
         CxtSubscriber cxtSubscriber = new CxtSubscriber();
         cxtSubscriber.subscribe("sensor", 1, 1);
     }

@@ -27,6 +27,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
     public void run() {
         //receive msg from car than publish to sensor channel
         while (true) {
+            // wang hui yan
             try {
                 byte[] data = new byte[1024];
                 DatagramPacket packet = new DatagramPacket(data, data.length);
@@ -49,7 +50,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
 
     @Override
     public void onMessage(String channel, String msg) {
-//        System.out.println("send: " + s2);
+        System.out.println("dd send: " + msg);
         //receive msg from actor channel than transmit to car
         try {
             byte[] data = msg.getBytes();
