@@ -29,10 +29,8 @@ public class SerMgrThread implements Runnable{
     @Override
     public void run() {
         //init cxt & inv
-//        CxtSubscriber cxtSubscriber = new CxtSubscriber();
-//        GrpPrioPair grpPrioPair = Channel.getGrpPrio("sensor", AbstractSubscriber.getSubscriber("MySyncApp"));
-//        System.out.println(grpPrioPair);
-//        cxtSubscriber.subscribe("sensor", grpPrioPair.groupId, grpPrioPair.priorityId + 1);
+        CxtSubscriber cxtSubscriber = new CxtSubscriber();
+        cxtSubscriber.subscribe("sensor", 1, 1);
     }
 
     public void start() {

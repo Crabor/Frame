@@ -15,6 +15,7 @@ public class UIDriver extends AbstractSubscriber implements Runnable {
     private int clientPort;
 
     public UIDriver(int serverPort, String clientAddress, int clientPort) {
+        // TODO 貌似不会调用Abstract的构造函数
         this.serverPort = serverPort;
         this.clientPort = clientPort;
         try {

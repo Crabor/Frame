@@ -31,7 +31,7 @@ public class AppMgrThread implements Runnable{
     public void run() {
         //init app
         MySyncApp app = new MySyncApp();
-        app.subscribe("sensor");
+        app.subscribe("sensor", 1 ,0);
     }
 
     public void start() {

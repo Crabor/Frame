@@ -3,10 +3,7 @@ package platform.pubsub;
 import platform.struct.GrpPrioPair;
 import reactor.util.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Channel {
     private final Map<Integer, Map<Integer, List<AbstractSubscriber>>> subscribers = new HashMap<>();
@@ -27,6 +24,10 @@ public class Channel {
             ret = new Channel(channelName);
         }
         return ret;
+    }
+
+    public static Collection<Channel> getObjs() {
+        return objs.values();
     }
 
     public Map<Integer, Map<Integer, List<AbstractSubscriber>>> getSubscribers() {
@@ -102,9 +103,6 @@ public class Channel {
 
     @Override
     public String toString() {
-        return "Channel{" +
-                "subscribers=" + subscribers +
-                ", channelBaseName='" + channelBaseName + '\'' +
-                '}';
+        return "Channel{" +channelBaseName + "=" + subscribers + "}";
     }
 }

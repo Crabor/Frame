@@ -25,6 +25,11 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
         objs.forEach(AbstractSubscriber::close);
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
+
     public void close() {
         if (conn != null) {
             conn.close();

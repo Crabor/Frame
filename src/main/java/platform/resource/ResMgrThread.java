@@ -31,12 +31,14 @@ public class ResMgrThread implements Runnable{
         //init resource
         Channel sensor = new Channel("sensor");
         Channel actor = new Channel("actor");
+
         DeviceDriver dd = new DeviceDriver(8080, "127.0.0.1", 8081);
-        dd.subscribe("actor");
+        dd.subscribe("actor", 0, 0);
         dd.start();
+
         UIDriver ud = new UIDriver(8082, "127.0.0.1", 8083);
-        ud.subscribe("sensor");
-        ud.subscribe("actor");
+        ud.subscribe("sensor", 0, 0);
+        ud.subscribe("actor", 1, 0);
         ud.start();
     }
 
