@@ -5,6 +5,9 @@ import platform.pubsub.Channel;
 import platform.service.cxt.CxtSubscriber;
 import platform.struct.GrpPrioPair;
 
+import static platform.service.cxt.Interactor.ctxServiceStart;
+import static platform.service.cxt.Interactor.sensorRegistAll;
+
 public class SerMgrThread implements Runnable{
     private static SerMgrThread instance;
     private static Thread t;
@@ -30,6 +33,8 @@ public class SerMgrThread implements Runnable{
     public void run() {
         //init cxt & inv
         // wang hui yan
+        ctxServiceStart();
+        sensorRegistAll();
         CxtSubscriber cxtSubscriber = new CxtSubscriber();
         cxtSubscriber.subscribe("sensor", 1, 1);
     }

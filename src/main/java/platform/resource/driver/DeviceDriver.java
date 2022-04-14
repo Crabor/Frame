@@ -1,9 +1,12 @@
 package platform.resource.driver;
 
+import com.alibaba.fastjson.JSONObject;
 import platform.pubsub.AbstractSubscriber;
 
 import java.io.IOException;
 import java.net.*;
+
+import static java.lang.Thread.sleep;
 
 public class DeviceDriver extends AbstractSubscriber implements Runnable {
     private Thread t;
@@ -28,16 +31,22 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
         //receive msg from car than publish to sensor channel
         while (true) {
             // wang hui yan
-            try {
-                byte[] data = new byte[1024];
-                DatagramPacket packet = new DatagramPacket(data, data.length);
-                socket.receive(packet);
-                String sensorData = new String(data, 0 , packet.getLength());
+            //try {
+                //byte[] data = new byte[1024];
+                //DatagramPacket packet = new DatagramPacket(data, data.length);
+                //socket.receive(packet);
+                //String sensorData = new String(data, 0 , packet.getLength());
 //                System.out.println("dd recv: " + sensorData);
+                String sensorData = RandomCarData.randomJSONCarData();
                 publish("sensor", sensorData);
-            } catch (IOException e) {
+            try {
+                sleep(100);
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            //} catch (IOException e) {
+            //    e.printStackTrace();
+            //}
         }
     }
 

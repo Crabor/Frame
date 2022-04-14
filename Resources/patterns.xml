@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<patterns>
+
+	<pattern>
+		<id>pat_GPSSensor-Front</id>
+		<freshness>4000</freshness>  <!-- ms -->
+		<category>entities</category>
+		<subject>any</subject>
+		<predicate>any</predicate>
+		<object>any</object>
+		<site>any</site>
+	</pattern>
+
+	<pattern>
+		<id>pat_GPSSensor-Back</id>
+		<freshness>4000</freshness>  <!-- ms -->
+		<category>entities</category>
+		<subject>any</subject>
+		<predicate>any</predicate>
+		<object>any</object>
+		<site>any</site>
+	</pattern>
+
+	<pattern>
+		<id>pat_GPSSensor-Left</id>
+		<freshness>4000</freshness>  <!-- ms -->
+		<category>entities</category>
+		<subject>any</subject>
+		<predicate>any</predicate>
+		<object>any</object>
+		<site>any</site>
+	</pattern>
+
+	<pattern>
+		<id>pat_GPSSensor-Right</id>
+		<freshness>4000</freshness>  <!-- ms -->
+		<category>entities</category>
+		<subject>any</subject>
+		<predicate>any</predicate>
+		<object>any</object>
+		<site>any</site>
+	</pattern>
+</patterns>
