@@ -3,6 +3,8 @@ package platform.service.cxt;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import platform.pubsub.AbstractSubscriber;
+import platform.service.cxt.Config.PlatformConfig;
+import platform.service.cxt.Context.ContextManager;
 import platform.struct.GrpPrioPair;
 
 public class CxtSubscriber extends AbstractSubscriber {
@@ -13,6 +15,11 @@ public class CxtSubscriber extends AbstractSubscriber {
         JSONObject jo = JSON.parseObject(msg);
         jo.put("cxt", "yes");
         String msgNew = jo.toString();
+
+
+        int index = PlatformConfig.context_index.getAndIncrement();
+
+        //ContextManager.addRawSensingContext();
 
         // 将处理后的数据返回给sensor频道
         GrpPrioPair pair = getGrpPrioPair(channel); //获取该订阅者在sensor频道的分组及优先级信息
