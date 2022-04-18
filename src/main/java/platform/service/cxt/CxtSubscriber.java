@@ -11,7 +11,8 @@ public class CxtSubscriber extends AbstractSubscriber {
         // 接收原始sensor数据进行处理
         // wang hui yan
         JSONObject jo = JSON.parseObject(msg);
-        jo.put("cxt", "yes");
+        //jo.put("front", jo.getDouble("front") * 2);
+        //jo.put("front", -1);
         String msgNew = jo.toString();
 
         // 将处理后的数据返回给sensor频道

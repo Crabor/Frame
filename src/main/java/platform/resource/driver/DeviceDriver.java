@@ -43,14 +43,14 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
 
     public void start() {
         if (t == null) {
-            t = new Thread (this, getClass().getSimpleName());
+            t = new Thread (this, getClass().getName());
             t.start ();
         }
     }
 
     @Override
     public void onMessage(String channel, String msg) {
-        System.out.println("dd send: " + msg);
+        //System.out.println("dd send: " + msg);
         //receive msg from actor channel than transmit to car
         try {
             byte[] data = msg.getBytes();

@@ -1,9 +1,7 @@
 package platform.service;
 
-import platform.pubsub.AbstractSubscriber;
-import platform.pubsub.Channel;
 import platform.service.cxt.CxtSubscriber;
-import platform.struct.GrpPrioPair;
+import platform.service.inv.CancerServer;
 
 public class SerMgrThread implements Runnable{
     private static SerMgrThread instance;
@@ -31,7 +29,12 @@ public class SerMgrThread implements Runnable{
         //init cxt & inv
         // wang hui yan
         CxtSubscriber cxtSubscriber = new CxtSubscriber();
-        cxtSubscriber.subscribe("sensor", 1, 1);
+        cxtSubscriber.subscribe("sensor", true,1, 99);
+
+        CancerServer cancerServer = CancerServer.getInstance();
+        cancerServer.subscribe("check", 1, 0);
+        cancerServer.subscribe("sensor", 1, 1);
+        cancerServer.start();
     }
 
     public void start() {

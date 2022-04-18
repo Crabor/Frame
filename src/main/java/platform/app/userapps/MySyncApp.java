@@ -3,21 +3,28 @@ package platform.app.userapps;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import platform.app.AbstractSyncApp;
+import platform.service.inv.CancerArray;
+import platform.service.inv.CancerObject;
 import platform.struct.Actor;
 
 public class MySyncApp extends AbstractSyncApp {
 
+    public MySyncApp() {
+        super();
+    }
+
     @Override
     public void iter(String channel, String msg) {
-        //System.out.println("myapp recv: " + msg);
-        if (channel.equals("sensor")) {
-            JSONObject jo = JSON.parseObject(msg);
-            Double front = jo.getDouble("front");
-            if (front > 10) {
-                publish("actor", new Actor(0, 10).toString());
-            } else {
-                publish("actor", new Actor(0, 0).toString());
-            }
+        System.out.println("myapp recv: " + msg);
+        CancerArray ca = CancerArray.fromJsonObjectString(msg);
+        String checkMsg = ca.check();
+        System.out.println("myapp checkMsg: " + checkMsg);
+        publish("check", checkMsg);
+        CancerObject front = ca.get("front");
+        if (front.getValue() > 10) {
+            publish("actor", new Actor(0, 10).toString());
+        } else {
+            publish("actor", new Actor(0, 0).toString());
         }
     }
 

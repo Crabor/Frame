@@ -3,14 +3,18 @@ package platform.pubsub;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
+import platform.struct.SubscriberCutPair;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Publisher {
     private static RedisClient client;
     private static final List<Publisher> objs = new ArrayList<>();
+    private static final Lock objsLock = new ReentrantLock();
     private final StatefulRedisConnection<String, String> conn;
 
     public static void Init(RedisClient client) {
@@ -19,7 +23,9 @@ public class Publisher {
 
     public Publisher() {
         conn = client.connect();
+        objsLock.lock();
         objs.add(this);
+        objsLock.unlock();
     }
 
     public static void Close() {
@@ -32,29 +38,30 @@ public class Publisher {
 
     public void publish(Channel channel, int groupId, int priorityId, String message) {
         RedisCommands<String, String> commands = conn.sync();
-        Map<Integer, List<AbstractSubscriber>> grp = channel.getGroup(groupId);
+        Map<Integer, SubscriberCutPair> grp = channel.getGroup(groupId);
         if (grp != null) {
-            int maxPrio = Integer.MIN_VALUE;
-            for (Integer prio : grp.keySet()) {
+            Object[] arr = grp.keySet().toArray();
+            for (int i = grp.size() - 1; i >= 0; i--) {
+                int prio = (int) arr[i];
                 if (prio > priorityId) {
                     continue;
                 }
-                maxPrio = Math.max(maxPrio, prio);
-            }
-            if (maxPrio != Integer.MIN_VALUE) {
                 commands.publish(
                         String.join(
                                 "-",
                                 channel.getName(),
                                 String.valueOf(groupId),
-                                String.valueOf(maxPrio)),
+                                String.valueOf(prio)),
                         message);
+                if (grp.get(prio).cut) {
+                    break;
+                }
             }
         }
     }
 
     public void publish(String channel, int groupId, int priorityId, String message) {
-        publish(Channel.getChannel(channel), groupId, priorityId, message);
+        publish(Channel.get(channel), groupId, priorityId, message);
     }
 
     public void publish(Channel channel, int groupId, String message) {
@@ -62,7 +69,7 @@ public class Publisher {
     }
 
     public void publish(String channel, int groupId, String message) {
-        publish(Channel.getChannel(channel), groupId, message);
+        publish(Channel.get(channel), groupId, message);
     }
 
     public void publish(Channel channel, String message) {
@@ -72,6 +79,6 @@ public class Publisher {
     }
 
     public void publish(String channel, String message) {
-        publish(Channel.getChannel(channel), message);
+        publish(Channel.get(channel), message);
     }
 }
