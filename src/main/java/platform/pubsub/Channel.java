@@ -9,7 +9,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Channel {
-    private final Map<Integer, Map<Integer, SubscriberCutPair>> subscribers = new HashMap<>();
+    private final Map<Integer, Map<Integer, List<AbstractSubscriber>>> subscribers = new HashMap<>();
     private final String channelBaseName;
     private static final Map<String, Channel> objs = new HashMap<>();
     private static final Lock objsLock = new ReentrantLock();
@@ -36,11 +36,11 @@ public class Channel {
         return objs.values();
     }
 
-    public Map<Integer, Map<Integer, SubscriberCutPair>> getSubscribers() {
+    public Map<Integer, Map<Integer, List<AbstractSubscriber>>> getSubscribers() {
         return subscribers;
     }
 
-    public Map<Integer, SubscriberCutPair> getGroup(int groupId) {
+    public Map<Integer, List<AbstractSubscriber>> getGroup(int groupId) {
         return subscribers.get(groupId);
     }
 
@@ -61,13 +61,13 @@ public class Channel {
 
     @Nullable
     public GrpPrioPair getGrpPrio(AbstractSubscriber s) {
-        for (Map.Entry<Integer, Map<Integer, SubscriberCutPair>> entry : subscribers.entrySet()) {
+        for (Map.Entry<Integer, Map<Integer, List<AbstractSubscriber>>> entry : subscribers.entrySet()) {
             int grpId = entry.getKey();
-            Map<Integer, SubscriberCutPair> grp = entry.getValue();
-            for (Map.Entry<Integer, SubscriberCutPair> e : grp.entrySet()) {
+            Map<Integer, List<AbstractSubscriber>> grp = entry.getValue();
+            for (Map.Entry<Integer, List<AbstractSubscriber>> e : grp.entrySet()) {
                 int prioId = e.getKey();
-                AbstractSubscriber subs = e.getValue().subscriber;
-                if (subs.equals(s)) {
+                List<AbstractSubscriber> subs = e.getValue();
+                if (subs.contains(s)) {
                     return new GrpPrioPair(grpId, prioId);
                 }
             }
@@ -83,23 +83,27 @@ public class Channel {
         return get(c).getGrpPrio(s);
     }
 
-    public GrpPrioPair addSubscriber(SubscriberCutPair pair, int groupId, int priorityId) {
+    public GrpPrioPair addSubscriber(AbstractSubscriber subscriber, int groupId, int priorityId) {
         if (!subscribers.containsKey(groupId)) {
             subscribers.put(groupId, new HashMap<>());
         }
-        Map<Integer, SubscriberCutPair> grp = subscribers.get(groupId);
-        grp.put(priorityId, pair);
+        Map<Integer, List<AbstractSubscriber>> grp = subscribers.get(groupId);
+        if (!grp.containsKey(priorityId)) {
+            grp.put(priorityId, new ArrayList<>());
+        }
+        List<AbstractSubscriber> prio = grp.get(priorityId);
+        prio.add(subscriber);
         return new GrpPrioPair(groupId, priorityId);
     }
 
-    public GrpPrioPair addSubscriber(SubscriberCutPair pair, int groupId) {
-        addSubscriber(pair, groupId, DEFAULT_PRIO_ID);
+    public GrpPrioPair addSubscriber(AbstractSubscriber subscriber, int groupId) {
+        addSubscriber(subscriber, groupId, DEFAULT_PRIO_ID);
         return new GrpPrioPair(groupId, DEFAULT_PRIO_ID);
     }
 
-    public GrpPrioPair addSubscriber(SubscriberCutPair pair) {
+    public GrpPrioPair addSubscriber(AbstractSubscriber subscriber) {
         int groupId = genNewGroupId();
-        addSubscriber(pair, groupId, DEFAULT_PRIO_ID);
+        addSubscriber(subscriber, groupId, DEFAULT_PRIO_ID);
         return new GrpPrioPair(groupId, DEFAULT_PRIO_ID);
     }
 

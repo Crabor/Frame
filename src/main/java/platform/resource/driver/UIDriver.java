@@ -44,15 +44,20 @@ public class UIDriver extends AbstractSubscriber implements Runnable {
 
     public void start() {
         if (t == null) {
-            t = new Thread (this, getClass().getName());
+            t = new Thread (this, getClass().getSimpleName());
             t.start ();
         }
     }
+
+    private static int count = 0;
 
     @Override
     public void onMessage(String channel, String msg) {
         //receive msg from xxx channel than transmit to UI
         //System.out.println("ud send: " + msg);
+        if (channel.equals("check")) {
+            System.out.println("ud " + count++ + ":\n" + msg);
+        }
         try {
             byte[] data = msg.getBytes();
             DatagramPacket packet = new DatagramPacket(data, data.length, clientAddress, clientPort);

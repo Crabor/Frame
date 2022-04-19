@@ -29,11 +29,11 @@ public class SerMgrThread implements Runnable{
         //init cxt & inv
         // wang hui yan
         CxtSubscriber cxtSubscriber = new CxtSubscriber();
-        cxtSubscriber.subscribe("sensor", true,1, 99);
+        cxtSubscriber.subscribe("sensor", 1, 1);
 
         CancerServer cancerServer = CancerServer.getInstance();
         cancerServer.subscribe("check", 1, 0);
-        cancerServer.subscribe("sensor", 1, 1);
+        cancerServer.subscribe("sensor", 1, 0);
         cancerServer.start();
     }
 

@@ -9,7 +9,7 @@ public abstract class AbstractSyncApp extends AbstractSubscriber implements Sync
     protected int iterId;
 
     public AbstractSyncApp() {
-        appName = getClass().getName();
+        appName = getClass().getSimpleName();
         iterId = 0;
     }
 

@@ -7,6 +7,7 @@ import platform.pubsub.Publisher;
 import platform.pubsub.AbstractSubscriber;
 import platform.service.SerMgrThread;
 import io.lettuce.core.RedisClient;
+import platform.service.inv.CancerServer;
 
 public class Platform {
     private static ResMgrThread resMgr;
@@ -36,7 +37,7 @@ public class Platform {
         serMgr.start();
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -45,7 +46,21 @@ public class Platform {
         }
         System.out.println(AbstractSubscriber.getObjs());
 
-        while(true);
+
+        while(true) {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+//            for (Channel c : Channel.getObjs()) {
+//                System.out.println(c);
+//            }
+//            System.out.println(AbstractSubscriber.getObjs());
+//            System.out.println(CancerServer.getCheckMap());
+//            System.out.println(CancerServer.getSegMap());
+//            System.out.println("\n");
+        }
     }
 
     public static void Close() {

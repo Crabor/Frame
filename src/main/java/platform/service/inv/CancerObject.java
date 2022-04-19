@@ -23,7 +23,7 @@ public class CancerObject {
         this.appName = appName;
         this.name = name;
         this.value = value;
-        this.iterId = 0;
+        this.iterId = 1;
         this.checkId = 0;
         put(appName, this);
     }
@@ -134,7 +134,8 @@ public class CancerObject {
         int lineNumber = Thread.currentThread().getStackTrace()[2].getLineNumber();
         StringBuilder jsonArray = new StringBuilder();
         for (int i = 0; i < names.length; i++) {
-            String appName = Thread.currentThread().getStackTrace()[2].getClassName();
+            String appFullName = Thread.currentThread().getStackTrace()[2].getClassName();
+            String appName = appFullName.substring(appFullName.lastIndexOf('.') + 1);
             CancerObject obj = get(appName, names[i]);
             if (i == 0) {
                 jsonArray.append("[");

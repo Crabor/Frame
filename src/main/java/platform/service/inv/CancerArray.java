@@ -120,7 +120,8 @@ public class CancerArray implements List<CancerObject> {
     }
 
     public static CancerArray fromJsonObjectString(String jsonObjectString) {
-        String appName = Thread.currentThread().getStackTrace()[2].getClassName();
+        String appFullName = Thread.currentThread().getStackTrace()[2].getClassName();
+        String appName = appFullName.substring(appFullName.lastIndexOf('.') + 1);
         JSONObject jo = JSONObject.parseObject(jsonObjectString);
         CancerArray ca = new CancerArray();
         for (String key : jo.keySet()) {
@@ -132,7 +133,8 @@ public class CancerArray implements List<CancerObject> {
     }
 
     public static CancerArray[] fromJsonArrayString(String jsonArrayString) {
-        String appName = Thread.currentThread().getStackTrace()[2].getClassName();
+        String appFullName = Thread.currentThread().getStackTrace()[2].getClassName();
+        String appName = appFullName.substring(appFullName.lastIndexOf('.') + 1);
         JSONArray ja = JSONArray.parseArray(jsonArrayString);
         CancerArray[] cas = new CancerArray[ja.size()];
         for (int i = 0; i < ja.size(); i++) {

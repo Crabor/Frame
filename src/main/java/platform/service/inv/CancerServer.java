@@ -47,15 +47,17 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
 
     public void start() {
         if (t == null) {
-            t = new Thread (this, getClass().getName());
+            t = new Thread (this, getClass().getSimpleName());
             t.start ();
         }
     }
+    static int count = 0;
 
     @Override
     public void onMessage(String channel, String msg) {
         if (channel.equals("check")) {
             //System.out.println(msg);
+            //System.out.println("cs:\n" + count++);
             List<CheckInfo> list = JSONArray.parseArray(msg, CheckInfo.class);
             for (CheckInfo checkInfo : list) {
                 //System.out.println(checkInfo);
@@ -109,6 +111,10 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
 
     public static Map<String, Map<Integer, Map<Integer, List<CheckInfo>>>> getCheckMap() {
         return checkMap;
+    }
+
+    public static Map<String, Map<Integer, SegInfo>> getSegMap() {
+        return segMap;
     }
 
     public static void iterEntry(String appName, int iterId) {

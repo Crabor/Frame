@@ -38,24 +38,23 @@ public class Publisher {
 
     public void publish(Channel channel, int groupId, int priorityId, String message) {
         RedisCommands<String, String> commands = conn.sync();
-        Map<Integer, SubscriberCutPair> grp = channel.getGroup(groupId);
+        Map<Integer, List<AbstractSubscriber>> grp = channel.getGroup(groupId);
         if (grp != null) {
-            Object[] arr = grp.keySet().toArray();
-            for (int i = grp.size() - 1; i >= 0; i--) {
-                int prio = (int) arr[i];
+            int maxPrio = Integer.MIN_VALUE;
+            for (Integer prio : grp.keySet()) {
                 if (prio > priorityId) {
                     continue;
                 }
+                maxPrio = Math.max(maxPrio, prio);
+            }
+            if (maxPrio != Integer.MIN_VALUE) {
                 commands.publish(
                         String.join(
                                 "-",
                                 channel.getName(),
                                 String.valueOf(groupId),
-                                String.valueOf(prio)),
+                                String.valueOf(maxPrio)),
                         message);
-                if (grp.get(prio).cut) {
-                    break;
-                }
             }
         }
     }

@@ -35,7 +35,7 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
     }
 
     public String getName() {
-        return getClass().getName();
+        return toString();
     }
 
     public static List<AbstractSubscriber> getObjs() {
@@ -61,7 +61,7 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
 
     @Nullable
     public static AbstractSubscriber getSubscriber(String name) {
-        return objs.stream().filter(s -> s.getClass().getName().equals(name)).findFirst().orElse(null);
+        return objs.stream().filter(s -> s.getClass().getSimpleName().equals(name)).findFirst().orElse(null);
     }
 
     @Nullable
@@ -97,9 +97,9 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
     protected void publish(String channel, String message) {
         publisher.publish(channel, message);
     }
-    
-    public void subscribe(Channel channel, boolean cut, int groupId, int priorityId) {
-        channels.put(channel, channel.addSubscriber(new SubscriberCutPair(this, cut), groupId, priorityId));
+
+    public void subscribe(Channel channel, int groupId, int priorityId) {
+        channels.put(channel, channel.addSubscriber(this, groupId, priorityId));
 
         conn.addListener(this);
         RedisPubSubCommands<String, String> sync = conn.sync();
@@ -110,21 +110,13 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
                         String.valueOf(groupId),
                         String.valueOf(priorityId)));
     }
-    
-    public void subscribe(String channel,boolean cut, int groupId, int priorityId) {
-        subscribe(Channel.get(channel), cut,  groupId, priorityId);
-    }
-    
-    public void subscribe(Channel channel, int groupId, int priorityId) {
-        subscribe(channel, false, groupId, priorityId);
-    }
-    
+
     public void subscribe(String channel, int groupId, int priorityId) {
         subscribe(Channel.get(channel), groupId, priorityId);
     }
-    
-    public void subscribe(Channel channel, boolean cut, int groupId) {
-        GrpPrioPair pair = channel.addSubscriber(new SubscriberCutPair(this, cut), groupId);
+
+    public void subscribe(Channel channel, int groupId) {
+        GrpPrioPair pair = channel.addSubscriber(this, groupId);
         channels.put(channel, pair);
 
         conn.addListener(this);
@@ -137,20 +129,12 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
                         String.valueOf(pair.priorityId)));
     }
 
-    public void subscribe(String channel, boolean cut, int groupId) {
-        subscribe(Channel.get(channel), cut, groupId);
-    }
-
-    public void subscribe(Channel channel, int groupId) {
-        subscribe(channel, false, groupId);
-    }
-
     public void subscribe(String channel, int groupId) {
         subscribe(Channel.get(channel), groupId);
     }
 
-    public void subscribe(Channel channel, boolean cut) {
-        GrpPrioPair pair = channel.addSubscriber(new SubscriberCutPair(this, cut));
+    public void subscribe(Channel channel) {
+        GrpPrioPair pair = channel.addSubscriber(this);
         channels.put(channel, pair);
 
         conn.addListener(this);
@@ -161,14 +145,6 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
                         channel.getName(),
                         String.valueOf(pair.groupId),
                         String.valueOf(pair.priorityId)));
-    }
-
-    public void subscribe(String channel, boolean cut) {
-        subscribe(Channel.get(channel), cut);
-    }
-
-    public void subscribe(Channel channel) {
-        subscribe(channel, false);
     }
 
     public void subscribe(String channel) {

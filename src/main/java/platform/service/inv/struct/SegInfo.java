@@ -5,7 +5,6 @@ import java.util.*;
 public class SegInfo {
     public int iterId;
     public int gid;
-
     public Map<String, Double> eCxt;
     public Set<Integer> pCxt;
     public Map<Integer, List<CheckInfo>> checkTable;
@@ -24,5 +23,16 @@ public class SegInfo {
         this.eCxt = new HashMap<>();
         this.pCxt = new HashSet<>();
         this.checkTable = new HashMap<>();
+    }
+
+    @Override
+    public String toString() {
+        return "SegInfo{" +
+                "iterId=" + iterId +
+                ", gid=" + gid +
+                ", eCxt=" + eCxt +
+                ", pCxt=" + pCxt +
+                ", checkTable=" + checkTable +
+                '}';
     }
 }
