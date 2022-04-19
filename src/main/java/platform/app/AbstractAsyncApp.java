@@ -2,14 +2,17 @@ package platform.app;
 
 import platform.pubsub.AbstractSubscriber;
 import platform.service.inv.CancerObject;
+import platform.service.inv.CancerServer;
 
 public abstract class AbstractAsyncApp extends AbstractSubscriber implements AsyncApp, Runnable {
     private Thread t;
     private int sleepTime;
     protected String appName;
+    protected int iterId;
 
     public AbstractAsyncApp() {
         this.appName = getClass().getName();
+        iterId = 0;
     }
 
     public void setSleepTime(int sleepTime) {
@@ -24,8 +27,10 @@ public abstract class AbstractAsyncApp extends AbstractSubscriber implements Asy
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            CancerObject.iterEntry(appName);
+            iterId++;
+            CancerServer.iterEntry(appName, iterId);
             iter();
+            CancerServer.iterExit(appName, iterId);
         }
     }
 

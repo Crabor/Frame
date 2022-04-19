@@ -8,17 +8,12 @@ import platform.service.inv.CancerObject;
 import platform.struct.Actor;
 
 public class MySyncApp extends AbstractSyncApp {
-
-    public MySyncApp() {
-        super();
-    }
-
     @Override
     public void iter(String channel, String msg) {
-        System.out.println("myapp recv: " + msg);
+        //System.out.println("myapp recv: " + msg);
         CancerArray ca = CancerArray.fromJsonObjectString(msg);
         String checkMsg = ca.check();
-        System.out.println("myapp checkMsg: " + checkMsg);
+        //System.out.println("myapp checkMsg: " + checkMsg);
         publish("check", checkMsg);
         CancerObject front = ca.get("front");
         if (front.getValue() > 10) {

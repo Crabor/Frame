@@ -13,6 +13,7 @@ public class CancerObject {
     private final String name;
     private double value;
 
+    //静态变量，第一维为appName，第二维为name，第三维为cancerObject
     private static final Map<String, Map<String, CancerObject>> objs = new HashMap<>();
 
     public CancerObject(String appName, String name, double value) {
@@ -85,10 +86,10 @@ public class CancerObject {
         return appObjs.get(name);
     }
 
-    public static void iterEntry(String appName) {
+    public static void iterEntry(String appName, int iterId) {
         if (objs.containsKey(appName)) {
             objs.get(appName).forEach((k, v) -> {
-                v.iterId++;
+                v.iterId = iterId;
                 v.checkId = 0;
             });
         }
@@ -101,7 +102,7 @@ public class CancerObject {
 
     public String check(int lineNumber) {
         checkId++;
-        CheckInfo info = new CheckInfo(appName, checkId, new Date().getTime(), iterId, lineNumber, name, value);
+        CheckInfo info = new CheckInfo(appName, iterId, lineNumber, checkId, new Date().getTime(), name, value);
         return JSONObject.toJSONString(info);
     }
 

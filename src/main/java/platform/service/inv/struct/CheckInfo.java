@@ -11,7 +11,7 @@ public class CheckInfo {
     public String name;//Cancer<T>实例的名字
     public double value;//Cancer<T>实例对应的T实例的值
 
-    public CheckInfo(String appName, int checkId, long checkTime, int iterId, int lineNumber, String name, double value) {
+    public CheckInfo(String appName, int iterId, int lineNumber, int checkId, long checkTime, String name, double value) {
         this.appName = appName;
         this.lineNumber = lineNumber;
         this.iterId = iterId;
@@ -19,5 +19,18 @@ public class CheckInfo {
         this.checkTime = checkTime;
         this.name = name;
         this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "appName='" + appName + '\'' +
+                ", iterId=" + iterId +
+                ", lineNumber=" + lineNumber +
+                ", checkId=" + checkId +
+                ", checkTime=" + checkTime +
+                ", name='" + name + '\'' +
+                ", value=" + value +
+                '}';
     }
 }

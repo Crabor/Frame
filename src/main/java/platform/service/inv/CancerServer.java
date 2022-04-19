@@ -1,23 +1,24 @@
 package platform.service.inv;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import platform.app.AppMgrThread;
 import platform.pubsub.AbstractSubscriber;
 import platform.resource.ResMgrThread;
 import platform.service.inv.struct.CheckInfo;
 import platform.service.inv.struct.SegInfo;
+import reactor.util.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CancerServer extends AbstractSubscriber implements Runnable {
     private static CancerServer instance;
     private Thread t;
     private int iterId = 0;
+
     //静态变量，第一维为appName，第二维为iterId，第三维为LineNumber，第四维为保存的checkInfo列表
     private static final Map<String, Map<Integer, Map<Integer, List<CheckInfo>>>> checkMap = new HashMap<>();
-    //静态变量，第一维为appName，第二维为iterId，第三维为保存的segInfo列表
+    //静态变量，第一维为appName，第二维为iterId，第三维为保存的segInfo
     private static final Map<String, Map<Integer, SegInfo>> segMap = new HashMap<>();
 
     // 构造方法私有化
@@ -38,7 +39,10 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
 
     @Override
     public void run() {
+        //group
+        while(true) {
 
+        }
     }
 
     public void start() {
@@ -50,12 +54,11 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
 
     @Override
     public void onMessage(String channel, String msg) {
-
         if (channel.equals("check")) {
-            // TODO :
-            JSONArray jsonArray = JSONArray.parseArray(msg);
-            for (int i = 0; i < jsonArray.size(); i++) {
-                CheckInfo checkInfo = jsonArray.getObject(i, CheckInfo.class);
+            //System.out.println(msg);
+            List<CheckInfo> list = JSONArray.parseArray(msg, CheckInfo.class);
+            for (CheckInfo checkInfo : list) {
+                //System.out.println(checkInfo);
                 if (!checkMap.containsKey(checkInfo.appName)) {
                     checkMap.put(checkInfo.appName, new HashMap<>());
                 }
@@ -70,9 +73,27 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
                 List<CheckInfo> checkInfoList = lineMap.get(checkInfo.lineNumber);
                 checkInfoList.add(checkInfo);
             }
+            //System.out.println(checkMap);
         } else if (channel.equals("sensor")) {
             iterId++;
-            System.out.println("inv recv: " + msg);
+            Map<String, Double> map = new HashMap<>();
+            //System.out.println("inv recv: " + msg);
+            JSONObject jsonObject = JSONObject.parseObject(msg);
+            for (String key : jsonObject.keySet()) {
+                map.put(key, jsonObject.getDouble(key));
+            }
+            AppMgrThread.getInstance().getAppNames().forEach(appName -> {
+                if (!segMap.containsKey(appName)) {
+                    segMap.put(appName, new HashMap<>());
+                }
+                Map<Integer, SegInfo> iterMap = segMap.get(appName);
+                if (!iterMap.containsKey(iterId)) {
+                    iterMap.put(iterId, new SegInfo(iterId));
+                }
+                SegInfo segInfo = iterMap.get(iterId);
+                segInfo.eCxt = map;
+            });
+            //System.out.println(ecxtMap);
         }
     }
 
@@ -86,5 +107,33 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
 
     }
 
+    public static Map<String, Map<Integer, Map<Integer, List<CheckInfo>>>> getCheckMap() {
+        return checkMap;
+    }
 
+    public static void iterEntry(String appName, int iterId) {
+        CancerObject.iterEntry(appName, iterId);
+    }
+
+    public static void iterExit(String appName, int iterId) {
+        if (!checkMap.containsKey(appName)) {
+            checkMap.put(appName, new HashMap<>());
+        }
+        Map<Integer, Map<Integer, List<CheckInfo>>> iterMap = checkMap.get(appName);
+        if (!iterMap.containsKey(iterId)) {
+            iterMap.put(iterId, new HashMap<>());
+        }
+        Map<Integer, List<CheckInfo>> lineMap = iterMap.get(iterId);
+        if (!segMap.containsKey(appName)) {
+            segMap.put(appName, new HashMap<>());
+        }
+        Map<Integer, SegInfo> iterMap1 = segMap.get(appName);
+        if (!iterMap1.containsKey(iterId)) {
+            iterMap1.put(iterId, new SegInfo(iterId));
+        }
+        SegInfo segInfo = iterMap1.get(iterId);
+
+        segInfo.pCxt = lineMap.keySet();
+        segInfo.checkTable = lineMap;
+    }
 }

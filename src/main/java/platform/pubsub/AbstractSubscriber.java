@@ -34,6 +34,10 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
         return getClass().getSimpleName();
     }
 
+    public String getName() {
+        return getClass().getName();
+    }
+
     public static List<AbstractSubscriber> getObjs() {
         return objs;
     }

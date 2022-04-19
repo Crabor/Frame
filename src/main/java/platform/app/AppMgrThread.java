@@ -3,12 +3,14 @@ package platform.app;
 import platform.app.userapps.MySyncApp;
 import platform.pubsub.AbstractSubscriber;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class AppMgrThread implements Runnable{
     private static AppMgrThread instance;
     private static Thread t;
+    private final List<String> appNames = new ArrayList<>();
 
     // 构造方法私有化
     private AppMgrThread() {}
@@ -32,6 +34,7 @@ public class AppMgrThread implements Runnable{
         //init app
         MySyncApp app = new MySyncApp();
         app.subscribe("sensor", 1 ,0);
+        appNames.add(app.getName());
     }
 
     public void start() {
@@ -39,5 +42,9 @@ public class AppMgrThread implements Runnable{
             t = new Thread (this, "AppMgrThread");
             t.start ();
         }
+    }
+
+    public List<String> getAppNames() {
+        return appNames;
     }
 }

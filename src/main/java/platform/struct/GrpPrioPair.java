@@ -11,9 +11,6 @@ public class GrpPrioPair {
 
     @Override
     public String toString() {
-        return "GrpPrioPair{" +
-                "groupId=" + groupId +
-                ", priorityId=" + priorityId +
-                '}';
+        return "{" + groupId + "," + priorityId + "}";
     }
 }
