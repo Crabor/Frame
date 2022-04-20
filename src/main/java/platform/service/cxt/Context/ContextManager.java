@@ -1,6 +1,6 @@
 package platform.service.cxt.Context;
 
-import platform.service.cxt.CMID.context.Context;
+import platform.service.cxt.Context.Context;
 import platform.service.cxt.Config.PlatformConfig;
 
 import java.util.HashMap;
@@ -25,11 +25,13 @@ public class ContextManager<T> {
         String change = null;
         try {
             change = ChangeInvoked.take();
-            results.add(change);
-            System.out.println("Get change: " + change);
-
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+        results.add(change);
+        for(int i = 0; i < ChangeInvoked.size();i++) {
+            change = ChangeInvoked.poll();
+            results.add(change);
         }
         return results;
     }
@@ -61,6 +63,7 @@ public class ContextManager<T> {
         return temp;
     }
     public static void addCleanSensingContext(String sensorName, Context context){
+        //System.out.println(context.toString());
         ContextBufferList.get(sensorName).insertCleanData(context);
     }
     public static Context pollCleanSensingContext(String sensorName){

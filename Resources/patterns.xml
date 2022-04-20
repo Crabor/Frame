@@ -3,7 +3,7 @@
 <patterns>
 
 	<pattern>
-		<id>pat_GPSSensor-Front</id>
+		<id>pat_front</id>
 		<freshness>4000</freshness>  <!-- ms -->
 		<category>entities</category>
 		<subject>any</subject>
@@ -13,7 +13,7 @@
 	</pattern>
 
 	<pattern>
-		<id>pat_GPSSensor-Back</id>
+		<id>pat_back</id>
 		<freshness>4000</freshness>  <!-- ms -->
 		<category>entities</category>
 		<subject>any</subject>
@@ -23,7 +23,7 @@
 	</pattern>
 
 	<pattern>
-		<id>pat_GPSSensor-Left</id>
+		<id>pat_left</id>
 		<freshness>4000</freshness>  <!-- ms -->
 		<category>entities</category>
 		<subject>any</subject>
@@ -33,7 +33,7 @@
 	</pattern>
 
 	<pattern>
-		<id>pat_GPSSensor-Right</id>
+		<id>pat_right</id>
 		<freshness>4000</freshness>  <!-- ms -->
 		<category>entities</category>
 		<subject>any</subject>

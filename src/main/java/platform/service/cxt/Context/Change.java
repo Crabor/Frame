@@ -1,7 +1,7 @@
 package platform.service.cxt.Context;
 
 import com.alibaba.fastjson.JSON;
-import platform.service.cxt.CMID.context.Context;
+import platform.service.cxt.Context.Context;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -14,18 +14,23 @@ public class Change<T> {
     enum Change_TYPE {
         ADDITION, DELETION;
     }
-    private int  index;
+    private long index;
     private char change_type;
     private String SensorName;
     private String SensorData;
     private String timestamps;
-    private long change_index;
 
+    Change(char type, String sensorName, String sensorData){
+        this.change_type = type;
+        SensorName = sensorName;
+        SensorData = sensorData;
+    }
     Change(char type, Context context){
         this.change_type = type;
-        //change_index = INDEX_TAG.incrementAndGet();
+        index = context.getIndex();
         SensorName = context.getSensorName();
-        SensorData = context.getSensorData();
+        SensorData = String.valueOf(context.getSensorData());
+        timestamps = context.getTimestamps();
 
     }
     public String toString(){

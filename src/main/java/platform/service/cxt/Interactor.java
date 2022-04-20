@@ -1,7 +1,7 @@
 package platform.service.cxt;
 
 import platform.service.cxt.CMID.builder.CheckerBuilder;
-import platform.service.cxt.CMID.context.Context;
+import platform.service.cxt.Context.Context;
 import platform.service.cxt.Config.PlatformConfig;
 import platform.service.cxt.Config.SensorConfig;
 
@@ -27,7 +27,7 @@ public class Interactor {
     }
     public static void sensorRegist(String name){
         ContextManager.registContextManager(name);
-        System.out.println("Register buffer for "+name);
+        //System.out.println("Register buffer for "+name);
         //ListenManager.ListenStart(name);
     }
     public static String getSensorData(String name){

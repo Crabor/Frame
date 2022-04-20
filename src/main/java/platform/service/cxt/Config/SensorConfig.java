@@ -13,10 +13,10 @@ public class SensorConfig {
     public SensorConfig(JSONObject object){
         SensorType = object.getString("SensorType");
         SensorName = object.getString("SensorName");
-        isValid = object.getBoolean("isValid");
-        SensorFreq = object.getIntValue("SensorFreq");
-        IPAddress = object.getString("IPAddress");
-        port = object.getIntValue("Port");
+//        isValid = object.getBoolean("isValid");
+//        SensorFreq = object.getIntValue("SensorFreq");
+//        IPAddress = object.getString("IPAddress");
+//        port = object.getIntValue("Port");
     }
 
     public String getSensorType() {

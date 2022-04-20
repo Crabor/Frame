@@ -2,6 +2,8 @@ package platform.service;
 
 import platform.pubsub.AbstractSubscriber;
 import platform.pubsub.Channel;
+import platform.service.cxt.CMID.builder.CheckerBuilder;
+import platform.service.cxt.Config.PlatformConfig;
 import platform.service.cxt.CxtSubscriber;
 import platform.struct.GrpPrioPair;
 
@@ -35,8 +37,18 @@ public class SerMgrThread implements Runnable{
         // wang hui yan
         ctxServiceStart();
         sensorRegistAll();
+
+
         CxtSubscriber cxtSubscriber = new CxtSubscriber();
         cxtSubscriber.subscribe("sensor", 1, 1);
+
+        Thread checkerThread = new Thread(new CheckerBuilder(PlatformConfig.getInstace()));
+        checkerThread.setPriority(Thread.MAX_PRIORITY);
+        checkerThread.start();
+
+
+
+
     }
 
     public void start() {

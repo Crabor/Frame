@@ -40,7 +40,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                 String sensorData = RandomCarData.randomJSONCarData();
                 publish("sensor", sensorData);
             try {
-                sleep(100);
+                sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -51,6 +51,8 @@ public abstract class ChangeHandler {
             System.exit(1);
         }
         Checker checker = checkerMap.get(patternId);
+        System.out.println(checkerMap.keySet().toString());
+        System.out.println("patternID:"+patternId);
         checker.delete(patternId, timestamp);
      //   pattern.deleteFirstByTime(timestamp);
     }

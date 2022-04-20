@@ -2,6 +2,7 @@ package platform.service.cxt.CMID.builder;
 
 import platform.service.cxt.CMID.checker.Checker;
 import platform.service.cxt.Config.PlatformConfig;
+import platform.service.cxt.Context.Change;
 import platform.service.cxt.Context.ContextManager;
 
 import java.util.*;
@@ -47,13 +48,22 @@ public class CheckerBuilder  extends AbstractCheckerBuilder implements Runnable{
 
             long startTime = System.nanoTime();
             for (String chg : results) {
-                System.out.println(chg);
-                //changeHandler.doContextChange(chg);
+                System.out.println("Checking: "+chg);
+                changeHandler.doContextChange(chg);
             }
             long endTime = System.nanoTime(); //获取结束时间
             timeSum += (endTime - startTime);
 
             count = results.size() + count;
+            System.out.println("[INFO] Total changes: "+count);
+            int incCount = 0;
+            for(Checker checker : checkerList) {
+                incCount += checker.getInc();
+                System.out.println("Checker: "+checker.getName() + "====" + checker.getIncLinkSet().toString());
+            }
+
+            System.out.println("[INFO] Total changes: "+incCount);
+            System.out.println("[INFO] Total checking time: " + timeSum / 1000000 + " ms");
         }
 
        // long start = System.nanoTime();

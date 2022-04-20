@@ -52,8 +52,6 @@ public abstract class Checker {
     protected int maxLinkSize = 0;
 
 //    private Set<String> incUnpreSet;
-
-
     public Checker(String name, STNode stRoot, Map<String, Pattern> patternMap, Map<String, STNode> stMap) {
         this.name = name;
         this.stRoot = stRoot;
@@ -125,7 +123,7 @@ public abstract class Checker {
         return incLinkSet.add(link);
     }
 
-    protected Set<String> getIncLinkSet() {
+    public Set<String> getIncLinkSet() {
         return incLinkSet;
     }
 
@@ -234,11 +232,13 @@ public abstract class Checker {
         if(stRoot.getNodeType() == STNode.EXISTENTIAL_NODE || stRoot.getNodeType() == STNode.UNIVERSAL_NODE) {
             cctMap.get(stRoot.getContextSetName()).add(cctRoot); //add critical node information
             STNode stChild = (STNode) stRoot.getFirstChild();
-            for(Context context : patternMap.get(stRoot.getContextSetName()).getContextList()) {
-                //CCT结点创建默认为FC状态
-                CCTNode cctChild = new CCTNode(stChild.getNodeName(), stChild.getNodeType(), context);
-                buildCCT(stChild, cctChild);
-                cctRoot.addChildeNode(cctChild);
+            if(patternMap.get(stRoot.getContextSetName())!=null) {
+                for (Context context : patternMap.get(stRoot.getContextSetName()).getContextList()) {
+                    //CCT结点创建默认为FC状态
+                    CCTNode cctChild = new CCTNode(stChild.getNodeName(), stChild.getNodeType(), context);
+                    buildCCT(stChild, cctChild);
+                    cctRoot.addChildeNode(cctChild);
+                }
             }
         }
         else {
