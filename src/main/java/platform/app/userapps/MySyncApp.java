@@ -8,16 +8,13 @@ import platform.service.inv.CancerObject;
 import platform.struct.Actor;
 
 public class MySyncApp extends AbstractSyncApp {
-    private static int count = 0;
-
     @Override
     public void iter(String channel, String msg) {
-        //System.out.println("myapp recv: " + msg);
         CancerArray ca = CancerArray.fromJsonObjectString(msg);
-        String checkMsg = ca.check();
-        //System.out.println("myapp checkMsg: " + checkMsg);
-        System.out.println("myapp " + count++);
-        publish("check", checkMsg);
+        if (iterId % 2 == 0) {
+            String checkMsg = ca.check();
+            publish("check", checkMsg);
+        }
         CancerObject front = ca.get("front");
         if (front.getValue() > 10) {
             publish("actor", new Actor(0, 10).toString());

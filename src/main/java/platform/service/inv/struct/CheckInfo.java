@@ -8,8 +8,8 @@ public class CheckInfo {
 
     public int checkId;//第几次check
     public long checkTime;//check时间
-    public String name;//Cancer<T>实例的名字
-    public double value;//Cancer<T>实例对应的T实例的值
+    public String name;//Cancer实例的名字
+    public double value;//Cancer实例对应的T实例的值
 
     public CheckInfo(String appName, int iterId, int lineNumber, int checkId, long checkTime, String name, double value) {
         this.appName = appName;

@@ -33,9 +33,8 @@ public class UIDriver extends AbstractSubscriber implements Runnable {
                 byte[] data = new byte[1024];
                 DatagramPacket packet = new DatagramPacket(data, data.length);
                 socket.receive(packet);
-                String sensorData = new String(data, 0, packet.getLength());
-                //System.out.println("ud recv: " + sensorData);
-//                publish("sensor", sensorData);
+                String msg = new String(data, 0, packet.getLength());
+                //System.out.println("ud recv: " + msg);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -53,11 +52,6 @@ public class UIDriver extends AbstractSubscriber implements Runnable {
 
     @Override
     public void onMessage(String channel, String msg) {
-        //receive msg from xxx channel than transmit to UI
-        //System.out.println("ud send: " + msg);
-        if (channel.equals("check")) {
-            System.out.println("ud " + count++ + ":\n" + msg);
-        }
         try {
             byte[] data = msg.getBytes();
             DatagramPacket packet = new DatagramPacket(data, data.length, clientAddress, clientPort);
