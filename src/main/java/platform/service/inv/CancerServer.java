@@ -27,7 +27,7 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
 
     // 静态方法返回该实例
     public static CancerServer getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             synchronized (CancerServer.class) {
                 if (instance == null) {
                     instance = new CancerServer();
@@ -40,17 +40,18 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
     @Override
     public void run() {
         //group
-        while(true) {
+        while (true) {
 
         }
     }
 
     public void start() {
         if (t == null) {
-            t = new Thread (this, getClass().getSimpleName());
-            t.start ();
+            t = new Thread(this, getClass().getSimpleName());
+            t.start();
         }
     }
+
     static int count = 0;
 
     @Override

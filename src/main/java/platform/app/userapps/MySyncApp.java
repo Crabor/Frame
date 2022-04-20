@@ -9,6 +9,7 @@ import platform.struct.Actor;
 
 public class MySyncApp extends AbstractSyncApp {
     private static int count = 0;
+
     @Override
     public void iter(String channel, String msg) {
         //System.out.println("myapp recv: " + msg);

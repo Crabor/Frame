@@ -47,7 +47,7 @@ public class Platform {
         System.out.println(AbstractSubscriber.getObjs());
 
 
-        while(true) {
+        while (true) {
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {

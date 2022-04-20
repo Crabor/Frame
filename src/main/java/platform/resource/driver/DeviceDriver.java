@@ -32,7 +32,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                 byte[] data = new byte[1024];
                 DatagramPacket packet = new DatagramPacket(data, data.length);
                 socket.receive(packet);
-                String sensorData = new String(data, 0 , packet.getLength());
+                String sensorData = new String(data, 0, packet.getLength());
 //                System.out.println("dd recv: " + sensorData);
                 publish("sensor", sensorData);
             } catch (IOException e) {
@@ -43,8 +43,8 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
 
     public void start() {
         if (t == null) {
-            t = new Thread (this, getClass().getSimpleName());
-            t.start ();
+            t = new Thread(this, getClass().getSimpleName());
+            t.start();
         }
     }
 

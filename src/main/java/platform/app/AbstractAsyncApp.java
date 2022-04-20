@@ -36,8 +36,8 @@ public abstract class AbstractAsyncApp extends AbstractSubscriber implements Asy
 
     public void start() {
         if (t == null) {
-            t = new Thread (this, getClass().getSimpleName());
-            t.start ();
+            t = new Thread(this, getClass().getSimpleName());
+            t.start();
         }
     }
 }

@@ -7,13 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class AppMgrThread implements Runnable{
+public class AppMgrThread implements Runnable {
     private static AppMgrThread instance;
     private static Thread t;
     private final List<String> appNames = new ArrayList<>();
 
     // 构造方法私有化
-    private AppMgrThread() {}
+    private AppMgrThread() {
+    }
 
     // 静态方法返回该实例
     public static AppMgrThread getInstance() {
@@ -33,14 +34,14 @@ public class AppMgrThread implements Runnable{
     public void run() {
         //init app
         MySyncApp app = new MySyncApp();
-        app.subscribe("sensor", 1 ,0);
+        app.subscribe("sensor", 1, 0);
         appNames.add(app.getName());
     }
 
     public void start() {
         if (t == null) {
-            t = new Thread (this, "AppMgrThread");
-            t.start ();
+            t = new Thread(this, "AppMgrThread");
+            t.start();
         }
     }
 

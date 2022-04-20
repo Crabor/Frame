@@ -23,7 +23,7 @@ public class Channel {
         objs.put(name, this);
         objsLock.unlock();
     }
-    
+
     public static Channel get(String channelName) {
         Channel ret = objs.get(channelName);
         if (ret == null) {
@@ -109,6 +109,6 @@ public class Channel {
 
     @Override
     public String toString() {
-        return "{" +channelBaseName + "=" + subscribers + "}";
+        return "{" + channelBaseName + "=" + subscribers + "}";
     }
 }

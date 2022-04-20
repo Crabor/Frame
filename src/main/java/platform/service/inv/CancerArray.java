@@ -8,11 +8,11 @@ import java.util.*;
 
 public class CancerArray implements List<CancerObject> {
     private List<CancerObject> list;
-    
+
     public CancerArray() {
         list = new ArrayList<>();
     }
-    
+
     public CancerArray(List<CancerObject> list) {
         this.list = list;
     }
@@ -106,7 +106,7 @@ public class CancerArray implements List<CancerObject> {
     public int size() {
         return list.size();
     }
-    
+
     public List<CancerObject> subList(int fromIndex, int toIndex) {
         return list.subList(fromIndex, toIndex);
     }
