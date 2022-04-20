@@ -5,7 +5,6 @@ import platform.pubsub.AbstractSubscriber;
 public class UI extends AbstractSubscriber {
     @Override
     public void onMessage(String channel, String msg) {
-        System.out.println("UI: " + msg);
     }
 
     @Override

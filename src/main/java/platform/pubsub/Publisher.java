@@ -48,6 +48,7 @@ public class Publisher {
                 maxPrio = Math.max(maxPrio, prio);
             }
             if (maxPrio != Integer.MIN_VALUE) {
+                System.out.println("publish to " + channel.getName() + "-" + groupId + "-" + maxPrio + " : " + message);
                 commands.publish(
                         String.join(
                                 "-",
