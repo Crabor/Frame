@@ -48,18 +48,18 @@ public class Platform {
 
 
         while (true) {
-//            try {
-//                Thread.sleep(5000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 //            for (Channel c : Channel.getObjs()) {
 //                System.out.println(c);
 //            }
 //            System.out.println(AbstractSubscriber.getObjs());
 //            System.out.println(CancerServer.getCheckMap());
-//            System.out.println(CancerServer.getSegMap());
-//            System.out.println("\n");
+            System.out.println(CancerServer.getSegMap());
+            System.out.println();
         }
     }
 

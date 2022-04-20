@@ -20,6 +20,7 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
     private static final Map<String, Map<Integer, Map<Integer, List<CheckInfo>>>> checkMap = new HashMap<>();
     //静态变量，第一维为appName，第二维为iterId，第三维为保存的segInfo
     private static final Map<String, Map<Integer, SegInfo>> segMap = new HashMap<>();
+    private static final int GROUP_THRO = 100;
 
     // 构造方法私有化
     private CancerServer() {
@@ -41,8 +42,17 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
     public void run() {
         //group
         while (true) {
+            segMap.forEach((appName, iterMap) -> {
+                int size = iterMap.size();
+                if (size > GROUP_THRO) {
 
+                }
+            });
         }
+    }
+
+    private void group(String appName, int startIterId, int endIterId) {
+
     }
 
     public void start() {

@@ -32,7 +32,7 @@ public class SegInfo {
                 ", gid=" + gid +
                 ", eCxt=" + eCxt +
                 ", pCxt=" + pCxt +
-                ", checkTable=" + checkTable +
+                ", checkTable=" +
                 '}';
     }
 }
