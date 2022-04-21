@@ -33,6 +33,7 @@ public abstract class Checker {
     protected Map<String, Pattern> patternMap;
 
     private Set<String> incLinkSet;
+    private Set<String> incLinkSet_delta;
 
     protected int checkTimes = 0;
 
@@ -47,16 +48,15 @@ public abstract class Checker {
     private Set<String> incDelSet;
 
     private Set<String> criticalSet;
-
-
     protected int maxLinkSize = 0;
-
 //    private Set<String> incUnpreSet;
     public Checker(String name, STNode stRoot, Map<String, Pattern> patternMap, Map<String, STNode> stMap) {
         this.name = name;
         this.stRoot = stRoot;
         this.patternMap = patternMap;
         this.incLinkSet = ConcurrentHashMap.newKeySet();
+        this.incLinkSet_delta = ConcurrentHashMap.newKeySet();
+
         this.checkTimes = 0;
 
         this.stMap = stMap;
@@ -86,6 +86,7 @@ public abstract class Checker {
 
         this.patternMap = checker.patternMap;
         this.incLinkSet = checker.incLinkSet;
+        this.incLinkSet_delta = checker.incLinkSet_delta;
         this.checkTimes = checker.checkTimes;
 
         this.stMap = checker.stMap;
@@ -120,11 +121,20 @@ public abstract class Checker {
     }
 
     protected boolean addIncLink(String link) {
-        return incLinkSet.add(link);
+        return incLinkSet.add(link) && incLinkSet_delta.add(link);
     }
 
     public Set<String> getIncLinkSet() {
         return incLinkSet;
+    }
+    public Set<String> getIncLinkSet_delta() {
+        return incLinkSet_delta;
+    }
+    public void clearIncLinkSet_delta() {
+        incLinkSet_delta.clear();
+    }
+    public Set<String> getIncAddSet() {
+        return incAddSet;
     }
 
     /**
@@ -183,7 +193,6 @@ public abstract class Checker {
 //        System.out.println("[Check add]: " + context);
         return true;
     }
-
 
     public boolean delete(String patternId, long timestamp) {
         if(!deleteContextFromPattern(patternId, timestamp)) {

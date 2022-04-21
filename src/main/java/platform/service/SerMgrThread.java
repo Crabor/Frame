@@ -46,9 +46,6 @@ public class SerMgrThread implements Runnable{
         checkerThread.setPriority(Thread.MAX_PRIORITY);
         checkerThread.start();
 
-
-
-
     }
 
     public void start() {
