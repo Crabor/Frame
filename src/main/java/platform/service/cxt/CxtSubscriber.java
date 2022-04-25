@@ -13,15 +13,13 @@ public class CxtSubscriber extends AbstractSubscriber {
         // 接收原始sensor数据进行处理
         // wang hui yan
         JSONObject jo = JSON.parseObject(msg);
-        //jo.put("front", jo.getDouble("front") * 2);
-        //jo.put("front", -1);
-        String msgNew = jo.toString();
 
 
         int index = PlatformConfig.context_index.getAndIncrement();
 
         //ContextManager.addRawSensingContext();
 
+        String msgNew = jo.toString();
         // 将处理后的数据返回给sensor频道
         GrpPrioPair pair = getGrpPrioPair(channel); //获取该订阅者在sensor频道的分组及优先级信息
         if (pair != null) {
