@@ -16,36 +16,20 @@
   },
   "SensorConfiguration": [
     {
-      "SensorName": "GPSSensor-Front",
-      "SensorType": "Double",
-      "SensorFreq": 500, //ms
-      "isValid": true,
-      "IPAddress": "127.0.0.1",
-      "Port": 1234
+      "SensorName": "front",
+      "SensorType": "Double"
     },
     {
-      "SensorName": "GPSSensor-Back",
-      "SensorType": "Double",
-      "SensorFreq": 1000,
-      "isValid": true,
-      "IPAddress": "127.0.0.1",
-      "Port": 1235
+      "SensorName": "back",
+      "SensorType": "Double"
     },
     {
-      "SensorName": "GPSSensor-Left",
-      "SensorType": "Double",
-      "SensorFreq": 1000,
-      "isValid": true,
-      "IPAddress": "127.0.0.1",
-      "Port": 1236
+      "SensorName": "left",
+      "SensorType": "Double"
     },
     {
-      "SensorName": "GPSSensor-Right",
-      "SensorType": "Double",
-      "SensorFreq": 1000,
-      "isValid": true,
-      "IPAddress": "127.0.0.1",
-      "Port": 1237
+      "SensorName": "right",
+      "SensorType": "Double"
     }
   ]
 }

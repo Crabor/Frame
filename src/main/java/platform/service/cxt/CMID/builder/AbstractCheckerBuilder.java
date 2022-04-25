@@ -168,6 +168,7 @@ public abstract class AbstractCheckerBuilder implements CheckerType {
         //change handle
         configChangeHandler();
 
+        /*
         if (changeHandlerType.contains("static")) {
             //context file path
             this.dataFilePath = cmidConfig.getDataFile();
@@ -180,7 +181,7 @@ public abstract class AbstractCheckerBuilder implements CheckerType {
                 System.exit(1);
 
             }
-        }
+        }*/
 
         System.out.println("[INFO] 配置文件解析成功");
     }

@@ -1,6 +1,6 @@
 package platform.service.cxt.Context;
 
-import platform.service.cxt.CMID.context.Context;
+import platform.service.cxt.Context.Context;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -60,7 +60,8 @@ public class ContextBuffer {
                 ContextManager.getChangeInvoked().put(new Change<String>(Change.ADDITION,context).toString());
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }        //System.out.println("Add: "+context.toString());*/
+            }
+        //System.out.println("Add: "+context.toString());
     }
 
     public Queue<Context> getRawQueue() {

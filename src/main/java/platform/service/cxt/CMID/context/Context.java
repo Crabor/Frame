@@ -5,15 +5,15 @@ import java.util.Objects;
 /**
  * Created by njucjc on 2017/10/3.
  */
-public class Context {
+public class Context<T> {
     private int no;
     private String SensorName;
     private String id;
-    private String SensorData;
+    private T SensorData;
 
     private long timestamp;
 
-    public Context(int no, String SensorName, String id, String SensorData, long timestamp) {
+    public Context(int no, String SensorName, String id, T SensorData, long timestamp) {
         this.no = no;
         this.SensorName = SensorName;
         this.id = id;
@@ -58,7 +58,7 @@ public class Context {
         this.timestamp = timestamp;
     }
 
-    public String getSensorData() {
+    public T getSensorData() {
         return SensorData;
     }
 

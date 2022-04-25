@@ -1,11 +1,9 @@
 package platform.service.cxt.Context;
 
-import platform.service.cxt.CMID.context.Context;
+import platform.service.cxt.Context.Context;
 import platform.service.cxt.Config.PlatformConfig;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -13,7 +11,41 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ContextManager<T> {
     public static Map<String, ContextBuffer> ContextBufferList = new ConcurrentHashMap<>();
 
+    public static LinkedBlockingQueue<String> errorMsgID = new LinkedBlockingQueue<String>();
+    public static LinkedBlockingQueue<Message> msgBuffer = new LinkedBlockingQueue<Message>();
+    public static LinkedBlockingQueue<Message> msgBuffer_fixed = new LinkedBlockingQueue<Message>();
+
+
     public static LinkedBlockingQueue<String> ChangeInvoked = new LinkedBlockingQueue<String>();
+
+    public static void addMsgBuffer(long index, String msg){
+        msgBuffer.add(new Message(index,msg));
+    }
+    public static void adderrorMsgID(String msgID){
+        errorMsgID.add(msgID);
+    }
+
+    public static void adderrorMsgIDList(List<String> msgIDList){
+        for(int i = 0; i<msgIDList.size(); i++) {
+            String temp = msgIDList.get(i);
+            if (!errorMsgID.contains(temp))
+                errorMsgID.add(temp);
+        }
+    }
+
+    public static void addMsgBufferFixed(long index, String msg){
+        msgBuffer_fixed.add(new Message(index,msg));
+    }
+
+
+    public static void addMsgBufferFixed(Message message){
+        msgBuffer_fixed.add(message);
+    }
+
+    public static void addList2MsgBufferFixed(LinkedList<Message> results){
+        for(int i = 0; i<results.size(); i++)
+            addMsgBufferFixed(results.get(i));
+    }
 
     public static LinkedBlockingQueue<String> getChangeInvoked() {
 
@@ -25,15 +57,71 @@ public class ContextManager<T> {
         String change = null;
         try {
             change = ChangeInvoked.take();
-            results.add(change);
-            System.out.println("Get change: " + change);
-
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+        results.add(change);
+        for(int i = 0; i < ChangeInvoked.size();i++) {
+            change = ChangeInvoked.poll();
+            results.add(change);
         }
         return results;
     }
 
+    public static void fixMsgElementsUntil(long end_index) {
+        //LinkedList<Message> results = new LinkedList<>();
+        Message message = null;
+
+        message = msgBuffer.peek();
+            while(message!=null && message.index < end_index) {
+                try {
+                    message = msgBuffer.take();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if(!errorMsgID.contains(message.index+"")) {
+                    addMsgBufferFixed(message);
+                    //System.out.println("Fixed: " +message.index + "---"+message);
+                }
+                else {
+                    //System.out.println("removing: " +message.index + "---"+message);
+                    errorMsgID.remove(message.index+"");
+                }
+                //results.add(change);
+                message = msgBuffer.peek();
+            }
+            //System.out.println("Error after: "+errorMsgID.toString());
+        //return results;
+    }
+
+    public static LinkedList<Message> getMsgElements() {
+        LinkedList<Message> results = new LinkedList<>();
+        Message change = null;
+        try {
+            change = msgBuffer.take();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        results.add(change);
+        for(int i = 0; i < msgBuffer.size();i++) {
+            change = msgBuffer.poll();
+            results.add(change);
+        }
+        return results;
+    }
+    public static LinkedList<Message> getMsgFixedElements() {
+        LinkedList<Message> results = new LinkedList<>();
+        Message change = null;
+        change = msgBuffer_fixed.poll();
+        if(change == null)
+            return null;
+        results.add(change);
+        for(int i = 0; i < msgBuffer_fixed.size();i++) {
+            change = msgBuffer_fixed.poll();
+            results.add(change);
+        }
+        return results;
+    }
     public static void registContextManager(String name){
         ContextBufferList.put(name, new ContextBuffer(PlatformConfig.getInstace().getBuffer_raw_max(),
                 PlatformConfig.getInstace().getBuffer_clean_max()));
@@ -61,6 +149,7 @@ public class ContextManager<T> {
         return temp;
     }
     public static void addCleanSensingContext(String sensorName, Context context){
+        //System.out.println(context.toString());
         ContextBufferList.get(sensorName).insertCleanData(context);
     }
     public static Context pollCleanSensingContext(String sensorName){

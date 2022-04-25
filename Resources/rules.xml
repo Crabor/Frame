@@ -3,9 +3,9 @@
 <rules>
 
 	<rule>
-		<id>rule_GPSSensor-Front</id>
+		<id>rule_front</id>
 		<formula>
-			<forall var = "v1" in = "pat_GPSSensor-Front">
+			<forall var = "v1" in = "pat_front">
 				<bfunction name = "isValid">
 						<param pos = "1" var = "v1" field = "type" />
 				</bfunction>
@@ -14,9 +14,9 @@
 	</rule>
 
 	<rule>
-		<id>rule_GPSSensor-Back</id>
+		<id>rule_back</id>
 		<formula>
-			<forall var = "v1" in = "pat_GPSSensor-Back">
+			<forall var = "v1" in = "pat_back">
 				<bfunction name = "isValid">
 						<param pos = "1" var = "v1" field = "type" />
 				</bfunction>
@@ -25,9 +25,9 @@
 	</rule>
 
 	<rule>
-		<id>rule_GPSSensor-Left</id>
+		<id>rule_left</id>
 		<formula>
-			<forall var = "v1" in = "pat_GPSSensor-Left">
+			<forall var = "v1" in = "pat_left">
 				<bfunction name = "isValid">
 						<param pos = "1" var = "v1" field = "type" />
 				</bfunction>
@@ -36,9 +36,9 @@
 	</rule>
 
 	<rule>
-		<id>rule_GPSSensor-Right</id>
+		<id>rule_right</id>
 		<formula>
-			<forall var = "v1" in = "pat_GPSSensor-Right">
+			<forall var = "v1" in = "pat_right">
 				<bfunction name = "isValid">
 						<param pos = "1" var = "v1" field = "type" />
 				</bfunction>
