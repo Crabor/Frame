@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+
+<rules>
+
+	<rule>
+		<id>rule_GPSSensor-Front</id>
+		<formula>
+			<forall var = "v1" in = "pat_GPSSensor-Front">
+				<bfunction name = "isValid">
+						<param pos = "1" var = "v1" field = "type" />
+				</bfunction>
+			</forall>
+		</formula>
+	</rule>
+
+	<rule>
+		<id>rule_GPSSensor-Back</id>
+		<formula>
+			<forall var = "v1" in = "pat_GPSSensor-Back">
+				<bfunction name = "isValid">
+						<param pos = "1" var = "v1" field = "type" />
+				</bfunction>
+			</forall>
+		</formula>
+	</rule>
+
+	<rule>
+		<id>rule_GPSSensor-Left</id>
+		<formula>
+			<forall var = "v1" in = "pat_GPSSensor-Left">
+				<bfunction name = "isValid">
+						<param pos = "1" var = "v1" field = "type" />
+				</bfunction>
+			</forall>
+		</formula>
+	</rule>
+
+	<rule>
+		<id>rule_GPSSensor-Right</id>
+		<formula>
+			<forall var = "v1" in = "pat_GPSSensor-Right">
+				<bfunction name = "isValid">
+						<param pos = "1" var = "v1" field = "type" />
+				</bfunction>
+			</forall>
+		</formula>
+	</rule>
+	
+</rules>

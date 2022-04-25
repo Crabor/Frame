@@ -1,9 +1,12 @@
 package platform.resource.driver;
 
+import com.alibaba.fastjson.JSONObject;
 import platform.pubsub.AbstractSubscriber;
 
 import java.io.IOException;
 import java.net.*;
+
+import static java.lang.Thread.sleep;
 
 public class DeviceDriver extends AbstractSubscriber implements Runnable {
     private Thread t;

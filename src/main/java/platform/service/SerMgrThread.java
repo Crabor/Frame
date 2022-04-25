@@ -1,15 +1,20 @@
 package platform.service;
 
+import platform.pubsub.AbstractSubscriber;
+import platform.pubsub.Channel;
 import platform.service.cxt.CxtSubscriber;
+import platform.struct.GrpPrioPair;
 import platform.service.inv.CancerServer;
 
-public class SerMgrThread implements Runnable {
+import static platform.service.cxt.Interactor.ctxServiceStart;
+import static platform.service.cxt.Interactor.sensorRegistAll;
+
+public class SerMgrThread implements Runnable{
     private static SerMgrThread instance;
     private static Thread t;
 
     // 构造方法私有化
-    private SerMgrThread() {
-    }
+    private SerMgrThread() {}
 
     // 静态方法返回该实例
     public static SerMgrThread getInstance() {
@@ -29,6 +34,8 @@ public class SerMgrThread implements Runnable {
     public void run() {
         //init cxt & inv
         // wang hui yan
+        ctxServiceStart();
+        sensorRegistAll();
         CxtSubscriber cxtSubscriber = new CxtSubscriber();
         cxtSubscriber.subscribe("sensor", 1, 1);
 
