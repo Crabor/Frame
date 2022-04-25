@@ -45,15 +45,11 @@ public class CxtSubscriber extends AbstractSubscriber {
 
         //ContextManager.addRawSensingContext();
 
-        // 将处理后的数据返回给sensor频道
         GrpPrioPair pair = getGrpPrioPair(channel); //获取该订阅者在sensor频道的分组及优先级信息
-        if (pair != null) {
-            // pair.priorityId - 1是为了将数据发送给比自己优先级低的订阅者，防止被自己拦截
-            publish("sensor", pair.groupId, pair.priorityId - 1, msgNew);
+        // 将处理后的数据返回给sensor频道
         if(send!=null) {
             for (int i = 0; i < send.size(); i++) {
                 String msgNew = send.get(i).getMsg();
-                GrpPrioPair pair = getGrpPrioPair(channel); //获取该订阅者在sensor频道的分组及优先级信息
                 if (pair != null) {
                     // pair.priorityId - 1是为了将数据发送给比自己优先级低的订阅者，防止被自己拦截
                     publish("sensor", pair.groupId, pair.priorityId - 1, msgNew);
