@@ -157,7 +157,6 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
 
     @Override
     public void message(String s, String k1, String s2) {
-
     }
 
     @Override

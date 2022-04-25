@@ -1,9 +1,6 @@
 package platform.service;
 
-import platform.pubsub.AbstractSubscriber;
-import platform.pubsub.Channel;
 import platform.service.cxt.CxtSubscriber;
-import platform.struct.GrpPrioPair;
 import platform.service.inv.CancerServer;
 
 import static platform.service.cxt.Interactor.ctxServiceStart;
