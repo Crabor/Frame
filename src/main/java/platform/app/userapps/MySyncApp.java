@@ -11,12 +11,11 @@ public class MySyncApp extends AbstractSyncApp {
     @Override
     public void iter(String channel, String msg) {
         CancerArray ca = CancerArray.fromJsonObjectString(msg);
-        if (iterId % 2 == 0) {
-            String checkMsg = ca.check();
-            publish("check", checkMsg);
-        }
+        String checkMsg = ca.check();
+        publish("check", checkMsg);
+
         CancerObject front = ca.get("front");
-        if (front.getValue() > 10) {
+        if (front.getValue() > 40) {
             publish("actor", new Actor(0, 10).toString());
         } else {
             publish("actor", new Actor(0, 0).toString());

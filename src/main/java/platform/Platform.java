@@ -37,14 +37,15 @@ public class Platform {
         serMgr.start();
 
         try {
-            Thread.sleep(5000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        System.out.println("channels:");
         for (Channel c : Channel.getObjs()) {
             System.out.println(c);
         }
-        System.out.println(AbstractSubscriber.getObjs());
+        System.out.println("subscribers: " + AbstractSubscriber.getObjs());
 
 
         while (true) {
@@ -58,8 +59,8 @@ public class Platform {
 //            }
 //            System.out.println(AbstractSubscriber.getObjs());
 //            System.out.println(CancerServer.getCheckMap());
-            System.out.println(CancerServer.getSegMap());
-            System.out.println();
+//            System.out.println(CancerServer.getSegMap());
+//            System.out.println();
         }
     }
 

@@ -36,7 +36,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                 DatagramPacket packet = new DatagramPacket(data, data.length);
                 socket.receive(packet);
                 String sensorData = new String(data, 0, packet.getLength());
-//                System.out.println("dd recv: " + sensorData);
+                //System.out.println("dd recv: " + sensorData);
                 publish("sensor", sensorData);
             } catch (IOException e) {
                 e.printStackTrace();
