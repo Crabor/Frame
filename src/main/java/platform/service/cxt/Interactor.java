@@ -53,12 +53,21 @@ public class Interactor {
                 result.add(temp.get(i).toString());
         return result;
     }
+    public static void ruleRegistAll(){
+        ContextManager.registRuleStatistics();
+//        LinkedList<String> temp = PlatformConfig.getInstace().getSensorNameList();
+//        for (int i=0; i< temp.size(); i++){
+//            sensorRegist(temp.get(i));
+//        }
+
+    }
     public static void sensorRegistAll(){
         ContextManager.registContextManagerAll();
-        LinkedList<String> temp = PlatformConfig.getInstace().getSensorNameList();
-        for (int i=0; i< temp.size(); i++){
-            sensorRegist(temp.get(i));
-        }
+//        LinkedList<String> temp = PlatformConfig.getInstace().getSensorNameList();
+//        for (int i=0; i< temp.size(); i++){
+//            sensorRegist(temp.get(i));
+//        }
+
     }
     public static void printAllSensors(){
         List<SensorConfig> sensorConfigs =  Configuration.getListOfSensorObj();

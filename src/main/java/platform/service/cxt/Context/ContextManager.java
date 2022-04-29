@@ -2,6 +2,8 @@ package platform.service.cxt.Context;
 
 import platform.service.cxt.Context.Context;
 import platform.service.cxt.Config.PlatformConfig;
+import platform.service.cxt.WebConnector.CtxRuntimeStatus;
+import platform.service.cxt.WebConnector.RedisCtxCustom;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,14 +14,19 @@ public class ContextManager<T> {
     public static Map<String, ContextBuffer> ContextBufferList = new ConcurrentHashMap<>();
 
     public static LinkedBlockingQueue<String> errorMsgID = new LinkedBlockingQueue<String>();
-    public static LinkedBlockingQueue<Message> msgBuffer = new LinkedBlockingQueue<Message>();
+    public static LinkedBlockingQueue<Message> msgBuffer = new LinkedBlockingQueue<Message>(100);
     public static LinkedBlockingQueue<Message> msgBuffer_fixed = new LinkedBlockingQueue<Message>();
-
-
     public static LinkedBlockingQueue<String> ChangeInvoked = new LinkedBlockingQueue<String>();
 
+    public static CtxRuntimeStatus msgStatistics = new CtxRuntimeStatus();
+
+    public static Map<String, RedisCtxCustom> CtxStatistics = new HashMap<>(); //ctx wrongnumber, correctnumber, rate, buffersize
+
     public static void addMsgBuffer(long index, String msg){
-        msgBuffer.add(new Message(index,msg));
+        while(msgBuffer.offer(new Message(index,msg))==false){
+            msgBuffer.clear();
+        }
+        msgStatistics.addRecv();
     }
     public static void adderrorMsgID(String msgID){
         errorMsgID.add(msgID);
@@ -76,6 +83,7 @@ public class ContextManager<T> {
             while(message!=null && message.index < end_index) {
                 try {
                     message = msgBuffer.take();
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -86,6 +94,7 @@ public class ContextManager<T> {
                 else {
                     //System.out.println("removing: " +message.index + "---"+message);
                     errorMsgID.remove(message.index+"");
+                    msgStatistics.addfilter();
                 }
                 //results.add(change);
                 message = msgBuffer.peek();
@@ -129,8 +138,10 @@ public class ContextManager<T> {
     public static void registContextManagerAll() {
         LinkedList<String> temp = PlatformConfig.getInstace().getSensorNameList();
         for (int i = 0; i < temp.size(); i++) {
-            ContextBufferList.put(temp.get(i), new ContextBuffer(PlatformConfig.getInstace().getBuffer_raw_max(),
+            String name = temp.get(i);
+            ContextBufferList.put(name, new ContextBuffer(PlatformConfig.getInstace().getBuffer_raw_max(),
                     PlatformConfig.getInstace().getBuffer_clean_max()));
+            CtxStatistics.put(name, new RedisCtxCustom(name, "sensor info"));
         }
     }
     public static void addRawSensingContext(String sensorName, Context context){
@@ -163,5 +174,8 @@ public class ContextManager<T> {
                 temp.add(c);
         }
         return temp;
+    }
+
+    public static void registRuleStatistics() {
     }
 }

@@ -13,6 +13,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 
+import static platform.service.cxt.Context.ContextManager.msgStatistics;
+
 public class CxtSubscriber extends AbstractSubscriber {
 
     @Override
@@ -26,7 +28,7 @@ public class CxtSubscriber extends AbstractSubscriber {
         Date date = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
-        //System.out.println(jo);
+        System.out.println(jo);
 
         ContextManager.addMsgBuffer(index,msg);
 
@@ -36,10 +38,10 @@ public class CxtSubscriber extends AbstractSubscriber {
         ContextManager.addCleanSensingContext("right", new Context(index,"right", jo.get("right"), format.format(date)));
 
         LinkedList<Message> send = ContextManager.getMsgFixedElements();
-        if(send != null) {
+        /*if(send != null) {
             for (int i = 0; i < send.size(); i++)
                 System.out.println("==================================" + send.get(i).getMsg());
-        }
+        }*/
 
         //publish("sensor", pair.groupId, pair.priorityId - 1, msg);
 
@@ -50,11 +52,11 @@ public class CxtSubscriber extends AbstractSubscriber {
         if(send!=null) {
             for (int i = 0; i < send.size(); i++) {
                 String msgNew = send.get(i).getMsg();
+                msgStatistics.addSend();
                 if (pair != null) {
                     // pair.priorityId - 1是为了将数据发送给比自己优先级低的订阅者，防止被自己拦截
                     publish("sensor", pair.groupId, pair.priorityId - 1, msgNew);
-                    System.out.println("+++++++++++++++++++" + msgNew);
-
+                    System.out.println("+++++++++++++++++++" + msgNew + msgStatistics.toString());
                 }
             }
         }

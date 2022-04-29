@@ -7,8 +7,7 @@ import platform.service.cxt.Config.PlatformConfig;
 import platform.service.cxt.CxtSubscriber;
 import platform.service.inv.CancerServer;
 
-import static platform.service.cxt.Interactor.ctxServiceStart;
-import static platform.service.cxt.Interactor.sensorRegistAll;
+import static platform.service.cxt.Interactor.*;
 
 public class SerMgrThread implements Runnable{
     private static SerMgrThread instance;
@@ -36,6 +35,7 @@ public class SerMgrThread implements Runnable{
         //init cxt & inv
         // wang hui yan
         ctxServiceStart();
+        ruleRegistAll();
         sensorRegistAll();
         CxtSubscriber cxtSubscriber = new CxtSubscriber();
         cxtSubscriber.subscribe("sensor", 1, 1);
