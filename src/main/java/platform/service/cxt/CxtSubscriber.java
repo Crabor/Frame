@@ -42,7 +42,7 @@ public class CxtSubscriber extends AbstractSubscriber {
         ContextManager.addCleanSensingContext("right", new Context(index,"right", jo.get("right"), format.format(date)));
 
         LinkedList<Message> send = ContextManager.getMsgFixedElements();
-
+//
         rawcount++;
         if (send!=null) {
             fixcount++;
@@ -60,18 +60,16 @@ public class CxtSubscriber extends AbstractSubscriber {
 
         //ContextManager.addRawSensingContext();
 
-        GrpPrioPair pair = getGrpPrioPair(channel); //获取该订阅者在sensor频道的分组及优先级信息
         // 将处理后的数据返回给sensor频道
         if(send!=null) {
             for (int i = 0; i < send.size(); i++) {
                 String msgNew = send.get(i).getMsg();
-                if (pair != null) {
-                    // pair.priorityId - 1是为了将数据发送给比自己优先级低的订阅者，防止被自己拦截
-                    publish("sensor", pair.groupId, pair.priorityId - 1, msgNew);
-                    //System.out.println("+++++++++++++++++++" + msgNew);
-                }
+                publish("sensor", 1, 0, msgNew);
+                //System.out.println("+++++++++++++++++++" + msgNew);
             }
-        }
+       } //else {
+//            publish("sensor", 1, 0, msg);
+//        }
     }
 
     @Override

@@ -52,6 +52,7 @@ public class UIDriver extends AbstractSubscriber implements Runnable {
 
     @Override
     public void onMessage(String channel, String msg) {
+        //System.out.println(channel + ": " + msg);
         try {
             byte[] data = msg.getBytes();
             DatagramPacket packet = new DatagramPacket(data, data.length, clientAddress, clientPort);
