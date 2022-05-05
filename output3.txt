@@ -1,0 +1,138 @@
+rule_left {"No":"0","SensorName":"pat_left","SensorData":"26.60823043185358","ID":"pat_left","TimeStamp":"1651696198000"}
+
+
+rule_right {"No":"0","SensorName":"pat_right","SensorData":"27.48214801466686","ID":"pat_right","TimeStamp":"1651696198000"}
+
+
+rule_front {"No":"1","SensorName":"pat_front","SensorData":"20.769283240493067","ID":"pat_front","TimeStamp":"1651696198000"}
+
+
+rule_left {"No":"1","SensorName":"pat_left","SensorData":"21.732992320260326","ID":"pat_left","TimeStamp":"1651696198000"}
+
+
+rule_right {"No":"1","SensorName":"pat_right","SensorData":"28.9719899539839","ID":"pat_right","TimeStamp":"1651696198000"}
+
+
+rule_front {"No":"2","SensorName":"pat_front","SensorData":"28.370416114992935","ID":"pat_front","TimeStamp":"1651696198000"}
+
+
+rule_back {"No":"2","SensorName":"pat_back","SensorData":"28.60626227665433","ID":"pat_back","TimeStamp":"1651696198000"}
+
+
+rule_front {"No":"3","SensorName":"pat_front","SensorData":"25.196362311508626","ID":"pat_front","TimeStamp":"1651696198000"}
+
+
+rule_right {"No":"3","SensorName":"pat_right","SensorData":"27.59623801058856","ID":"pat_right","TimeStamp":"1651696198000"}
+
+
+rule_right {"No":"5","SensorName":"pat_right","SensorData":"25.214421211483007","ID":"pat_right","TimeStamp":"1651696199000"}
+
+
+rule_right {"No":"6","SensorName":"pat_right","SensorData":"28.837652048183255","ID":"pat_right","TimeStamp":"1651696199000"}
+
+
+rule_back {"No":"7","SensorName":"pat_back","SensorData":"21.43554259203157","ID":"pat_back","TimeStamp":"1651696199000"}
+
+
+rule_left {"No":"7","SensorName":"pat_left","SensorData":"28.69682020517457","ID":"pat_left","TimeStamp":"1651696199000"}
+
+
+rule_right {"No":"8","SensorName":"pat_right","SensorData":"26.600299076268843","ID":"pat_right","TimeStamp":"1651696199000"}
+
+
+rule_back {"No":"9","SensorName":"pat_back","SensorData":"20.038332455729698","ID":"pat_back","TimeStamp":"1651696199000"}
+
+
+rule_right {"No":"9","SensorName":"pat_right","SensorData":"23.635295846248482","ID":"pat_right","TimeStamp":"1651696199000"}
+
+
+rule_front {"No":"10","SensorName":"pat_front","SensorData":"25.76907212090625","ID":"pat_front","TimeStamp":"1651696199000"}
+
+
+rule_back {"No":"11","SensorName":"pat_back","SensorData":"21.674676445670357","ID":"pat_back","TimeStamp":"1651696199000"}
+
+
+rule_left {"No":"11","SensorName":"pat_left","SensorData":"27.584560579023012","ID":"pat_left","TimeStamp":"1651696199000"}
+
+
+rule_front {"No":"12","SensorName":"pat_front","SensorData":"26.688130456219135","ID":"pat_front","TimeStamp":"1651696199000"}
+
+
+rule_back {"No":"13","SensorName":"pat_back","SensorData":"20.975432276969947","ID":"pat_back","TimeStamp":"1651696200000"}
+
+
+rule_left {"No":"13","SensorName":"pat_left","SensorData":"26.234971676133426","ID":"pat_left","TimeStamp":"1651696200000"}
+
+
+rule_back {"No":"15","SensorName":"pat_back","SensorData":"24.12645423398267","ID":"pat_back","TimeStamp":"1651696200000"}
+
+
+rule_left {"No":"16","SensorName":"pat_left","SensorData":"29.884638764368795","ID":"pat_left","TimeStamp":"1651696200000"}
+
+
+rule_right {"No":"16","SensorName":"pat_right","SensorData":"20.452702090185294","ID":"pat_right","TimeStamp":"1651696200000"}
+
+
+rule_back {"No":"17","SensorName":"pat_back","SensorData":"23.102136966823085","ID":"pat_back","TimeStamp":"1651696200000"}
+
+
+rule_right {"No":"17","SensorName":"pat_right","SensorData":"23.650586465857863","ID":"pat_right","TimeStamp":"1651696200000"}
+
+
+rule_front {"No":"18","SensorName":"pat_front","SensorData":"22.816706253467206","ID":"pat_front","TimeStamp":"1651696200000"}
+
+
+rule_back {"No":"18","SensorName":"pat_back","SensorData":"20.643201550688556","ID":"pat_back","TimeStamp":"1651696200000"}
+
+
+rule_left {"No":"18","SensorName":"pat_left","SensorData":"20.875074495461725","ID":"pat_left","TimeStamp":"1651696200000"}
+
+
+rule_right {"No":"18","SensorName":"pat_right","SensorData":"25.594781167022514","ID":"pat_right","TimeStamp":"1651696200000"}
+
+
+rule_front {"No":"19","SensorName":"pat_front","SensorData":"20.556667763841638","ID":"pat_front","TimeStamp":"1651696200000"}
+
+
+rule_back {"No":"20","SensorName":"pat_back","SensorData":"22.274403150383556","ID":"pat_back","TimeStamp":"1651696200000"}
+
+
+rule_left {"No":"21","SensorName":"pat_left","SensorData":"24.59164476880888","ID":"pat_left","TimeStamp":"1651696200000"}
+
+
+rule_right {"No":"21","SensorName":"pat_right","SensorData":"20.12939867635881","ID":"pat_right","TimeStamp":"1651696200000"}
+
+
+rule_back {"No":"22","SensorName":"pat_back","SensorData":"29.090202396148477","ID":"pat_back","TimeStamp":"1651696201000"}
+
+
+rule_left {"No":"22","SensorName":"pat_left","SensorData":"25.105051820486267","ID":"pat_left","TimeStamp":"1651696201000"}
+
+
+rule_right {"No":"22","SensorName":"pat_right","SensorData":"26.46834491202504","ID":"pat_right","TimeStamp":"1651696201000"}
+
+
+rule_back {"No":"23","SensorName":"pat_back","SensorData":"26.198183682608974","ID":"pat_back","TimeStamp":"1651696201000"}
+
+
+rule_right {"No":"23","SensorName":"pat_right","SensorData":"21.381140172616846","ID":"pat_right","TimeStamp":"1651696201000"}
+
+
+rule_back {"No":"24","SensorName":"pat_back","SensorData":"25.616391706236193","ID":"pat_back","TimeStamp":"1651696201000"}
+
+
+rule_right {"No":"24","SensorName":"pat_right","SensorData":"21.391770084567987","ID":"pat_right","TimeStamp":"1651696201000"}
+
+
+rule_left {"No":"25","SensorName":"pat_left","SensorData":"29.065452601428646","ID":"pat_left","TimeStamp":"1651696201000"}
+
+
+rule_front {"No":"26","SensorName":"pat_front","SensorData":"27.39253784273611","ID":"pat_front","TimeStamp":"1651696201000"}
+
+
+rule_left {"No":"28","SensorName":"pat_left","SensorData":"21.716771288846473","ID":"pat_left","TimeStamp":"1651696201000"}
+
+
+rule_front {"No":"29","SensorName":"pat_front","SensorData":"24.934558914892936","ID":"pat_front","TimeStamp":"1651696201000"}
+
+

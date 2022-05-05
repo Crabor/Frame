@@ -1,5 +1,7 @@
 package platform.service.cxt.WebConnector;
 
+import platform.service.cxt.Context.ContextManager;
+
 public class RedisCtxCustom extends RedisBase{
     private int all_num;
     private int problematic_num;
@@ -26,7 +28,14 @@ public class RedisCtxCustom extends RedisBase{
         this.problematic_num = problematic_num;
         this.buffersize = buffersize;
     }
-
+    public void addChecked (){
+        this.all_num ++;
+    }
+    public void addProblematic (){
+        this.problematic_num ++;
+        this.clean_num = all_num - problematic_num;
+        this.clean_rate =  (double) clean_num / (double) all_num;
+    }
     public int getAll_num() {
         return all_num;
     }
@@ -68,9 +77,11 @@ public class RedisCtxCustom extends RedisBase{
 
     @Override
     public String toString() {
+        buffersize = ContextManager.getContextBufferList().get(name).returnBufferSize();
         return "RedisCtxCustom{" +
                 "name=" + name +
                 ", info=" + info +
+                ", buffersize=" + buffersize +
                 ", all_num=" + all_num +
                 ", problematic_num=" + problematic_num +
                 ", clean_num=" + clean_num +

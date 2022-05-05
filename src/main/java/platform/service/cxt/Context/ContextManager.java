@@ -22,6 +22,10 @@ public class ContextManager<T> {
 
     public static Map<String, RedisCtxCustom> CtxStatistics = new HashMap<>(); //ctx wrongnumber, correctnumber, rate, buffersize
 
+    public static Map<String, ContextBuffer> getContextBufferList() {
+        return ContextBufferList;
+    }
+
     public static void addMsgBuffer(long index, String msg){
         while(msgBuffer.offer(new Message(index,msg))==false){
             msgBuffer.clear();

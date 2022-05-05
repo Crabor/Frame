@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class PlatformConfig {
     private static PlatformConfig INSTANCE = null;
     public static AtomicInteger context_index = new AtomicInteger();
-    private boolean isCtxFixOn;
-    private boolean isCtxCleanOn;
+    public boolean isCtxFixOn;
+    public boolean isCtxCleanOn;
     private String CtxFixer;
     private String CtxCleaner;
     private String CtxChecker;

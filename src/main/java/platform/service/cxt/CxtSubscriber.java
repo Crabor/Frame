@@ -7,12 +7,16 @@ import platform.service.cxt.Config.PlatformConfig;
 import platform.service.cxt.Context.Context;
 import platform.service.cxt.Context.ContextManager;
 import platform.service.cxt.Context.Message;
+import platform.service.cxt.WebConnector.RedisCtxCustom;
+import platform.service.cxt.WebConnector.SerializeUtil;
 import platform.struct.GrpPrioPair;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Map;
 
+import static platform.service.cxt.Context.ContextManager.CtxStatistics;
 import static platform.service.cxt.Context.ContextManager.msgStatistics;
 
 public class CxtSubscriber extends AbstractSubscriber {
@@ -56,10 +60,25 @@ public class CxtSubscriber extends AbstractSubscriber {
                 if (pair != null) {
                     // pair.priorityId - 1是为了将数据发送给比自己优先级低的订阅者，防止被自己拦截
                     publish("sensor", pair.groupId, pair.priorityId - 1, msgNew);
-                    System.out.println("+++++++++++++++++++" + msgNew + msgStatistics.toString());
+                    System.out.println("+++++++++++++++++++" + msgNew );
+
                 }
             }
         }
+        //redis： "SumStatistics", SerializeUtil.serialize(msgStatistics)<---(class CtxRuntimeStatus)
+        String name1 = "SumStatistics";
+        byte[] send1 = SerializeUtil.serialize(msgStatistics);
+        //jedis.set(name1.getBytes(),send1);
+        System.out.println("************************"+msgStatistics.toString());
+
+        for (Map.Entry<String, RedisCtxCustom> entry: CtxStatistics.entrySet()) {
+            //redis： "SumStatistics", SerializeUtil.serialize(msgStatistics)<---(class CtxRuntimeStatus)
+            String name2 = entry.getKey();
+            byte[] send2 = SerializeUtil.serialize(entry.getValue());
+            //jedis.set(name2.getBytes(),send2);
+            System.out.println("************************"+entry.getKey() + ": " + entry.getValue());//redis： entry.getKey(), SerializeUtil.serialize(entry)<---(class RedisCtxCustom)
+        }
+
     }
 
     @Override

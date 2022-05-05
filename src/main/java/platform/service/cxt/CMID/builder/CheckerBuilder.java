@@ -9,6 +9,7 @@ import platform.service.cxt.Context.ContextManager;
 import java.util.*;
 
 import static java.lang.Thread.sleep;
+import static platform.service.cxt.Context.ContextManager.CtxStatistics;
 import static platform.service.cxt.Context.ContextManager.msgStatistics;
 
 /**
@@ -62,6 +63,7 @@ public class CheckerBuilder  extends AbstractCheckerBuilder implements Runnable{
                     long index = Long.parseLong(parts[1]);
                     String pat = parts[2];
                     checkPointLog.put(pat, index);
+                    CtxStatistics.get(pat.replace("pat_","")).addChecked();
                 }
             }
             long endTime = System.nanoTime(); //获取结束时间
@@ -127,6 +129,7 @@ public class CheckerBuilder  extends AbstractCheckerBuilder implements Runnable{
         for(String str: inc_list){
             JSONObject json = JSONObject.parseObject(str);
             list.add(json.getString("No"));
+            CtxStatistics.get(json.getString("SensorName").replace("pat_","")).addProblematic();
         }
         return list;
     }

@@ -5,7 +5,7 @@
     "CtxCleaner": "ECC+IMD",
     "CtxFixer": "Drop",
     "BUFFER_RAW_MAX": 2,
-    "BUFFER_CLEAN_MAX": 5,
+    "BUFFER_CLEAN_MAX": 50,
     "delay_allowed": 20000, //ms  <= 1000*20
     "dataFile": "data28/wrongData3.txt",
     "changeHandlerType": "static-change-based",
