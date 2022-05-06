@@ -66,17 +66,15 @@ public class CxtSubscriber extends AbstractSubscriber {
             }
         }
         //redis： "SumStatistics", SerializeUtil.serialize(msgStatistics)<---(class CtxRuntimeStatus)
-        String name1 = "SumStatistics";
-        byte[] send1 = SerializeUtil.serialize(msgStatistics);
         //jedis.set(name1.getBytes(),send1);
-        System.out.println("************************"+msgStatistics.toString());
+        //System.out.println(msgStatistics.toString());
+        publish("ctxStat", msgStatistics.toString());
 
         for (Map.Entry<String, RedisCtxCustom> entry: CtxStatistics.entrySet()) {
             //redis： "SumStatistics", SerializeUtil.serialize(msgStatistics)<---(class CtxRuntimeStatus)
-            String name2 = entry.getKey();
-            byte[] send2 = SerializeUtil.serialize(entry.getValue());
             //jedis.set(name2.getBytes(),send2);
-            System.out.println("************************"+entry.getKey() + ": " + entry.getValue());//redis： entry.getKey(), SerializeUtil.serialize(entry)<---(class RedisCtxCustom)
+            publish("ctxStat", entry.getValue().toString());
+            //.out.println(entry.getKey() + ": " + entry.getValue());//redis： entry.getKey(), SerializeUtil.serialize(entry)<---(class RedisCtxCustom)
         }
 
     }

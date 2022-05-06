@@ -28,7 +28,8 @@ public class CtxRuntimeStatus implements Serializable {
     public void addSend(){
         send ++;
     }
+
     public String toString(){
-        return "recv: "+recv +", checked: " + checked/4 +", filter: " + filter+ ", send: "+send;
+        return "{\"recv\": "+recv +", \"checked\": " + checked/4 +", \"filter\": " + filter+ ", \"send\": "+send+"}";
     }
 }
