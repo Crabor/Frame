@@ -7,6 +7,7 @@ import platform.pubsub.Publisher;
 import platform.pubsub.AbstractSubscriber;
 import platform.service.SerMgrThread;
 import io.lettuce.core.RedisClient;
+import platform.service.cxt.CxtSubscriber;
 import platform.service.inv.CancerServer;
 
 public class Platform {
@@ -33,8 +34,13 @@ public class Platform {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        appMgr.start();
         serMgr.start();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        appMgr.start();
 
         try {
             Thread.sleep(1000);

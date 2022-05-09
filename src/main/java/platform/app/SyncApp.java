@@ -1,5 +1,5 @@
 package platform.app;
 
-public interface SyncApp {
+public interface SyncApp extends App {
     void iter(String channel, String msg);
 }

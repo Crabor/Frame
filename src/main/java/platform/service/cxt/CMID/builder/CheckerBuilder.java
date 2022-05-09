@@ -9,6 +9,8 @@ import platform.service.cxt.Context.ContextManager;
 import java.util.*;
 
 import static java.lang.Thread.sleep;
+import static platform.service.cxt.Context.ContextManager.CtxStatistics;
+import static platform.service.cxt.Context.ContextManager.msgStatistics;
 
 /**
  * Created by njucjc on 2017/10/23.
@@ -56,10 +58,12 @@ public class CheckerBuilder  extends AbstractCheckerBuilder implements Runnable{
                 changeHandler.doContextChange(chg);
 
                 if(chg.startsWith("+")) {
+                    msgStatistics.addChk();
                     String[] parts = chg.split(","); //Checking: +,11,pat_right,5.264847945235763,2022-04-20 05:51:45
                     long index = Long.parseLong(parts[1]);
                     String pat = parts[2];
                     checkPointLog.put(pat, index);
+                    CtxStatistics.get(pat.replace("pat_","")).addChecked();
                 }
             }
             long endTime = System.nanoTime(); //获取结束时间
@@ -125,6 +129,7 @@ public class CheckerBuilder  extends AbstractCheckerBuilder implements Runnable{
         for(String str: inc_list){
             JSONObject json = JSONObject.parseObject(str);
             list.add(json.getString("No"));
+            CtxStatistics.get(json.getString("SensorName").replace("pat_","")).addProblematic();
         }
         return list;
     }

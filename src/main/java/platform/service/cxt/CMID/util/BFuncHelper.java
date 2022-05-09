@@ -8,8 +8,7 @@ import platform.service.cxt.CMID.context.Context;
 public class BFuncHelper {
 
     private static boolean isValid(Context c) {
-        // TODO : yr changed thro
-        if(Double.parseDouble(String.valueOf(c.getSensorData()))<1000)
+        if(Double.parseDouble(String.valueOf(c.getSensorData()))<100)
             return true;
         else return false;
     }

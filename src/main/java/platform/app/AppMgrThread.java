@@ -2,7 +2,10 @@ package platform.app;
 
 import platform.app.userapps.MySyncApp;
 import platform.pubsub.AbstractSubscriber;
+import platform.service.cxt.Config.AppConfig;
+import platform.service.cxt.Configuration;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +36,18 @@ public class AppMgrThread implements Runnable {
     @Override
     public void run() {
         //init app
-        MySyncApp app = new MySyncApp();
-        app.subscribe("sensor", 1, 0);
-        appNames.add(app.getName());
+        for (AppConfig appConfig : Configuration.getListOfAppObj()) {
+            appNames.add(appConfig.getAppName());
+            try {
+                Object app = Class.forName(appConfig.getAppName()).newInstance();
+                ((App) app).setSleepTime(appConfig.getSleepTime());
+                ((AbstractSubscriber) app).subscribe("sensor", 1, 0);
+            } catch (InstantiationException |
+                    IllegalAccessException |
+                    ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void start() {

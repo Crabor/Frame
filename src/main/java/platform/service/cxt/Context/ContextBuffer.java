@@ -1,5 +1,6 @@
 package platform.service.cxt.Context;
 
+import platform.service.cxt.Configuration;
 import platform.service.cxt.Context.Context;
 
 import java.util.LinkedList;
@@ -72,6 +73,12 @@ public class ContextBuffer {
         return cleanQueue;
     }
 
+    public int returnBufferSize(){
+        if (Configuration.getPlatformConfig().isCtxCleanOn == true)
+            return cleanQueue.size();
+        else
+            return rawQueue.size();
+    }
     public void displayAllRawInQueue(){
         for(Context c: rawQueue)
             System.out.println(c.toString());
