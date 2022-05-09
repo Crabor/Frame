@@ -33,12 +33,12 @@ public class SerMgrThread implements Runnable{
     @Override
     public void run() {
         //init cxt & inv
-        // wang hui yan
         ctxServiceStart();
         ruleRegistAll();
         sensorRegistAll();
         CxtSubscriber cxtSubscriber = new CxtSubscriber();
         cxtSubscriber.subscribe("sensor", 1, 1);
+        cxtSubscriber.start();
         Thread checkerThread = new Thread(new CheckerBuilder(PlatformConfig.getInstace()));
         checkerThread.setPriority(Thread.MAX_PRIORITY);
         checkerThread.start();

@@ -7,6 +7,7 @@ import platform.pubsub.Publisher;
 import platform.pubsub.AbstractSubscriber;
 import platform.service.SerMgrThread;
 import io.lettuce.core.RedisClient;
+import platform.service.cxt.CxtSubscriber;
 import platform.service.inv.CancerServer;
 
 public class Platform {
@@ -33,33 +34,40 @@ public class Platform {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        appMgr.start();
         serMgr.start();
-
         try {
-            Thread.sleep(5000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        appMgr.start();
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("channels:");
         for (Channel c : Channel.getObjs()) {
             System.out.println(c);
         }
-        System.out.println(AbstractSubscriber.getObjs());
+        System.out.println("subscribers:" + AbstractSubscriber.getObjs());
 
 
         while (true) {
             try {
-                Thread.sleep(5000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+//            System.out.println((100 * CxtSubscriber.fixCount / CxtSubscriber.onMessageCount) + "%");
 //            for (Channel c : Channel.getObjs()) {
 //                System.out.println(c);
 //            }
 //            System.out.println(AbstractSubscriber.getObjs());
 //            System.out.println(CancerServer.getCheckMap());
-            System.out.println(CancerServer.getSegMap());
-            System.out.println();
+//            System.out.println(CancerServer.getSegMap());
+//            System.out.println();
         }
     }
 

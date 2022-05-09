@@ -30,36 +30,17 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
     public void run() {
         //receive msg from car than publish to sensor channel
         while (true) {
-            while (true) {
-                // wang hui yan
-                //try {
-                //byte[] data = new byte[1024];
-                //DatagramPacket packet = new DatagramPacket(data, data.length);
-                //socket.receive(packet);
-                //String sensorData = new String(data, 0 , packet.getLength());
-//                System.out.println("dd recv: " + sensorData);
+            try {
+//                byte[] data = new byte[1024];
+//                DatagramPacket packet = new DatagramPacket(data, data.length);
+//                socket.receive(packet);
+//                String sensorData = new String(data, 0 , packet.getLength());
+                Thread.sleep(50);
                 String sensorData = RandomCarData.randomJSONCarData();
                 publish("sensor", sensorData);
-                try {
-                    sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                //} catch (IOException e) {
-                //    e.printStackTrace();
-                //}
-            }
-            // wang hui yan
-            /*  try {
-                byte[] data = new byte[1024];
-                DatagramPacket packet = new DatagramPacket(data, data.length);
-                socket.receive(packet);
-                String sensorData = new String(data, 0, packet.getLength());
-//                System.out.println("dd recv: " + sensorData);
-                publish("sensor", sensorData);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
-            }*/
+            }
         }
     }
 

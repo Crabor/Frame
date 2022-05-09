@@ -31,5 +31,11 @@
       "SensorName": "right",
       "SensorType": "Double"
     }
+  ],
+  "AppConfiguration": [
+    {
+      "appName": "platform.app.userapps.MySyncApp",
+      "sleepTime": 0
+    }
   ]
 }

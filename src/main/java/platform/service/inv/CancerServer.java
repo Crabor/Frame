@@ -5,7 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import platform.app.AppMgrThread;
 import platform.pubsub.AbstractSubscriber;
 import platform.resource.ResMgrThread;
+import platform.service.cxt.Configuration;
+import platform.service.inv.algorithm.tracegrp.DoS;
+import platform.service.inv.algorithm.tracegrp.KMeans;
 import platform.service.inv.struct.CheckInfo;
+import platform.service.inv.struct.PECount;
 import platform.service.inv.struct.SegInfo;
 import reactor.util.annotation.Nullable;
 
@@ -20,6 +24,7 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
     private static final Map<String, Map<Integer, Map<Integer, List<CheckInfo>>>> checkMap = new HashMap<>();
     //静态变量，第一维为appName，第二维为iterId，第三维为保存的segInfo
     private static final Map<String, Map<Integer, SegInfo>> segMap = new HashMap<>();
+    private static final Map<String, PECount> peCountMap = new HashMap<>();
     private static final int GROUP_THRO = 100;
 
     // 构造方法私有化
@@ -42,10 +47,20 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
     public void run() {
         //group
         while (true) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             segMap.forEach((appName, iterMap) -> {
-                int size = iterMap.size();
-                if (size > GROUP_THRO) {
-
+                PECount peCount = peCountMap.get(appName);
+                int min = Math.min(peCount.eCxtCount, peCount.pCxtCount);
+                if (min > GROUP_THRO) {
+                    //group
+                    KMeans kMeans = new KMeans(new ArrayList<>(iterMap.values()).subList(0, min), 3, 1E-10, Configuration.getListOfSensorObj().size());
+                    kMeans.run();
+                    DoS dos = new DoS(iterMap, kMeans.getGrps(), 0.5);
+                    dos.run();
                 }
             });
         }
@@ -98,6 +113,11 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
                 }
                 SegInfo segInfo = iterMap.get(iterId);
                 segInfo.eCxt = map;
+                if (!peCountMap.containsKey(appName)) {
+                    peCountMap.put(appName, new PECount());
+                }
+                PECount peCount = peCountMap.get(appName);
+                peCount.eCxtCount++;
             });
         }
     }
@@ -144,5 +164,11 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
 
         segInfo.pCxt = lineMap.keySet();
         segInfo.checkTable = lineMap;
+
+        if (!peCountMap.containsKey(appName)) {
+            peCountMap.put(appName, new PECount());
+        }
+        PECount peCount = peCountMap.get(appName);
+        peCount.pCxtCount++;
     }
 }
