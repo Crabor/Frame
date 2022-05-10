@@ -5,7 +5,6 @@ import io.lettuce.core.RedisClient;
 import io.lettuce.core.pubsub.RedisPubSubListener;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import io.lettuce.core.pubsub.api.sync.RedisPubSubCommands;
-import platform.struct.SubscriberCutPair;
 import reactor.util.annotation.Nullable;
 
 import java.util.*;

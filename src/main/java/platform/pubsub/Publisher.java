@@ -3,7 +3,6 @@ package platform.pubsub;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
-import platform.struct.SubscriberCutPair;
 
 import java.util.ArrayList;
 import java.util.List;
