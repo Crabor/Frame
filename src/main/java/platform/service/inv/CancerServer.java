@@ -47,22 +47,27 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
     public void run() {
         //group
         while (true) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            segMap.forEach((appName, iterMap) -> {
-                PECount peCount = peCountMap.get(appName);
-                int min = Math.min(peCount.eCxtCount, peCount.pCxtCount);
-                if (min > GROUP_THRO) {
-                    //group
-                    KMeans kMeans = new KMeans(new ArrayList<>(iterMap.values()).subList(0, min), 3, 1E-10, Configuration.getListOfSensorObj().size());
-                    kMeans.run();
-                    DoS dos = new DoS(iterMap, kMeans.getGrps(), 0.5);
-                    dos.run();
-                }
-            });
+//            try {
+//                Thread.sleep(5000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            segMap.forEach((appName, iterMap) -> {
+//                PECount peCount = peCountMap.get(appName);
+//                int min = Math.min(peCount.eCxtCount, peCount.pCxtCount);
+//                if (min > GROUP_THRO) {
+//                    //group
+//                    KMeans kMeans = new KMeans(new ArrayList<>(iterMap.values()).subList(0, min), 3, 1E-10, Configuration.getListOfSensorObj().size());
+//                    kMeans.run();
+//                    DoS dos = new DoS(iterMap, kMeans.getGrps(), 0.5);
+//                    dos.run();
+//
+//                    System.out.println("\ndos:");
+//                    dos.getOutGrps().forEach((grp, iters) -> {
+//                        System.out.println(grp + "=" + iters);
+//                    });
+//                }
+//            });
         }
     }
 
