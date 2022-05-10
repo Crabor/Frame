@@ -37,5 +37,10 @@
       "appName": "platform.app.userapps.MySyncApp",
       "sleepTime": 0
     }
-  ]
+  ],
+  "CancerServerConfiguration": {
+    "groupThro": 100,
+    "kMeansGroupSize": 3,
+    "dosThro": 0.5,
+  }
 }
