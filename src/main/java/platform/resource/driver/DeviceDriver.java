@@ -2,6 +2,7 @@ package platform.resource.driver;
 
 import com.alibaba.fastjson.JSONObject;
 import platform.pubsub.AbstractSubscriber;
+import platform.util.Util;
 
 import java.io.IOException;
 import java.net.*;
@@ -37,7 +38,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
 //                DatagramPacket packet = new DatagramPacket(data, data.length);
 //                socket.receive(packet);
 //                String sensorData = new String(data, 0, packet.getLength());
-                String sensorData = RandomCarData.randomJSONCarData();
+                String sensorData = Util.randomJSONCarData();
                 //System.out.println("dd recv: " + sensorData);
                 publish("sensor", sensorData);
             } catch (Exception e) {
