@@ -11,7 +11,7 @@ public abstract class AbstractAsyncApp extends AbstractSubscriber implements Asy
     protected int iterId;
 
     public AbstractAsyncApp() {
-        this.appName = getClass().getSimpleName();
+        this.appName = getClass().getName();
         iterId = 0;
     }
 
@@ -36,7 +36,7 @@ public abstract class AbstractAsyncApp extends AbstractSubscriber implements Asy
 
     public void start() {
         if (t == null) {
-            t = new Thread(this, getClass().getSimpleName());
+            t = new Thread(this, getClass().getName());
             t.start();
         }
     }

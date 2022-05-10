@@ -47,12 +47,12 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
     public void run() {
         //group
         while (true) {
-//            try {
-//                Thread.sleep(5000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            segMap.forEach((appName, iterMap) -> {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            segMap.forEach((appName, iterMap) -> {
 //                PECount peCount = peCountMap.get(appName);
 //                int min = Math.min(peCount.eCxtCount, peCount.pCxtCount);
 //                if (min > GROUP_THRO) {
@@ -67,7 +67,7 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
 //                        System.out.println(grp + "=" + iters);
 //                    });
 //                }
-//            });
+            });
         }
     }
 
@@ -77,7 +77,7 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
 
     public void start() {
         if (t == null) {
-            t = new Thread(this, getClass().getSimpleName());
+            t = new Thread(this, getClass().getName());
             t.start();
         }
     }

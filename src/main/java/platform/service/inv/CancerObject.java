@@ -134,8 +134,7 @@ public class CancerObject {
         int lineNumber = Thread.currentThread().getStackTrace()[2].getLineNumber();
         StringBuilder jsonArray = new StringBuilder();
         for (int i = 0; i < names.length; i++) {
-            String appFullName = Thread.currentThread().getStackTrace()[2].getClassName();
-            String appName = appFullName.substring(appFullName.lastIndexOf('.') + 1);
+            String appName = Thread.currentThread().getStackTrace()[2].getClassName();
             CancerObject obj = get(appName, names[i]);
             if (i == 0) {
                 jsonArray.append("[");

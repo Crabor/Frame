@@ -48,7 +48,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
 
     public void start() {
         if (t == null) {
-            t = new Thread(this, getClass().getSimpleName());
+            t = new Thread(this, getClass().getName());
             t.start();
         }
     }

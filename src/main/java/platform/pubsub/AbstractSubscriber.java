@@ -31,7 +31,7 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
 
     @Override
     public String toString() {
-        return getClass().getSimpleName();
+        return getClass().getName();
     }
 
     public String getName() {
