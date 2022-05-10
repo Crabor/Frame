@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import platform.pubsub.AbstractSubscriber;
 import platform.service.cxt.Config.PlatformConfig;
+import platform.service.cxt.Config.SensorConfig;
 import platform.service.cxt.Context.Context;
 import platform.service.cxt.Context.ContextManager;
 import platform.service.cxt.Context.Message;
@@ -39,10 +40,10 @@ public class CxtSubscriber extends AbstractSubscriber implements Runnable {
 
         ContextManager.addMsgBuffer(index,msg);
 
-        ContextManager.addCleanSensingContext("front", new Context(index,"front", jo.get("front"), format.format(date)));
-        ContextManager.addCleanSensingContext("back", new Context(index,"back", jo.get("back"), format.format(date)));
-        ContextManager.addCleanSensingContext("left", new Context(index,"left", jo.get("left"), format.format(date)));
-        ContextManager.addCleanSensingContext("right", new Context(index,"right", jo.get("right"), format.format(date)));
+        for (SensorConfig sensorConfig : Configuration.getListOfSensorObj()) {
+            String sensorName = sensorConfig.getSensorName();
+            ContextManager.addCleanSensingContext(sensorName, new Context(index,sensorName, jo.get(sensorName), format.format(date)));
+        }
     }
 
     @Override
