@@ -49,8 +49,6 @@ public class UIDriver extends AbstractSubscriber implements Runnable {
         }
     }
 
-    private static int count = 0;
-
     @Override
     public void onMessage(String channel, String msg) {
         //System.out.println("ui: "+channel+":"+msg);
