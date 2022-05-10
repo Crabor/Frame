@@ -54,8 +54,9 @@ public class UIDriver extends AbstractSubscriber implements Runnable {
     @Override
     public void onMessage(String channel, String msg) {
         //System.out.println("ui: "+channel+":"+msg);
-        JSONObject jo = JSONObject.parseObject(msg);
+        JSONObject jo = new JSONObject();
         jo.put("channel", channel);
+        jo.put("message", msg);
         try {
             byte[] data = jo.toJSONString().getBytes();
             DatagramPacket packet = new DatagramPacket(data, data.length, clientAddress, clientPort);
