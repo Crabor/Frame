@@ -1,5 +1,6 @@
 package platform.resource.driver;
 
+import com.alibaba.fastjson.JSONObject;
 import platform.pubsub.AbstractSubscriber;
 
 import java.io.IOException;
@@ -53,8 +54,11 @@ public class UIDriver extends AbstractSubscriber implements Runnable {
     @Override
     public void onMessage(String channel, String msg) {
         //System.out.println("ui: "+channel+":"+msg);
+        JSONObject jo = new JSONObject();
+        jo.put("channel", channel);
+        jo.put("msg", msg);
         try {
-            byte[] data = msg.getBytes();
+            byte[] data = jo.toJSONString().getBytes();
             DatagramPacket packet = new DatagramPacket(data, data.length, clientAddress, clientPort);
             socket.send(packet);
         } catch (IOException e) {
