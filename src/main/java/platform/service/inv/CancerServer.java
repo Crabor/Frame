@@ -50,13 +50,13 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
         while (true) {
             segMap.forEach((appName, iterMap) -> {
                 PECount peCount = peCountMap.get(appName);
-                int min = Math.min(peCount.eCxtCount, peCount.pCxtCount);
                 if (!peCount.isGrouped &&
-                        min > Configuration.getCancerServerConfig().getGroupThro()) {
+                        Math.min(peCount.eCxtCount, peCount.pCxtCount)
+                                > Configuration.getCancerServerConfig().getGroupThro()) {
                     peCount.isGrouped = true;
                     //group
                     KMeans kMeans = new KMeans(
-                            new ArrayList<>(iterMap.values()).subList(0, min),
+                            new ArrayList<>(iterMap.values()).subList(0, Configuration.getCancerServerConfig().getGroupThro()),
                             Configuration.getCancerServerConfig().getKMeansGroupSize(),
                             1E-10,
                             Configuration.getListOfSensorObj().size());
