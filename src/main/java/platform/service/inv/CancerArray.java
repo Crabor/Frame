@@ -2,6 +2,7 @@ package platform.service.inv;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import platform.service.inv.struct.CheckInfo;
 import reactor.util.annotation.Nullable;
 
 import java.util.*;
@@ -148,18 +149,12 @@ public class CancerArray implements List<CancerObject> {
         return cas;
     }
 
-    public String check() {
+    public CheckInfo[] check() {
         int lineNumber = Thread.currentThread().getStackTrace()[2].getLineNumber();
-        StringBuilder jsonArray = new StringBuilder();
+        CheckInfo[] checkInfos = new CheckInfo[size()];
         for (int i = 0; i < size(); i++) {
-            if (i == 0) {
-                jsonArray.append("[");
-            } else {
-                jsonArray.append(",");
-            }
-            jsonArray.append(get(i).check(lineNumber));
+            checkInfos[i] = get(i).check(lineNumber);
         }
-        jsonArray.append("]");
-        return jsonArray.toString();
+        return checkInfos;
     }
 }

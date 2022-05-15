@@ -1,18 +1,25 @@
 package platform.app.userapps;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import platform.app.AbstractSyncApp;
 import platform.service.inv.CancerArray;
 import platform.service.inv.CancerObject;
+import platform.service.inv.struct.CheckInfo;
 import platform.struct.Actor;
 
 public class MySyncApp extends AbstractSyncApp {
     @Override
     public void iter(String channel, String msg) {
         CancerArray ca = CancerArray.fromJsonObjectString(msg);
-        String checkMsg = ca.check();
-        publish("check", checkMsg);
+        CheckInfo[] checkInfos = ca.check();
+        publish("check", JSON.toJSONString(checkInfos));
+        for (CheckInfo checkInfo : checkInfos) {
+            if (checkInfo.isViolated) {
+                // TODO
+            }
+        }
 
         CancerObject front = ca.get("front");
         if (front.getValue() > 40) {

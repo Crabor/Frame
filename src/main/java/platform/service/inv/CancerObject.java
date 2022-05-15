@@ -1,7 +1,9 @@
 package platform.service.inv;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import platform.service.inv.struct.CheckInfo;
+import platform.service.inv.struct.Inv;
 import reactor.util.annotation.Nullable;
 
 import java.util.*;
@@ -12,6 +14,9 @@ public class CancerObject {
     private final String appName;
     private final String name;
     private double value;
+
+    //k为行号，v为该行的不变式
+    private final Map<Integer, Inv> invs = new HashMap<>();
 
     //静态变量，第一维为appName，第二维为name，第三维为cancerObject
     private static final Map<String, Map<String, CancerObject>> objs = new HashMap<>();
@@ -100,50 +105,45 @@ public class CancerObject {
         return name + "=" + value;
     }
 
-    public String check(int lineNumber) {
+    public CheckInfo check(int lineNumber) {
         checkId++;
-        CheckInfo info = new CheckInfo(appName, iterId, lineNumber, checkId, new Date().getTime(), name, value);
-        return JSONObject.toJSONString(info);
+        boolean isViolated =
+                invs.containsKey(lineNumber) &&
+                invs.get(lineNumber).isViolated(value);
+        return new CheckInfo(appName, iterId, lineNumber, checkId, new Date().getTime(), name, value, isViolated);
     }
 
-    public String check() {
+    public CheckInfo check() {
         int lineNumber = Thread.currentThread().getStackTrace()[2].getLineNumber();
         return check(lineNumber);
     }
 
-    public static String check(CancerObject... args) {
-        return check(Arrays.asList(args));
-    }
-
-    public static String check(List<CancerObject> args) {
+    public static CheckInfo[] check(CancerObject... args) {
         int lineNumber = Thread.currentThread().getStackTrace()[2].getLineNumber();
-        StringBuilder jsonArray = new StringBuilder();
-        for (int i = 0; i < args.size(); i++) {
-            if (i == 0) {
-                jsonArray.append("[");
-            } else {
-                jsonArray.append(",");
-            }
-            jsonArray.append(args.get(i).check(lineNumber));
+        CheckInfo[] checkInfos = new CheckInfo[args.length];
+        for (int i = 0; i < args.length; i++) {
+            checkInfos[i] = args[i].check(lineNumber);
         }
-        jsonArray.append("]");
-        return jsonArray.toString();
+        return checkInfos;
     }
 
-    public static String check(String... names) {
+    public static CheckInfo[] check(List<CancerObject> args) {
         int lineNumber = Thread.currentThread().getStackTrace()[2].getLineNumber();
-        StringBuilder jsonArray = new StringBuilder();
+        CheckInfo[] checkInfos = new CheckInfo[args.size()];
+        for (int i = 0; i < args.size(); i++) {
+            checkInfos[i] = args.get(i).check(lineNumber);
+        }
+        return checkInfos;
+    }
+
+    public static CheckInfo[] check(String... names) {
+        int lineNumber = Thread.currentThread().getStackTrace()[2].getLineNumber();
+        CheckInfo[] checkInfos = new CheckInfo[names.length];
         for (int i = 0; i < names.length; i++) {
             String appName = Thread.currentThread().getStackTrace()[2].getClassName();
             CancerObject obj = get(appName, names[i]);
-            if (i == 0) {
-                jsonArray.append("[");
-            } else {
-                jsonArray.append(",");
-            }
-            jsonArray.append(obj.check(lineNumber));
+            checkInfos[i] = obj.check(lineNumber);
         }
-        jsonArray.append("]");
-        return jsonArray.toString();
+        return checkInfos;
     }
 }
