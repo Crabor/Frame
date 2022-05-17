@@ -42,5 +42,6 @@
     "groupThro": 100,
     "kMeansGroupSize": 3,
     "dosThro": 0.5,
+    "groupTraceType": "dig",
   }
 }

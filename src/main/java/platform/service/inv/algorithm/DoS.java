@@ -1,4 +1,4 @@
-package platform.service.inv.algorithm.tracegrp;
+package platform.service.inv.algorithm;
 
 
 import platform.service.inv.struct.SegInfo;

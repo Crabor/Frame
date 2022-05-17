@@ -4,14 +4,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import platform.app.AppMgrThread;
 import platform.pubsub.AbstractSubscriber;
-import platform.resource.ResMgrThread;
 import platform.service.cxt.Configuration;
-import platform.service.inv.algorithm.tracegrp.DoS;
-import platform.service.inv.algorithm.tracegrp.KMeans;
+import platform.service.inv.algorithm.DoS;
+import platform.service.inv.algorithm.KMeans;
+import platform.service.inv.grptracefile.GrpTrace;
 import platform.service.inv.struct.CheckInfo;
 import platform.service.inv.struct.PECount;
 import platform.service.inv.struct.SegInfo;
-import reactor.util.annotation.Nullable;
 
 import java.util.*;
 
@@ -72,17 +71,20 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
                             Configuration.getCancerServerConfig().getDosThro());
                     dos.run();
 
-                    System.out.println("\ngroup:");
+                    System.out.println(appName + " group:");
                     dos.getOutGrps().forEach((grp, iters) -> {
                         System.out.println(grp + "=" + iters);
                     });
+
+                    //output group trace
+                    GrpTrace trace =  Configuration.getCancerServerConfig().getGroupTraceType();
+                    trace.printGrpTraces(appName, segMap.get(appName), dos.getOutGrps());
+
+                    //inv generate
+
                 }
             });
         }
-    }
-
-    private void group(String appName, int startIterId, int endIterId) {
-
     }
 
     public void start() {
