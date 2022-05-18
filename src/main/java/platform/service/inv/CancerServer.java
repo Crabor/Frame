@@ -48,7 +48,7 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
         //group
         while (true) {
             try {
-                Thread.sleep(5000);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

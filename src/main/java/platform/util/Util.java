@@ -6,9 +6,10 @@ public class Util {
     }
 
     public static String randomJSONCarData(){
-        return "{\"front\":" + Math.random()*30 +
-                ", \"back\":" + Math.random()*30 +
-                ", \"left\":" + Math.random()*30 +
-                ", \"right\":" + Math.random()*30 +"}";
+        int max = 100;
+        return "{\"front\":" + Math.random()*max +
+                ", \"back\":" + Math.random()*max +
+                ", \"left\":" + Math.random()*max +
+                ", \"right\":" + Math.random()*max +"}";
     }
 }

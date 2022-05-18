@@ -18,11 +18,11 @@ public class CancerServerConfig {
         this.dosThro = object.getDoubleValue("dosThro");
         String gtt = object.getString("groupTraceType").toLowerCase();
         if (gtt.equals("csv")) {
-            groupTraceType = new GrpTraceCSV("csv_dir");
+            groupTraceType = new GrpTraceCSV("csv");
         } else if (gtt.equals("daikon")) {
-            groupTraceType = new GrpTraceDaikon("daikon_dir");
+            groupTraceType = new GrpTraceDaikon("daikon");
         } else if (gtt.equals("dig")) {
-            groupTraceType = new GrpTraceDIG("dig_dir");
+            groupTraceType = new GrpTraceDIG("dig");
         }
     }
 
