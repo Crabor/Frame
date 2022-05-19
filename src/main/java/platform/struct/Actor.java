@@ -1,20 +1,50 @@
 package platform.struct;
 
 public class Actor {
-    int dir;
-    double speed;
-    int time;
+    double xSpeed;
+    double ySpeed;
+    double zSpeed;
 
-    public Actor(int dir, double speed) {
-        this.dir = dir; // 0:x 1:y 2:z
-        this.speed = speed;
+    public Actor() {
+        this(0, 0, 0);
+    }
+
+    public Actor(double xSpeed, double ySpeed, double zSpeed) {
+        this.xSpeed = xSpeed;
+        this.ySpeed = ySpeed;
+        this.zSpeed = zSpeed;
+    }
+
+    public double getXSpeed() {
+        return xSpeed;
+    }
+
+    public double getYSpeed() {
+        return ySpeed;
+    }
+
+    public double getZSpeed() {
+        return zSpeed;
+    }
+
+    public void setXSpeed(double xSpeed) {
+        this.xSpeed = xSpeed;
+    }
+
+    public void setYSpeed(double ySpeed) {
+        this.ySpeed = ySpeed;
+    }
+
+    public void setZSpeed(double zSpeed) {
+        this.zSpeed = zSpeed;
     }
 
     @Override
     public String toString() {
-        return "{" +
-                "\"dir\":" + dir +
-                ", \"speed\":" + speed +
+        return "Actor{" +
+                "xSpeed=" + xSpeed +
+                ", ySpeed=" + ySpeed +
+                ", zSpeed=" + zSpeed +
                 '}';
     }
 }
