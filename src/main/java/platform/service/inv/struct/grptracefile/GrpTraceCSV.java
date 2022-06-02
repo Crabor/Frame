@@ -1,4 +1,4 @@
-package platform.service.inv.grptracefile;
+package platform.service.inv.struct.grptracefile;
 
 import java.io.*;
 import java.util.List;

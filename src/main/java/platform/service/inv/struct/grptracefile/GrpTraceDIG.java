@@ -1,6 +1,4 @@
-package platform.service.inv.grptracefile;
-
-import platform.util.Util;
+package platform.service.inv.struct.grptracefile;
 
 import java.io.*;
 import java.util.ArrayList;

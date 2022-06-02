@@ -1,4 +1,4 @@
-package platform.service.inv.struct;
+package platform.service.inv.struct.inv;
 
 public interface Inv {
     /*!

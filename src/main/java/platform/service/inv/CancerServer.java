@@ -7,7 +7,7 @@ import platform.pubsub.AbstractSubscriber;
 import platform.service.cxt.Configuration;
 import platform.service.inv.algorithm.DoS;
 import platform.service.inv.algorithm.KMeans;
-import platform.service.inv.grptracefile.GrpTrace;
+import platform.service.inv.struct.grptracefile.GrpTrace;
 import platform.service.inv.struct.CheckInfo;
 import platform.service.inv.struct.PECount;
 import platform.service.inv.struct.SegInfo;

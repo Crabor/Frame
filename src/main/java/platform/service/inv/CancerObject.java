@@ -1,10 +1,7 @@
 package platform.service.inv;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import platform.service.inv.struct.CheckInfo;
-import platform.service.inv.struct.Inv;
-import reactor.util.annotation.Nullable;
+import platform.service.inv.struct.inv.Inv;
 
 import java.util.*;
 
@@ -15,11 +12,10 @@ public class CancerObject {
     private final String name;
     private double value;
 
-    //k为行号，v为该行的不变式
-    private final Map<Integer, Inv> invs = new HashMap<>();
-
     //静态变量，第一维为appName，第二维为name，第三维为cancerObject
     private static final Map<String, Map<String, CancerObject>> objs = new HashMap<>();
+    //第一维为行号，第二维为组号，第三维为不变式
+    private final Map<Integer, Map<Integer, Inv>> invMap = new HashMap<>();
 
     public CancerObject(String appName, String name, double value) {
         if (contains(appName, name)) {
@@ -91,6 +87,14 @@ public class CancerObject {
         return appObjs.get(name);
     }
 
+    public static Map<String, Map<String, CancerObject>> getAllObjs() {
+        return objs;
+    }
+
+    public Map<Integer, Map<Integer, Inv>> getInvMap() {
+        return invMap;
+    }
+
     public static void iterEntry(String appName, int iterId) {
         if (objs.containsKey(appName)) {
             objs.get(appName).forEach((k, v) -> {
@@ -107,9 +111,20 @@ public class CancerObject {
 
     public CheckInfo check(int lineNumber) {
         checkId++;
-        boolean isViolated =
-                invs.containsKey(lineNumber) &&
-                invs.get(lineNumber).isViolated(value);
+        boolean isViolated = false;
+        if (!invMap.containsKey(lineNumber)) {
+            isViolated = true;
+        } else {
+            Map<Integer, Inv> invs = invMap.get(lineNumber);
+            // TODO : 判断违反不变式规则
+            for (Inv inv : invs.values()) {
+                if (inv.isViolated(value)) {
+                    isViolated = true;
+                    break;
+                }
+            }
+        }
+
         return new CheckInfo(appName, iterId, lineNumber, checkId, new Date().getTime(), name, value, isViolated);
     }
 

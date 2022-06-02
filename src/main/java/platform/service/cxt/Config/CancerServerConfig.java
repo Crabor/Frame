@@ -1,10 +1,10 @@
 package platform.service.cxt.Config;
 
 import com.alibaba.fastjson.JSONObject;
-import platform.service.inv.grptracefile.GrpTrace;
-import platform.service.inv.grptracefile.GrpTraceCSV;
-import platform.service.inv.grptracefile.GrpTraceDIG;
-import platform.service.inv.grptracefile.GrpTraceDaikon;
+import platform.service.inv.struct.grptracefile.GrpTrace;
+import platform.service.inv.struct.grptracefile.GrpTraceCSV;
+import platform.service.inv.struct.grptracefile.GrpTraceDIG;
+import platform.service.inv.struct.grptracefile.GrpTraceDaikon;
 
 public class CancerServerConfig {
     private int groupThro;

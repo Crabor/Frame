@@ -1,4 +1,4 @@
-package platform.service.inv.grptracefile;
+package platform.service.inv.struct.grptracefile;
 import platform.service.inv.struct.CheckInfo;
 import platform.service.inv.struct.SegInfo;
 import platform.util.Util;
@@ -93,7 +93,7 @@ public abstract class GrpTraceAbstract implements GrpTrace{
 
     @Override
     public void printGrpTraces(String appName, Map<Integer, SegInfo> segs, Map<Integer, List<Integer>> grps) {
-        String simpleAppName = Util.getSimpleName(appName);
+        //String simpleAppName = Util.getSimpleName(appName);
         Map<Integer, Map<Integer, List<Integer>>> overview = new HashMap<>();
         grps.forEach((gid, iters) -> {
             for (int iterId : iters) {
@@ -114,10 +114,10 @@ public abstract class GrpTraceAbstract implements GrpTrace{
                 seg.checkTable.forEach((lineNumber, checkInfos) -> {
                     try {
                         List<String> varNames = getVarNames(checkInfos);
-                        printVarNames(simpleAppName, gid, lineNumber, varNames);
+                        printVarNames(appName, gid, lineNumber, varNames);
                         int checkNum = checkInfos.size() / varNames.size();
                         for (int i = 0; i < checkNum; i++) {
-                            printValues(simpleAppName, gid, lineNumber, getValuesByIndex(checkInfos, i, varNames.size()));
+                            printValues(appName, gid, lineNumber, getValuesByIndex(checkInfos, i, varNames.size()));
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -125,6 +125,6 @@ public abstract class GrpTraceAbstract implements GrpTrace{
                 });
             }
         });
-        printGrpTraceOverView(simpleAppName, overview);
+        printGrpTraceOverView(appName, overview);
     }
 }

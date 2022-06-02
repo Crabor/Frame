@@ -1,4 +1,4 @@
-package platform.service.inv.grptracefile;
+package platform.service.inv.struct.grptracefile;
 
 import platform.service.inv.struct.SegInfo;
 
