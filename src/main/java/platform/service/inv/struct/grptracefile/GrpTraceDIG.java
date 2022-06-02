@@ -17,7 +17,7 @@ public class GrpTraceDIG extends GrpTraceAbstract {
 
     @Override
     protected void printVarNames(String appName, int gid, int lineNumber, List<String> varNames) throws IOException {
-        String fileName = grpTraceDir + appName + "_line" + lineNumber + "_grp" + gid + ".csv";
+        String fileName = grpTraceDir + appName + "-line" + lineNumber + "-grp" + gid + ".csv";
         File file = new File(fileName);
         if (!file.exists()) {
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true)));
@@ -28,7 +28,7 @@ public class GrpTraceDIG extends GrpTraceAbstract {
 
     @Override
     protected void printValues(String appName, int gid, int lineNumber, List<String> values) throws IOException {
-        String fileName = grpTraceDir + appName + "_line" + lineNumber + "_grp" + gid + ".csv";
+        String fileName = grpTraceDir + appName + "-line" + lineNumber + "-grp" + gid + ".csv";
         List<String> intValues = new ArrayList<>();
         values.forEach(v -> {
             intValues.add(String.valueOf(Double.valueOf(v).intValue()));

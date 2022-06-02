@@ -23,8 +23,7 @@ public class MySyncApp extends AbstractSyncApp {
                     actor.setXSpeed(2);
                 }
             } else if (checkInfo.name.equals("right")
-//                    && checkInfo.isViolated
-                    && checkInfo.value < 15) {
+                    && checkInfo.isViolated) {
                 actor.setYSpeed(-1);
             }
         }

@@ -7,10 +7,12 @@ import platform.pubsub.AbstractSubscriber;
 import platform.service.cxt.Configuration;
 import platform.service.inv.algorithm.DoS;
 import platform.service.inv.algorithm.KMeans;
+import platform.service.inv.algorithm.invgen.InvGen;
 import platform.service.inv.struct.grptracefile.GrpTrace;
 import platform.service.inv.struct.CheckInfo;
 import platform.service.inv.struct.PECount;
 import platform.service.inv.struct.SegInfo;
+import platform.service.inv.struct.inv.Inv;
 
 import java.util.*;
 
@@ -81,7 +83,22 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
                     trace.printGrpTraces(appName, segMap.get(appName), dos.getOutGrps());
 
                     //inv generate
-
+                    InvGen gen = Configuration.getCancerServerConfig().getInvGenType();
+                    gen.run();
+                    Map<String, Map<String, Map<Integer, Map<Integer, Inv>>>> invMap = gen.getInvMap();
+                    System.out.println(invMap);
+                    invMap.get(appName).forEach((name, lineMap) -> {
+                        CancerObject co = CancerObject.get(appName, name);
+                        Map<Integer, Map<Integer, Inv>> coInvMap = co.getInvMap();
+                        lineMap.forEach((line, groupMap) -> {
+                            groupMap.forEach((group, inv) -> {
+                                if (!coInvMap.containsKey(line)) {
+                                    coInvMap.put(line, new HashMap<>());
+                                }
+                                coInvMap.get(line).put(group, inv);
+                            });
+                        });
+                    });
                 }
             });
         }

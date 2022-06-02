@@ -40,8 +40,9 @@
   ],
   "CancerServerConfiguration": {
     "groupThro": 100,
-    "kMeansGroupSize": 3,
+    "kMeansGroupSize": 1,
     "dosThro": 0.5,
     "groupTraceType": "csv",
+    "invGenType": "numeric"
   }
 }

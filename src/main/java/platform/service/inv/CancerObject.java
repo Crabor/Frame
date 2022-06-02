@@ -112,9 +112,7 @@ public class CancerObject {
     public CheckInfo check(int lineNumber) {
         checkId++;
         boolean isViolated = false;
-        if (!invMap.containsKey(lineNumber)) {
-            isViolated = true;
-        } else {
+        if (invMap.containsKey(lineNumber)) {
             Map<Integer, Inv> invs = invMap.get(lineNumber);
             // TODO : 判断违反不变式规则
             for (Inv inv : invs.values()) {

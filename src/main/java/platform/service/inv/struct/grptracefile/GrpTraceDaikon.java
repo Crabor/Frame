@@ -13,7 +13,7 @@ public class GrpTraceDaikon extends GrpTraceAbstract{
     @Override
     protected void printVarNames(String appName, int gid, int lineNumber, List<String> varNames) throws IOException {
         this.varNames = varNames;
-        String fileName = grpTraceDir + appName + "_line" + lineNumber + "_grp" + gid + ".decls";
+        String fileName = grpTraceDir + appName + "-line" + lineNumber + "-grp" + gid + ".decls";
         File file = new File(fileName);
         if (!file.exists()) {
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true)));
@@ -27,7 +27,7 @@ public class GrpTraceDaikon extends GrpTraceAbstract{
 
     @Override
     protected void printValues(String appName, int gid, int lineNumber, List<String> values) throws IOException{
-        String fileName = grpTraceDir + appName + "_line" + lineNumber + "_grp" + gid + ".dtrace";
+        String fileName = grpTraceDir + appName + "-line" + lineNumber + "-grp" + gid + ".dtrace";
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, true)));
         out.write("aprogram.point:::POINT\n");
         for (int i = 0; i < varNames.size(); i++) {

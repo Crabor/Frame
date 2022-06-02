@@ -76,7 +76,7 @@ public abstract class GrpTraceAbstract implements GrpTrace{
 
     public void printGrpTraceOverView(String appName, Map<Integer, Map<Integer, List<Integer>>> overview) {
         overview.forEach((lineNumber, grps) -> {
-            String fileName = grpTraceDir + appName + "_line" + lineNumber + "_overview";
+            String fileName = grpTraceDir + appName + "-line" + lineNumber + "-overview";
             try {
                 BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, true)));
                 for (Map.Entry<Integer, List<Integer>> entry : grps.entrySet()) {

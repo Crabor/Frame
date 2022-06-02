@@ -1,6 +1,8 @@
 package platform.service.cxt.Config;
 
 import com.alibaba.fastjson.JSONObject;
+import platform.service.inv.algorithm.invgen.InvGen;
+import platform.service.inv.algorithm.invgen.InvGenNumeric;
 import platform.service.inv.struct.grptracefile.GrpTrace;
 import platform.service.inv.struct.grptracefile.GrpTraceCSV;
 import platform.service.inv.struct.grptracefile.GrpTraceDIG;
@@ -11,6 +13,8 @@ public class CancerServerConfig {
     private int kMeansGroupSize;
     private double dosThro;
     private GrpTrace groupTraceType;
+
+    private InvGen invGenType;
 
     public CancerServerConfig(JSONObject object) {
         this.groupThro = object.getIntValue("groupThro");
@@ -24,6 +28,14 @@ public class CancerServerConfig {
         } else if (gtt.equals("dig")) {
             groupTraceType = new GrpTraceDIG("dig");
         }
+        String igt = object.getString("invGenType").toLowerCase();
+        if (igt.equals("numeric")) {
+            invGenType = new InvGenNumeric("csv");
+        }
+    }
+
+    public InvGen getInvGenType() {
+        return invGenType;
     }
 
     public GrpTrace getGroupTraceType() {
@@ -49,6 +61,7 @@ public class CancerServerConfig {
                 ", kMeansGroupSize=" + kMeansGroupSize +
                 ", dosThro=" + dosThro +
                 ", groupTraceType=" + groupTraceType +
+                ", invGenType=" + invGenType +
                 '}';
     }
 }
