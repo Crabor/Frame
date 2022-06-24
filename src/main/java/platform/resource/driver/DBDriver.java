@@ -1,6 +1,8 @@
 package platform.resource.driver;
 
 import com.alibaba.fastjson.JSONObject;
+import io.lettuce.core.api.sync.RedisCommands;
+import io.lettuce.core.pubsub.api.sync.RedisPubSubCommands;
 import platform.pubsub.AbstractSubscriber;
 
 import java.io.IOException;
@@ -8,14 +10,14 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-public class UIDriver extends AbstractSubscriber implements Runnable {
+public class DBDriver extends AbstractSubscriber implements Runnable {
     private Thread t;
     private DatagramSocket socket;
     private int serverPort;
     private InetAddress clientAddress;
     private int clientPort;
 
-    public UIDriver(int serverPort, String clientAddress, int clientPort) {
+    public DBDriver(int serverPort, String clientAddress, int clientPort) {
         this.serverPort = serverPort;
         this.clientPort = clientPort;
         try {
@@ -52,16 +54,18 @@ public class UIDriver extends AbstractSubscriber implements Runnable {
     @Override
     public void onMessage(String channel, String msg) {
         //System.out.println("ui: "+channel+":"+msg);
-        JSONObject jo = new JSONObject();
-        jo.put("channel", channel);
-        jo.put("message", msg);
-        try {
-            byte[] data = jo.toJSONString().getBytes();
-            DatagramPacket packet = new DatagramPacket(data, data.length, clientAddress, clientPort);
-            socket.send(packet);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        JSONObject jo = new JSONObject();
+//        jo.put("channel", channel);
+//        jo.put("message", msg);
+//        try {
+//            byte[] data = jo.toJSONString().getBytes();
+//            DatagramPacket packet = new DatagramPacket(data, data.length, clientAddress, clientPort);
+//            socket.send(packet);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        RedisCommands<String, String> sync = commonConn.sync();
+        sync.rpush(channel, msg);
     }
 
     @Override

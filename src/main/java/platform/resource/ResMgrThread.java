@@ -2,7 +2,7 @@ package platform.resource;
 
 import platform.pubsub.Channel;
 import platform.resource.driver.DeviceDriver;
-import platform.resource.driver.UIDriver;
+import platform.resource.driver.DBDriver;
 
 public class ResMgrThread implements Runnable {
     private static ResMgrThread instance;
@@ -39,7 +39,7 @@ public class ResMgrThread implements Runnable {
         dd.subscribe("actor", 0, 0);
         dd.start();
 
-        UIDriver ud = new UIDriver(8082, "127.0.0.1", 8083);
+        DBDriver ud = new DBDriver(8082, "127.0.0.1", 8083);
         ud.subscribe("sensor", 0, 0);
         ud.subscribe("actor", 1, 0);
         ud.subscribe("check", 0, 0);

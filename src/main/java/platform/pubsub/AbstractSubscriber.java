@@ -1,5 +1,6 @@
 package platform.pubsub;
 
+import io.lettuce.core.api.StatefulRedisConnection;
 import platform.struct.GrpPrioPair;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.pubsub.RedisPubSubListener;
@@ -18,7 +19,8 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
     protected Publisher publisher;
     private static RedisClient client = null;
     protected Runnable thread = null;
-    private final StatefulRedisPubSubConnection<String, String> conn;
+    private final StatefulRedisPubSubConnection<String, String> pubsubConn;
+    protected final StatefulRedisConnection<String, String> commonConn;
 
     public static void Init(RedisClient client) {
         AbstractSubscriber.client = client;
@@ -42,13 +44,14 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
     }
 
     public void close() {
-        if (conn != null) {
-            conn.close();
+        if (pubsubConn != null) {
+            pubsubConn.close();
         }
     }
 
     public AbstractSubscriber() {
-        conn = client.connectPubSub();
+        pubsubConn = client.connectPubSub();
+        commonConn = client.connect();
         publisher = new Publisher();
         objsLock.lock();
         objs.add(this);
@@ -104,9 +107,9 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
         channels.put(channel, pair);
         if (!addListenerFlag) {
             addListenerFlag = true;
-            conn.addListener(this);
+            pubsubConn.addListener(this);
         }
-        RedisPubSubCommands<String, String> sync = conn.sync();
+        RedisPubSubCommands<String, String> sync = pubsubConn.sync();
         sync.subscribe(
                 String.join(
                         "-",
