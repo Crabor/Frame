@@ -1,45 +1,24 @@
 package platform.resource.driver;
 
-import com.alibaba.fastjson.JSONObject;
+import io.lettuce.core.KeyValue;
 import io.lettuce.core.api.sync.RedisCommands;
-import io.lettuce.core.pubsub.api.sync.RedisPubSubCommands;
 import platform.pubsub.AbstractSubscriber;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 public class DBDriver extends AbstractSubscriber implements Runnable {
     private Thread t;
-    private DatagramSocket socket;
-    private int serverPort;
-    private InetAddress clientAddress;
-    private int clientPort;
-
-    public DBDriver(int serverPort, String clientAddress, int clientPort) {
-        this.serverPort = serverPort;
-        this.clientPort = clientPort;
-        try {
-            this.clientAddress = InetAddress.getByName(clientAddress);
-            socket = new DatagramSocket(this.serverPort);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void run() {
         //receive msg from UI than do sth
         while (true) {
-            try {
-                byte[] data = new byte[1024];
-                DatagramPacket packet = new DatagramPacket(data, data.length);
-                socket.receive(packet);
-                String msg = new String(data, 0, packet.getLength());
-                //System.out.println("ud recv: " + msg);
-            } catch (IOException e) {
-                e.printStackTrace();
+            RedisCommands<String, String> sync = commonConn.sync();
+            switch (sync.brpop(0, "cmd").getValue()) {
+                //TODO: cmd
+                case "a" :
+                    break;
             }
         }
     }

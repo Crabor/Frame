@@ -40,11 +40,11 @@ public class ResMgrThread implements Runnable {
         dd.subscribe("actor", 0, 0);
         dd.start();
 
-        dbd = new DBDriver(8082, "127.0.0.1", 8083);
+        dbd = new DBDriver();
         dbd.subscribe("sensor", 0, 0);
         dbd.subscribe("actor", 1, 0);
         dbd.subscribe("check", 0, 0);
-        dbd.subscribe("ctxStat");
+        dbd.subscribe("ctxStat", 0, 0);
         dbd.start();
     }
 
