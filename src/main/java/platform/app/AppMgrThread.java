@@ -13,7 +13,7 @@ import java.util.Map;
 public class AppMgrThread implements Runnable {
     private static AppMgrThread instance;
     private static Thread t;
-    private final List<String> appNames = new ArrayList<>();
+    private final List<App> apps = new ArrayList<>();
 
     // 构造方法私有化
     private AppMgrThread() {
@@ -37,9 +37,9 @@ public class AppMgrThread implements Runnable {
     public void run() {
         //init app
         for (AppConfig appConfig : Configuration.getListOfAppObj()) {
-            appNames.add(appConfig.getAppName());
             try {
                 Object app = Class.forName(appConfig.getAppName()).newInstance();
+                apps.add((App) app);
                 ((App) app).setSleepTime(appConfig.getSleepTime());
                 ((AbstractSubscriber) app).subscribe("sensor", 1, 0);
             } catch (InstantiationException |
@@ -57,7 +57,7 @@ public class AppMgrThread implements Runnable {
         }
     }
 
-    public List<String> getAppNames() {
-        return appNames;
+    public List<App> getApps() {
+        return apps;
     }
 }

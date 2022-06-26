@@ -37,7 +37,7 @@ public class CancerObject {
         this(appName, String.valueOf(Thread.currentThread().getStackTrace()[2].getLineNumber()), value);
     }
 
-    public CancerObject(String appName) {
+    public CancerObject(String appName) {  
         this(appName, String.valueOf(Thread.currentThread().getStackTrace()[2].getLineNumber()));
     }
 

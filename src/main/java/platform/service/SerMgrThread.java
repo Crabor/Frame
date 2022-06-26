@@ -13,6 +13,10 @@ public class SerMgrThread implements Runnable{
     private static SerMgrThread instance;
     private static Thread t;
 
+    private CxtSubscriber cxtSubscriber;
+
+    private CancerServer cancerServer;
+
     // 构造方法私有化
     private SerMgrThread() {}
 
@@ -36,17 +40,25 @@ public class SerMgrThread implements Runnable{
         ctxServiceStart();
         ruleRegistAll();
         sensorRegistAll();
-        CxtSubscriber cxtSubscriber = new CxtSubscriber();
+        cxtSubscriber = new CxtSubscriber();
         cxtSubscriber.subscribe("sensor", 1, 1);
         cxtSubscriber.start();
         Thread checkerThread = new Thread(new CheckerBuilder(PlatformConfig.getInstace()));
         checkerThread.setPriority(Thread.MAX_PRIORITY);
         checkerThread.start();
 
-        CancerServer cancerServer = CancerServer.getInstance();
+        cancerServer = CancerServer.getInstance();
         cancerServer.subscribe("check", 1, 0);
         cancerServer.subscribe("sensor", 1, 0);
         cancerServer.start();
+    }
+
+    public CxtSubscriber getCxtSubscriber() {
+        return cxtSubscriber;
+    }
+
+    public CancerServer getCancerServer() {
+        return cancerServer;
     }
 
     public void start() {

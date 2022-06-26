@@ -3,7 +3,7 @@ package platform.service.inv.struct.inv;
 import java.util.Collections;
 import java.util.List;
 
-public class InvNumeric implements Inv{
+public class InvNumeric extends InvAbstract {
     private double min;
     private double max;
 

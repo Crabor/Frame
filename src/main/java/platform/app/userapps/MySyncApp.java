@@ -40,5 +40,4 @@ public class MySyncApp extends AbstractSyncApp {
     public void onUnsubscribed(String s, long l) {
 
     }
-
 }

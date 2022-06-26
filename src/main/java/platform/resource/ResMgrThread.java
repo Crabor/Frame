@@ -4,9 +4,15 @@ import platform.pubsub.Channel;
 import platform.resource.driver.DeviceDriver;
 import platform.resource.driver.DBDriver;
 
+import java.util.List;
+
 public class ResMgrThread implements Runnable {
     private static ResMgrThread instance;
     private static Thread t;
+
+    private DBDriver dbd;
+    
+    private DeviceDriver dd;
 
 
     // 构造方法私有化
@@ -30,21 +36,24 @@ public class ResMgrThread implements Runnable {
     @Override
     public void run() {
         //init resource
-        Channel sensor = new Channel("sensor");
-        Channel actor = new Channel("actor");
-        Channel check = new Channel("check");
-        Channel ctxStat = new Channel("ctxStat");
-
-        DeviceDriver dd = new DeviceDriver(8080, "127.0.0.1", 8081);
+        dd = new DeviceDriver(8080, "127.0.0.1", 8081);
         dd.subscribe("actor", 0, 0);
         dd.start();
 
-        DBDriver ud = new DBDriver(8082, "127.0.0.1", 8083);
-        ud.subscribe("sensor", 0, 0);
-        ud.subscribe("actor", 1, 0);
-        ud.subscribe("check", 0, 0);
-        ud.subscribe("ctxStat");
-        ud.start();
+        dbd = new DBDriver(8082, "127.0.0.1", 8083);
+        dbd.subscribe("sensor", 0, 0);
+        dbd.subscribe("actor", 1, 0);
+        dbd.subscribe("check", 0, 0);
+        dbd.subscribe("ctxStat");
+        dbd.start();
+    }
+
+    public DBDriver getDBDriver() {
+        return dbd;
+    }
+
+    public DeviceDriver getDeviceDriver() {
+        return dd;
     }
 
     public void start() {

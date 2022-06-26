@@ -137,7 +137,8 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
             for (String key : jsonObject.keySet()) {
                 map.put(key, jsonObject.getDouble(key));
             }
-            AppMgrThread.getInstance().getAppNames().forEach(appName -> {
+            AppMgrThread.getInstance().getApps().forEach(app -> {
+                String appName = ((AbstractSubscriber) app).getName();
                 if (!segMap.containsKey(appName)) {
                     segMap.put(appName, new HashMap<>());
                 }
