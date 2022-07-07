@@ -12,7 +12,9 @@ import platform.service.inv.struct.grptracefile.GrpTrace;
 import platform.service.inv.struct.CheckInfo;
 import platform.service.inv.struct.PECount;
 import platform.service.inv.struct.SegInfo;
-import platform.service.inv.struct.inv.Inv;
+import platform.service.inv.struct.inv.InvAbstract;
+import platform.struct.InvGenMode;
+import platform.util.Util;
 
 import java.util.*;
 
@@ -54,53 +56,56 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            segMap.forEach((appName, iterMap) -> {
-                PECount peCount = peCountMap.get(appName);
-                if (!peCount.isGrouped &&
-                        Math.min(peCount.eCxtCount, peCount.pCxtCount)
-                                > Configuration.getCancerServerConfig().getGroupThro()) {
-                    peCount.isGrouped = true;
-                    //group
-                    KMeans kMeans = new KMeans(
-                            new ArrayList<>(iterMap.values()).subList(0, Configuration.getCancerServerConfig().getGroupThro()),
-                            Configuration.getCancerServerConfig().getKMeansGroupSize(),
-                            1E-10,
-                            Configuration.getListOfSensorObj().size());
-                    kMeans.run();
-                    DoS dos = new DoS(
-                            iterMap,
-                            kMeans.getGrps(),
-                            Configuration.getCancerServerConfig().getDosThro());
-                    dos.run();
+            if (Configuration.getCancerServerConfig().getInvGenMode() == InvGenMode.TOTAL) {
+                segMap.forEach((appName, iterMap) -> {
+                    PECount peCount = peCountMap.get(appName);
+                    if (!peCount.isGrouped &&
+                            Math.min(peCount.eCxtCount, peCount.pCxtCount)
+                                    > Configuration.getCancerServerConfig().getGroupThro()) {
+                        peCount.isGrouped = true;
+                        //group
+                        KMeans kMeans = new KMeans(
+                                new ArrayList<>(iterMap.values()).subList(0, Configuration.getCancerServerConfig().getGroupThro()),
+                                Configuration.getCancerServerConfig().getKMeansGroupSize(),
+                                1E-10,
+                                Configuration.getListOfSensorObj().size());
+                        kMeans.run();
+                        DoS dos = new DoS(
+                                iterMap,
+                                kMeans.getGrps(),
+                                Configuration.getCancerServerConfig().getDosThro());
+                        dos.run();
 
-                    System.out.println(appName + " group:");
-                    dos.getOutGrps().forEach((grp, iters) -> {
-                        System.out.println(grp + "=" + iters);
-                    });
+                        System.out.println(appName + " group:");
+                        dos.getOutGrps().forEach((grp, iters) -> {
+                            System.out.println(grp + "=" + iters);
+                        });
 
-                    //output group trace
-                    GrpTrace trace =  Configuration.getCancerServerConfig().getGroupTraceType();
-                    trace.printGrpTraces(appName, segMap.get(appName), dos.getOutGrps());
+                        //output group trace
+                        GrpTrace trace =  Configuration.getCancerServerConfig().getGroupTraceType();
+                        trace.printGrpTraces(appName, segMap.get(appName), Util.mapListToListList(dos.getOutGrps()));
 
-                    //inv generate
-                    InvGen gen = Configuration.getCancerServerConfig().getInvGenType();
-                    gen.run();
-                    Map<String, Map<String, Map<Integer, Map<Integer, Inv>>>> invMap = gen.getInvMap();
-                    System.out.println(invMap);
-                    invMap.get(appName).forEach((name, lineMap) -> {
-                        CancerObject co = CancerObject.get(appName, name);
-                        Map<Integer, Map<Integer, Inv>> coInvMap = co.getInvMap();
-                        lineMap.forEach((line, groupMap) -> {
-                            groupMap.forEach((group, inv) -> {
-                                if (!coInvMap.containsKey(line)) {
-                                    coInvMap.put(line, new HashMap<>());
-                                }
-                                coInvMap.get(line).put(group, inv);
+                        //inv generate
+                        InvGen gen = Configuration.getCancerServerConfig().getInvGenType();
+                        gen.run();
+                        Map<String, Map<String, Map<Integer, Map<Integer, InvAbstract>>>> invMap = gen.getInvMap();
+                        System.out.println(invMap);
+                        invMap.get(appName).forEach((name, lineMap) -> {
+                            CancerObject co = CancerObject.get(appName, name);
+                            Map<Integer, Map<Integer, InvAbstract>> coInvMap = co.getInvMap();
+                            lineMap.forEach((line, groupMap) -> {
+                                groupMap.forEach((group, inv) -> {
+                                    if (!coInvMap.containsKey(line)) {
+                                        coInvMap.put(line, new HashMap<>());
+                                    }
+                                    coInvMap.get(line).put(group, inv);
+                                });
                             });
                         });
-                    });
-                }
-            });
+                    }
+                });
+            }
+
         }
     }
 

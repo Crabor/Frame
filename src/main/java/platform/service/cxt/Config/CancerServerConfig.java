@@ -7,13 +7,14 @@ import platform.service.inv.struct.grptracefile.GrpTrace;
 import platform.service.inv.struct.grptracefile.GrpTraceCSV;
 import platform.service.inv.struct.grptracefile.GrpTraceDIG;
 import platform.service.inv.struct.grptracefile.GrpTraceDaikon;
+import platform.struct.*;
 
 public class CancerServerConfig {
     private int groupThro;
     private int kMeansGroupSize;
     private double dosThro;
     private GrpTrace groupTraceType;
-
+    private InvGenMode invGenMode;
     private InvGen invGenType;
 
     public CancerServerConfig(JSONObject object) {
@@ -28,10 +29,20 @@ public class CancerServerConfig {
         } else if (gtt.equals("dig")) {
             groupTraceType = new GrpTraceDIG("dig");
         }
+        String igm = object.getString("invGenMode").toLowerCase();
+        if (igm.equals("total")) {
+            invGenMode = InvGenMode.TOTAL;
+        } else if (igm.equals("incr")) {
+            invGenMode = InvGenMode.INCR;
+        }
         String igt = object.getString("invGenType").toLowerCase();
         if (igt.equals("numeric")) {
             invGenType = new InvGenNumeric("csv");
         }
+    }
+
+    public InvGenMode getInvGenMode() {
+        return invGenMode;
     }
 
     public InvGen getInvGenType() {
@@ -61,6 +72,7 @@ public class CancerServerConfig {
                 ", kMeansGroupSize=" + kMeansGroupSize +
                 ", dosThro=" + dosThro +
                 ", groupTraceType=" + groupTraceType +
+                ", invGenMode=" + (invGenMode == 1 ? "incr" : "total") +
                 ", invGenType=" + invGenType +
                 '}';
     }

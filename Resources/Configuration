@@ -43,6 +43,7 @@
     "kMeansGroupSize": 1,
     "dosThro": 0.5,
     "groupTraceType": "csv",
+    "invGenMode": "incr",
     "invGenType": "numeric"
   }
 }

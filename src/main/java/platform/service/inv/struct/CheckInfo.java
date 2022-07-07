@@ -11,9 +11,9 @@ public class CheckInfo {
     public String name;//Cancer实例的名字
     public double value;//Cancer实例对应的T实例的值
 
-    public boolean isViolated;//是否违反了不变式
+    public CheckState checkState;//是否违反了不变式
 
-    public CheckInfo(String appName, int iterId, int lineNumber, int checkId, long checkTime, String name, double value, boolean isViolated) {
+    public CheckInfo(String appName, int iterId, int lineNumber, int checkId, long checkTime, String name, double value, CheckState checkState) {
         this.appName = appName;
         this.lineNumber = lineNumber;
         this.iterId = iterId;
@@ -21,7 +21,7 @@ public class CheckInfo {
         this.checkTime = checkTime;
         this.name = name;
         this.value = value;
-        this.isViolated = isViolated;
+        this.checkState = checkState;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class CheckInfo {
                 ", checkTime=" + checkTime +
                 ", name='" + name + '\'' +
                 ", value=" + value +
-                ", isViolated=" + isViolated +
+                ", checkState=" + checkState +
                 '}';
     }
 }

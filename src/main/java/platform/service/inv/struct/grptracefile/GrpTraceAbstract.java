@@ -27,29 +27,8 @@ public abstract class GrpTraceAbstract implements GrpTrace{
             grpTraceDir += "/";
         }
         File dir = new File(grpTraceDir);
-        deleteDir(dir);
+        Util.deleteDir(dir);
         dir.mkdirs();
-    }
-
-    /**
-     * 递归删除目录下的所有文件及子目录下所有文件
-     * @param dir 将要删除的文件目录
-     * @return boolean Returns "true" if all deletions were successful.
-     *                 If a deletion fails, the method stops attempting to
-     *                 delete and returns "false".
-     */
-    private static boolean deleteDir(File dir) {
-        if (dir.isDirectory()) {
-            String[] children = dir.list();
-            for (String child : children) {
-                boolean success = deleteDir(new File(dir, child));
-                if (!success) {
-                    return false;
-                }
-            }
-        }
-        // 目录此时为空，可以删除
-        return dir.delete();
     }
 
     private List<String> getVarNames(List<CheckInfo> checkInfos){
@@ -74,15 +53,13 @@ public abstract class GrpTraceAbstract implements GrpTrace{
         return ret;
     }
 
-    public void printGrpTraceOverView(String appName, Map<Integer, Map<Integer, List<Integer>>> overview) {
+    public void printGrpTraceOverView(String appName, Map<Integer, List<List<Integer>>> overview) {
         overview.forEach((lineNumber, grps) -> {
             String fileName = grpTraceDir + appName + "-line" + lineNumber + "-overview";
             try {
                 BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, true)));
-                for (Map.Entry<Integer, List<Integer>> entry : grps.entrySet()) {
-                    Integer grp = entry.getKey();
-                    List<Integer> iters = entry.getValue();
-                    out.write("grp" + grp + " = " + iters + "\n");
+                for (List<Integer> iters : grps) {
+                    out.write(iters + "\n");
                 }
                 out.close();
             } catch (IOException e) {
@@ -92,39 +69,41 @@ public abstract class GrpTraceAbstract implements GrpTrace{
     }
 
     @Override
-    public void printGrpTraces(String appName, Map<Integer, SegInfo> segs, Map<Integer, List<Integer>> grps) {
+    public void printGrpTraces(String appName, Map<Integer, SegInfo> se5gs, List<List<Integer>> grps) {
         //String simpleAppName = Util.getSimpleName(appName);
-        Map<Integer, Map<Integer, List<Integer>>> overview = new HashMap<>();
-        grps.forEach((gid, iters) -> {
+        Map<Integer, List<List<Integer>>> overview = new HashMap<>();
+        for (int i = 0; i < grps.size(); i++) {
+            List<Integer> iters = grps.get(i);
             for (int iterId : iters) {
                 SegInfo seg = segs.get(iterId);
+                int finalI = i;
                 seg.pCxt.forEach(lineNumber -> {
                     if (!overview.containsKey(lineNumber)) {
-                        Map<Integer, List<Integer>> l = new HashMap<>();
+                        List<List<Integer>> l = new ArrayList<>();
                         overview.put(lineNumber, l);
                     }
-                    Map<Integer, List<Integer>> l = overview.get(lineNumber);
-                    if (!l.containsKey(gid)) {
+                    List<List<Integer>> l = overview.get(lineNumber);
+                    if (l.size() < finalI + 1) {
                         List<Integer> is = new ArrayList<>();
-                        l.put(gid, is);
+                        l.add(is);
                     }
-                    List<Integer> is = l.get(gid);
+                    List<Integer> is = l.get(finalI);
                     is.add(iterId);
                 });
                 seg.checkTable.forEach((lineNumber, checkInfos) -> {
                     try {
                         List<String> varNames = getVarNames(checkInfos);
-                        printVarNames(appName, gid, lineNumber, varNames);
+                        printVarNames(appName, finalI, lineNumber, varNames);
                         int checkNum = checkInfos.size() / varNames.size();
-                        for (int i = 0; i < checkNum; i++) {
-                            printValues(appName, gid, lineNumber, getValuesByIndex(checkInfos, i, varNames.size()));
+                        for (int j = 0; j < checkNum; j++) {
+                            printValues(appName, finalI, lineNumber, getValuesByIndex(checkInfos, j, varNames.size()));
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 });
             }
-        });
+        }
         printGrpTraceOverView(appName, overview);
     }
 }

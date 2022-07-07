@@ -1,7 +1,7 @@
 package platform.service.inv.algorithm.invgen;
 
 import com.opencsv.CSVReader;
-import platform.service.inv.struct.inv.Inv;
+import platform.service.inv.struct.inv.InvAbstract;
 import platform.service.inv.struct.inv.InvNumeric;
 import platform.util.Util;
 import reactor.util.function.Tuple3;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class InvGenNumeric implements InvGen{
     //appname, name, linenumber, group, inv
-    private Map<String, Map<String, Map<Integer, Map<Integer, Inv>>>> invMap = new HashMap<>();
+    private Map<String, Map<String, Map<Integer, Map<Integer, InvAbstract>>>> invMap = new HashMap<>();
     //appname, name, linenumber, group, trace(list)
     private Map<String, Map<String, Map<Integer, Map<Integer, List<Double>>>>> traceMap= new HashMap<>();
     private static String ROOT_DIR_NAME = "output/grouptrace/";
@@ -50,7 +50,7 @@ public class InvGenNumeric implements InvGen{
                         invMap.put(tuple3.getT1(), new HashMap<>());
                     }
                     List<List<Double>> traces = new ArrayList<>();
-                    List<Inv> invs = new ArrayList<>();
+                    List<InvAbstract> invs = new ArrayList<>();
                     for (String name : names) {
                         if (!traceMap.get(tuple3.getT1()).containsKey(name)) {
                             traceMap.get(tuple3.getT1()).put(name, new HashMap<>());
@@ -83,7 +83,7 @@ public class InvGenNumeric implements InvGen{
     }
 
     @Override
-    public Map<String, Map<String, Map<Integer, Map<Integer, Inv>>>> getInvMap() {
+    public Map<String, Map<String, Map<Integer, Map<Integer, InvAbstract>>>> getInvMap() {
         return invMap;
     }
 }

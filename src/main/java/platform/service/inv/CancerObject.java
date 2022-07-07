@@ -1,7 +1,12 @@
 package platform.service.inv;
 
+import platform.service.cxt.Configuration;
 import platform.service.inv.struct.CheckInfo;
-import platform.service.inv.struct.inv.Inv;
+import platform.service.inv.struct.CheckState;
+import platform.service.inv.struct.InvState;
+import platform.service.inv.struct.inv.InvAbstract;
+import platform.struct.InvGenMode;
+import platform.util.Util;
 
 import java.util.*;
 
@@ -15,7 +20,9 @@ public class CancerObject {
     //静态变量，第一维为appName，第二维为name，第三维为cancerObject
     private static final Map<String, Map<String, CancerObject>> objs = new HashMap<>();
     //第一维为行号，第二维为组号，第三维为不变式
-    private final Map<Integer, Map<Integer, Inv>> invMap = new HashMap<>();
+    private final Map<Integer, Map<Integer, InvAbstract>> invMap = new HashMap<>();
+    //第一维为appName，第二维为lineNumber，第三维为name,第四维为cancerObject
+    private final Map<String, Map<Integer, Map<String, CancerObject>>> lineMap = new HashMap<>();
 
     public CancerObject(String appName, String name, double value) {
         if (contains(appName, name)) {
@@ -91,7 +98,11 @@ public class CancerObject {
         return objs;
     }
 
-    public Map<Integer, Map<Integer, Inv>> getInvMap() {
+    public Map<String, Map<Integer, Map<String, CancerObject>>> getLineMap() {
+        return lineMap;
+    }
+
+    public Map<Integer, Map<Integer, InvAbstract>> getInvMap() {
         return invMap;
     }
 
@@ -109,21 +120,61 @@ public class CancerObject {
         return name + "=" + value;
     }
 
-    public CheckInfo check(int lineNumber) {
-        checkId++;
-        boolean isViolated = false;
+    private CheckState getCheckState(int lineNumber, int group) {
+        CheckState checkState = CheckState.TRACE_COLLECT;
         if (invMap.containsKey(lineNumber)) {
-            Map<Integer, Inv> invs = invMap.get(lineNumber);
-            // TODO : 判断违反不变式规则
-            for (Inv inv : invs.values()) {
-                if (inv.isViolated(value)) {
-                    isViolated = true;
-                    break;
+            Map<Integer, InvAbstract> invs = invMap.get(lineNumber);
+            if (invs.containsKey(group)) {
+                InvAbstract inv = invs.get(group);
+                if (inv.getState() == InvState.TRACE_COLLECT) {
+                    inv.addViolatedIter(iterId);
+                } else if (inv.getState() == InvState.INV_GENERATING) {
+                    checkState = CheckState.INV_GENERATING;
+                } else if (inv.isViolated(value)) {
+                    checkState = CheckState.INV_VIOLATED;
+                    inv.addViolatedIter(iterId);
+                    if (Configuration.getCancerServerConfig().getInvGenMode() == InvGenMode.INCR &&
+                            inv.getViolatedIters().size() > Configuration.getCancerServerConfig().getGroupThro()) {
+                        inv.setState(InvState.INV_GENERATING);
+                        //output trace
+
+                        //gen new inv
+
+                        inv.setState(InvState.INV_GENERATED);
+                    }
+                } else {
+                    checkState = CheckState.INV_NOT_VIOLATED;
+                    inv.clearViolatedIters();
                 }
             }
         }
+        return checkState;
+    }
 
-        return new CheckInfo(appName, iterId, lineNumber, checkId, new Date().getTime(), name, value, isViolated);
+    public CheckInfo check(int lineNumber, int group) {
+        checkId++;
+        if (!lineMap.containsKey(appName)) {
+            lineMap.put(appName, new HashMap<>());
+        }
+        if (!lineMap.get(appName).containsKey(lineNumber)) {
+            lineMap.get(appName).put(lineNumber, new HashMap<>());
+        }
+        if (!lineMap.get(appName).get(lineNumber).containsKey(name)) {
+            lineMap.get(appName).get(lineNumber).put(name, this);
+        }
+        return new CheckInfo(appName, iterId, lineNumber, checkId, new Date().getTime(), name, value, getCheckState(lineNumber, group));
+    }
+
+    public CheckInfo check(int lineNumber) {
+        int group = -1;
+        if (invMap.containsKey(lineNumber)) {
+            Map<Integer, InvAbstract> invs = invMap.get(lineNumber);
+            if (!invs.isEmpty()) {
+                group = Util.getMaxKey(invs);
+            }
+        }
+
+        return check(lineNumber, group);
     }
 
     public CheckInfo check() {
