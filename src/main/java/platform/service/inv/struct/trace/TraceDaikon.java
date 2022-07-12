@@ -1,19 +1,19 @@
-package platform.service.inv.struct.grptracefile;
+package platform.service.inv.struct.trace;
 
 import java.io.*;
 import java.util.List;
 
-public class GrpTraceDaikon extends GrpTraceAbstract{
+public class TraceDaikon extends TraceAbstract{
     private List<String> varNames;
 
-    public GrpTraceDaikon(String subTraceDir) {
+    public TraceDaikon(String subTraceDir) {
         super(subTraceDir);
     }
 
     @Override
-    protected void printVarNames(String appName, int gid, int lineNumber, List<String> varNames) throws IOException {
+    protected void printVarNames(String appName, int lineNumber, int gid, List<String> varNames) throws IOException {
         this.varNames = varNames;
-        String fileName = grpTraceDir + appName + "-line" + lineNumber + "-grp" + gid + ".decls";
+        String fileName = traceDir + appName + "-line" + lineNumber + "-grp" + gid + ".decls";
         File file = new File(fileName);
         if (!file.exists()) {
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true)));
@@ -26,8 +26,8 @@ public class GrpTraceDaikon extends GrpTraceAbstract{
     }
 
     @Override
-    protected void printValues(String appName, int gid, int lineNumber, List<String> values) throws IOException{
-        String fileName = grpTraceDir + appName + "-line" + lineNumber + "-grp" + gid + ".dtrace";
+    protected void printValues(String appName, int lineNumber, int gid, List<String> values) throws IOException {
+        String fileName = traceDir + appName + "-line" + lineNumber + "-grp" + gid + ".dtrace";
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, true)));
         out.write("aprogram.point:::POINT\n");
         for (int i = 0; i < varNames.size(); i++) {
@@ -35,10 +35,5 @@ public class GrpTraceDaikon extends GrpTraceAbstract{
         }
         out.write("\n");
         out.close();
-    }
-
-    @Override
-    public void close() {
-
     }
 }

@@ -17,12 +17,12 @@ public class CancerObject {
     private final String name;
     private double value;
 
+    private List<Integer> lines = new ArrayList<>();
+
     //静态变量，第一维为appName，第二维为name，第三维为cancerObject
     private static final Map<String, Map<String, CancerObject>> objs = new HashMap<>();
     //第一维为行号，第二维为组号，第三维为不变式
     private final Map<Integer, Map<Integer, InvAbstract>> invMap = new HashMap<>();
-    //第一维为appName，第二维为lineNumber，第三维为name,第四维为cancerObject
-    private final Map<String, Map<Integer, Map<String, CancerObject>>> lineMap = new HashMap<>();
 
     public CancerObject(String appName, String name, double value) {
         if (contains(appName, name)) {
@@ -98,8 +98,8 @@ public class CancerObject {
         return objs;
     }
 
-    public Map<String, Map<Integer, Map<String, CancerObject>>> getLineMap() {
-        return lineMap;
+    public List<Integer> getLines() {
+        return lines;
     }
 
     public Map<Integer, Map<Integer, InvAbstract>> getInvMap() {
@@ -134,7 +134,7 @@ public class CancerObject {
                     checkState = CheckState.INV_VIOLATED;
                     inv.addViolatedIter(iterId);
                     if (Configuration.getCancerServerConfig().getInvGenMode() == InvGenMode.INCR &&
-                            inv.getViolatedIters().size() > Configuration.getCancerServerConfig().getGroupThro()) {
+                            inv.getViolatedTrace().size() > Configuration.getCancerServerConfig().getGroupThro()) {
                         inv.setState(InvState.INV_GENERATING);
                         //output trace
 
@@ -153,14 +153,17 @@ public class CancerObject {
 
     public CheckInfo check(int lineNumber, int group) {
         checkId++;
-        if (!lineMap.containsKey(appName)) {
-            lineMap.put(appName, new HashMap<>());
+        if (!lines.contains(lineNumber)) {
+            lines.add(lineNumber);
         }
-        if (!lineMap.get(appName).containsKey(lineNumber)) {
-            lineMap.get(appName).put(lineNumber, new HashMap<>());
+        if (!CancerServer.getLineMap().containsKey(appName)) {
+            CancerServer.getLineMap().put(appName, new HashMap<>());
         }
-        if (!lineMap.get(appName).get(lineNumber).containsKey(name)) {
-            lineMap.get(appName).get(lineNumber).put(name, this);
+        if (!CancerServer.getLineMap().get(appName).containsKey(lineNumber)) {
+            CancerServer.getLineMap().get(appName).put(lineNumber, new ArrayList<>());
+        }
+        if (!CancerServer.getLineMap().get(appName).get(lineNumber).contains(this)) {
+            CancerServer.getLineMap().get(appName).get(lineNumber).add(this);
         }
         return new CheckInfo(appName, iterId, lineNumber, checkId, new Date().getTime(), name, value, getCheckState(lineNumber, group));
     }

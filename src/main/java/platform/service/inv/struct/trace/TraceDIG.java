@@ -1,23 +1,17 @@
-package platform.service.inv.struct.grptracefile;
+package platform.service.inv.struct.trace;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GrpTraceDIG extends GrpTraceAbstract {
+public class TraceDIG extends TraceAbstract{
 
-    public GrpTraceDIG(String subGrpTraceDir) {
-        super(subGrpTraceDir);
+    public TraceDIG(String subTraceDir) {
+        super(subTraceDir);
     }
-
     @Override
-    public void close() {
-
-    }
-
-    @Override
-    protected void printVarNames(String appName, int gid, int lineNumber, List<String> varNames) throws IOException {
-        String fileName = grpTraceDir + appName + "-line" + lineNumber + "-grp" + gid + ".csv";
+    protected void printVarNames(String appName, int lineNumber, int gid, List<String> varNames) throws IOException {
+        String fileName = traceDir + appName + "-line" + lineNumber + "-grp" + gid + ".csv";
         File file = new File(fileName);
         if (!file.exists()) {
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true)));
@@ -27,8 +21,8 @@ public class GrpTraceDIG extends GrpTraceAbstract {
     }
 
     @Override
-    protected void printValues(String appName, int gid, int lineNumber, List<String> values) throws IOException {
-        String fileName = grpTraceDir + appName + "-line" + lineNumber + "-grp" + gid + ".csv";
+    protected void printValues(String appName, int lineNumber, int gid, List<String> values) throws IOException {
+        String fileName = traceDir + appName + "-line" + lineNumber + "-grp" + gid + ".csv";
         List<String> intValues = new ArrayList<>();
         values.forEach(v -> {
             intValues.add(String.valueOf(Double.valueOf(v).intValue()));

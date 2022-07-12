@@ -1,21 +1,19 @@
 package platform.service.cxt.Config;
 
 import com.alibaba.fastjson.JSONObject;
-import platform.service.inv.algorithm.invgen.InvGen;
-import platform.service.inv.algorithm.invgen.InvGenNumeric;
-import platform.service.inv.struct.grptracefile.GrpTrace;
-import platform.service.inv.struct.grptracefile.GrpTraceCSV;
-import platform.service.inv.struct.grptracefile.GrpTraceDIG;
-import platform.service.inv.struct.grptracefile.GrpTraceDaikon;
+import platform.service.inv.struct.trace.Trace;
+import platform.service.inv.struct.trace.TraceCSV;
+import platform.service.inv.struct.trace.TraceDIG;
+import platform.service.inv.struct.trace.TraceDaikon;
 import platform.struct.*;
 
 public class CancerServerConfig {
     private int groupThro;
     private int kMeansGroupSize;
     private double dosThro;
-    private GrpTrace groupTraceType;
+    private Trace groupTraceType;
     private InvGenMode invGenMode;
-    private InvGen invGenType;
+    private InvGenType invGenType;
 
     public CancerServerConfig(JSONObject object) {
         this.groupThro = object.getIntValue("groupThro");
@@ -23,11 +21,11 @@ public class CancerServerConfig {
         this.dosThro = object.getDoubleValue("dosThro");
         String gtt = object.getString("groupTraceType").toLowerCase();
         if (gtt.equals("csv")) {
-            groupTraceType = new GrpTraceCSV("csv");
+            groupTraceType = new TraceCSV("csv");
         } else if (gtt.equals("daikon")) {
-            groupTraceType = new GrpTraceDaikon("daikon");
+            groupTraceType = new TraceDaikon("daikon");
         } else if (gtt.equals("dig")) {
-            groupTraceType = new GrpTraceDIG("dig");
+            groupTraceType = new TraceDIG("dig");
         }
         String igm = object.getString("invGenMode").toLowerCase();
         if (igm.equals("total")) {
@@ -37,7 +35,7 @@ public class CancerServerConfig {
         }
         String igt = object.getString("invGenType").toLowerCase();
         if (igt.equals("numeric")) {
-            invGenType = new InvGenNumeric("csv");
+            invGenType = InvGenType.NUMERIC;
         }
     }
 
@@ -45,11 +43,11 @@ public class CancerServerConfig {
         return invGenMode;
     }
 
-    public InvGen getInvGenType() {
+    public InvGenType getInvGenType() {
         return invGenType;
     }
 
-    public GrpTrace getGroupTraceType() {
+    public Trace getGroupTraceType() {
         return groupTraceType;
     }
 
@@ -72,7 +70,7 @@ public class CancerServerConfig {
                 ", kMeansGroupSize=" + kMeansGroupSize +
                 ", dosThro=" + dosThro +
                 ", groupTraceType=" + groupTraceType +
-                ", invGenMode=" + (invGenMode == 1 ? "incr" : "total") +
+                ", invGenMode=" + invGenMode +
                 ", invGenType=" + invGenType +
                 '}';
     }

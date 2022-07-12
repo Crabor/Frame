@@ -7,6 +7,7 @@ import platform.app.AbstractSyncApp;
 import platform.service.inv.CancerArray;
 import platform.service.inv.CancerObject;
 import platform.service.inv.struct.CheckInfo;
+import platform.service.inv.struct.CheckState;
 import platform.struct.Actor;
 
 public class MySyncApp extends AbstractSyncApp {
@@ -23,7 +24,7 @@ public class MySyncApp extends AbstractSyncApp {
                     actor.setXSpeed(2);
                 }
             } else if (checkInfo.name.equals("right")
-                    && checkInfo.isViolated) {
+                    && checkInfo.checkState == CheckState.INV_VIOLATED) {
                 actor.setYSpeed(-1);
             }
         }

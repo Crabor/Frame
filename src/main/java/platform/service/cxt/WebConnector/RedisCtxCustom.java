@@ -79,13 +79,13 @@ public class RedisCtxCustom extends RedisBase{
     public String toString() {
         buffersize = ContextManager.getContextBufferList().get(name).returnBufferSize();
         return "{" +
-                "\"ctxname\":" + name +
-                ", \"info\":" + info +
+                "\"ctxname\":" + "\"" + name + "\"" +
+                ", \"info\":" + "\"" + info + "\"" +
                 ", \"buffersize\":" + buffersize +
                 ", \"all_num\":" + all_num +
                 ", \"problematic_num\":" + problematic_num +
                 ", \"clean_num\":" + clean_num +
-                ", \"clean_rate\":" + String.format("%.2f",clean_rate) +
+                ", \"clean_rate\":" + "\"" + String.format("%.2f",clean_rate) + "\"" +
                 '}';
     }
     public static void main(String[] args){

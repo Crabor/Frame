@@ -14,12 +14,12 @@ public class DBDriver extends AbstractSubscriber implements Runnable {
     public void run() {
         //receive msg from UI than do sth
         while (true) {
-            RedisCommands<String, String> sync = commonConn.sync();
-            switch (sync.brpop(0, "cmd").getValue()) {
-                //TODO: cmd
-                case "a" :
-                    break;
-            }
+//            RedisCommands<String, String> sync = commonConn.sync();
+//            switch (sync.brpop(0, "cmd").getValue()) {
+//                //TODO: cmd
+//                case "a" :
+//                    break;
+//            }
         }
     }
 

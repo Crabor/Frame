@@ -3,28 +3,45 @@ package platform.service.inv.struct.inv;
 import platform.service.inv.struct.CheckState;
 import platform.service.inv.struct.InvState;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class InvAbstract{
+    protected final String invDir = "output/inv/";
+    protected String invFileName;
     String appName;
     int lineNumber;
     String varName;
     int group;
-    List<Integer> iters;
-    List<Integer> violatedIters;
+    List<Integer> trace;
+    List<Integer> violatedTrace;
     InvState state;
+    public void setMetaData(String appName, int lineNumber, int group, String varName, List<Integer> trace) {
+        this.appName = appName;
+        this.lineNumber = lineNumber;
+        this.varName = varName;
+        this.group = group;
+        this.trace = trace;
+        this.violatedTrace = new ArrayList<>();
+        this.state = InvState.TRACE_COLLECT;
+        this.invFileName = invDir + appName + "-" + "line" + lineNumber + "-" + "grp" + group + ".inv";
+        File dir = new File(invDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+    }
 
     public void addViolatedIter(int iterId) {
-        if (violatedIters == null) {
-            violatedIters = new ArrayList<>();
+        if (violatedTrace == null) {
+            violatedTrace = new ArrayList<>();
         }
-        violatedIters.add(iterId);
+        violatedTrace.add(iterId);
     }
 
     public void clearViolatedIters() {
-        if (violatedIters != null) {
-            violatedIters.clear();
+        if (violatedTrace != null) {
+            violatedTrace.clear();
         }
     }
 
@@ -46,12 +63,12 @@ public abstract class InvAbstract{
         return group;
     }
 
-    public List<Integer> getIters() {
-        return iters;
+    public List<Integer> getTrace() {
+        return trace;
     }
 
-    public List<Integer> getViolatedIters() {
-        return violatedIters;
+    public List<Integer> getViolatedTrace() {
+        return violatedTrace;
     }
 
     public InvState getState() {
@@ -61,4 +78,21 @@ public abstract class InvAbstract{
     public void setState(InvState state) {
         this.state = state;
     }
+    
+    public void genInv() {
+        File file = new File(invFileName);
+        if (!file.exists()) {
+            try {
+                setInv();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            getInv();
+        }
+    }
+
+    public abstract void setInv();
+
+    public abstract void getInv();
 }

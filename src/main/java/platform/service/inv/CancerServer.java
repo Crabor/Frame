@@ -2,20 +2,19 @@ package platform.service.inv;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import platform.app.App;
 import platform.app.AppMgrThread;
 import platform.pubsub.AbstractSubscriber;
 import platform.service.cxt.Configuration;
-import platform.service.inv.algorithm.DoS;
-import platform.service.inv.algorithm.KMeans;
-import platform.service.inv.algorithm.invgen.InvGen;
-import platform.service.inv.struct.grptracefile.GrpTrace;
-import platform.service.inv.struct.CheckInfo;
-import platform.service.inv.struct.PECount;
-import platform.service.inv.struct.SegInfo;
+import platform.service.inv.algorithm.*;
+import platform.service.inv.struct.*;
 import platform.service.inv.struct.inv.InvAbstract;
+import platform.service.inv.struct.trace.Trace;
 import platform.struct.InvGenMode;
+import platform.struct.InvGenType;
 import platform.util.Util;
 
+import java.io.File;
 import java.util.*;
 
 public class CancerServer extends AbstractSubscriber implements Runnable {
@@ -28,9 +27,14 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
     //静态变量，第一维为appName，第二维为iterId，第三维为保存的segInfo
     private static final Map<String, Map<Integer, SegInfo>> segMap = new HashMap<>();
     private static final Map<String, PECount> peCountMap = new HashMap<>();
+    //静态变量，第一维为appName，第二维为lineNumber，第三维为cancerObject列表
+    private static final Map<String, Map<Integer, List<CancerObject>>> lineMap = new HashMap<>();
 
     // 构造方法私有化
     private CancerServer() {
+        File dir = new File("output/inv/");
+        Util.deleteDir(dir);
+        dir.mkdirs();
     }
 
     // 静态方法返回该实例
@@ -44,8 +48,6 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
         }
         return instance;
     }
-
-    private boolean groupFlag = false;
 
     @Override
     public void run() {
@@ -81,24 +83,44 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
                             System.out.println(grp + "=" + iters);
                         });
 
-                        //output group trace
-                        GrpTrace trace =  Configuration.getCancerServerConfig().getGroupTraceType();
-                        trace.printGrpTraces(appName, segMap.get(appName), Util.mapListToListList(dos.getOutGrps()));
-
-                        //inv generate
-                        InvGen gen = Configuration.getCancerServerConfig().getInvGenType();
-                        gen.run();
-                        Map<String, Map<String, Map<Integer, Map<Integer, InvAbstract>>>> invMap = gen.getInvMap();
-                        System.out.println(invMap);
-                        invMap.get(appName).forEach((name, lineMap) -> {
-                            CancerObject co = CancerObject.get(appName, name);
-                            Map<Integer, Map<Integer, InvAbstract>> coInvMap = co.getInvMap();
-                            lineMap.forEach((line, groupMap) -> {
-                                groupMap.forEach((group, inv) -> {
-                                    if (!coInvMap.containsKey(line)) {
-                                        coInvMap.put(line, new HashMap<>());
+                        //output group trace & gen inv
+                        Trace trace =  Configuration.getCancerServerConfig().getGroupTraceType();
+                        dos.getOutGrps().forEach((grp, iters) -> {
+                            Map<Integer, List<Integer>> linesTrace = new HashMap<>();
+                            iters.forEach(iter -> {
+                                segMap.get(appName).get(iter).pCxt.forEach(lineNumber -> {
+                                    if (!linesTrace.containsKey(lineNumber)) {
+                                        linesTrace.put(lineNumber, new ArrayList<>());
                                     }
-                                    coInvMap.get(line).put(group, inv);
+                                    linesTrace.get(lineNumber).add(iter);
+                                });
+                            });
+                            linesTrace.forEach((lineNumber, lineTrace) -> {
+                                // trace output
+                                trace.printTrace(appName, lineNumber, grp, segMap.get(appName), iters);
+                                // inv meta info
+                                lineMap.get(appName).get(lineNumber).forEach(cancerObject -> {
+                                    if (!cancerObject.getInvMap().containsKey(lineNumber)) {
+                                        cancerObject.getInvMap().put(lineNumber, new HashMap<>());
+                                    }
+                                    if (!cancerObject.getInvMap().get(lineNumber).containsKey(grp)) {
+                                        String invClassName = "platform.service.inv.struct.inv.Inv" +
+                                                Util.makeFirstCharUpperCase(Configuration.getCancerServerConfig().getInvGenType().toString().toLowerCase());
+                                        try {
+                                            InvAbstract inv = (InvAbstract) Class.forName(invClassName).newInstance();
+                                            inv.setMetaData(appName, lineNumber, grp, cancerObject.getName(), lineTrace);
+                                            cancerObject.getInvMap().get(lineNumber).put(grp, inv);
+                                        } catch (InstantiationException |
+                                                 IllegalAccessException |
+                                                 ClassNotFoundException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    //inv gen
+                                    InvAbstract inv = cancerObject.getInvMap().get(lineNumber).get(grp);
+                                    inv.setState(InvState.INV_GENERATING);
+                                    inv.genInv();
+                                    inv.setState(InvState.INV_GENERATED);
                                 });
                             });
                         });
@@ -178,6 +200,14 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
 
     public static Map<String, Map<Integer, SegInfo>> getSegMap() {
         return segMap;
+    }
+
+    public static Map<String, PECount> getPECountMap() {
+        return peCountMap;
+    }
+
+    public static Map<String, Map<Integer, List<CancerObject>>> getLineMap() {
+        return lineMap;
     }
 
     public static void iterEntry(String appName, int iterId) {

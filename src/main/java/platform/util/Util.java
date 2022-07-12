@@ -85,6 +85,13 @@ public class Util {
         return dir.delete();
     }
 
+    public static String makeFirstCharUpperCase(String str) {
+        if (str == null || str.length() == 0) {
+            return str;
+        }
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
     public static void main(String[] args) {
         System.out.println(isTraceFile("platform.app.userapps.MySyncApp-line18-grp0.csv"));
         System.out.println(getAppNameLineNumberGroup("output/grouptrace/csv/platform.app.userapps.MySyncApp-line18-grp0.csv"));

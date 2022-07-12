@@ -4,8 +4,7 @@ import platform.service.inv.struct.CheckInfo;
 import platform.service.inv.struct.SegInfo;
 import platform.util.Util;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -54,8 +53,35 @@ public abstract class TraceAbstract implements Trace{
         return ret;
     }
 
+    public void printGrpTraceOverView(String appName, int lineNumber, int gid, List<Integer> trace) {
+        String fileName = traceDir + appName + "-line" + lineNumber + "-overview";
+        try {
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, true)));
+            out.write("grp" + gid + "=" + trace + "\n");
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void printTrace(String appName, int lineNumber, int gid, Map<Integer, SegInfo> segs, List<Integer> trace) {
-
+        printGrpTraceOverView(appName, lineNumber, gid, trace);
+        for (Integer iter : trace) {
+            SegInfo seg = segs.get(iter);
+            if (seg.pCxt.contains(lineNumber)) {
+                try {
+                    List<CheckInfo> checkInfos = seg.checkTable.get(lineNumber);
+                    List<String> varNames = getVarNames(checkInfos);
+                    printVarNames(appName, lineNumber, gid, varNames);
+                    int checkNum = checkInfos.size() / varNames.size();
+                    for (int j = 0; j < checkNum; j++) {
+                        printValues(appName, lineNumber, gid, getValuesByIndex(checkInfos, j, varNames.size()));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
