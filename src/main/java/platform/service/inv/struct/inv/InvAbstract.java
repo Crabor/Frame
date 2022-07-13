@@ -4,6 +4,7 @@ import platform.service.inv.struct.CheckState;
 import platform.service.inv.struct.InvState;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,19 +18,23 @@ public abstract class InvAbstract{
     List<Integer> trace;
     List<Integer> violatedTrace;
     InvState state;
-    public void setMetaData(String appName, int lineNumber, int group, String varName, List<Integer> trace) {
+    public void setMetaData(String appName, int lineNumber, int group, String varName, List<Integer> trace, InvState state) {
         this.appName = appName;
         this.lineNumber = lineNumber;
         this.varName = varName;
         this.group = group;
         this.trace = trace;
         this.violatedTrace = new ArrayList<>();
-        this.state = InvState.TRACE_COLLECT;
+        this.state = state;
         this.invFileName = invDir + appName + "-" + "line" + lineNumber + "-" + "grp" + group + ".inv";
         File dir = new File(invDir);
         if (!dir.exists()) {
             dir.mkdirs();
         }
+    }
+
+    public void setMetaData(String appName, int lineNumber, int group, String varName, List<Integer> trace) {
+        setMetaData(appName, lineNumber, group, varName, trace, InvState.TRACE_COLLECT);
     }
 
     public void addViolatedIter(int iterId) {
@@ -40,7 +45,7 @@ public abstract class InvAbstract{
     }
 
     public void clearViolatedIters() {
-        if (violatedTrace != null) {
+        if (violatedTrace != null && !violatedTrace.isEmpty()) {
             violatedTrace.clear();
         }
     }
@@ -83,6 +88,7 @@ public abstract class InvAbstract{
         File file = new File(invFileName);
         if (!file.exists()) {
             try {
+                file.createNewFile();
                 setInv();
             } catch (Exception e) {
                 e.printStackTrace();

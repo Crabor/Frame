@@ -1,10 +1,12 @@
 package platform.resource;
 
+import platform.Platform;
 import platform.pubsub.Channel;
 import platform.resource.driver.DeviceDriver;
 import platform.resource.driver.DBDriver;
 
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 
 public class ResMgrThread implements Runnable {
     private static ResMgrThread instance;
@@ -46,6 +48,8 @@ public class ResMgrThread implements Runnable {
         dbd.subscribe("check", 0, 0);
         dbd.subscribe("ctxStat", 0, 0);
         dbd.start();
+
+        Platform.incrMgrStartFlag();
     }
 
     public DBDriver getDBDriver() {

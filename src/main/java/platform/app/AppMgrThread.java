@@ -1,5 +1,6 @@
 package platform.app;
 
+import platform.Platform;
 import platform.app.userapps.MySyncApp;
 import platform.pubsub.AbstractSubscriber;
 import platform.service.cxt.Config.AppConfig;
@@ -48,6 +49,8 @@ public class AppMgrThread implements Runnable {
                 e.printStackTrace();
             }
         }
+
+        Platform.incrMgrStartFlag();
     }
 
     public void start() {

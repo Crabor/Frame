@@ -84,7 +84,7 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
                         });
 
                         //output group trace & gen inv
-                        Trace trace =  Configuration.getCancerServerConfig().getGroupTraceType();
+                        Trace traceOutput =  Configuration.getCancerServerConfig().getGroupTraceType();
                         dos.getOutGrps().forEach((grp, iters) -> {
                             Map<Integer, List<Integer>> linesTrace = new HashMap<>();
                             iters.forEach(iter -> {
@@ -97,7 +97,7 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
                             });
                             linesTrace.forEach((lineNumber, lineTrace) -> {
                                 // trace output
-                                trace.printTrace(appName, lineNumber, grp, segMap.get(appName), iters);
+                                traceOutput.printTrace(appName, lineNumber, grp, segMap.get(appName), iters);
                                 // inv meta info
                                 lineMap.get(appName).get(lineNumber).forEach(cancerObject -> {
                                     if (!cancerObject.getInvMap().containsKey(lineNumber)) {

@@ -5,10 +5,13 @@ import platform.service.inv.struct.CheckInfo;
 import platform.service.inv.struct.CheckState;
 import platform.service.inv.struct.InvState;
 import platform.service.inv.struct.inv.InvAbstract;
+import platform.service.inv.struct.trace.Trace;
 import platform.struct.InvGenMode;
 import platform.util.Util;
 
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class CancerObject {
     private int iterId;
@@ -17,7 +20,7 @@ public class CancerObject {
     private final String name;
     private double value;
 
-    private List<Integer> lines = new ArrayList<>();
+    private final List<Integer> lines = new ArrayList<>();
 
     //静态变量，第一维为appName，第二维为name，第三维为cancerObject
     private static final Map<String, Map<String, CancerObject>> objs = new HashMap<>();
@@ -124,24 +127,34 @@ public class CancerObject {
         CheckState checkState = CheckState.TRACE_COLLECT;
         if (invMap.containsKey(lineNumber)) {
             Map<Integer, InvAbstract> invs = invMap.get(lineNumber);
-            if (invs.containsKey(group)) {
+            if (group == -1 && Configuration.getCancerServerConfig().getInvGenMode() == InvGenMode.INCR) {
+                if (!invs.containsKey(-1)) {
+                    String invClassName = "platform.service.inv.struct.inv.Inv" +
+                            Util.makeFirstCharUpperCase(Configuration.getCancerServerConfig().getInvGenType().toString().toLowerCase());
+                    try {
+                        InvAbstract inv = (InvAbstract) Class.forName(invClassName).newInstance();
+                        inv.setMetaData(appName, lineNumber, -1, name, new ArrayList<>());
+                        invs.put(-1, inv);
+                    } catch (InstantiationException |
+                             IllegalAccessException |
+                             ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                InvAbstract inv = invs.get(-1);
+                inv.addViolatedIter(iterId);
+                outputTraceAndGenNewInv(lineNumber, group, invs, inv);
+            } else if (invs.containsKey(group)) {
                 InvAbstract inv = invs.get(group);
                 if (inv.getState() == InvState.TRACE_COLLECT) {
                     inv.addViolatedIter(iterId);
+                    outputTraceAndGenNewInv(lineNumber, group, invs, inv);
                 } else if (inv.getState() == InvState.INV_GENERATING) {
                     checkState = CheckState.INV_GENERATING;
                 } else if (inv.isViolated(value)) {
                     checkState = CheckState.INV_VIOLATED;
                     inv.addViolatedIter(iterId);
-                    if (Configuration.getCancerServerConfig().getInvGenMode() == InvGenMode.INCR &&
-                            inv.getViolatedTrace().size() > Configuration.getCancerServerConfig().getGroupThro()) {
-                        inv.setState(InvState.INV_GENERATING);
-                        //output trace
-
-                        //gen new inv
-
-                        inv.setState(InvState.INV_GENERATED);
-                    }
+                    outputTraceAndGenNewInv(lineNumber, group, invs, inv);
                 } else {
                     checkState = CheckState.INV_NOT_VIOLATED;
                     inv.clearViolatedIters();
@@ -151,8 +164,36 @@ public class CancerObject {
         return checkState;
     }
 
+    private void outputTraceAndGenNewInv(int lineNumber, int group, Map<Integer, InvAbstract> invs, InvAbstract inv) {
+        if (Configuration.getCancerServerConfig().getInvGenMode() == InvGenMode.INCR &&
+                inv.getViolatedTrace().size() > Configuration.getCancerServerConfig().getGroupThro()) {
+            String invClassName = "platform.service.inv.struct.inv.Inv" +
+                    Util.makeFirstCharUpperCase(Configuration.getCancerServerConfig().getInvGenType().toString().toLowerCase());
+            try {
+                InvAbstract invNew = (InvAbstract) Class.forName(invClassName).newInstance();
+                invNew.setMetaData(appName, lineNumber, group + 1, name, inv.getViolatedTrace(), InvState.INV_GENERATING);
+                invs.put(group + 1, invNew);
+            } catch (InstantiationException |
+                     IllegalAccessException |
+                     ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            InvAbstract invNew = invs.get(group + 1);
+            //output trace
+            Trace traceOutput =  Configuration.getCancerServerConfig().getGroupTraceType();
+            traceOutput.printTrace(appName, lineNumber, group + 1, CancerServer.getSegMap().get(appName), invNew.getTrace());
+            System.out.println("grp" + (group + 1) + "=" + invNew.getTrace());
+            //gen new inv
+            invNew.genInv();
+            invNew.setState(InvState.INV_GENERATED);
+        }
+    }
+
     public CheckInfo check(int lineNumber, int group) {
         checkId++;
+        if (!invMap.containsKey(lineNumber)) {
+            invMap.put(lineNumber, new HashMap<>());
+        }
         if (!lines.contains(lineNumber)) {
             lines.add(lineNumber);
         }
@@ -170,11 +211,12 @@ public class CancerObject {
 
     public CheckInfo check(int lineNumber) {
         int group = -1;
-        if (invMap.containsKey(lineNumber)) {
-            Map<Integer, InvAbstract> invs = invMap.get(lineNumber);
-            if (!invs.isEmpty()) {
-                group = Util.getMaxKey(invs);
-            }
+        if (!invMap.containsKey(lineNumber)) {
+            invMap.put(lineNumber, new HashMap<>());
+        }
+        Map<Integer, InvAbstract> invs = invMap.get(lineNumber);
+        if (!invs.isEmpty()) {
+            group = Util.getMaxKey(invs);
         }
 
         return check(lineNumber, group);

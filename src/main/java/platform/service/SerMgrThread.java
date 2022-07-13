@@ -1,5 +1,6 @@
 package platform.service;
 
+import platform.Platform;
 import platform.pubsub.AbstractSubscriber;
 import platform.pubsub.Channel;
 import platform.service.cxt.CMID.builder.CheckerBuilder;
@@ -51,6 +52,8 @@ public class SerMgrThread implements Runnable{
         cancerServer.subscribe("check", 1, 0);
         cancerServer.subscribe("sensor", 1, 0);
         cancerServer.start();
+
+        Platform.incrMgrStartFlag();
     }
 
     public CxtSubscriber getCxtSubscriber() {
