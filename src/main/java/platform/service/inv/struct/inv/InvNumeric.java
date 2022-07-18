@@ -25,7 +25,8 @@ public class InvNumeric extends InvAbstract {
     @Override
     public boolean isViolated(double value) {
         //TODO:仅为演示
-        return value < min - 5 || value > max + 5;
+        return value < min;
+//        return value < min || value > max;
     }
 
     @Override

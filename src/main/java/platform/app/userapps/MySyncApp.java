@@ -14,6 +14,7 @@ public class MySyncApp extends AbstractSyncApp {
     int ratio = 1;
     @Override
     public void iter(String channel, String msg) {
+        System.out.println("++++++" + msg);
         Actor actor = new Actor(2, 0, 0);
 
         CancerArray ca = CancerArray.fromJsonObjectString(msg);
@@ -23,7 +24,7 @@ public class MySyncApp extends AbstractSyncApp {
             if (checkInfo.name.equals("left")) {
                 if (checkInfo.checkState == CheckState.INV_VIOLATED) {
                     actor.setYSpeed(ratio);
-                    ratio += 1;
+//                    ratio += 1;
                 } else {
                     ratio = 1;
                 }
