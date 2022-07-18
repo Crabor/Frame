@@ -11,21 +11,22 @@ import platform.service.inv.struct.CheckState;
 import platform.struct.Actor;
 
 public class MySyncApp extends AbstractSyncApp {
+    int ratio = 1;
     @Override
     public void iter(String channel, String msg) {
-        Actor actor = new Actor(0, 0, 0);
+        Actor actor = new Actor(2, 0, 0);
 
         CancerArray ca = CancerArray.fromJsonObjectString(msg);
         CheckInfo[] checkInfos = ca.check();
         publish("check", JSON.toJSONString(checkInfos));
         for (CheckInfo checkInfo : checkInfos) {
-            if (checkInfo.name.equals("front")) {
-                if (checkInfo.value > 10) {
-                    actor.setXSpeed(2);
+            if (checkInfo.name.equals("left")) {
+                if (checkInfo.checkState == CheckState.INV_VIOLATED) {
+                    actor.setYSpeed(ratio);
+                    ratio += 1;
+                } else {
+                    ratio = 1;
                 }
-            } else if (checkInfo.name.equals("right")
-                    && checkInfo.checkState == CheckState.INV_VIOLATED) {
-                actor.setYSpeed(-1);
             }
         }
 

@@ -25,8 +25,7 @@ public class InvNumeric extends InvAbstract {
     @Override
     public boolean isViolated(double value) {
         //TODO:仅为演示
-        return value < min;
-//        return value < min || value > max;
+        return value < min - 5 || value > max + 5;
     }
 
     @Override
@@ -67,6 +66,9 @@ public class InvNumeric extends InvAbstract {
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(invFileName, false)));
             out.write(JSON.toJSONString(jo, SerializerFeature.PrettyFormat));
             out.close();
+
+            System.out.println(invFileName + ":");
+            System.out.println(JSON.toJSONString(jo, SerializerFeature.PrettyFormat));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -87,7 +89,6 @@ public class InvNumeric extends InvAbstract {
             e.printStackTrace();
         }
     }
-
 
     @Override
     public String toString() {

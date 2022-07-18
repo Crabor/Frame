@@ -77,7 +77,7 @@ public class CxtSubscriber extends AbstractSubscriber implements Runnable {
                         String msgNew = send.get(i).getMsg();
                         msgStatistics.addSend();
                         publish("sensor", 1, 0, msgNew);
-                        //System.out.println("+++++++++++++++++++" + msgNew );
+//                        System.out.println("++++++" + msgNew );
                     }
                     //redis： "SumStatistics", SerializeUtil.serialize(msgStatistics)<---(class CtxRuntimeStatus)
                     //jedis.set(name1.getBytes(),send1);
