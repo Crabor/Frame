@@ -14,7 +14,7 @@ public class Util {
     }
 
     public static String randomJSONCarData(){
-        int max = 300;
+        int max = 120;
         return "{\"front\":" + Math.random()*max +
                 ", \"back\":" + Math.random()*max +
                 ", \"left\":" + Math.random()*max +

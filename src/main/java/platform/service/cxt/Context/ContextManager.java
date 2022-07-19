@@ -14,6 +14,7 @@ public class ContextManager<T> {
     public static Map<String, ContextBuffer> ContextBufferList = new ConcurrentHashMap<>();
 
     public static LinkedBlockingQueue<String> errorMsgID = new LinkedBlockingQueue<String>();
+    public static LinkedBlockingQueue<String> checkMsgID = new LinkedBlockingQueue<String>();
     public static LinkedBlockingQueue<Message> msgBuffer = new LinkedBlockingQueue<Message>(100);
     public static LinkedBlockingQueue<Message> msgBuffer_fixed = new LinkedBlockingQueue<Message>();
     public static LinkedBlockingQueue<String> ChangeInvoked = new LinkedBlockingQueue<String>();
@@ -36,6 +37,9 @@ public class ContextManager<T> {
         errorMsgID.add(msgID);
     }
 
+    public static void addcheckMsgID(String msgID){
+        checkMsgID.add(msgID);
+    }
     public static void adderrorMsgIDList(List<String> msgIDList){
         for(int i = 0; i<msgIDList.size(); i++) {
             String temp = msgIDList.get(i);
@@ -91,13 +95,19 @@ public class ContextManager<T> {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if(!errorMsgID.contains(message.index+"")) {
-                    addMsgBufferFixed(message);
-                    //System.out.println("Fixed: " +message.index + "---"+message);
+                if(checkMsgID.contains(message.index+"")) {
+                    if (!errorMsgID.contains(message.index + "")) {
+                        addMsgBufferFixed(message);
+                        //System.out.println("Fixed: " +message.index + "---"+message);
+                    } else {
+                        errorMsgID.remove(message.index + "");
+                        //System.out.println("Removing: " +message.index + "---"+message);
+                        msgStatistics.addfilter();
+                    }
+                    checkMsgID.remove(message.index+"");
                 }
                 else {
-                    //System.out.println("removing: " +message.index + "---"+message);
-                    errorMsgID.remove(message.index+"");
+                    System.out.println("Skipping: " +message.index + "---"+message);
                     msgStatistics.addfilter();
                 }
                 //results.add(change);

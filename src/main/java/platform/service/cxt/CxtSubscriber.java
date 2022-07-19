@@ -31,12 +31,9 @@ public class CxtSubscriber extends AbstractSubscriber implements Runnable {
         // wang hui yan
         JSONObject jo = JSON.parseObject(msg);
 
-
         int index = PlatformConfig.context_index.getAndIncrement();
         Date date = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-        //System.out.println(jo);
 
         ContextManager.addMsgBuffer(index,msg);
 
