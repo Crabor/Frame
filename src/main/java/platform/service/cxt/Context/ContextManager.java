@@ -1,5 +1,6 @@
 package platform.service.cxt.Context;
 
+import platform.service.cxt.Configuration;
 import platform.service.cxt.Context.Context;
 import platform.service.cxt.Config.PlatformConfig;
 import platform.service.cxt.WebConnector.CtxRuntimeStatus;
@@ -14,7 +15,7 @@ public class ContextManager<T> {
     public static Map<String, ContextBuffer> ContextBufferList = new ConcurrentHashMap<>();
 
     public static LinkedBlockingQueue<String> errorMsgID = new LinkedBlockingQueue<String>();
-    public static LinkedBlockingQueue<String> checkMsgID = new LinkedBlockingQueue<String>();
+    public static Map<String, Integer> checkMsgID = new HashMap<>();
     public static LinkedBlockingQueue<Message> msgBuffer = new LinkedBlockingQueue<Message>(100);
     public static LinkedBlockingQueue<Message> msgBuffer_fixed = new LinkedBlockingQueue<Message>();
     public static LinkedBlockingQueue<String> ChangeInvoked = new LinkedBlockingQueue<String>();
@@ -38,7 +39,10 @@ public class ContextManager<T> {
     }
 
     public static void addcheckMsgID(String msgID){
-        checkMsgID.add(msgID);
+        if(checkMsgID.containsKey(msgID))
+            checkMsgID.put(msgID, checkMsgID.get(msgID)+1);
+        else
+            checkMsgID.put(msgID, 1);
     }
     public static void adderrorMsgIDList(List<String> msgIDList){
         for(int i = 0; i<msgIDList.size(); i++) {
@@ -88,26 +92,28 @@ public class ContextManager<T> {
         Message message = null;
 
         message = msgBuffer.peek();
+
             while(message!=null && message.index < end_index) {
+                String Msgindex = message.index + "";
                 try {
                     message = msgBuffer.take();
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if(checkMsgID.contains(message.index+"")) {
-                    if (!errorMsgID.contains(message.index + "")) {
+                if(checkMsgID.containsKey(Msgindex)&&checkMsgID.get(Msgindex)==Configuration.getSensorLength()) {
+                    if (!errorMsgID.contains(Msgindex)) {
                         addMsgBufferFixed(message);
                         //System.out.println("Fixed: " +message.index + "---"+message);
                     } else {
-                        errorMsgID.remove(message.index + "");
+                        errorMsgID.remove(Msgindex);
                         //System.out.println("Removing: " +message.index + "---"+message);
                         msgStatistics.addfilter();
                     }
-                    checkMsgID.remove(message.index+"");
+                    checkMsgID.remove(Msgindex);
                 }
                 else {
-                    System.out.println("Skipping: " +message.index + "---"+message);
+                    System.out.println("Skipping: " +Msgindex + "---"+message.getMsg());
                     msgStatistics.addfilter();
                 }
                 //results.add(change);

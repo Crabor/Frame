@@ -19,6 +19,7 @@ public class Configuration {
     private static List<AppConfig> listOfAppObj  = new ArrayList<>();
     private static PlatformConfig platformConfig;
     private static CancerServerConfig cancerServerConfig;
+    private static int SensorLength;
 
     public static List<AppConfig> getListOfAppObj() {
         return listOfAppObj;
@@ -68,5 +69,11 @@ public class Configuration {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        SensorLength = listOfSensorObj.size();
+        //System.out.println("SensorLength"+SensorLength);
+    }
+
+    public static int getSensorLength() {
+        return SensorLength;
     }
 }

@@ -60,6 +60,8 @@ public class CheckerBuilder  extends AbstractCheckerBuilder implements Runnable{
                     msgStatistics.addChk();
                     String[] parts = chg.split(","); //Checking: +,11,pat_right,5.264847945235763,2022-04-20 05:51:45
                     long index = Long.parseLong(parts[1]);
+                    //if(Math.random()<0.5)
+                    //    addcheckMsgID(String.valueOf(index));
                     addcheckMsgID(String.valueOf(index));
                     String pat = parts[2];
                     checkPointLog.put(pat, index);
