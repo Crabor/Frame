@@ -41,18 +41,22 @@ public class Platform {
     public static void Start() {
         resMgr.start();
         try {
-            Thread.sleep(500);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         serMgr.start();
         try {
-            Thread.sleep(500);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         appMgr.start();
-
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         while (true) {
             mgrStartFlagLock.lock();
             if (mgrStartFlag == 3) {
