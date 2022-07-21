@@ -40,24 +40,40 @@ public class Platform {
 
     public static void Start() {
         resMgr.start();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while (true) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            mgrStartFlagLock.lock();
+            if (mgrStartFlag == 1) {
+                mgrStartFlagLock.unlock();
+                break;
+            }
+            mgrStartFlagLock.unlock();
         }
         serMgr.start();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while (true) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            mgrStartFlagLock.lock();
+            if (mgrStartFlag == 2) {
+                mgrStartFlagLock.unlock();
+                break;
+            }
+            mgrStartFlagLock.unlock();
         }
         appMgr.start();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         while (true) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             mgrStartFlagLock.lock();
             if (mgrStartFlag == 3) {
                 mgrStartFlagLock.unlock();

@@ -8,6 +8,7 @@ import platform.service.inv.struct.trace.TraceDaikon;
 import platform.struct.*;
 
 public class CancerServerConfig {
+    private boolean serverOn;
     private int groupThro;
     private int kMeansGroupSize;
     private double dosThro;
@@ -16,6 +17,7 @@ public class CancerServerConfig {
     private InvGenType invGenType;
 
     public CancerServerConfig(JSONObject object) {
+        this.serverOn = object.getBoolean("serverOn");
         this.groupThro = object.getIntValue("groupThro");
         this.kMeansGroupSize = object.getIntValue("kMeansGroupSize");
         this.dosThro = object.getDoubleValue("dosThro");
@@ -63,10 +65,15 @@ public class CancerServerConfig {
         return dosThro;
     }
 
+    public boolean getServerOn() {
+        return serverOn;
+    }
+
     @Override
     public String toString() {
         return "CancerServerConfig{" +
-                "groupThro=" + groupThro +
+                "serverOn=" + serverOn +
+                ", groupThro=" + groupThro +
                 ", kMeansGroupSize=" + kMeansGroupSize +
                 ", dosThro=" + dosThro +
                 ", groupTraceType=" + groupTraceType +

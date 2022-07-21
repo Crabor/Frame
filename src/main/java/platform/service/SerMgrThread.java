@@ -5,6 +5,7 @@ import platform.pubsub.AbstractSubscriber;
 import platform.pubsub.Channel;
 import platform.service.cxt.CMID.builder.CheckerBuilder;
 import platform.service.cxt.Config.PlatformConfig;
+import platform.service.cxt.Configuration;
 import platform.service.cxt.CxtSubscriber;
 import platform.service.inv.CancerServer;
 
@@ -41,17 +42,19 @@ public class SerMgrThread implements Runnable{
         ctxServiceStart();
         ruleRegistAll();
         sensorRegistAll();
-        cxtSubscriber = new CxtSubscriber();
+        cxtSubscriber = CxtSubscriber.getInstance();
         cxtSubscriber.subscribe("sensor", 1, 1);
         cxtSubscriber.start();
         Thread checkerThread = new Thread(new CheckerBuilder(PlatformConfig.getInstace()));
         checkerThread.setPriority(Thread.MAX_PRIORITY);
         checkerThread.start();
 
-        cancerServer = CancerServer.getInstance();
-        cancerServer.subscribe("check", 1, 0);
-        cancerServer.subscribe("sensor", 1, 0);
-        cancerServer.start();
+        if (Configuration.getCancerServerConfig().getServerOn()) {
+            cancerServer = CancerServer.getInstance();
+            cancerServer.subscribe("check", 1, 0);
+            cancerServer.subscribe("sensor", 1, 0);
+            cancerServer.start();
+        }
 
         Platform.incrMgrStartFlag();
     }

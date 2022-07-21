@@ -10,6 +10,7 @@ import platform.service.cxt.Context.ContextManager;
 import platform.service.cxt.Context.Message;
 import platform.service.cxt.WebConnector.RedisCtxCustom;
 import platform.service.cxt.WebConnector.SerializeUtil;
+import platform.service.inv.CancerServer;
 import platform.struct.GrpPrioPair;
 
 import java.text.SimpleDateFormat;
@@ -21,9 +22,23 @@ import static platform.service.cxt.Context.ContextManager.CtxStatistics;
 import static platform.service.cxt.Context.ContextManager.msgStatistics;
 
 public class CxtSubscriber extends AbstractSubscriber implements Runnable {
+    private static CxtSubscriber instance;
     private Thread t;
 //    public static int onMessageCount = 0;
 //    public static int fixCount = 0;
+    private CxtSubscriber() {
+    }
+
+    public static CxtSubscriber getInstance() {
+        if (instance == null) {
+            synchronized (CxtSubscriber.class) {
+                if (instance == null) {
+                    instance = new CxtSubscriber();
+                }
+            }
+        }
+        return instance;
+    }
 
     @Override
     public void onMessage(String channel, String msg) {
