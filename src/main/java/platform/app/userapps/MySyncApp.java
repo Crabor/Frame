@@ -22,17 +22,15 @@ public class MySyncApp extends AbstractSyncApp {
         publish("check", JSON.toJSONString(checkInfos));
         for (CheckInfo checkInfo : checkInfos) {
             if (checkInfo.name.equals("left")) {
+                System.out.println("+++++++++" + checkInfo.checkState);
                 if (checkInfo.checkState == CheckState.INV_VIOLATED) {
                     actor.setYSpeed(ratio);
                     ratio += 0.01;
-                    System.out.println("left violated " + ratio);
                 } else {
                     ratio = 1;
-                    System.out.println("left not violated");
                 }
             }
         }
-        System.out.println("actor: " + JSON.toJSONString(actor));
         publish("actor", JSON.toJSONString(actor));
     }
 

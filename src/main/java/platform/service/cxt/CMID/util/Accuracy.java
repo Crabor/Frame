@@ -1,15 +1,19 @@
 package platform.service.cxt.CMID.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
 public class Accuracy {
+    private static final Log logger = LogFactory.getLog(Accuracy.class);
     public static void main(String[] args) {
         if(args.length == 3) {
-            System.out.println("[INFO] 开始结果分析");
-            System.out.println("[INFO] 读取oracle文件并分析");
+            logger.info("开始结果分析");
+            logger.info("读取oracle文件并分析");
             Set<String> groundTruth = readLogFile(args[1]);
             Set<String> myLog = readLogFile(args[0]);
 
@@ -25,7 +29,7 @@ public class Accuracy {
 
             int miss = groundTruth.size() - right;
 
-            System.out.println("[INFO] 结果分析完成，结果为：");
+            logger.info("结果分析完成，结果为：");
             if(fault == 0 && miss == 0) {
                 LogFileHelper.getLogger().info("Oracle验证通过", true);
             }

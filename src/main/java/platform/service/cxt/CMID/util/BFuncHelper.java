@@ -1,12 +1,14 @@
 package platform.service.cxt.CMID.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import platform.service.cxt.CMID.context.Context;
 
 /**
  * Created by njucjc on 2017/10/7.
  */
 public class BFuncHelper {
-
+    private static final Log logger = LogFactory.getLog(BFuncHelper.class);
     private static boolean isValid(Context c) {
         double value = Double.parseDouble(String.valueOf(c.getSensorData()));
         if(value < 100 && value > -100)
@@ -21,7 +23,7 @@ public class BFuncHelper {
                 value = isValid(context1);
                 break;
             default:
-                System.out.println("[INFO] Illegal bfunc: " + name);
+                logger.info("Illegal bfunc: " + name);
                 System.exit(1);
                 break;
         }

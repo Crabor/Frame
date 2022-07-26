@@ -3,10 +3,14 @@ package platform.util;
 import reactor.util.function.Tuple3;
 import reactor.util.function.Tuples;
 
-import java.io.File;
+import java.io.*;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import  org.apache.commons.logging.Log;
+import  org.apache.commons.logging.LogFactory;
 
 public class Util {
     public static String getSimpleName(String name) {
@@ -92,8 +96,28 @@ public class Util {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
+    public static void clearInfoForFile(String fileName) {
+        File file =new File(fileName);
+        try {
+            if(!file.exists()) {
+                file.createNewFile();
+            }
+            if(file.isDirectory()){
+                File[] files = file.listFiles();
+                for (File file1 : files) {
+                    clearInfoForFile(file1.getAbsolutePath());
+                }
+            }else{
+                FileWriter fileWriter =new FileWriter(file);
+                fileWriter.write("");
+                fileWriter.flush();
+                fileWriter.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
-        System.out.println(isTraceFile("platform.app.userapps.MySyncApp-line18-grp0.csv"));
-        System.out.println(getAppNameLineNumberGroup("output/grouptrace/csv/platform.app.userapps.MySyncApp-line18-grp0.csv"));
     }
 }

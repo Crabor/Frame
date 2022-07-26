@@ -1,5 +1,8 @@
 package platform.service.cxt.CMID.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.text.SimpleDateFormat;
 
 
@@ -7,6 +10,7 @@ import java.text.SimpleDateFormat;
  * Created by njucjc on 2017/10/23.
  */
 public class TimestampHelper {
+    private static final Log logger = LogFactory.getLog(TimestampHelper.class);
     private static SimpleDateFormat dfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
     private static SimpleDateFormat dfs2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -56,7 +60,7 @@ public class TimestampHelper {
         try {
             date = dfs2.parse(time);
         } catch (Exception e) {
-            System.out.println("[INFO] 时间戳格式错误");
+            logger.info("时间戳格式错误");
             System.exit(1);
         }
         return date;

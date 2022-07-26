@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class PlatformConfig {
     private static PlatformConfig INSTANCE = null;
     public static AtomicInteger context_index = new AtomicInteger();
+    private boolean serverOn;
     public boolean isCtxFixOn;
     public boolean isCtxCleanOn;
     private String CtxFixer;
@@ -44,7 +45,7 @@ public class PlatformConfig {
     }
 
     PlatformConfig(JSONObject object){
-
+        serverOn = object.getBoolean("serverOn");
         isCtxFixOn = object.getBoolean("isCtxFixOn");
         isCtxCleanOn = object.getBoolean("isCtxCleanOn");
         CtxFixer = object.getString("CtxFixer");
@@ -57,6 +58,9 @@ public class PlatformConfig {
         delay_allowed = object.getIntValue("delay_allowed");
     }
 
+    public boolean isServerOn() {
+        return serverOn;
+    }
     public int getDelay_allowed() {
         return delay_allowed;
     }
@@ -129,7 +133,8 @@ public class PlatformConfig {
     }
 
     public String toString(){
-        return "isCtxCleanOn = " + isCtxCleanOn
+        return "serverOn: " + serverOn
+                + ", isCtxCleanOn = " + isCtxCleanOn
                 + ", isCtxFixOn = " + isCtxFixOn
                 + ", CtxCleaner = " + CtxCleaner
                 + ", CtxChecker = " + CtxChecker

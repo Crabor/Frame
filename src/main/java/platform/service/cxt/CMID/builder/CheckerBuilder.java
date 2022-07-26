@@ -1,6 +1,8 @@
 package platform.service.cxt.CMID.builder;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import platform.service.cxt.CMID.checker.Checker;
 import platform.service.cxt.Config.PlatformConfig;
 import platform.service.cxt.Context.Change;
@@ -15,7 +17,7 @@ import static platform.service.cxt.Context.ContextManager.*;
  * Created by njucjc on 2017/10/23.
  */
 public class CheckerBuilder  extends AbstractCheckerBuilder implements Runnable{
-
+    private static final Log logger = LogFactory.getLog(CheckerBuilder.class);
     private static HashMap<String, Long> checkPointLog;
 
     public CheckerBuilder(PlatformConfig config) {
@@ -27,7 +29,7 @@ public class CheckerBuilder  extends AbstractCheckerBuilder implements Runnable{
     @Override
     public void run() {
         //List<String> contextList = fileReader(this.dataFilePath);
-        System.out.println("[INFO] 开始一致性处理");
+        logger.info("开始一致性处理");
         int count = 0;
         long timeSum = 0L;
 
@@ -72,7 +74,7 @@ public class CheckerBuilder  extends AbstractCheckerBuilder implements Runnable{
             timeSum += (endTime - startTime);
 
             count = results.size() + count;
-            //System.out.println("[INFO] Total changes: "+count);
+            //logger.info("Total changes: "+count);
             //int incCount = 0;
             for(Checker checker : checkerList) {
                 //incCount += checker.getInc();
@@ -87,8 +89,8 @@ public class CheckerBuilder  extends AbstractCheckerBuilder implements Runnable{
             long process_Tag = minInCheckPointLog();
             ContextManager.fixMsgElementsUntil(process_Tag);
 
-            //System.out.println("[INFO] Total changes: "+incCount);
-            //System.out.println("[INFO] Total checking time: " + timeSum / 1000000 + " ms");
+            //logger.info("Total changes: "+incCount);
+            //logger.info("Total checking time: " + timeSum / 1000000 + " ms");
         }
        // long start = System.nanoTime();
         /*Iterator<Map.Entry<Long, List<String>>> it = deleteChanges.entrySet().iterator();

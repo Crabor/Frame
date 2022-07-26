@@ -1,5 +1,6 @@
 {
   "PlatformConfiguration": {
+    "serverOn": true,
     "isCtxCleanOn": true,
     "isCtxFixOn": true,
     "CtxCleaner": "ECC+IMD",
@@ -39,9 +40,9 @@
     }
   ],
   "CancerServerConfiguration": {
-    "serverOn": false,
+    "serverOn": true,
     "groupThro": 100,
-    "kMeansGroupSize": 3,
+    "kMeansGroupSize": 1,
     "dosThro": 0.5,
     "groupTraceType": "csv",
     "invGenMode": "total",

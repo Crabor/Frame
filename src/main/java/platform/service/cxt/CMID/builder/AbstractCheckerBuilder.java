@@ -1,5 +1,7 @@
 package platform.service.cxt.CMID.builder;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import platform.service.cxt.CMID.change.ChangeHandler;
 import platform.service.cxt.CMID.change.ChangebasedChangeHandler;
 import platform.service.cxt.CMID.checker.*;
@@ -35,7 +37,7 @@ import java.util.concurrent.Executors;
 
 
 public abstract class AbstractCheckerBuilder implements CheckerType {
-
+    private static final Log logger = LogFactory.getLog(AbstractCheckerBuilder.class);
 
     protected List<Checker> checkerList;
 
@@ -74,7 +76,7 @@ public abstract class AbstractCheckerBuilder implements CheckerType {
         //check type
         String technique = cmidConfig.getCtxChecker();
         if (technique == null) {
-            System.out.println("[INFO] 配置文件解析失败：缺少technique配置项");
+            logger.info("配置文件解析失败：缺少technique配置项");
             System.exit(1);
         } else if ("pcc".equals(technique.toLowerCase())) {
             this.checkType = PCC_TYPE;
@@ -85,7 +87,7 @@ public abstract class AbstractCheckerBuilder implements CheckerType {
         } else if ("cpcc".equals(technique.toLowerCase())) {
             this.checkType = CONPCC_TYPE;
         } else {
-            System.out.println("[INFO] 配置文件解析失败：technique配置项配置值" + technique + "无效");
+            logger.info("配置文件解析失败：technique配置项配置值" + technique + "无效");
             System.exit(1);
         }
 
@@ -96,10 +98,10 @@ public abstract class AbstractCheckerBuilder implements CheckerType {
         String patternFilePath = cmidConfig.getPatternFilePath();
 
         if (patternFilePath == null) {
-            System.out.println("[INFO] 配置文件解析失败：缺少patternFilePath配置项");
+            logger.info("配置文件解析失败：缺少patternFilePath配置项");
             System.exit(1);
         } else if (!isFileExists(patternFilePath)) {
-            System.out.println("[INFO] 配置文件解析失败：Pattern文件" + patternFilePath + "不存在");
+            logger.info("配置文件解析失败：Pattern文件" + patternFilePath + "不存在");
             System.exit(1);
         }
         parsePatternFile(patternFilePath);
@@ -107,10 +109,10 @@ public abstract class AbstractCheckerBuilder implements CheckerType {
         //rule
         String ruleFilePath = cmidConfig.getRuleFilePath();
         if (ruleFilePath == null) {
-            System.out.println("[INFO] 配置文件解析失败：缺少ruleFilePath配置项");
+            logger.info("配置文件解析失败：缺少ruleFilePath配置项");
             System.exit(1);
         } else if (!isFileExists(ruleFilePath)) {
-            System.out.println("[INFO] 配置文件解析失败：Rule文件" + ruleFilePath + "不存在");
+            logger.info("配置文件解析失败：Rule文件" + ruleFilePath + "不存在");
             System.exit(1);
         }
         parseRuleFile(ruleFilePath);
@@ -118,7 +120,7 @@ public abstract class AbstractCheckerBuilder implements CheckerType {
         //log
         String logFilePath = cmidConfig.getLogFilePath();
         if (logFilePath == null) {
-            System.out.println("[INFO] 配置文件解析失败：缺少logFilePath配置项");
+            logger.info("配置文件解析失败：缺少logFilePath配置项");
             System.exit(1);
         }
         LogFileHelper.initLogger(logFilePath);
@@ -133,15 +135,15 @@ public abstract class AbstractCheckerBuilder implements CheckerType {
         //change handler
         this.changeHandlerType = cmidConfig.getChangeHandlerType();
         if (this.changeHandlerType == null) {
-            System.out.println("[INFO] 配置文件解析失败：缺少changeHandlerType配置项");
+            logger.info("配置文件解析失败：缺少changeHandlerType配置项");
             System.exit(1);
         } else if (!changeHandlerType.equals("static-change-based") && !changeHandlerType.equals("dynamic-change-based")) {
-            System.out.println("[INFO] 配置文件解析失败：changeHandlerType配置项配置值" + this.changeHandlerType + "无效");
+            logger.info("配置文件解析失败：changeHandlerType配置项配置值" + this.changeHandlerType + "无效");
             System.exit(1);
         }
 
         if (schedule == null) {
-            System.out.println("[INFO] 配置文件解析失败：缺少schedule配置项");
+            logger.info("配置文件解析失败：缺少schedule配置项");
             System.exit(1);
         } else if ("immed".equals(schedule.toLowerCase()) || "imd".equals(schedule.toLowerCase())) {
             this.scheduler = new BatchScheduler(1);
@@ -157,13 +159,13 @@ public abstract class AbstractCheckerBuilder implements CheckerType {
             this.scheduleType = -2;
         } else {
             this.scheduleType = -1;
-            System.out.println("[INFO] 配置文件解析失败：schedule配置项配置值" + schedule + "无效");
+            logger.info("配置文件解析失败：schedule配置项配置值" + schedule + "无效");
             System.exit(1);
         }
 
 
-        System.out.println("[INFO] 检测技术：" + technique);
-        System.out.println("[INFO] 调度策略：" + schedule);
+        logger.info("检测技术：" + technique);
+        logger.info("调度策略：" + schedule);
 
         //change handle
         configChangeHandler();
@@ -174,16 +176,16 @@ public abstract class AbstractCheckerBuilder implements CheckerType {
             this.dataFilePath = cmidConfig.getDataFile();
 
             if (this.dataFilePath == null) {
-                System.out.println("[INFO] 配置文件解析失败：缺少dataFilePath配置项");
+                logger.info("配置文件解析失败：缺少dataFilePath配置项");
                 System.exit(1);
             } else if (!isFileExists(this.dataFilePath)) {
-                System.out.println("[INFO] 数据文件解析失败：数据文件" + this.dataFilePath + "不存在");
+                logger.info("数据文件解析失败：数据文件" + this.dataFilePath + "不存在");
                 System.exit(1);
 
             }
         }*/
 
-        System.out.println("[INFO] 配置文件解析成功");
+        logger.info("配置文件解析成功");
     }
 
 
@@ -209,7 +211,7 @@ public abstract class AbstractCheckerBuilder implements CheckerType {
             Document document = db.parse(patternFilePath);
 
             NodeList patterns = document.getElementsByTagName("pattern");
-            System.out.println("[INFO] Pattern文件为" + patternFilePath + "，总共" + patterns.getLength() + "个patterns");
+            logger.info("Pattern文件为" + patternFilePath + "，总共" + patterns.getLength() + "个patterns");
             for (int i = 0; i < patterns.getLength(); i++) {
                 Node patNode = patterns.item(i);
                 NodeList childNodes = patNode.getChildNodes();
@@ -251,7 +253,7 @@ public abstract class AbstractCheckerBuilder implements CheckerType {
                                 member.put("freshness", true);
                                 freshness = Long.parseLong(childNodes.item(j).getTextContent());
                             } catch (NumberFormatException e) {
-                                System.out.println("[INFO] 配置文件解析失败：Pattern文件中的freshness配置值" + childNodes.item(j).getTextContent() + "无效");
+                                logger.info("配置文件解析失败：Pattern文件中的freshness配置值" + childNodes.item(j).getTextContent() + "无效");
                                 System.exit(1);
                             }
                             break;
@@ -276,14 +278,14 @@ public abstract class AbstractCheckerBuilder implements CheckerType {
                             site = childNodes.item(j).getTextContent();
                             break;
                         default:
-                            System.out.println("[INFO] 配置文件解析失败：Pattern文件" + patternFilePath + "存在非法的pattern标识符" + childNodes.item(j).getNodeName());
+                            logger.info("配置文件解析失败：Pattern文件" + patternFilePath + "存在非法的pattern标识符" + childNodes.item(j).getNodeName());
                             System.exit(1);
                     }
                 }
 
                 for(String key : member.keySet()) {
                     if (!member.get(key)) {
-                        System.out.println("[INFO] 配置文件解析失败：Pattern文件" + patternFilePath + "缺少pattern标识符" + key);
+                        logger.info("配置文件解析失败：Pattern文件" + patternFilePath + "缺少pattern标识符" + key);
                         System.exit(1);
                     }
                 }
@@ -302,12 +304,12 @@ public abstract class AbstractCheckerBuilder implements CheckerType {
         } catch (SAXException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            System.out.println("[INFO] 配置文件解析失败：Pattern文件" + patternFilePath + "不存在");
+            logger.info("配置文件解析失败：Pattern文件" + patternFilePath + "不存在");
             System.exit(1);
         }
 
         if (patternMap.isEmpty()) {
-            System.out.println("[INFO]  配置文件解析失败：Pattern文件" + patternFilePath + "没有pattern");
+            logger.info(" 配置文件解析失败：Pattern文件" + patternFilePath + "没有pattern");
             System.exit(1);
         }
     }
@@ -322,7 +324,7 @@ public abstract class AbstractCheckerBuilder implements CheckerType {
             Document document = db.parse(ruleFilePath);
 
             NodeList ruleList = document.getElementsByTagName("rule");
-            System.out.println("[INFO] Rule文件为" + ruleFilePath + "，总共" + ruleList.getLength() + "条rules");
+            logger.info("Rule文件为" + ruleFilePath + "，总共" + ruleList.getLength() + "条rules");
 
             for(int i = 0; i < ruleList.getLength(); i++){
                 STNode treeHead = new STNode();
@@ -365,12 +367,12 @@ public abstract class AbstractCheckerBuilder implements CheckerType {
         } catch (SAXException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            System.out.println("[INFO] 配置文件解析失败：Rule文件" + ruleFilePath + "不存在");
+            logger.info("配置文件解析失败：Rule文件" + ruleFilePath + "不存在");
             System.exit(1);
         }
 
         if (checkerList.isEmpty()) {
-            System.out.println("[INFO] 配置文件解析失败：Rule文件" + ruleFilePath + "没有rule");
+            logger.info("配置文件解析失败：Rule文件" + ruleFilePath + "没有rule");
             System.exit(1);
         }
     }
@@ -422,7 +424,7 @@ public abstract class AbstractCheckerBuilder implements CheckerType {
                         stNode = new STNode(e.getAttribute("name"), STNode.BFUNC_NODE);
                         break;
                     default:
-                        System.out.println("[INFO] 配置文件解析失败：Rule文件" + ruleFilePath +  "存在非法的一致性规则标识符" + nodeName);
+                        logger.info("配置文件解析失败：Rule文件" + ruleFilePath +  "存在非法的一致性规则标识符" + nodeName);
                         System.exit(1);
                         break;
                 }

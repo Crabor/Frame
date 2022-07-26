@@ -1,5 +1,7 @@
 package platform.service.cxt.CMID.builder;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import platform.service.cxt.CMID.checker.Checker;
 import platform.service.cxt.CMID.context.Context;
 import platform.service.cxt.CMID.context.ContextParser;
@@ -18,6 +20,7 @@ import java.util.TreeMap;
 //TODO: Maybe "Consumer-Producer" Mode?
 
 public class ThreadBuilder extends AbstractCheckerBuilder implements Runnable{
+    private static final Log logger = LogFactory.getLog(ThreadBuilder.class);
     private DatagramSocket serverSocket;
     private boolean running;
     private byte [] buf = new byte[256];
@@ -25,17 +28,17 @@ public class ThreadBuilder extends AbstractCheckerBuilder implements Runnable{
     public ThreadBuilder(PlatformConfig platformConfig)  {
         super(platformConfig);
         if (!changeHandlerType.contains("dynamic")) {
-            System.out.println("[INFO] 配置文件配置错误：运行Server需将changeHandlerType配置为dynamic-change-based");
+            logger.info("配置文件配置错误：运行Server需将changeHandlerType配置为dynamic-change-based");
             System.exit(1);
         }
-        System.out.println("[INFO] 服务器开始启动");
+        logger.info("服务器开始启动");
 
         try {
             serverSocket = new DatagramSocket(port);
         }catch(IOException e) {
             e.printStackTrace();
         }
-        System.out.println("[INFO] 成功绑定" + port + "端口");
+        logger.info("成功绑定" + port + "端口");
     }
 
     @Override

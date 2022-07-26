@@ -65,7 +65,7 @@ public class CancerServerConfig {
         return dosThro;
     }
 
-    public boolean getServerOn() {
+    public boolean isServerOn() {
         return serverOn;
     }
 

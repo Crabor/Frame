@@ -9,12 +9,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import platform.Platform;
+import platform.service.cxt.CMID.util.Logger;
 import platform.service.cxt.Config.AppConfig;
 import platform.service.cxt.Config.CancerServerConfig;
 import platform.service.cxt.Config.PlatformConfig;
 import platform.service.cxt.Config.SensorConfig;
 
 public class Configuration {
+    private static final Log logger = LogFactory.getLog(Configuration.class);
     private static List<SensorConfig> listOfSensorObj  = new ArrayList<>();
     private static List<AppConfig> listOfAppObj  = new ArrayList<>();
     private static PlatformConfig platformConfig;
@@ -58,14 +63,14 @@ public class Configuration {
                 listOfAppObj.add(new AppConfig(temp));
             }
             cancerServerConfig = new CancerServerConfig(cancerObj);
-            System.out.println(platformConfig.toString());
+            logger.info(platformConfig);
             for(int i = 0; i<listOfSensorObj.size(); i++) {
-                System.out.println(listOfSensorObj.get(i).toString());
+                logger.info(listOfSensorObj.get(i));
             }
             for(int i = 0; i<listOfAppObj.size(); i++) {
-                System.out.println(listOfAppObj.get(i).toString());
+                logger.info(listOfAppObj.get(i));
             }
-            System.out.println(cancerServerConfig.toString());
+            logger.info(cancerServerConfig);
         } catch (IOException e) {
             e.printStackTrace();
         }

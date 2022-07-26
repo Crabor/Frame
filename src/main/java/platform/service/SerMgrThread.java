@@ -42,14 +42,16 @@ public class SerMgrThread implements Runnable{
         ctxServiceStart();
         ruleRegistAll();
         sensorRegistAll();
-        cxtSubscriber = CxtSubscriber.getInstance();
-        cxtSubscriber.subscribe("sensor", 1, 1);
-        cxtSubscriber.start();
         Thread checkerThread = new Thread(new CheckerBuilder(PlatformConfig.getInstace()));
         checkerThread.setPriority(Thread.MAX_PRIORITY);
         checkerThread.start();
+        if (Configuration.getPlatformConfig().isServerOn()) {
+            cxtSubscriber = CxtSubscriber.getInstance();
+            cxtSubscriber.subscribe("sensor", 1, 1);
+            cxtSubscriber.start();
+        }
 
-        if (Configuration.getCancerServerConfig().getServerOn()) {
+        if (Configuration.getCancerServerConfig().isServerOn()) {
             cancerServer = CancerServer.getInstance();
             cancerServer.subscribe("check", 1, 0);
             cancerServer.subscribe("sensor", 1, 0);

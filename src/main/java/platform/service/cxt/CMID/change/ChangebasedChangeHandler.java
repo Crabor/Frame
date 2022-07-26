@@ -1,5 +1,7 @@
 package platform.service.cxt.CMID.change;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import platform.service.cxt.CMID.checker.Checker;
 import platform.service.cxt.CMID.context.ContextParser;
 import platform.service.cxt.CMID.pattern.Pattern;
@@ -12,6 +14,7 @@ import java.util.Map;
  * Created by njucjc at 2018/1/23
  */
 public class ChangebasedChangeHandler extends ChangeHandler {
+    private static final Log logger = LogFactory.getLog(ChangebasedChangeHandler.class);
     public ChangebasedChangeHandler(Map<String, Pattern> patternMap, Map<String, Checker> checkerMap, Scheduler scheduler, List<Checker> checkerList) {
         super(patternMap, checkerMap, scheduler, checkerList);
     }
@@ -33,7 +36,7 @@ public class ChangebasedChangeHandler extends ChangeHandler {
             deleteChange(ContextParser.parseChangeFromPlatfrom(strs).getTimestamp(), patternId);
         }
         else {
-            System.out.println("[INFO] 存在不可识别操作类型" + op);
+            logger.info("存在不可识别操作类型" + op);
             System.exit(1);
         }
 

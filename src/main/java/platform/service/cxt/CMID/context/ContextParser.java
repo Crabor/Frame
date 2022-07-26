@@ -1,15 +1,18 @@
 package platform.service.cxt.CMID.context;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import platform.service.cxt.CMID.util.TimestampHelper;
 import com.alibaba.fastjson.*;
 /**
  * Created by njucjc on 2017/10/23.
  */
 public class ContextParser {
+    private static final Log logger = LogFactory.getLog(ContextParser.class);
     public static Context parseContext(int no, String pattern) {
         String [] fields = pattern.split(",");
         if (fields.length != 4) {
-            System.out.println("[INFO] 数据格式错误");
+            logger.info("数据格式错误");
             System.exit(1);
         }
 
@@ -25,7 +28,7 @@ public class ContextParser {
             timestamp = Long.parseLong(fields[3]);
 
         } catch (NumberFormatException e) {
-            System.out.println("[INFO] 数据格式错误");
+            logger.info("数据格式错误");
             System.exit(1);
         }
 
@@ -34,7 +37,7 @@ public class ContextParser {
 
     public static Context parseChangeFromPlatfrom (String [] elements){ // example: +, 19,GPSSensor-Left,61.1198142536155, 2022-02-10 04:08:19
         if (elements.length != 5 ) {
-            System.out.println("[INFO] Change格式错误1");
+            logger.info("Change格式错误1");
             System.exit(1);
         }
         //for (int i = 0; i<elements.length; i++)
@@ -45,7 +48,7 @@ public class ContextParser {
                     elements[2],
                     elements[2], elements[3], TimestampHelper.parserDate(elements[4]).getTime());
         } catch (NumberFormatException e) {
-            System.out.println("[INFO] Change格式错误2");
+            logger.info("Change格式错误2");
             System.exit(1);
         }
         return context;
@@ -54,7 +57,7 @@ public class ContextParser {
 
         //System.out.println(elements.length);
         if (elements.length != 8 ) {
-            System.out.println("[INFO] Change格式错误1");
+            logger.info("Change格式错误1");
             System.exit(1);
         }
 
@@ -66,7 +69,7 @@ public class ContextParser {
                     "0.0",
                     0);
         } catch (NumberFormatException e) {
-            System.out.println("[INFO] Change格式错误2");
+            logger.info("Change格式错误2");
             System.exit(1);
         }
         return context;
