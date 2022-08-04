@@ -1,12 +1,12 @@
 package platform.resource;
 
 import platform.Platform;
-import platform.pubsub.Channel;
 import platform.resource.driver.DeviceDriver;
 import platform.resource.driver.DBDriver;
-
-import java.util.List;
-import java.util.concurrent.locks.Lock;
+import platform.config.DatabaseDriverConfig;
+import platform.config.DeviceDriverConfig;
+import platform.config.SubConfig;
+import platform.config.Configuration;
 
 public class ResMgrThread implements Runnable {
     private static ResMgrThread instance;
@@ -38,15 +38,18 @@ public class ResMgrThread implements Runnable {
     @Override
     public void run() {
         //init resource
-        dd = new DeviceDriver(8080, "127.0.0.1", 8081);
-        dd.subscribe("actor", 0, 0);
+        DeviceDriverConfig ddc = Configuration.getResourceConfig().getDeviceDriverConfig();
+        dd = new DeviceDriver(ddc.serverPort, ddc.clientAddress, ddc.clientPort);
+        for (SubConfig subConfig : ddc.getSubConfigs()) {
+            dd.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
+        }
         dd.start();
 
+        DatabaseDriverConfig dbdc = Configuration.getResourceConfig().getDatabaseDriverConfig();
         dbd = new DBDriver();
-        dbd.subscribe("sensor", 0, 0);
-        dbd.subscribe("actor", 1, 0);
-        dbd.subscribe("check", 0, 0);
-        dbd.subscribe("ctxStat", 0, 0);
+        for (SubConfig subConfig : dbdc.getSubConfigs()) {
+            dbd.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
+        }
         dbd.start();
 
         Platform.incrMgrStartFlag();

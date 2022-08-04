@@ -1,4 +1,4 @@
-package platform.service.cxt.Config;
+package platform.config;
 
 import com.alibaba.fastjson.JSONObject;
 

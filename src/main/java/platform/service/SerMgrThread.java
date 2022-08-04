@@ -1,13 +1,12 @@
 package platform.service;
 
 import platform.Platform;
-import platform.pubsub.AbstractSubscriber;
-import platform.pubsub.Channel;
 import platform.service.cxt.CMID.builder.CheckerBuilder;
-import platform.service.cxt.Config.PlatformConfig;
-import platform.service.cxt.Configuration;
+import platform.config.PlatformConfig;
+import platform.config.Configuration;
 import platform.service.cxt.CxtSubscriber;
 import platform.service.inv.CancerServer;
+import platform.config.SubConfig;
 
 import static platform.service.cxt.Interactor.*;
 
@@ -39,7 +38,6 @@ public class SerMgrThread implements Runnable{
     @Override
     public void run() {
         //init cxt & inv
-        ctxServiceStart();
         ruleRegistAll();
         sensorRegistAll();
         Thread checkerThread = new Thread(new CheckerBuilder(PlatformConfig.getInstace()));
@@ -47,14 +45,17 @@ public class SerMgrThread implements Runnable{
         checkerThread.start();
         if (Configuration.getPlatformConfig().isServerOn()) {
             cxtSubscriber = CxtSubscriber.getInstance();
-            cxtSubscriber.subscribe("sensor", 1, 1);
+            for (SubConfig subConfig : Configuration.getPlatformConfig().getSubConfigs()) {
+                cxtSubscriber.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
+            }
             cxtSubscriber.start();
         }
 
         if (Configuration.getCancerServerConfig().isServerOn()) {
             cancerServer = CancerServer.getInstance();
-            cancerServer.subscribe("check", 1, 0);
-            cancerServer.subscribe("sensor", 1, 0);
+            for (SubConfig subConfig : Configuration.getCancerServerConfig().getSubConfigs()) {
+                cancerServer.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
+            }
             cancerServer.start();
         }
 

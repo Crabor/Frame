@@ -1,9 +1,9 @@
 package platform.service.cxt;
 
-import platform.service.cxt.CMID.builder.CheckerBuilder;
+import platform.config.Configuration;
 import platform.service.cxt.Context.Context;
-import platform.service.cxt.Config.PlatformConfig;
-import platform.service.cxt.Config.SensorConfig;
+import platform.config.PlatformConfig;
+import platform.config.SensorConfig;
 
 import platform.service.cxt.Context.ContextBuffer;
 import platform.service.cxt.Context.ContextManager;

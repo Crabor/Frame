@@ -15,8 +15,8 @@ import platform.service.cxt.CMID.scheduler.Scheduler;
 import platform.service.cxt.CMID.util.Accuracy;
 import platform.service.cxt.CMID.util.LogFileHelper;
 
-import platform.service.cxt.Config.CMIDConfig;
-import platform.service.cxt.Config.PlatformConfig;
+import platform.config.CMIDConfig;
+import platform.config.PlatformConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

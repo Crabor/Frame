@@ -1,6 +1,8 @@
 package platform.service.inv;
 
-import platform.service.cxt.Configuration;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import platform.config.Configuration;
 import platform.service.inv.struct.CheckInfo;
 import platform.service.inv.struct.CheckState;
 import platform.service.inv.struct.InvState;
@@ -10,8 +12,6 @@ import platform.struct.InvGenMode;
 import platform.util.Util;
 
 import java.util.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class CancerObject {
     private int iterId;
@@ -26,6 +26,8 @@ public class CancerObject {
     private static final Map<String, Map<String, CancerObject>> objs = new HashMap<>();
     //第一维为行号，第二维为组号，第三维为不变式
     private final Map<Integer, Map<Integer, InvAbstract>> invMap = new HashMap<>();
+
+    private static final Log logger = LogFactory.getLog(CancerObject.class);
 
     public CancerObject(String appName, String name, double value) {
         if (contains(appName, name)) {
@@ -182,7 +184,7 @@ public class CancerObject {
             //output trace
             Trace traceOutput =  Configuration.getCancerServerConfig().getGroupTraceType();
             traceOutput.printTrace(appName, lineNumber, group + 1, CancerServer.getSegMap().get(appName), invNew.getTrace());
-            System.out.println("grp" + (group + 1) + "=" + invNew.getTrace());
+            logger.info("grp" + (group + 1) + "=" + invNew.getTrace());
             //gen new inv
             invNew.genInv();
             invNew.setState(InvState.INV_GENERATED);

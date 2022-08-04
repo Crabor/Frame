@@ -1,21 +1,15 @@
 package platform.service.cxt;
 
 
-import platform.service.cxt.CMID.builder.CheckerBuilder;
-import platform.service.cxt.Config.PlatformConfig;
-import platform.service.cxt.Context.ContextBuffer;
-import platform.service.cxt.Context.ContextManager;
 import platform.service.cxt.Context.ContextBuffer;
 import platform.service.cxt.Context.ContextManager;
 
 import java.util.Map;
 
-import static platform.service.cxt.Interactor.*;
 import static platform.service.cxt.Interactor.sensorRegist;
 import static java.lang.Thread.sleep;
 import static platform.service.cxt.Interactor.ctxServiceStart;
 import static platform.service.cxt.Interactor.printAllSensors;
-import static platform.service.cxt.Interactor.sensorRegist;
 
 public class StartMain {
     public static void main(String[] args) throws InterruptedException {

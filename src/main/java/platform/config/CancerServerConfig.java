@@ -1,11 +1,15 @@
-package platform.service.cxt.Config;
+package platform.config;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import platform.service.inv.struct.trace.Trace;
 import platform.service.inv.struct.trace.TraceCSV;
 import platform.service.inv.struct.trace.TraceDIG;
 import platform.service.inv.struct.trace.TraceDaikon;
 import platform.struct.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CancerServerConfig {
     private boolean serverOn;
@@ -16,18 +20,24 @@ public class CancerServerConfig {
     private InvGenMode invGenMode;
     private InvGenType invGenType;
 
+    private List<SubConfig> subConfigs = new ArrayList<>();
+
     public CancerServerConfig(JSONObject object) {
         this.serverOn = object.getBoolean("serverOn");
         this.groupThro = object.getIntValue("groupThro");
         this.kMeansGroupSize = object.getIntValue("kMeansGroupSize");
         this.dosThro = object.getDoubleValue("dosThro");
         String gtt = object.getString("groupTraceType").toLowerCase();
-        if (gtt.equals("csv")) {
-            groupTraceType = new TraceCSV("csv");
-        } else if (gtt.equals("daikon")) {
-            groupTraceType = new TraceDaikon("daikon");
-        } else if (gtt.equals("dig")) {
-            groupTraceType = new TraceDIG("dig");
+        switch (gtt) {
+            case "csv":
+                groupTraceType = new TraceCSV("csv");
+                break;
+            case "daikon":
+                groupTraceType = new TraceDaikon("daikon");
+                break;
+            case "dig":
+                groupTraceType = new TraceDIG("dig");
+                break;
         }
         String igm = object.getString("invGenMode").toLowerCase();
         if (igm.equals("total")) {
@@ -38,6 +48,11 @@ public class CancerServerConfig {
         String igt = object.getString("invGenType").toLowerCase();
         if (igt.equals("numeric")) {
             invGenType = InvGenType.NUMERIC;
+        }
+        JSONArray subs = object.getJSONArray("subscribe");
+        for (int i = 0; i < subs.size(); i++) {
+            JSONObject sub = subs.getJSONObject(i);
+            subConfigs.add(new SubConfig(sub));
         }
     }
 
@@ -65,6 +80,10 @@ public class CancerServerConfig {
         return dosThro;
     }
 
+    public List<SubConfig> getSubConfigs() {
+        return subConfigs;
+    }
+
     public boolean isServerOn() {
         return serverOn;
     }
@@ -79,6 +98,7 @@ public class CancerServerConfig {
                 ", groupTraceType=" + groupTraceType +
                 ", invGenMode=" + invGenMode +
                 ", invGenType=" + invGenType +
+                ", subConfigs=" + subConfigs +
                 '}';
     }
 }

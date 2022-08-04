@@ -1,8 +1,7 @@
 package platform.service.cxt.Context;
 
-import platform.service.cxt.Configuration;
-import platform.service.cxt.Context.Context;
-import platform.service.cxt.Config.PlatformConfig;
+import platform.config.Configuration;
+import platform.config.PlatformConfig;
 import platform.service.cxt.WebConnector.CtxRuntimeStatus;
 import platform.service.cxt.WebConnector.RedisCtxCustom;
 

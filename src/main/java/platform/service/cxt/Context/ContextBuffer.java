@@ -1,7 +1,6 @@
 package platform.service.cxt.Context;
 
-import platform.service.cxt.Configuration;
-import platform.service.cxt.Context.Context;
+import platform.config.Configuration;
 
 import java.util.LinkedList;
 import java.util.Queue;

@@ -13,7 +13,35 @@
     "logFilePath": "output3.txt",
     "ruleFilePath": "Resources/rules.xml",
     "patternFilePath": "Resources/patterns.xml",
-    "oracleFilePath": "oracle.txt"
+    "oracleFilePath": "oracle.txt",
+    "subscribe": [
+      {
+        "channel": "sensor",
+        "groupId": 1,
+        "priorityId": 1,
+      },
+    ],
+  },
+  "CancerServerConfiguration": {
+      "serverOn": true,
+      "groupThro": 100,
+      "kMeansGroupSize": 1,
+      "dosThro": 0.5,
+      "groupTraceType": "csv",
+      "invGenMode": "total",
+      "invGenType": "numeric",
+      "subscribe": [
+        {
+          "channel": "sensor",
+          "groupId": 1,
+          "priorityId": 0,
+        },
+        {
+          "channel": "check",
+          "groupId": 1,
+          "priorityId": 0,
+        },
+      ],
   },
   "SensorConfiguration": [
     {
@@ -36,16 +64,52 @@
   "AppConfiguration": [
     {
       "appName": "platform.app.userapps.MySyncApp",
-      "sleepTime": 0
-    }
+      "sleepTime": 0,
+      "subscribe": [
+        {
+          "channel": "sensor",
+          "groupId": 1,
+          "priorityId": 0,
+        },
+      ],
+    },
   ],
-  "CancerServerConfiguration": {
-    "serverOn": true,
-    "groupThro": 100,
-    "kMeansGroupSize": 1,
-    "dosThro": 0.5,
-    "groupTraceType": "csv",
-    "invGenMode": "total",
-    "invGenType": "numeric"
+  "ResourceConfiguration": {
+    "deviceDriver": {
+      "serverPort": 8080,
+      "clientAddress": "127.0.0.1",
+      "clientPort": 8081,
+      "subscribe": [
+        {
+          "channel": "actor",
+          "groupId": 0,
+          "priorityId": 0,
+        },
+      ],
+    },
+    "databaseDriver": {
+      "subscribe": [
+        {
+          "channel": "sensor",
+          "groupId": 0,
+          "priorityId": 0,
+        },
+        {
+          "channel": "actor",
+          "groupId": 1,
+          "priorityId": 0,
+        },
+        {
+          "channel": "check",
+          "groupId": 0,
+          "priorityId": 0,
+        },
+        {
+          "channel": "ctxStat",
+          "groupId": 0,
+          "priorityId": 0,
+        },
+      ],
+    }
   }
 }

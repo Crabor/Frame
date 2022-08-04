@@ -3,15 +3,13 @@ package platform.service.cxt;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import platform.pubsub.AbstractSubscriber;
-import platform.service.cxt.Config.PlatformConfig;
-import platform.service.cxt.Config.SensorConfig;
+import platform.config.Configuration;
+import platform.config.PlatformConfig;
+import platform.config.SensorConfig;
 import platform.service.cxt.Context.Context;
 import platform.service.cxt.Context.ContextManager;
 import platform.service.cxt.Context.Message;
 import platform.service.cxt.WebConnector.RedisCtxCustom;
-import platform.service.cxt.WebConnector.SerializeUtil;
-import platform.service.inv.CancerServer;
-import platform.struct.GrpPrioPair;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

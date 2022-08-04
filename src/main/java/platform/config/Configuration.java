@@ -1,4 +1,4 @@
-package platform.service.cxt;
+package platform.config;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -11,12 +11,6 @@ import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import platform.Platform;
-import platform.service.cxt.CMID.util.Logger;
-import platform.service.cxt.Config.AppConfig;
-import platform.service.cxt.Config.CancerServerConfig;
-import platform.service.cxt.Config.PlatformConfig;
-import platform.service.cxt.Config.SensorConfig;
 
 public class Configuration {
     private static final Log logger = LogFactory.getLog(Configuration.class);
@@ -24,6 +18,7 @@ public class Configuration {
     private static List<AppConfig> listOfAppObj  = new ArrayList<>();
     private static PlatformConfig platformConfig;
     private static CancerServerConfig cancerServerConfig;
+    private static ResourceConfig resourceConfig;
     private static int SensorLength;
 
     public static List<AppConfig> getListOfAppObj() {
@@ -42,6 +37,10 @@ public class Configuration {
         return cancerServerConfig;
     }
 
+    public static ResourceConfig getResourceConfig() {
+        return resourceConfig;
+    }
+
     public static void analyzer(String configuration){
         File file = new File(configuration);
         try {
@@ -51,6 +50,7 @@ public class Configuration {
             JSONArray sensorObj = (JSONArray) obj.get("SensorConfiguration");
             JSONArray appObj = (JSONArray) obj.get("AppConfiguration");
             JSONObject cancerObj = (JSONObject) obj.get("CancerServerConfiguration");
+            JSONObject resourceObj = (JSONObject) obj.get("ResourceConfiguration");
             //System.out.println(platObj.toJSONString());
             platformConfig  = PlatformConfig.getInstace(platObj);
             for(int i = 0; i<sensorObj.size(); i++) {
@@ -71,6 +71,8 @@ public class Configuration {
                 logger.info(listOfAppObj.get(i));
             }
             logger.info(cancerServerConfig);
+            resourceConfig = new ResourceConfig(resourceObj);
+            logger.info(resourceConfig);
         } catch (IOException e) {
             e.printStackTrace();
         }

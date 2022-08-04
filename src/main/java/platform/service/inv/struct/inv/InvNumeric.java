@@ -6,6 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.opencsv.CSVReader;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import platform.service.cxt.CMID.checker.EccChecker;
 
 import java.io.*;
@@ -14,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class InvNumeric extends InvAbstract {
+    private static final Log logger = LogFactory.getLog(InvNumeric.class);
     private double min;
     private double max;
 
@@ -68,8 +71,8 @@ public class InvNumeric extends InvAbstract {
             out.write(JSON.toJSONString(jo, SerializerFeature.PrettyFormat));
             out.close();
 
-            System.out.println(invFileName + ":");
-            System.out.println(JSON.toJSONString(jo, SerializerFeature.PrettyFormat));
+            logger.info(invFileName + ":");
+            logger.info(JSON.toJSONString(jo, SerializerFeature.PrettyFormat));
         } catch (Exception e) {
             e.printStackTrace();
         }

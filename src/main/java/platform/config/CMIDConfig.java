@@ -1,6 +1,4 @@
-package platform.service.cxt.Config;
-
-import com.alibaba.fastjson.JSONObject;
+package platform.config;
 
 public class CMIDConfig {
     private String dataFile;

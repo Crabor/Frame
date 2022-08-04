@@ -4,8 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import platform.service.cxt.CMID.checker.Checker;
-import platform.service.cxt.Config.PlatformConfig;
-import platform.service.cxt.Context.Change;
+import platform.config.PlatformConfig;
 import platform.service.cxt.Context.ContextManager;
 
 import java.util.*;

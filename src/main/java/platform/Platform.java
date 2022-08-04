@@ -1,5 +1,6 @@
 package platform;
 
+import platform.config.Configuration;
 import platform.app.AppMgrThread;
 import platform.pubsub.Channel;
 import platform.resource.ResMgrThread;
@@ -17,7 +18,7 @@ import  org.apache.commons.logging.Log;
 import  org.apache.commons.logging.LogFactory;
 
 public class Platform {
-    private static Log logger = LogFactory.getLog(Platform.class);
+    private static final Log logger = LogFactory.getLog(Platform.class);
     private static ResMgrThread resMgr;
     private static SerMgrThread serMgr;
     private static AppMgrThread appMgr;
@@ -35,6 +36,9 @@ public class Platform {
         File dir = new File("output/");
         Util.deleteDir(dir);
         dir.mkdirs();
+
+        //read config file
+        Configuration.analyzer("Resources/Configuration");
 
         //init database
         RedisClient client = RedisClient.create("redis://localhost:6379");

@@ -2,16 +2,16 @@ package platform.service.inv;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import platform.app.App;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import platform.app.AppMgrThread;
 import platform.pubsub.AbstractSubscriber;
-import platform.service.cxt.Configuration;
+import platform.config.Configuration;
 import platform.service.inv.algorithm.*;
 import platform.service.inv.struct.*;
 import platform.service.inv.struct.inv.InvAbstract;
 import platform.service.inv.struct.trace.Trace;
 import platform.struct.InvGenMode;
-import platform.struct.InvGenType;
 import platform.util.Util;
 
 import java.io.File;
@@ -29,6 +29,8 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
     private static final Map<String, PECount> peCountMap = new HashMap<>();
     //静态变量，第一维为appName，第二维为lineNumber，第三维为cancerObject列表
     private static final Map<String, Map<Integer, List<CancerObject>>> lineMap = new HashMap<>();
+    
+    private static final Log logger = LogFactory.getLog(CancerServer.class);
 
     // 构造方法私有化
     private CancerServer() {
@@ -78,9 +80,9 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
                                 Configuration.getCancerServerConfig().getDosThro());
                         dos.run();
 
-                        System.out.println(appName + " group:");
+                        logger.info(appName + " group:");
                         dos.getOutGrps().forEach((grp, iters) -> {
-                            System.out.println(grp + "=" + iters);
+                            logger.info(grp + "=" + iters);
                         });
 
                         //output group trace & gen inv

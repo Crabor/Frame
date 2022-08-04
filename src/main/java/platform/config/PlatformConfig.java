@@ -1,5 +1,6 @@
-package platform.service.cxt.Config;
+package platform.config;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.LinkedList;
@@ -19,6 +20,8 @@ public class PlatformConfig {
     private int buffer_clean_max;
     private int delay_allowed;
     private LinkedList<String> sensorNameList;
+
+    private LinkedList<SubConfig> subConfigs = new LinkedList<>();
 
     private static CMIDConfig CMID_CONFIG = null;
 
@@ -56,6 +59,11 @@ public class PlatformConfig {
         buffer_clean_max = object.getIntValue("BUFFER_CLEAN_MAX");
         sensorNameList = new LinkedList<>();
         delay_allowed = object.getIntValue("delay_allowed");
+        JSONArray subs = object.getJSONArray("subscribe");
+        for (int i = 0; i < subs.size(); i++) {
+            JSONObject sub = subs.getJSONObject(i);
+            subConfigs.add(new SubConfig(sub));
+        }
     }
 
     public boolean isServerOn() {
@@ -132,6 +140,10 @@ public class PlatformConfig {
         this.buffer_clean_max = buffer_clean_max;
     }
 
+    public LinkedList<SubConfig> getSubConfigs() {
+        return subConfigs;
+    }
+
     public String toString(){
         return "serverOn: " + serverOn
                 + ", isCtxCleanOn = " + isCtxCleanOn
@@ -142,6 +154,7 @@ public class PlatformConfig {
                 + ", Buffer_raw_max = " + buffer_raw_max
                 + ", Buffer_clean_max = " + buffer_clean_max
                 + ", Delay_allowed = " + delay_allowed
-                + ", CtxFixer = " + CtxFixer;
+                + ", CtxFixer = " + CtxFixer
+                + ", SubConfigs = " + subConfigs;
     }
 }
