@@ -46,7 +46,7 @@ public class Configuration {
         try {
             String str = FileUtils.readFileToString(file,"UTF-8");
             JSONObject obj = JSON.parseObject(str);
-            JSONObject platObj = (JSONObject) obj.get("PlatformConfiguration");
+            JSONObject platObj = (JSONObject) obj.get("CtxServerConfiguration");
             JSONArray sensorObj = (JSONArray) obj.get("SensorConfiguration");
             JSONArray appObj = (JSONArray) obj.get("AppConfiguration");
             JSONObject cancerObj = (JSONObject) obj.get("CancerServerConfiguration");
@@ -63,15 +63,11 @@ public class Configuration {
                 listOfAppObj.add(new AppConfig(temp));
             }
             cancerServerConfig = new CancerServerConfig(cancerObj);
-            logger.info(platformConfig);
-            for(int i = 0; i<listOfSensorObj.size(); i++) {
-                logger.info(listOfSensorObj.get(i));
-            }
-            for(int i = 0; i<listOfAppObj.size(); i++) {
-                logger.info(listOfAppObj.get(i));
-            }
-            logger.info(cancerServerConfig);
             resourceConfig = new ResourceConfig(resourceObj);
+            logger.info(platformConfig);
+            logger.info(listOfSensorObj);
+            logger.info(listOfAppObj);
+            logger.info(cancerServerConfig);
             logger.info(resourceConfig);
         } catch (IOException e) {
             e.printStackTrace();

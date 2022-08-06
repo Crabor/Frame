@@ -43,12 +43,15 @@ public class SensorConfig {
         return port;
     }
 
-    public String toString(){
-        return "SensorType = " + SensorType
-                + ", SensorName = " + SensorName
-                + ", isValid = " + isValid
-                + ", IPAddress = " + IPAddress
-                + ", port = " + port
-                + ", SensorFreq = " + SensorFreq;
+    @Override
+    public String toString() {
+        return "SensorConfig{" +
+                "SensorType='" + SensorType + '\'' +
+                ", SensorName='" + SensorName + '\'' +
+                ", isValid=" + isValid +
+                ", SensorFreq=" + SensorFreq +
+                ", IPAddress='" + IPAddress + '\'' +
+                ", port=" + port +
+                '}';
     }
 }

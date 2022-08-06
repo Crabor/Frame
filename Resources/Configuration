@@ -1,5 +1,5 @@
 {
-  "PlatformConfiguration": {
+  "CtxServerConfiguration": {
     "serverOn": true,
     "isCtxCleanOn": true,
     "isCtxFixOn": true,
