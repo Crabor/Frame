@@ -208,7 +208,9 @@ public class CancerObject {
         if (!CancerServer.getLineMap().get(appName).get(lineNumber).contains(this)) {
             CancerServer.getLineMap().get(appName).get(lineNumber).add(this);
         }
-        return new CheckInfo(appName, iterId, lineNumber, checkId, new Date().getTime(), name, value, getCheckState(lineNumber, group));
+        CheckState checkState = getCheckState(lineNumber, group);
+        return new CheckInfo(appName, iterId, lineNumber, checkId, new Date().getTime(), name, value,
+                checkState, checkState == CheckState.INV_VIOLATED ? invMap.get(lineNumber).get(group).getDiff(value) : 0);
     }
 
     public CheckInfo check(int lineNumber) {

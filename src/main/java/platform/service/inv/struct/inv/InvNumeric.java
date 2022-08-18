@@ -28,9 +28,21 @@ public class InvNumeric extends InvAbstract {
     @Override
     public boolean isViolated(double value) {
         //TODO:仅为演示
-        return value < min;
-//        return value < min || value > max;
+//        return value < min;
+        return value < min || value > max;
     }
+
+    @Override
+    public double getDiff(double value) {
+        double ret = 0;
+        if (value < min) {
+            ret = value - min;
+        } else if (value > max) {
+            ret = value - max;
+        }
+        return ret;
+    }
+
 
     @Override
     public void setInv() {

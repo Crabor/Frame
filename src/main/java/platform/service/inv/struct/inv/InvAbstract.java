@@ -52,6 +52,8 @@ public abstract class InvAbstract{
 
     public abstract boolean isViolated(double value);
 
+    public abstract double getDiff(double value);
+
     public String getAppName() {
         return appName;
     }

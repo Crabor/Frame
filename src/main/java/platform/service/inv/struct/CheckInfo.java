@@ -12,6 +12,7 @@ public class CheckInfo {
     public double value;//Cancer实例对应的T实例的值
 
     public CheckState checkState;//是否违反了不变式
+    public double diff;//checkState == CheckState.INV_VIOLATED时，diff为差值
 
     public CheckInfo(String appName, int iterId, int lineNumber, int checkId, long checkTime, String name, double value, CheckState checkState) {
         this.appName = appName;
@@ -22,6 +23,19 @@ public class CheckInfo {
         this.name = name;
         this.value = value;
         this.checkState = checkState;
+        this.diff = 0;
+    }
+
+    public CheckInfo(String appName, int iterId, int lineNumber, int checkId, long checkTime, String name, double value, CheckState checkState, double diff) {
+        this.appName = appName;
+        this.lineNumber = lineNumber;
+        this.iterId = iterId;
+        this.checkId = checkId;
+        this.checkTime = checkTime;
+        this.name = name;
+        this.value = value;
+        this.checkState = checkState;
+        this.diff = diff;
     }
 
     @Override
@@ -35,6 +49,7 @@ public class CheckInfo {
                 ", name='" + name + '\'' +
                 ", value=" + value +
                 ", checkState=" + checkState +
+                ", diff=" + diff +
                 '}';
     }
 }

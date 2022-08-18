@@ -1,6 +1,6 @@
 {
   "CtxServerConfiguration": {
-    "serverOn": true,
+    "serverOn": false,
     "isCtxCleanOn": true,
     "isCtxFixOn": true,
     "CtxCleaner": "ECC+IMD",
@@ -86,8 +86,8 @@
           "priorityId": 0,
         },
         {
-          "channel": "checkState",
-          "groupId": 0,
+          "channel": "check",
+          "groupId": 1,
           "priorityId": 0,
         }
       ],
