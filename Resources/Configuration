@@ -85,6 +85,11 @@
           "groupId": 0,
           "priorityId": 0,
         },
+        {
+          "channel": "checkState",
+          "groupId": 0,
+          "priorityId": 0,
+        }
       ],
     },
     "databaseDriver": {

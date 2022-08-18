@@ -1,5 +1,6 @@
 package platform.resource.driver;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import platform.pubsub.AbstractSubscriber;
 import platform.util.Util;
@@ -59,7 +60,10 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
         //System.out.println("dd send: " + msg);
         //receive msg from actor channel than transmit to car
         try {
-            byte[] data = msg.getBytes();
+            JSONObject jo = new JSONObject();
+            jo.put("channel", channel);
+            jo.put("message", msg);
+            byte[] data = jo.toJSONString().getBytes();
             DatagramPacket packet = new DatagramPacket(data, data.length, clientAddress, clientPort);
             socket.send(packet);
         } catch (IOException e) {
