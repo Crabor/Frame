@@ -1,6 +1,6 @@
 {
   "CtxServerConfiguration": {
-    "serverOn": false,
+    "serverOn": true,
     "isCtxCleanOn": true,
     "isCtxFixOn": true,
     "CtxCleaner": "ECC+IMD",
@@ -63,7 +63,7 @@
   ],
   "AppConfiguration": [
     {
-      "appName": "platform.app.userapps.MySyncApp",
+      "appName": "platform.testcarapp.MySyncApp",
       "sleepTime": 0,
       "subscribe": [
         {

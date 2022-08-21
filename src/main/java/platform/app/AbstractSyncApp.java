@@ -30,4 +30,14 @@ public abstract class AbstractSyncApp extends AbstractSubscriber implements Sync
         iter(channel, msg);
         CancerServer.iterExit(appName, iterId);
     }
+
+    @Override
+    public void onSubscribed(String s, long l) {
+
+    }
+
+    @Override
+    public void onUnsubscribed(String s, long l) {
+
+    }
 }

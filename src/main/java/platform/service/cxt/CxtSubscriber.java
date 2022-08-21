@@ -69,39 +69,34 @@ public class CxtSubscriber extends AbstractSubscriber implements Runnable {
     @Override
     public void run() {
         while (true) {
-            try {
-                Thread.sleep(50);
-                LinkedList<Message> send = ContextManager.getMsgFixedElements();
-                /*if(send != null) {
-                    for (int i = 0; i < send.size(); i++)
-                        System.out.println("==================================" + send.get(i).getMsg());
-                }*/
+            LinkedList<Message> send = ContextManager.getMsgFixedElements();
+            /*if(send != null) {
+                for (int i = 0; i < send.size(); i++)
+                    System.out.println("==================================" + send.get(i).getMsg());
+            }*/
 
-                //publish("sensor", pair.groupId, pair.priorityId - 1, msg);
+            //publish("sensor", pair.groupId, pair.priorityId - 1, msg);
 
-                //ContextManager.addRawSensingContext();
-                // 将处理后的数据返回给sensor频道
-                if(send!=null) {
+            //ContextManager.addRawSensingContext();
+            // 将处理后的数据返回给sensor频道
+            if(send!=null) {
 //                    fixCount += send.size();
-                    for (int i = 0; i < send.size(); i++) {
-                        String msgNew = send.get(i).getMsg();
-                        msgStatistics.addSend();
-                        publish("sensor", 1, 0, msgNew);
-                    }
-                    //redis： "SumStatistics", SerializeUtil.serialize(msgStatistics)<---(class CtxRuntimeStatus)
-                    //jedis.set(name1.getBytes(),send1);
-                    //System.out.println(msgStatistics.toString());
-                    publish("ctxStat", msgStatistics.toString());
-
-                    for (Map.Entry<String, RedisCtxCustom> entry: CtxStatistics.entrySet()) {
-                        //redis： "SumStatistics", SerializeUtil.serialize(msgStatistics)<---(class CtxRuntimeStatus)
-                        //jedis.set(name2.getBytes(),send2);
-                        publish("ctxStat", entry.getValue().toString());
-                        //.out.println(entry.getKey() + ": " + entry.getValue());//redis： entry.getKey(), SerializeUtil.serialize(entry)<---(class RedisCtxCustom)
-                    }
+                for (int i = 0; i < send.size(); i++) {
+                    String msgNew = send.get(i).getMsg();
+                    msgStatistics.addSend();
+                    publish("sensor", 1, 0, msgNew);
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                //redis： "SumStatistics", SerializeUtil.serialize(msgStatistics)<---(class CtxRuntimeStatus)
+                //jedis.set(name1.getBytes(),send1);
+                //System.out.println(msgStatistics.toString());
+                publish("ctxStat", msgStatistics.toString());
+
+                for (Map.Entry<String, RedisCtxCustom> entry: CtxStatistics.entrySet()) {
+                    //redis： "SumStatistics", SerializeUtil.serialize(msgStatistics)<---(class CtxRuntimeStatus)
+                    //jedis.set(name2.getBytes(),send2);
+                    publish("ctxStat", entry.getValue().toString());
+                    //.out.println(entry.getKey() + ": " + entry.getValue());//redis： entry.getKey(), SerializeUtil.serialize(entry)<---(class RedisCtxCustom)
+                }
             }
         }
     }

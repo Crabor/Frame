@@ -40,4 +40,14 @@ public abstract class AbstractAsyncApp extends AbstractSubscriber implements Asy
             t.start();
         }
     }
+
+    @Override
+    public void onSubscribed(String s, long l) {
+
+    }
+
+    @Override
+    public void onUnsubscribed(String s, long l) {
+
+    }
 }
