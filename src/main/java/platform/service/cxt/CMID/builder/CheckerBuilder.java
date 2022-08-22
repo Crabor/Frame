@@ -37,11 +37,11 @@ public class CheckerBuilder  extends AbstractCheckerBuilder implements Runnable{
         while (true){
             if (!PlatformConfig.getInstace().isCtxCleanOn())
                 continue;
-            try {
-                sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                sleep(1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
             LinkedList<String> results = ContextManager.getChangeInvokedElements();
             // obtained changes received from blockingList in platform.ContextManager
 
