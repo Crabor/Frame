@@ -24,3 +24,6 @@ hs_err_pid*
 #dir
 output
 out
+
+#file
+output3.txt
