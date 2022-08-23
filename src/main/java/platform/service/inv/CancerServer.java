@@ -30,7 +30,7 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
     //静态变量，第一维为appName，第二维为lineNumber，第三维为cancerObject列表
     private static final Map<String, Map<Integer, List<CancerObject>>> lineMap = new HashMap<>();
     
-    private static final Log logger = LogFactory.getLog(CancerServer.class);
+//    private static final Log logger = LogFactory.getLog(CancerServer.class);
 
     // 构造方法私有化
     private CancerServer() {
@@ -72,7 +72,7 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
                                 new ArrayList<>(iterMap.values()).subList(0, Configuration.getCancerServerConfig().getGroupThro()),
                                 Configuration.getCancerServerConfig().getKMeansGroupSize(),
                                 1E-10,
-                                Configuration.getListOfSensorObj().size());
+                                Configuration.getResourceConfig().getListOfSensorObj().size());
                         kMeans.run();
                         DoS dos = new DoS(
                                 iterMap,
@@ -143,22 +143,20 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
     @Override
     public void onMessage(String channel, String msg) {
         if (channel.equals("check")) {
-            List<CheckInfo> list = JSONArray.parseArray(msg, CheckInfo.class);
-            for (CheckInfo checkInfo : list) {
-                if (!checkMap.containsKey(checkInfo.appName)) {
-                    checkMap.put(checkInfo.appName, new HashMap<>());
-                }
-                Map<Integer, Map<Integer, List<CheckInfo>>> iterMap = checkMap.get(checkInfo.appName);
-                if (!iterMap.containsKey(checkInfo.iterId)) {
-                    iterMap.put(checkInfo.iterId, new HashMap<>());
-                }
-                Map<Integer, List<CheckInfo>> lineMap = iterMap.get(checkInfo.iterId);
-                if (!lineMap.containsKey(checkInfo.lineNumber)) {
-                    lineMap.put(checkInfo.lineNumber, new ArrayList<>());
-                }
-                List<CheckInfo> checkInfoList = lineMap.get(checkInfo.lineNumber);
-                checkInfoList.add(checkInfo);
+            CheckInfo checkInfo = JSONObject.parseObject(msg, CheckInfo.class);
+            if (!checkMap.containsKey(checkInfo.appName)) {
+                checkMap.put(checkInfo.appName, new HashMap<>());
             }
+            Map<Integer, Map<Integer, List<CheckInfo>>> iterMap = checkMap.get(checkInfo.appName);
+            if (!iterMap.containsKey(checkInfo.iterId)) {
+                iterMap.put(checkInfo.iterId, new HashMap<>());
+            }
+            Map<Integer, List<CheckInfo>> lineMap = iterMap.get(checkInfo.iterId);
+            if (!lineMap.containsKey(checkInfo.lineNumber)) {
+                lineMap.put(checkInfo.lineNumber, new ArrayList<>());
+            }
+            List<CheckInfo> checkInfoList = lineMap.get(checkInfo.lineNumber);
+            checkInfoList.add(checkInfo);
         } else if (channel.equals("sensor")) {
             iterId++;
             Map<String, Double> map = new HashMap<>();

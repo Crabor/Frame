@@ -11,7 +11,11 @@ public class SensorConfig {
     private int port;
 
     public SensorConfig(JSONObject object){
-        SensorType = object.getString("SensorType");
+        try {
+            SensorType = object.getString("SensorType");
+        } catch (NullPointerException e) {
+            SensorType = "Double";
+        }
         SensorName = object.getString("SensorName");
 //        isValid = object.getBoolean("isValid");
 //        SensorFreq = object.getIntValue("SensorFreq");

@@ -70,7 +70,7 @@ public class Interactor {
 
     }
     public static void printAllSensors(){
-        List<SensorConfig> sensorConfigs =  Configuration.getListOfSensorObj();
+        List<SensorConfig> sensorConfigs =  Configuration.getResourceConfig().getListOfSensorObj();
         for(int i = 0; i<sensorConfigs.size(); i++)
             System.out.println(sensorConfigs.get(i).toString());
     }

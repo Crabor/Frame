@@ -1,6 +1,7 @@
 package platform.config;
 
 import com.alibaba.fastjson.JSONObject;
+import platform.pubsub.Channel;
 
 public class SubConfig {
     public String channel;
@@ -15,8 +16,16 @@ public class SubConfig {
 
     public SubConfig(JSONObject object) {
         this.channel = object.getString("channel");
-        this.groupId = object.getInteger("groupId");
-        this.priorityId = object.getInteger("priorityId");
+        try {
+            this.groupId = object.getInteger("groupId");
+        } catch (NullPointerException e) {
+            this.groupId = 0;
+        }
+        try {
+            this.priorityId = object.getInteger("priorityId");
+        } catch (NullPointerException e) {
+            this.priorityId = 0;
+        }
     }
 
     @Override

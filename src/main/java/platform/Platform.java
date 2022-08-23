@@ -41,7 +41,9 @@ public class Platform {
         Configuration.analyzer("Resources/Configuration");
 
         //init database
-        RedisClient client = RedisClient.create("redis://localhost:6379");
+        RedisClient client = RedisClient.create(
+                "redis://" + Configuration.getRedisConfig().getServerAddress() + ":" +
+                        Configuration.getRedisConfig().getServerPort());
         Publisher.Init(client);
         AbstractSubscriber.Init(client);
 

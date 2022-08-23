@@ -17,14 +17,13 @@
     "subscribe": [
       {
         "channel": "sensor",
-        "groupId": 1,
         "priorityId": 1,
       },
     ],
   },
   "CancerServerConfiguration": {
       "serverOn": true,
-      "groupThro": 100,
+      "groupThro": 20,
       "kMeansGroupSize": 1,
       "dosThro": 0.5,
       "groupTraceType": "csv",
@@ -33,43 +32,18 @@
       "subscribe": [
         {
           "channel": "sensor",
-          "groupId": 1,
-          "priorityId": 0,
         },
         {
           "channel": "check",
-          "groupId": 1,
-          "priorityId": 0,
         },
       ],
   },
-  "SensorConfiguration": [
-    {
-      "SensorName": "front",
-      "SensorType": "Double"
-    },
-    {
-      "SensorName": "back",
-      "SensorType": "Double"
-    },
-    {
-      "SensorName": "left",
-      "SensorType": "Double"
-    },
-    {
-      "SensorName": "right",
-      "SensorType": "Double"
-    }
-  ],
   "AppConfiguration": [
     {
-      "appName": "platform.testcarapp.MySyncApp",
-      "sleepTime": 0,
+      "appName": "platform.testunitycar.MySyncApp",
       "subscribe": [
         {
           "channel": "sensor",
-          "groupId": 1,
-          "priorityId": 0,
         },
       ],
     },
@@ -82,13 +56,9 @@
       "subscribe": [
         {
           "channel": "actor",
-          "groupId": 0,
-          "priorityId": 0,
         },
         {
           "channel": "check",
-          "groupId": 1,
-          "priorityId": 0,
         }
       ],
     },
@@ -96,25 +66,46 @@
       "subscribe": [
         {
           "channel": "sensor",
-          "groupId": 0,
-          "priorityId": 0,
         },
         {
           "channel": "actor",
-          "groupId": 1,
-          "priorityId": 0,
         },
         {
           "channel": "check",
-          "groupId": 0,
-          "priorityId": 0,
         },
         {
           "channel": "ctxStat",
-          "groupId": 0,
-          "priorityId": 0,
         },
       ],
-    }
+    },
+    "SensorConfiguration": [
+      {
+        "SensorName": "front",
+      },
+      {
+        "SensorName": "back",
+      },
+      {
+        "SensorName": "left",
+      },
+      {
+        "SensorName": "right",
+      }
+    ],
+    "ActorConfiguration": [
+      {
+        "ActorName": "x",
+      },
+      {
+        "ActorName": "y",
+      },
+      {
+        "ActorName": "z",
+      },
+    ],
+  },
+  "RedisConfig": {
+    "serverAddress": "127.0.0.1",
+    "serverPort": "6379",
   }
 }

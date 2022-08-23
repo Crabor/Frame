@@ -13,7 +13,11 @@ public class AppConfig {
 
     public AppConfig(JSONObject object) {
         this.appName = object.getString("appName");
-        this.sleepTime = object.getInteger("sleepTime");
+        try {
+            this.sleepTime = object.getInteger("sleepTime");
+        } catch (NullPointerException e) {
+            this.sleepTime = 0;
+        }
         JSONArray subs = object.getJSONArray("subscribe");
         for (int i = 0; i < subs.size(); i++) {
             JSONObject sub = subs.getJSONObject(i);

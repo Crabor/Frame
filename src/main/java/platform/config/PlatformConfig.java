@@ -144,17 +144,21 @@ public class PlatformConfig {
         return subConfigs;
     }
 
-    public String toString(){
-        return "serverOn: " + serverOn
-                + ", isCtxCleanOn = " + isCtxCleanOn
-                + ", isCtxFixOn = " + isCtxFixOn
-                + ", CtxCleaner = " + CtxCleaner
-                + ", CtxChecker = " + CtxChecker
-                + ", CtxScheduler = " + CtxScheduler
-                + ", Buffer_raw_max = " + buffer_raw_max
-                + ", Buffer_clean_max = " + buffer_clean_max
-                + ", Delay_allowed = " + delay_allowed
-                + ", CtxFixer = " + CtxFixer
-                + ", SubConfigs = " + subConfigs;
+    @Override
+    public String toString() {
+        return "CtxServerConfig{" +
+                "serverOn=" + serverOn +
+                ", isCtxFixOn=" + isCtxFixOn +
+                ", isCtxCleanOn=" + isCtxCleanOn +
+                ", CtxFixer='" + CtxFixer + '\'' +
+                ", CtxCleaner='" + CtxCleaner + '\'' +
+                ", CtxChecker='" + CtxChecker + '\'' +
+                ", CtxScheduler='" + CtxScheduler + '\'' +
+                ", buffer_raw_max=" + buffer_raw_max +
+                ", buffer_clean_max=" + buffer_clean_max +
+                ", delay_allowed=" + delay_allowed +
+                ", sensorNameList=" + sensorNameList +
+                ", subConfigs=" + subConfigs +
+                '}';
     }
 }

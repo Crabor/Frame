@@ -1,13 +1,9 @@
-package platform.struct;
+package platform.testunitycar;
 
 public class Actor {
     double xSpeed;
     double ySpeed;
     double zSpeed;
-
-    public Actor() {
-        this(0, 0, 0);
-    }
 
     public Actor(double xSpeed, double ySpeed, double zSpeed) {
         this.xSpeed = xSpeed;

@@ -1,6 +1,8 @@
 package platform.pubsub;
 
 import io.lettuce.core.api.StatefulRedisConnection;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import platform.struct.GrpPrioPair;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.pubsub.RedisPubSubListener;
@@ -18,7 +20,10 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
     private final Map<Channel, GrpPrioPair> channels = new HashMap<>();
     protected Publisher publisher;
     private static RedisClient client = null;
+
     protected Runnable thread = null;
+
+    protected static Log logger;
     private final StatefulRedisPubSubConnection<String, String> pubsubConn;
     protected final StatefulRedisConnection<String, String> commonConn;
 
@@ -56,6 +61,7 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
         objsLock.lock();
         objs.add(this);
         objsLock.unlock();
+        logger = LogFactory.getLog(this.getClass());
     }
 
     public void bind(Runnable thread) {

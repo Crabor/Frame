@@ -2,7 +2,10 @@ package platform.resource.driver;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import platform.pubsub.AbstractSubscriber;
+import platform.service.inv.CancerServer;
 import platform.util.Util;
 
 import java.io.IOException;
@@ -16,6 +19,8 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
     private int serverPort;
     private InetAddress clientAddress;
     private int clientPort;
+
+//    private static final Log logger = LogFactory.getLog(DeviceDriver.class);
 
     public DeviceDriver(int serverPort, String clientAddress, int clientPort) {
         this.serverPort = serverPort;
@@ -40,7 +45,6 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                 String sensorData = new String(data, 0, packet.getLength());
 //                Thread.sleep(50);
 //                String sensorData = Util.randomJSONCarData();
-//                System.out.println("dd recv: " + sensorData);
                 publish("sensor", sensorData);
             } catch (Exception e) {
                 e.printStackTrace();

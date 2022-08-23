@@ -1,8 +1,10 @@
 package platform.service.inv;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import platform.config.Configuration;
+import platform.pubsub.Publisher;
 import platform.service.inv.struct.CheckInfo;
 import platform.service.inv.struct.CheckState;
 import platform.service.inv.struct.InvState;
@@ -28,6 +30,8 @@ public class CancerObject {
     private final Map<Integer, Map<Integer, InvAbstract>> invMap = new HashMap<>();
 
     private static final Log logger = LogFactory.getLog(CancerObject.class);
+
+    private Publisher publisher = new Publisher();
 
     public CancerObject(String appName, String name, double value) {
         if (contains(appName, name)) {
@@ -209,8 +213,11 @@ public class CancerObject {
             CancerServer.getLineMap().get(appName).get(lineNumber).add(this);
         }
         CheckState checkState = getCheckState(lineNumber, group);
-        return new CheckInfo(appName, iterId, lineNumber, checkId, new Date().getTime(), name, value,
+        CheckInfo checkInfo = new CheckInfo(appName, iterId, lineNumber, checkId, new Date().getTime(), name, value,
                 checkState, checkState == CheckState.INV_VIOLATED ? invMap.get(lineNumber).get(group).getDiff(value) : 0);
+        // pub to check channel
+        publisher.publish("check", JSONObject.toJSONString(checkInfo));
+        return checkInfo;
     }
 
     public CheckInfo check(int lineNumber) {
