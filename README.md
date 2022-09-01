@@ -22,7 +22,7 @@
 
 ![](img/Snipaste_2022-09-01_16-17-38.png)
 
-平台通过DeviceDriver类与外界通信，通信方式为UCP套接字，因此可以兼容不同语言的外部程序。其中udp消息收发相关的配置在配置文件中决定。DeviceDriver接收到外部数据后将数据发布到sensor频道进而让app接收到sensor数据。
+平台通过DeviceDriver类与外界通信，通信方式为UDP套接字，因此可以兼容不同语言的外部程序。其中udp消息收发相关的配置在配置文件中决定。DeviceDriver接收到外部数据后将数据发布到sensor频道进而让app接收到sensor数据。
 
 例如外部程序是dji的小车程序（python），可通过一下模板和平台进行通信：
 
