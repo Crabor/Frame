@@ -216,6 +216,121 @@ public class MySyncApp extends AbstractSyncApp {
 }
 ```
 
+```txt
+//Configuration
+{
+  "CtxServerConfiguration": {
+    "serverOn": true,
+    "isCtxCleanOn": true,
+    "isCtxFixOn": true,
+    "CtxCleaner": "ECC+IMD",
+    "CtxFixer": "Drop",
+    "BUFFER_RAW_MAX": 2,
+    "BUFFER_CLEAN_MAX": 50,
+    "delay_allowed": 20000, //ms  <= 1000*20
+    "dataFile": "data28/wrongData3.txt",
+    "changeHandlerType": "static-change-based",
+    "logFilePath": "output3.txt",
+    "ruleFilePath": "Resources/rules.xml",
+    "patternFilePath": "Resources/patterns.xml",
+    "oracleFilePath": "oracle.txt",
+    "subscribe": [
+      {
+        "channel": "sensor",
+        "priorityId": 1,
+      },
+    ],
+  },
+  "InvServerConfiguration": {
+      "serverOn": true,
+      "groupThro": 20,
+      "kMeansGroupSize": 1,
+      "dosThro": 0.5,
+      "groupTraceType": "csv",
+      "invGenMode": "total",
+      "invGenType": "numeric",
+      "subscribe": [
+        {
+          "channel": "sensor",
+        },
+        {
+          "channel": "check",
+        },
+      ],
+  },
+  "AppConfiguration": [
+    {
+      "appName": "platform.testunitycar.MySyncApp",
+      "subscribe": [
+        {
+          "channel": "sensor",
+        },
+      ],
+    },
+  ],
+  "ResourceConfiguration": {
+    "deviceDriver": {
+      "serverPort": 8080,
+      "clientAddress": "127.0.0.1",
+      "clientPort": 8081,
+      "subscribe": [
+        {
+          "channel": "actor",
+        },
+        {
+          "channel": "check",
+        }
+      ],
+    },
+    "databaseDriver": {
+      "subscribe": [
+        {
+          "channel": "sensor",
+        },
+        {
+          "channel": "actor",
+        },
+        {
+          "channel": "check",
+        },
+        {
+          "channel": "ctxStat",
+        },
+      ],
+    },
+    "SensorConfiguration": [
+      {
+        "SensorName": "front",
+      },
+      {
+        "SensorName": "back",
+      },
+      {
+        "SensorName": "left",
+      },
+      {
+        "SensorName": "right",
+      }
+    ],
+    "ActorConfiguration": [
+      {
+        "ActorName": "x",
+      },
+      {
+        "ActorName": "y",
+      },
+      {
+        "ActorName": "z",
+      },
+    ],
+  },
+  "RedisConfig": {
+    "serverAddress": "127.0.0.1",
+    "serverPort": "6379",
+  }
+}
+```
+
 运行结果：
 
 ![](img/123.gif)
