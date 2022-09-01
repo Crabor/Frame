@@ -15,8 +15,8 @@ import org.apache.commons.logging.LogFactory;
 public class Configuration {
     private static final Log logger = LogFactory.getLog(Configuration.class);
     private static List<AppConfig> listOfAppObj  = new ArrayList<>();
-    private static PlatformConfig platformConfig;
-    private static CancerServerConfig cancerServerConfig;
+    private static CtxServerConfig ctxServerConfig;
+    private static InvServerConfig invServerConfig;
     private static ResourceConfig resourceConfig;
 
     private static RedisConfig redisConfig;
@@ -26,12 +26,12 @@ public class Configuration {
         return listOfAppObj;
     }
 
-    public static PlatformConfig getPlatformConfig() {
-        return platformConfig;
+    public static CtxServerConfig getCtxServerConfig() {
+        return ctxServerConfig;
     }
 
-    public static CancerServerConfig getCancerServerConfig() {
-        return cancerServerConfig;
+    public static InvServerConfig getInvServerConfig() {
+        return invServerConfig;
     }
 
     public static ResourceConfig getResourceConfig() {
@@ -47,22 +47,22 @@ public class Configuration {
         try {
             String str = FileUtils.readFileToString(file,"UTF-8");
             JSONObject obj = JSON.parseObject(str);
-            JSONObject platObj = (JSONObject) obj.get("CtxServerConfiguration");
+            JSONObject ctxObj = (JSONObject) obj.get("CtxServerConfiguration");
             JSONArray appObj = (JSONArray) obj.get("AppConfiguration");
-            JSONObject cancerObj = (JSONObject) obj.get("CancerServerConfiguration");
+            JSONObject invObj = (JSONObject) obj.get("InvServerConfiguration");
             JSONObject resourceObj = (JSONObject) obj.get("ResourceConfiguration");
             JSONObject redisObj = (JSONObject) obj.get("RedisConfig");
-            //System.out.println(platObj.toJSONString());
-            platformConfig  = PlatformConfig.getInstace(platObj);
+            //System.out.println(ctxObj.toJSONString());
+            ctxServerConfig  = CtxServerConfig.getInstace(ctxObj);
             for (int i = 0; i < appObj.size(); i++) {
                 JSONObject temp = (JSONObject) appObj.get(i);
                 listOfAppObj.add(new AppConfig(temp));
             }
-            cancerServerConfig = new CancerServerConfig(cancerObj);
+            invServerConfig = new InvServerConfig(invObj);
             resourceConfig = new ResourceConfig(resourceObj);
             redisConfig = new RedisConfig(redisObj);
-            logger.info(platformConfig);
-            logger.info(cancerServerConfig);
+            logger.info(ctxServerConfig);
+            logger.info(invServerConfig);
             logger.info(listOfAppObj);
             logger.info(resourceConfig);
             logger.info(redisConfig);
@@ -72,7 +72,7 @@ public class Configuration {
         List<SensorConfig> listOfSensorObj = resourceConfig.getListOfSensorObj();
         SensorLength = listOfSensorObj.size();
         for (SensorConfig sensorConfig : listOfSensorObj) {
-            platformConfig.addSensor(sensorConfig.getSensorName());
+            ctxServerConfig.addSensor(sensorConfig.getSensorName());
         }
         //System.out.println("SensorLength"+SensorLength);
     }

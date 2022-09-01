@@ -21,8 +21,6 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
     protected Publisher publisher;
     private static RedisClient client = null;
 
-    protected Runnable thread = null;
-
     protected static Log logger;
     private final StatefulRedisPubSubConnection<String, String> pubsubConn;
     protected final StatefulRedisConnection<String, String> commonConn;
@@ -62,10 +60,6 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
         objs.add(this);
         objsLock.unlock();
         logger = LogFactory.getLog(this.getClass());
-    }
-
-    public void bind(Runnable thread) {
-        this.thread = thread;
     }
 
     @Nullable
@@ -155,12 +149,12 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
 
     @Override
     public void subscribed(String s, long l) {
-        onSubscribed(s.substring(0, s.indexOf('-')), l);
+
     }
 
     @Override
     public void unsubscribed(String s, long l) {
-        onUnsubscribed(s.substring(0, s.indexOf('-')), l);
+
     }
 
     @Override

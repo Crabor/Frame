@@ -1,7 +1,9 @@
 package platform.service.cxt.Context;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import platform.config.Configuration;
-import platform.config.PlatformConfig;
+import platform.config.CtxServerConfig;
 import platform.service.cxt.WebConnector.CtxRuntimeStatus;
 import platform.service.cxt.WebConnector.RedisCtxCustom;
 
@@ -22,6 +24,8 @@ public class ContextManager<T> {
     public static CtxRuntimeStatus msgStatistics = new CtxRuntimeStatus();
 
     public static Map<String, RedisCtxCustom> CtxStatistics = new HashMap<>(); //ctx wrongnumber, correctnumber, rate, buffersize
+
+    private static final Log logger = LogFactory.getLog(ContextManager.class);
 
     public static Map<String, ContextBuffer> getContextBufferList() {
         return ContextBufferList;
@@ -94,6 +98,8 @@ public class ContextManager<T> {
 
             while(message!=null && message.index < end_index) {
                 String Msgindex = message.index + "";
+//                logger.info(errorMsgID);
+//                logger.info(Msgindex);
                 try {
                     message = msgBuffer.take();
 
@@ -103,16 +109,16 @@ public class ContextManager<T> {
                 if(checkMsgID.containsKey(Msgindex)&&checkMsgID.get(Msgindex)==Configuration.getSensorLength()) {
                     if (!errorMsgID.contains(Msgindex)) {
                         addMsgBufferFixed(message);
-                        //System.out.println("Fixed: " +message.index + "---"+message);
+//                        logger.info("Fixed: " +message.index + "---"+message);
                     } else {
                         errorMsgID.remove(Msgindex);
-                        //System.out.println("Removing: " +message.index + "---"+message);
+//                        logger.info("Removing: " +message.index + "---"+message);
                         msgStatistics.addfilter();
                     }
                     checkMsgID.remove(Msgindex);
                 }
                 else {
-                    System.out.println("Skipping: " +Msgindex + "---"+message.getMsg());
+//                    logger.info("Skipping: " +Msgindex + "---"+message.getMsg());
                     msgStatistics.addfilter();
                 }
                 //results.add(change);
@@ -151,15 +157,15 @@ public class ContextManager<T> {
         return results;
     }
     public static void registContextManager(String name){
-        ContextBufferList.put(name, new ContextBuffer(PlatformConfig.getInstace().getBuffer_raw_max(),
-                PlatformConfig.getInstace().getBuffer_clean_max()));
+        ContextBufferList.put(name, new ContextBuffer(CtxServerConfig.getInstace().getBuffer_raw_max(),
+                CtxServerConfig.getInstace().getBuffer_clean_max()));
     }
     public static void registContextManagerAll() {
-        LinkedList<String> temp = PlatformConfig.getInstace().getSensorNameList();
+        LinkedList<String> temp = CtxServerConfig.getInstace().getSensorNameList();
         for (int i = 0; i < temp.size(); i++) {
             String name = temp.get(i);
-            ContextBufferList.put(name, new ContextBuffer(PlatformConfig.getInstace().getBuffer_raw_max(),
-                    PlatformConfig.getInstace().getBuffer_clean_max()));
+            ContextBufferList.put(name, new ContextBuffer(CtxServerConfig.getInstace().getBuffer_raw_max(),
+                    CtxServerConfig.getInstace().getBuffer_clean_max()));
             CtxStatistics.put(name, new RedisCtxCustom(name, "sensor info"));
         }
     }

@@ -6,8 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class PlatformConfig {
-    private static PlatformConfig INSTANCE = null;
+public class CtxServerConfig {
+    private static CtxServerConfig INSTANCE = null;
     public static AtomicInteger context_index = new AtomicInteger();
     private boolean serverOn;
     public boolean isCtxFixOn;
@@ -27,11 +27,11 @@ public class PlatformConfig {
 
     public static LinkedList<String> changeListForChecking = new LinkedList<>();
 
-    public static PlatformConfig getInstace(){
+    public static CtxServerConfig getInstace(){
         return INSTANCE;
     }
-    public static PlatformConfig getInstace(JSONObject object){
-        INSTANCE = new PlatformConfig(object);
+    public static CtxServerConfig getInstace(JSONObject object){
+        INSTANCE = new CtxServerConfig(object);
         CMID_CONFIG = new CMIDConfig(INSTANCE.CtxChecker, INSTANCE.CtxScheduler, INSTANCE.CtxFixer,object.getString("dataFile"), object.getString("changeHandlerType"),
                 object.getString("logFilePath"), object.getString("ruleFilePath"),
                 object.getString("patternFilePath"));
@@ -47,7 +47,7 @@ public class PlatformConfig {
         return sensorNameList;
     }
 
-    PlatformConfig(JSONObject object){
+    CtxServerConfig(JSONObject object){
         serverOn = object.getBoolean("serverOn");
         isCtxFixOn = object.getBoolean("isCtxFixOn");
         isCtxCleanOn = object.getBoolean("isCtxCleanOn");

@@ -21,7 +21,7 @@
       },
     ],
   },
-  "CancerServerConfiguration": {
+  "InvServerConfiguration": {
       "serverOn": true,
       "groupThro": 20,
       "kMeansGroupSize": 1,

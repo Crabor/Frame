@@ -2,6 +2,7 @@ package platform.service.cxt.CMID.builder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import platform.config.CtxServerConfig;
 import platform.service.cxt.CMID.change.ChangeHandler;
 import platform.service.cxt.CMID.change.ChangebasedChangeHandler;
 import platform.service.cxt.CMID.checker.*;
@@ -16,7 +17,6 @@ import platform.service.cxt.CMID.util.Accuracy;
 import platform.service.cxt.CMID.util.LogFileHelper;
 
 import platform.config.CMIDConfig;
-import platform.config.PlatformConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -71,7 +71,7 @@ public abstract class AbstractCheckerBuilder implements CheckerType {
 
     protected int port;
 
-    public AbstractCheckerBuilder(PlatformConfig config) {
+    public AbstractCheckerBuilder(CtxServerConfig config) {
         CMIDConfig cmidConfig = config.getCMIDConfig();
         //check type
         String technique = cmidConfig.getCtxChecker();

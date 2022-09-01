@@ -2,8 +2,8 @@ package platform.service.cxt.CMID.builder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import platform.config.CtxServerConfig;
 import platform.service.cxt.CMID.checker.Checker;
-import platform.config.PlatformConfig;
 
 import java.io.IOException;
 import java.net.DatagramSocket;
@@ -20,8 +20,8 @@ public class ThreadBuilder extends AbstractCheckerBuilder implements Runnable{
     private boolean running;
     private byte [] buf = new byte[256];
 
-    public ThreadBuilder(PlatformConfig platformConfig)  {
-        super(platformConfig);
+    public ThreadBuilder(CtxServerConfig ctxServerConfig)  {
+        super(ctxServerConfig);
         if (!changeHandlerType.contains("dynamic")) {
             logger.info("配置文件配置错误：运行Server需将changeHandlerType配置为dynamic-change-based");
             System.exit(1);
@@ -47,11 +47,11 @@ public class ThreadBuilder extends AbstractCheckerBuilder implements Runnable{
 
         while (running) {
 
-            synchronized (PlatformConfig.changeListForChecking) {
+            synchronized (CtxServerConfig.changeListForChecking) {
 
                 long start = System.nanoTime();
 
-                for (String chg : PlatformConfig.changeListForChecking) {
+                for (String chg : CtxServerConfig.changeListForChecking) {
                     changeHandler.doContextChange(chg);
                 }
 
@@ -67,7 +67,7 @@ public class ThreadBuilder extends AbstractCheckerBuilder implements Runnable{
 
                 System.out.print("[INFO] INC: " + inc + "\tTotal Checking time: " + (timeSum / 1000000) + " ms\r");
                 try {
-                    PlatformConfig.changeListForChecking.wait();
+                    CtxServerConfig.changeListForChecking.wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -85,7 +85,7 @@ public class ThreadBuilder extends AbstractCheckerBuilder implements Runnable{
 
     public static void main(String[] args) {
         if(args.length == 1) {
-            Thread serverThread = new Thread(new ThreadBuilder(PlatformConfig.getInstace()));
+            Thread serverThread = new Thread(new ThreadBuilder(CtxServerConfig.getInstace()));
             serverThread.setPriority(Thread.MAX_PRIORITY);
             serverThread.start();
         }

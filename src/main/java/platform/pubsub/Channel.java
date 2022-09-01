@@ -39,7 +39,7 @@ public class Channel {
         return subscribers;
     }
 
-    public Map<Integer, List<AbstractSubscriber>> getGroup(int groupId) {
+    public Map<Integer, List<AbstractSubscriber>> getSubscribers(int groupId) {
         return subscribers.get(groupId);
     }
 

@@ -73,7 +73,7 @@ public class ContextBuffer {
     }
 
     public int returnBufferSize(){
-        if (Configuration.getPlatformConfig().isCtxCleanOn == true)
+        if (Configuration.getCtxServerConfig().isCtxCleanOn == true)
             return cleanQueue.size();
         else
             return rawQueue.size();

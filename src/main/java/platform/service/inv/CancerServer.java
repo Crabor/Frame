@@ -60,24 +60,24 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (Configuration.getCancerServerConfig().getInvGenMode() == InvGenMode.TOTAL) {
+            if (Configuration.getInvServerConfig().getInvGenMode() == InvGenMode.TOTAL) {
                 segMap.forEach((appName, iterMap) -> {
                     PECount peCount = peCountMap.get(appName);
                     if (!peCount.isGrouped &&
                             Math.min(peCount.eCxtCount, peCount.pCxtCount)
-                                    > Configuration.getCancerServerConfig().getGroupThro()) {
+                                    > Configuration.getInvServerConfig().getGroupThro()) {
                         peCount.isGrouped = true;
                         //group
                         KMeans kMeans = new KMeans(
-                                new ArrayList<>(iterMap.values()).subList(0, Configuration.getCancerServerConfig().getGroupThro()),
-                                Configuration.getCancerServerConfig().getKMeansGroupSize(),
+                                new ArrayList<>(iterMap.values()).subList(0, Configuration.getInvServerConfig().getGroupThro()),
+                                Configuration.getInvServerConfig().getKMeansGroupSize(),
                                 1E-10,
                                 Configuration.getResourceConfig().getListOfSensorObj().size());
                         kMeans.run();
                         DoS dos = new DoS(
                                 iterMap,
                                 kMeans.getGrps(),
-                                Configuration.getCancerServerConfig().getDosThro());
+                                Configuration.getInvServerConfig().getDosThro());
                         dos.run();
 
                         logger.info(appName + " group:");
@@ -86,7 +86,7 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
                         });
 
                         //output group trace & gen inv
-                        Trace traceOutput =  Configuration.getCancerServerConfig().getGroupTraceType();
+                        Trace traceOutput =  Configuration.getInvServerConfig().getGroupTraceType();
                         dos.getOutGrps().forEach((grp, iters) -> {
                             Map<Integer, List<Integer>> linesTrace = new HashMap<>();
                             iters.forEach(iter -> {
@@ -107,7 +107,7 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
                                     }
                                     if (!cancerObject.getInvMap().get(lineNumber).containsKey(grp)) {
                                         String invClassName = "platform.service.inv.struct.inv.Inv" +
-                                                Util.makeFirstCharUpperCase(Configuration.getCancerServerConfig().getInvGenType().toString().toLowerCase());
+                                                Util.makeFirstCharUpperCase(Configuration.getInvServerConfig().getInvGenType().toString().toLowerCase());
                                         try {
                                             InvAbstract inv = (InvAbstract) Class.forName(invClassName).newInstance();
                                             inv.setMetaData(appName, lineNumber, grp, cancerObject.getName(), lineTrace);
@@ -182,16 +182,6 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
                 peCount.eCxtCount++;
             });
         }
-    }
-
-    @Override
-    public void onSubscribed(String channel, long subChannelCount) {
-
-    }
-
-    @Override
-    public void onUnsubscribed(String channel, long subChannelCount) {
-
     }
 
     public static Map<String, Map<Integer, Map<Integer, List<CheckInfo>>>> getCheckMap() {

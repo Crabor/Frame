@@ -1,8 +1,8 @@
 package platform.service.cxt;
 
 import platform.config.Configuration;
+import platform.config.CtxServerConfig;
 import platform.service.cxt.Context.Context;
-import platform.config.PlatformConfig;
 import platform.config.SensorConfig;
 
 import platform.service.cxt.Context.ContextBuffer;
@@ -20,7 +20,7 @@ public class Interactor {
         Configuration.analyzer("Resources/Configuration");
         //ListenManager.ListenReady(Configuration.getListOfSensorObj());
 
-        //Thread checkerThread = new Thread(new CheckerBuilder(PlatformConfig.getInstace()));
+        //Thread checkerThread = new Thread(new CheckerBuilder(CtxServerConfig.getInstace()));
         //checkerThread.setPriority(Thread.MAX_PRIORITY);
         //checkerThread.start();
 
@@ -31,7 +31,7 @@ public class Interactor {
         //ListenManager.ListenStart(name);
     }
     public static String getSensorData(String name){
-        if(PlatformConfig.getInstace().isCtxCleanOn()) {
+        if(CtxServerConfig.getInstace().isCtxCleanOn()) {
             Context c = ContextManager.pollCleanSensingContext(name);
             return (c!=null?c.toString():null);
         }
@@ -43,7 +43,7 @@ public class Interactor {
     public static LinkedList<String> getSensorDataAll(){
         LinkedList<String> result = new LinkedList<>();
         LinkedList<Context> temp;
-        if(PlatformConfig.getInstace().isCtxCleanOn())
+        if(CtxServerConfig.getInstace().isCtxCleanOn())
             temp = ContextManager.pollCleanSensingContextAll();
         else
             temp = ContextManager.pollRawSensingContextAll();
@@ -55,7 +55,7 @@ public class Interactor {
     }
     public static void ruleRegistAll(){
         ContextManager.registRuleStatistics();
-//        LinkedList<String> temp = PlatformConfig.getInstace().getSensorNameList();
+//        LinkedList<String> temp = CtxServerConfig.getInstace().getSensorNameList();
 //        for (int i=0; i< temp.size(); i++){
 //            sensorRegist(temp.get(i));
 //        }
@@ -63,7 +63,7 @@ public class Interactor {
     }
     public static void sensorRegistAll(){
         ContextManager.registContextManagerAll();
-//        LinkedList<String> temp = PlatformConfig.getInstace().getSensorNameList();
+//        LinkedList<String> temp = CtxServerConfig.getInstace().getSensorNameList();
 //        for (int i=0; i< temp.size(); i++){
 //            sensorRegist(temp.get(i));
 //        }

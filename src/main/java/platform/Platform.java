@@ -31,6 +31,22 @@ public class Platform {
         mgrStartFlagLock.unlock();
     }
 
+    public static void lockUntilMgrStartFlagEqual(int value) {
+        while (true) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            mgrStartFlagLock.lock();
+            if (mgrStartFlag == value) {
+                mgrStartFlagLock.unlock();
+                break;
+            }
+            mgrStartFlagLock.unlock();
+        }
+    }
+
     public static void Init() {
         //delete output dir
         File dir = new File("output/");
@@ -54,51 +70,16 @@ public class Platform {
     }
 
     public static void Start() {
-        resMgr.start();
-        while (true) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            mgrStartFlagLock.lock();
-            if (mgrStartFlag == 1) {
-                mgrStartFlagLock.unlock();
-                break;
-            }
-            mgrStartFlagLock.unlock();
-        }
-        logger.info("ResMgrThread started");
         serMgr.start();
-        while (true) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            mgrStartFlagLock.lock();
-            if (mgrStartFlag == 2) {
-                mgrStartFlagLock.unlock();
-                break;
-            }
-            mgrStartFlagLock.unlock();
-        }
+        lockUntilMgrStartFlagEqual(1);
         logger.info("SerMgrThread started");
+        resMgr.start();
+        lockUntilMgrStartFlagEqual(2);
+        logger.info("ResMgrThread started");
         appMgr.start();
-        while (true) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            mgrStartFlagLock.lock();
-            if (mgrStartFlag == 3) {
-                mgrStartFlagLock.unlock();
-                break;
-            }
-            mgrStartFlagLock.unlock();
-        }
+        lockUntilMgrStartFlagEqual(3);
         logger.info("AppMgrThread started");
+
         logger.info("channels: ");
         for (Channel channel : Channel.getObjs()) {
             logger.info(channel);

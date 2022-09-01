@@ -46,14 +46,4 @@ public class DBDriver extends AbstractSubscriber implements Runnable {
         RedisCommands<String, String> sync = commonConn.sync();
         sync.rpush(channel, msg);
     }
-
-    @Override
-    public void onSubscribed(String channel, long subChannelCount) {
-
-    }
-
-    @Override
-    public void onUnsubscribed(String channel, long subChannelCount) {
-
-    }
 }

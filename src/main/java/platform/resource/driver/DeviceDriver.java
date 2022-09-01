@@ -45,6 +45,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                 String sensorData = new String(data, 0, packet.getLength());
 //                Thread.sleep(50);
 //                String sensorData = Util.randomJSONCarData();
+                logger.debug("dd recv: " + sensorData);
                 publish("sensor", sensorData);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -73,15 +74,5 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void onSubscribed(String channel, long subChannelCount) {
-
-    }
-
-    @Override
-    public void onUnsubscribed(String channel, long subChannelCount) {
-
     }
 }

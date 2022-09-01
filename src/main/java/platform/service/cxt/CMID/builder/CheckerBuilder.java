@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import platform.service.cxt.CMID.checker.Checker;
-import platform.config.PlatformConfig;
+import platform.config.CtxServerConfig;
 import platform.service.cxt.Context.ContextManager;
 
 import java.util.*;
@@ -19,7 +19,7 @@ public class CheckerBuilder  extends AbstractCheckerBuilder implements Runnable{
     private static final Log logger = LogFactory.getLog(CheckerBuilder.class);
     private static HashMap<String, Long> checkPointLog;
 
-    public CheckerBuilder(PlatformConfig config) {
+    public CheckerBuilder(CtxServerConfig config) {
         super(config);
         checkPointLog = new HashMap<>();
         for(int i = 0; i<patternList.size(); i++)
@@ -35,7 +35,7 @@ public class CheckerBuilder  extends AbstractCheckerBuilder implements Runnable{
 
         //for(String line : contextList) {
         while (true){
-            if (!PlatformConfig.getInstace().isCtxCleanOn())
+            if (!CtxServerConfig.getInstace().isCtxCleanOn())
                 continue;
 //            try {
 //                sleep(1000);
@@ -43,6 +43,7 @@ public class CheckerBuilder  extends AbstractCheckerBuilder implements Runnable{
 //                e.printStackTrace();
 //            }
             LinkedList<String> results = ContextManager.getChangeInvokedElements();
+//            logger.debug("result: " + results);
             // obtained changes received from blockingList in platform.ContextManager
 
 
@@ -79,6 +80,7 @@ public class CheckerBuilder  extends AbstractCheckerBuilder implements Runnable{
                 //incCount += checker.getInc();
                 Set<String> incs_delta = checker.getIncLinkSet_delta();
                 List<String> errorMsgIDs = incInvolvedMsgList(incs_delta);
+//                logger.debug("errorMsgIDs: " + errorMsgIDs);
                 ContextManager.adderrorMsgIDList(errorMsgIDs);
                 //System.out.println("Checker delta: "+checker.getName() + "====" + incs_delta.toString());
                 //System.out.println("Error list: "+ errorMsgIDs.toString());

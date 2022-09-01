@@ -43,16 +43,18 @@ public class ResMgrThread implements Runnable {
         for (SubConfig subConfig : ddc.getSubConfigs()) {
             dd.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
         }
-        dd.start();
 
         DatabaseDriverConfig dbdc = Configuration.getResourceConfig().getDatabaseDriverConfig();
         dbd = new DBDriver();
         for (SubConfig subConfig : dbdc.getSubConfigs()) {
             dbd.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
         }
-        dbd.start();
 
         Platform.incrMgrStartFlag();
+
+        Platform.lockUntilMgrStartFlagEqual(3);
+        dd.start();
+        dbd.start();
     }
 
     public DBDriver getDBDriver() {

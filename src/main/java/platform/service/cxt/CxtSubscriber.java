@@ -2,17 +2,14 @@ package platform.service.cxt;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import platform.config.CtxServerConfig;
 import platform.pubsub.AbstractSubscriber;
 import platform.config.Configuration;
-import platform.config.PlatformConfig;
 import platform.config.SensorConfig;
 import platform.service.cxt.Context.Context;
 import platform.service.cxt.Context.ContextManager;
 import platform.service.cxt.Context.Message;
 import platform.service.cxt.WebConnector.RedisCtxCustom;
-import platform.service.inv.CancerServer;
 import platform.struct.GrpPrioPair;
 
 import java.text.SimpleDateFormat;
@@ -48,10 +45,10 @@ public class CxtSubscriber extends AbstractSubscriber implements Runnable {
     public void onMessage(String channel, String msg) {
         // 接收原始sensor数据进行处理
         // wang hui yan
-//        logger.info("ctx recv: " + msg);
+        logger.debug("ctx recv: " + msg);
         JSONObject jo = JSON.parseObject(msg);
 
-        int index = PlatformConfig.context_index.getAndIncrement();
+        int index = CtxServerConfig.context_index.getAndIncrement();
         Date date = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
@@ -61,16 +58,6 @@ public class CxtSubscriber extends AbstractSubscriber implements Runnable {
             String sensorName = sensorConfig.getSensorName();
             ContextManager.addCleanSensingContext(sensorName, new Context(index,sensorName, jo.get(sensorName), format.format(date)));
         }
-    }
-
-    @Override
-    public void onSubscribed(String channel, long subChannelCount) {
-
-    }
-
-    @Override
-    public void onUnsubscribed(String channel, long subChannelCount) {
-
     }
 
     @Override
@@ -91,8 +78,8 @@ public class CxtSubscriber extends AbstractSubscriber implements Runnable {
                 for (int i = 0; i < send.size(); i++) {
                     String msgNew = send.get(i).getMsg();
                     msgStatistics.addSend();
-//                    logger.info("ctx send: " + msgNew);
                     GrpPrioPair p = getGrpPrioPair("sensor");
+                    logger.debug("ctx send: " + msgNew);
                     publish("sensor", p.groupId, p.priorityId - 1, msgNew);
                 }
                 //redis： "SumStatistics", SerializeUtil.serialize(msgStatistics)<---(class CtxRuntimeStatus)

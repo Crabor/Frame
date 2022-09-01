@@ -37,7 +37,7 @@ public class Publisher {
 
     public void publish(Channel channel, int groupId, int priorityId, String message) {
         RedisCommands<String, String> commands = conn.sync();
-        Map<Integer, List<AbstractSubscriber>> grp = channel.getGroup(groupId);
+        Map<Integer, List<AbstractSubscriber>> grp = channel.getSubscribers(groupId);
         if (grp != null) {
             int maxPrio = Integer.MIN_VALUE;
             for (Integer prio : grp.keySet()) {

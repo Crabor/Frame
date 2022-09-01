@@ -33,7 +33,7 @@ public class CancerObject {
 
     private Publisher publisher = new Publisher();
 
-    public CancerObject(String appName, String name, double value) {
+    private CancerObject(String appName, String name, double value) {
         if (contains(appName, name)) {
             throw new IllegalArgumentException(name + " has already exists!\n");
         }
@@ -45,15 +45,15 @@ public class CancerObject {
         put(appName, this);
     }
 
-    public CancerObject(String appName, String name) {
+    private CancerObject(String appName, String name) {
         this(appName, name, 0);
     }
 
-    public CancerObject(String appName, double value) {
+    private CancerObject(String appName, double value) {
         this(appName, String.valueOf(Thread.currentThread().getStackTrace()[2].getLineNumber()), value);
     }
 
-    public CancerObject(String appName) {  
+    private CancerObject(String appName) {
         this(appName, String.valueOf(Thread.currentThread().getStackTrace()[2].getLineNumber()));
     }
 
@@ -85,7 +85,12 @@ public class CancerObject {
         return objs.containsKey(appName) && objs.get(appName).containsKey(name);
     }
 
-    public static void put(String appName, CancerObject cancerObject) {
+    public static boolean contains(String name) {
+        String appName = Thread.currentThread().getStackTrace()[2].getClassName();
+        return contains(appName, name);
+    }
+
+    private static void put(String appName, CancerObject cancerObject) {
         if (!objs.containsKey(appName)) {
             objs.put(appName, new HashMap<>());
         }
@@ -101,6 +106,11 @@ public class CancerObject {
             appObjs.put(name, new CancerObject(appName, name));
         }
         return appObjs.get(name);
+    }
+
+    public static CancerObject get(String name) {
+        String appName = Thread.currentThread().getStackTrace()[2].getClassName();
+        return get(appName, name);
     }
 
     public static Map<String, Map<String, CancerObject>> getAllObjs() {
@@ -133,10 +143,10 @@ public class CancerObject {
         CheckState checkState = CheckState.TRACE_COLLECT;
         if (invMap.containsKey(lineNumber)) {
             Map<Integer, InvAbstract> invs = invMap.get(lineNumber);
-            if (group == -1 && Configuration.getCancerServerConfig().getInvGenMode() == InvGenMode.INCR) {
+            if (group == -1 && Configuration.getInvServerConfig().getInvGenMode() == InvGenMode.INCR) {
                 if (!invs.containsKey(-1)) {
                     String invClassName = "platform.service.inv.struct.inv.Inv" +
-                            Util.makeFirstCharUpperCase(Configuration.getCancerServerConfig().getInvGenType().toString().toLowerCase());
+                            Util.makeFirstCharUpperCase(Configuration.getInvServerConfig().getInvGenType().toString().toLowerCase());
                     try {
                         InvAbstract inv = (InvAbstract) Class.forName(invClassName).newInstance();
                         inv.setMetaData(appName, lineNumber, -1, name, new ArrayList<>());
@@ -171,10 +181,10 @@ public class CancerObject {
     }
 
     private void outputTraceAndGenNewInv(int lineNumber, int group, Map<Integer, InvAbstract> invs, InvAbstract inv) {
-        if (Configuration.getCancerServerConfig().getInvGenMode() == InvGenMode.INCR &&
-                inv.getViolatedTrace().size() > Configuration.getCancerServerConfig().getGroupThro()) {
+        if (Configuration.getInvServerConfig().getInvGenMode() == InvGenMode.INCR &&
+                inv.getViolatedTrace().size() > Configuration.getInvServerConfig().getGroupThro()) {
             String invClassName = "platform.service.inv.struct.inv.Inv" +
-                    Util.makeFirstCharUpperCase(Configuration.getCancerServerConfig().getInvGenType().toString().toLowerCase());
+                    Util.makeFirstCharUpperCase(Configuration.getInvServerConfig().getInvGenType().toString().toLowerCase());
             try {
                 InvAbstract invNew = (InvAbstract) Class.forName(invClassName).newInstance();
                 invNew.setMetaData(appName, lineNumber, group + 1, name, inv.getViolatedTrace(), InvState.INV_GENERATING);
@@ -186,7 +196,7 @@ public class CancerObject {
             }
             InvAbstract invNew = invs.get(group + 1);
             //output trace
-            Trace traceOutput =  Configuration.getCancerServerConfig().getGroupTraceType();
+            Trace traceOutput =  Configuration.getInvServerConfig().getGroupTraceType();
             traceOutput.printTrace(appName, lineNumber, group + 1, CancerServer.getSegMap().get(appName), invNew.getTrace());
             logger.info("grp" + (group + 1) + "=" + invNew.getTrace());
             //gen new inv

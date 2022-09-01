@@ -11,7 +11,7 @@ import platform.struct.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CancerServerConfig {
+public class InvServerConfig {
     private boolean serverOn;
     private int groupThro;
     private int kMeansGroupSize;
@@ -22,7 +22,7 @@ public class CancerServerConfig {
 
     private List<SubConfig> subConfigs = new ArrayList<>();
 
-    public CancerServerConfig(JSONObject object) {
+    public InvServerConfig(JSONObject object) {
         this.serverOn = object.getBoolean("serverOn");
         this.groupThro = object.getIntValue("groupThro");
         this.kMeansGroupSize = object.getIntValue("kMeansGroupSize");
@@ -90,7 +90,7 @@ public class CancerServerConfig {
 
     @Override
     public String toString() {
-        return "CancerServerConfig{" +
+        return "InvServerConfig{" +
                 "serverOn=" + serverOn +
                 ", groupThro=" + groupThro +
                 ", kMeansGroupSize=" + kMeansGroupSize +
