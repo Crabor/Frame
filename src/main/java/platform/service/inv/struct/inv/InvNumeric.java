@@ -8,7 +8,6 @@ import com.opencsv.CSVReader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import platform.service.cxt.CMID.checker.EccChecker;
 
 import java.io.*;
 import java.util.ArrayList;
