@@ -6,9 +6,11 @@ import platform.config.CtxServerConfig;
 import platform.pubsub.AbstractSubscriber;
 import platform.config.Configuration;
 import platform.config.SensorConfig;
+import platform.service.cxt.CMID.builder.CheckerBuilder;
 import platform.service.cxt.Context.Context;
 import platform.service.cxt.Context.ContextManager;
 import platform.service.cxt.Context.Message;
+import platform.service.cxt.INFuse.Starter;
 import platform.service.cxt.WebConnector.RedisCtxCustom;
 import platform.struct.GrpPrioPair;
 
@@ -19,6 +21,8 @@ import java.util.Map;
 
 import static platform.service.cxt.Context.ContextManager.CtxStatistics;
 import static platform.service.cxt.Context.ContextManager.msgStatistics;
+import static platform.service.cxt.Interactor.ruleRegistAll;
+import static platform.service.cxt.Interactor.sensorRegistAll;
 
 public class CxtSubscriber extends AbstractSubscriber implements Runnable {
     private static CxtSubscriber instance;
@@ -28,6 +32,17 @@ public class CxtSubscriber extends AbstractSubscriber implements Runnable {
 //    public static int onMessageCount = 0;
 //    public static int fixCount = 0;
     private CxtSubscriber() {
+        ruleRegistAll();
+        sensorRegistAll();
+        //CMID
+//        Thread checkerThread = new Thread(new CheckerBuilder(CtxServerConfig.getInstace()));
+//        checkerThread.setPriority(Thread.MAX_PRIORITY);
+//        checkerThread.start();
+        //INFuse
+        Thread checkerThread = new Thread(new Starter(CtxServerConfig.getInstace()));
+        checkerThread.setPriority(Thread.MAX_PRIORITY);
+        checkerThread.start();
+
     }
 
     public static CxtSubscriber getInstance() {

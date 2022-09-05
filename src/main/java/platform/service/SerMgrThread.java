@@ -38,11 +38,6 @@ public class SerMgrThread implements Runnable{
     @Override
     public void run() {
         //init cxt & inv
-        ruleRegistAll();
-        sensorRegistAll();
-        Thread checkerThread = new Thread(new CheckerBuilder(CtxServerConfig.getInstace()));
-        checkerThread.setPriority(Thread.MAX_PRIORITY);
-        checkerThread.start();
         if (Configuration.getCtxServerConfig().isServerOn()) {
             cxtSubscriber = CxtSubscriber.getInstance();
             for (SubConfig subConfig : Configuration.getCtxServerConfig().getSubConfigs()) {
