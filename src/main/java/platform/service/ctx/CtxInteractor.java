@@ -32,42 +32,53 @@ public class CtxInteractor {
                     '}';
         }
     }
-    public static volatile Map<String, SensorInfo> sensorInfoMap = null;
+    public static volatile Map<String, SensorInfo> supportedSensors = null;
 
-    private final Set<String> registeredSensors;
+    private final Map<String, SensorInfo> registeredSensors;
     private final JSONObject msgJSONObject;
 
     public CtxInteractor() {
-        if(sensorInfoMap == null){
+        if(supportedSensors == null){
             synchronized (CtxInteractor.class){
-                if(sensorInfoMap == null){
-                    sensorInfoMap = new HashMap<>();
+                if(supportedSensors == null){
+                    supportedSensors = new HashMap<>();
                     LinkedList<String> temp = CtxServerConfig.getInstace().getSensorNameList();
                     for (String name : temp) {
-                        sensorInfoMap.put(name, new SensorInfo("On", "Double"));
+                        supportedSensors.put(name, new SensorInfo("On", "Double"));
                     }
                 }
             }
         }
 
-        this.registeredSensors = new HashSet<>();
+        this.registeredSensors = new HashMap<>();
         msgJSONObject = new JSONObject();
     }
 
-    //查看平台所有sensors信息
-    public  Map<String, SensorInfo> sensorInfos(){
-        return sensorInfoMap;
+    //查看平台所有sensor信息
+    public Map<String, SensorInfo> getSupportedSensors(){
+        return supportedSensors;
     }
+
+    //查看注册监听的所有sensor信息
+    public Map<String, SensorInfo> getRegisteredSensors(){return registeredSensors;}
 
     //注册监听某一sensor
     public boolean registerSensor(String sensorName){
-        return registeredSensors.add(sensorName);
+        if(supportedSensors.containsKey(sensorName)){
+            synchronized (CtxInteractor.class){
+                registeredSensors.put(sensorName, supportedSensors.get(sensorName));
+            }
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     //过滤信息
     public void filter(String channel, String msg){
         JSONObject allMsgObject = JSONObject.parseObject(msg);
-        for(String sensorName : registeredSensors){
+        for(String sensorName : registeredSensors.keySet()){
             msgJSONObject.put(sensorName, allMsgObject.getDouble(sensorName));
         }
     }
