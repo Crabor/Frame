@@ -75,6 +75,15 @@ public class CtxInteractor {
         }
     }
 
+    //取消监听某一sensor
+    public boolean cancelSensor(String sensorName){
+        if(registeredSensors.containsKey(sensorName)){
+            registeredSensors.remove(sensorName);
+            return true;
+        }
+        return false;
+    }
+
     //过滤信息
     public void filter(String channel, String msg){
         JSONObject allMsgObject = JSONObject.parseObject(msg);
