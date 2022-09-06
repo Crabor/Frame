@@ -11,7 +11,6 @@ import platform.service.inv.struct.CheckState;
 public class MySyncApp extends AbstractSyncApp {
 
     public MySyncApp(){
-        System.out.println(ctxInteractor.getSupportedSensors());
         ctxInteractor.registerSensor("left");
     }
 
