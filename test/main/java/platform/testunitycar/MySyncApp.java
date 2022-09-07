@@ -19,14 +19,13 @@ public class MySyncApp extends AbstractSyncApp {
         logger.debug("app recv: " + ctxInteractor.getMsg());
         Actor actor = new Actor(5, 0, 0);
 
-        CancerArray ca = CancerArray.fromJsonObjectString(ctxInteractor.getMsg());
-        CancerObject left = ca.get("left");
-        if (left != null) {
-            CheckInfo checkInfo = left.check();
-            logger.debug("check:\n" + JSON.toJSONString(checkInfo, true));
-            if (checkInfo.checkState == CheckState.INV_VIOLATED) {
-                actor.setYSpeed(-checkInfo.diff);
-            }
+//        CancerArray ca = CancerArray.fromJsonObjectString(ctxInteractor.getMsg());
+//        CancerObject left = ca.get("left");
+        CancerObject left = CancerObject.fromJsonObjectString(ctxInteractor.getMsg());//{"left": 10}
+        CheckInfo checkInfo = left.check();
+        logger.debug("check:\n" + JSON.toJSONString(checkInfo, true));
+        if (checkInfo.checkState == CheckState.INV_VIOLATED) {
+            actor.setYSpeed(-checkInfo.diff);
         }
 
         publish("actor", JSON.toJSONString(actor));
