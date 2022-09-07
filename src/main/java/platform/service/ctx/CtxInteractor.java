@@ -93,8 +93,13 @@ public class CtxInteractor {
     }
 
     //获取某一sensor对应的值
-    public double getValue(String sensorName){
-        return msgJSONObject.getDouble(sensorName);
+    public String getSensor(String sensorName){
+        if(registeredSensors.containsKey(sensorName)){
+            JSONObject temp = new JSONObject();
+            temp.put(sensorName, msgJSONObject.get(sensorName));
+            return temp.toJSONString();
+        }
+        return  null;
     }
 
     //获取监听的所有sensor及其对应的值

@@ -15,13 +15,15 @@ public class MySyncApp extends AbstractSyncApp {
     }
 
     @Override
-    public void iter(String channel) {
-        logger.debug("app recv: " + ctxInteractor.getMsg());
+    public void iter(String channel, String msg) {
+        logger.debug("app recv: " + msg);
         Actor actor = new Actor(5, 0, 0);
 
-//        CancerArray ca = CancerArray.fromJsonObjectString(ctxInteractor.getMsg());
+        //method 1
+//        CancerArray ca = CancerArray.fromJsonObjectString(msg);
 //        CancerObject left = ca.get("left");
-        CancerObject left = CancerObject.fromJsonObjectString(ctxInteractor.getMsg());//{"left": 10}
+        //method 2
+        CancerObject left = CancerObject.fromJsonObjectString(ctxInteractor.getSensor("left"));//{"left": 10}
         CheckInfo checkInfo = left.check();
         logger.debug("check:\n" + JSON.toJSONString(checkInfo, true));
         if (checkInfo.checkState == CheckState.INV_VIOLATED) {

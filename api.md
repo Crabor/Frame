@@ -187,7 +187,7 @@ public boolean registerSensor(String sensorName);
 public boolean cancelSensor(String sensorName);
 
 //获取某一sensor对应的值
-public double getValue(String sensorName);
+public String getSensor(String sensorName);
 
 //获取监听的所有sensor及其对应的值
 public String getMsg();
@@ -228,24 +228,24 @@ package platform.testunitycar;
 
 public class MySyncApp extends AbstractSyncApp {
     public MySyncApp(){
-        //初始时，注册监听left传感器
         ctxInteractor.registerSensor("left");
     }
 
     @Override
-    public void iter(String channel) {
-        //从ctxInteractor中获取收到的数据
-        logger.debug("app recv: " + ctxInteractor.getMsg());
+    public void iter(String channel, String msg) {
+        //此处msg为该app监听的所有sensor的JsonString
+        logger.debug("app recv: " + msg);
         Actor actor = new Actor(5, 0, 0);
 
-        CancerArray ca = CancerArray.fromJsonObjectString(ctxInteractor.getMsg());
-        CancerObject left = ca.get("left");
-        if (left != null) {
-            CheckInfo checkInfo = left.check();
-            logger.debug("check:\n" + JSON.toJSONString(checkInfo, true));
-            if (checkInfo.checkState == CheckState.INV_VIOLATED) {
-                actor.setYSpeed(-checkInfo.diff);
-            }
+        //method 1: 将msg转为CancerArray
+//        CancerArray ca = CancerArray.fromJsonObjectString(msg);
+//        CancerObject left = ca.get("left");
+        //method 2: 通过ctxInteractor直接获取需要的单个sensor,并转为CancerObject
+        CancerObject left = CancerObject.fromJsonObjectString(ctxInteractor.getSensor("left"));//{"left": 10}
+        CheckInfo checkInfo = left.check();
+        logger.debug("check:\n" + JSON.toJSONString(checkInfo, true));
+        if (checkInfo.checkState == CheckState.INV_VIOLATED) {
+            actor.setYSpeed(-checkInfo.diff);
         }
 
         publish("actor", JSON.toJSONString(actor));

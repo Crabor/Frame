@@ -33,7 +33,7 @@ public abstract class AbstractSyncApp extends AbstractSubscriber implements Sync
         iterId++;
         CancerServer.iterEntry(appName, iterId);
         ctxInteractor.filter(channel, msg);
-        iter(channel);
+        iter(channel, ctxInteractor.getMsg());
         CancerServer.iterExit(appName, iterId);
     }
 }
