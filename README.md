@@ -291,6 +291,130 @@ Subscriber3: channel, hello
 
 ## configuration
 
+```c
+{
+  "CtxServerConfiguration": {
+    "serverOn": true, //是否开启服务
+    "isCtxCleanOn": true,
+    "isCtxFixOn": true,
+    "CtxCleaner": "ECC+IMD",
+    "CtxFixer": "Drop",
+    "BUFFER_RAW_MAX": 2,
+    "BUFFER_CLEAN_MAX": 50,
+    "delay_allowed": 20000, //ms  <= 1000*20
+    "dataFile": "data28/wrongData3.txt",
+    "changeHandlerType": "static-change-based",
+    "logFilePath": "output3.txt",
+    "ruleFilePath": "Resources/rules.xml",
+    "patternFilePath": "Resources/patterns.xml",
+    "oracleFilePath": "oracle.txt",
+    //订阅的频道信息
+    "subscribe": [
+      {
+        "channel": "sensor", //频道名
+        "priorityId": 1, //优先级
+      },
+    ],
+  },
+  "InvServerConfiguration": {
+      "serverOn": true, //服务是否开启
+      "groupThro": 20, //trace的阈值
+      "kMeansGroupSize": 1, //多少条trace
+      "dosThro": 0.5, //DoS算法阈值
+      //trace文件形式，用以将来要生成不变式，可选csv、daikon、dig
+      //详见src\main\java\platform\service\inv\struct\trace
+      "groupTraceType": "csv", 
+      "invGenMode": "total", //不变式生成模式，total是全量模式，incr是增量模式
+      "invGenType": "numeric",//不变式类型，numeric指数值型，更多不变式类型需要后续支持
+      "subscribe": [
+        {
+          "channel": "sensor",
+        },
+        {
+          "channel": "check",
+        },
+      ],
+  },
+  //app配置
+  "AppConfiguration": [
+    {
+      "appName": "platform.testunitycar.MySyncApp",//app名称
+      "subscribe": [
+        {
+          "channel": "sensor",
+        },
+      ],
+    },
+  ],
+  //资源配置
+  "ResourceConfiguration": {
+    //设备驱动配置
+    "deviceDriver": {
+      "serverPort": 8080, //udp接收端口
+      "clientAddress": "127.0.0.1",//udp发送地址
+      "clientPort": 8081,//udp发送端口
+      "subscribe": [
+        {
+          "channel": "actor",
+        },
+        {
+          "channel": "check",
+        }
+      ],
+    },
+    //数据库驱动，将频道数据写进redis里面
+    "databaseDriver": {
+      "subscribe": [
+        {
+          "channel": "sensor",
+        },
+        {
+          "channel": "actor",
+        },
+        {
+          "channel": "check",
+        },
+        {
+          "channel": "ctxStat",
+        },
+      ],
+    },
+    //传感器配置，ctx服务、inv服务会读取该项
+    "SensorConfiguration": [
+      {
+        "SensorName": "front",
+      },
+      {
+        "SensorName": "back",
+      },
+      {
+        "SensorName": "left",
+      },
+      {
+        "SensorName": "right",
+      }
+    ],
+    //动作设施配置
+    "ActorConfiguration": [
+      {
+        "ActorName": "x",
+      },
+      {
+        "ActorName": "y",
+      },
+      {
+        "ActorName": "z",
+      },
+    ],
+  },
+  //redis配置
+  "RedisConfig": {
+    "serverAddress": "127.0.0.1",
+    "serverPort": "6379",
+  }
+}
+```
+
 ## context
 
 ## invariant

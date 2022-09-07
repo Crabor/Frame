@@ -12,6 +12,7 @@ import platform.service.inv.struct.inv.InvAbstract;
 import platform.service.inv.struct.trace.Trace;
 import platform.struct.InvGenMode;
 import platform.util.Util;
+import reactor.util.annotation.Nullable;
 
 import java.util.*;
 
@@ -111,6 +112,21 @@ public class CancerObject {
     public static CancerObject get(String name) {
         String appName = Thread.currentThread().getStackTrace()[2].getClassName();
         return get(appName, name);
+    }
+
+    @Nullable
+    public static CancerObject fromJsonObjectString(String jsonObjectString) {
+        JSONObject obj = JSONObject.parseObject(jsonObjectString);
+        CancerObject cobj = null;
+        if (obj.size() != 1) {
+            logger.error("\"" + jsonObjectString + "\" can't parse to a CancerObject.");
+        } else {
+            String appName = Thread.currentThread().getStackTrace()[2].getClassName();
+            String key = obj.keySet().stream().findFirst().get();
+            cobj = get(appName, key);
+            cobj.setValue(obj.getDoubleValue(key));
+        }
+        return cobj;
     }
 
     public static Map<String, Map<String, CancerObject>> getAllObjs() {
