@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class CtxServerConfig {
     private static CtxServerConfig INSTANCE = null;
-    public static AtomicInteger context_index = new AtomicInteger();
+    public static AtomicInteger ctxIndex = new AtomicInteger();
     private boolean serverOn;
     public boolean isCtxFixOn;
     public boolean isCtxCleanOn;

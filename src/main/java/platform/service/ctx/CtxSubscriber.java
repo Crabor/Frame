@@ -6,11 +6,10 @@ import platform.config.CtxServerConfig;
 import platform.pubsub.AbstractSubscriber;
 import platform.config.Configuration;
 import platform.config.SensorConfig;
-import platform.service.ctx.CMID.builder.CheckerBuilder;
-import platform.service.ctx.Context.Context;
-import platform.service.ctx.Context.ContextManager;
-import platform.service.ctx.Context.Message;
-import platform.service.ctx.INFuse.Starter;
+import platform.service.ctx.ctxChecker.CMID.builder.CheckerBuilder;
+import platform.service.ctx.Context_bk.Context;
+import platform.service.ctx.Context_bk.ContextManager;
+import platform.service.ctx.Context_bk.Message;
 import platform.service.ctx.WebConnector.RedisCtxCustom;
 import platform.struct.GrpPrioPair;
 
@@ -19,8 +18,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Map;
 
-import static platform.service.ctx.Context.ContextManager.CtxStatistics;
-import static platform.service.ctx.Context.ContextManager.msgStatistics;
+import static platform.service.ctx.Context_bk.ContextManager.CtxStatistics;
+import static platform.service.ctx.Context_bk.ContextManager.msgStatistics;
 import static platform.service.ctx.Interactor.ruleRegistAll;
 import static platform.service.ctx.Interactor.sensorRegistAll;
 
@@ -63,7 +62,7 @@ public class CtxSubscriber extends AbstractSubscriber implements Runnable {
         logger.debug("ctx recv: " + msg);
         JSONObject jo = JSON.parseObject(msg);
 
-        int index = CtxServerConfig.context_index.getAndIncrement();
+        int index = CtxServerConfig.ctxIndex.getAndIncrement();
         Date date = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
