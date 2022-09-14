@@ -24,6 +24,7 @@ public class CtxServerConfig {
     private LinkedList<SubConfig> subConfigs = new LinkedList<>();
 
     private static CMIDConfig CMID_CONFIG = null;
+    private static INFuseConfig inFuseConfig = null;
 
     public static LinkedList<String> changeListForChecking = new LinkedList<>();
 
@@ -35,10 +36,15 @@ public class CtxServerConfig {
         CMID_CONFIG = new CMIDConfig(INSTANCE.CtxChecker, INSTANCE.CtxScheduler, INSTANCE.CtxFixer,object.getString("dataFile"), object.getString("changeHandlerType"),
                 object.getString("logFilePath"), object.getString("ruleFilePath"),
                 object.getString("patternFilePath"));
+        inFuseConfig = new INFuseConfig(object.getString("dataFile"), object.getString("bfuncFilePath"), object.getString("logFilePath"),
+                object.getString("ruleFilePath"), object.getString("patternFilePath"), INSTANCE.CtxFixer, INSTANCE.CtxCleaner);
         return INSTANCE;
     }
     public static CMIDConfig getCMIDConfig(){
         return CMID_CONFIG;
+    }
+    public static INFuseConfig getInFuseConfig() {
+        return inFuseConfig;
     }
     public static LinkedList<String> getChangeListForChecking() {
         return changeListForChecking;

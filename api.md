@@ -171,7 +171,38 @@ public class CheckInfo {
 
 ## context
 
-//TODO
+指CtxInteractor类， 该类是上层app与上下文模块交互的途径，每个app实例中包含了一个CtxInteractor的实例ctxInteractor,为上层app提供了如下api
+
+```java
+//查看平台所有sensor信息
+public Map<String, SensorInfo> getSupportedSensors();
+
+//查看注册监听的所有sensor信息
+public Map<String, SensorInfo> getRegisteredSensors();
+
+//注册监听某一sensor
+public boolean registerSensor(String sensorName);
+
+//取消监听某一sensor
+public boolean cancelSensor(String sensorName);
+
+//获取某一sensor对应的值
+public String getSensor(String sensorName);
+
+//获取监听的所有sensor及其对应的值
+public String getMsg();
+```
+
+其中SensorInfo类如下
+
+```java
+public final String State; //Sensor的状态 On 或者 Off
+public final String valueType; //Sensor的数据类型
+
+public String getState();
+public String getValueType();
+```
+
 
 ## 实例
 
@@ -196,22 +227,29 @@ public class CheckInfo {
 package platform.testunitycar;
 
 public class MySyncApp extends AbstractSyncApp {
+    public MySyncApp(){
+        ctxInteractor.registerSensor("left");
+    }
+
     @Override
     public void iter(String channel, String msg) {
+        //此处msg为该app监听的所有sensor的JsonString
         logger.debug("app recv: " + msg);
-        double ySpeed = 0;
+        Actor actor = new Actor(5, 0, 0);
 
-        CancerArray ca = CancerArray.fromJsonObjectString(msg);
-        CancerObject left = ca.get("left");
+        //method 1: 将msg转为CancerArray
+//        CancerArray ca = CancerArray.fromJsonObjectString(msg);
+//        CancerObject left = ca.get("left");
+        //method 2: 通过ctxInteractor直接获取需要的单个sensor,并转为CancerObject
+        CancerObject left = CancerObject.fromJsonObjectString(ctxInteractor.getSensor("left"));//{"left": 10}
         CheckInfo checkInfo = left.check();
+        logger.debug("check:\n" + JSON.toJSONString(checkInfo, true));
         if (checkInfo.checkState == CheckState.INV_VIOLATED) {
-            ySpeed = -checkInfo.diff;
+            actor.setYSpeed(-checkInfo.diff);
         }
 
-        String actor = "{\"xSpeed\": 2.0, \"ySpeed\": " + 
-                        String.valueOf(ySpeed) + ", \"zSpeed\": 0.0}";
-        logger.debug("actor: " + actor);             
-        publish("actor", actor);
+        publish("actor", JSON.toJSONString(actor));
+        logger.debug("actor: " + JSON.toJSONString(actor));
     }
 }
 ```
@@ -233,6 +271,7 @@ public class MySyncApp extends AbstractSyncApp {
     "logFilePath": "output3.txt",
     "ruleFilePath": "Resources/rules.xml",
     "patternFilePath": "Resources/patterns.xml",
+    "bfuncFilePath": "Resources/Bfunction.class",
     "oracleFilePath": "oracle.txt",
     "subscribe": [
       {

@@ -13,6 +13,7 @@
     "logFilePath": "output3.txt",
     "ruleFilePath": "Resources/rules.xml",
     "patternFilePath": "Resources/patterns.xml",
+    "bfuncFilePath": "Resources/Bfunction.class",
     "oracleFilePath": "oracle.txt",
     "subscribe": [
       {

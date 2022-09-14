@@ -114,18 +114,12 @@ public class CancerObject {
         return get(appName, name);
     }
 
-    @Nullable
     public static CancerObject fromJsonObjectString(String jsonObjectString) {
         JSONObject obj = JSONObject.parseObject(jsonObjectString);
-        CancerObject cobj = null;
-        if (obj.size() != 1) {
-            logger.error("\"" + jsonObjectString + "\" can't parse to a CancerObject.");
-        } else {
-            String appName = Thread.currentThread().getStackTrace()[2].getClassName();
-            String key = obj.keySet().stream().findFirst().get();
-            cobj = get(appName, key);
-            cobj.setValue(obj.getDoubleValue(key));
-        }
+        String appName = Thread.currentThread().getStackTrace()[2].getClassName();
+        String key = obj.keySet().stream().findFirst().get();
+        CancerObject cobj = get(appName, key);
+        cobj.setValue(obj.getDoubleValue(key));
         return cobj;
     }
 
