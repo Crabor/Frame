@@ -118,6 +118,14 @@ public class Util {
         }
     }
 
+    public static double limit(double min, double max, double value) {
+        if (value > 0) {
+            return Math.min(value, max);
+        } else {
+            return Math.max(value, min);
+        }
+    }
+
     public static void main(String[] args) {
     }
 }

@@ -23,7 +23,7 @@
   },
   "InvServerConfiguration": {
       "serverOn": true,
-      "groupThro": 20,
+      "groupThro": 10,
       "kMeansGroupSize": 1,
       "dosThro": 0.5,
       "groupTraceType": "csv",
