@@ -89,7 +89,7 @@ AbstractSyncApp类继承AbstractSubscriber类，AbstractSubscriber是抽象订�
   //......
   "AppConfiguration": [
     {
-      "appName": "platform.testunitycar.MySyncApp",
+      "appName": "platform.platform.testunitycar.MySyncApp",
       "subscribe": [
         {
           "channel": "sensor",
@@ -338,7 +338,7 @@ Subscriber3: channel, hello
   //app配置
   "AppConfiguration": [
     {
-      "appName": "platform.testunitycar.MySyncApp",//app名称
+      "appName": "platform.platform.testunitycar.MySyncApp",//app名称
       "subscribe": [
         {
           "channel": "sensor",

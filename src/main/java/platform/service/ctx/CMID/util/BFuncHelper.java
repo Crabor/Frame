@@ -11,9 +11,10 @@ public class BFuncHelper {
     private static final Log logger = LogFactory.getLog(BFuncHelper.class);
     private static boolean isValid(Context c) {
         double value = Double.parseDouble(String.valueOf(c.getSensorData()));
-        if(value < 500 && value > -500)
+        if(value < 200 && value > -200)
             return true;
         else return false;
+//        return true;
     }
 
     public static boolean bfun(String name, Context context1, Context context2) {
