@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+
+<patterns>
+
+    <pattern>
+        <id>pat_001</id>
+        <sensor>taxis</sensor>
+        <freshness>
+            <type>time</type> <!--可选项有time(ms)和number(#)-->
+            <value>20000</value> <!--2000ms-->
+        </freshness>
+        <matcher>
+            <type>function</type>
+            <funcName>taxiFilter</funcName>
+            <fieldList>
+                <field>status</field>
+            </fieldList>
+            <auxiliaryValueList>
+                <value>0</value> <!-- 由用户自定义，此处为对应status是否为0-->
+            </auxiliaryValueList>
+        </matcher>
+    </pattern>
+
+    <pattern>
+        <id>pat_002</id>
+        <sensor>taxis</sensor>
+        <freshness>
+            <type>time</type> <!--可选项有time(ms)和number(#)-->
+            <value>20000</value> <!--2000ms-->
+        </freshness>
+        <matcher>
+            <type>function</type>
+            <funcName>taxiFilter</funcName>
+            <fieldList>
+                <field>status</field>
+            </fieldList>
+            <auxiliaryValueList>
+                <value>0</value> <!-- 由用户自定义，此处为对应status是否为0-->
+            </auxiliaryValueList>
+        </matcher>
+    </pattern>
+
+</patterns>

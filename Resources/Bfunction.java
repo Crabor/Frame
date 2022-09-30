@@ -2,10 +2,6 @@ import java.util.Map;
 
 public class Bfunction {
 
-    public void test(String funcName){
-        System.out.println(funcName);
-    }
-
     public boolean bfunc(String funcName, Map<String, Map<String, String>> vcMap) throws Exception {
         if ("isValid".equals(funcName)) {
             return isValid(vcMap);
@@ -61,8 +57,6 @@ public class Bfunction {
         // The difference should be no more than 50 (as 'close')
         return Math.abs(speed2 - speed1) <= 50;
     }
-
-
 
     private boolean isValid(Map<String, Map<String, String>> vcMap){
         //vcMap: {"v1" : {"ctx_id" : "ctx_1", "value": 123.213}}

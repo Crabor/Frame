@@ -3,6 +3,7 @@ package platform.service;
 import platform.Platform;
 import platform.config.Configuration;
 import platform.service.ctx.CtxSubscriber;
+import platform.service.ctx.ctxServer.CtxBaseCtxServer;
 import platform.service.inv.CancerServer;
 import platform.config.SubConfig;
 
@@ -10,7 +11,7 @@ public class SerMgrThread implements Runnable{
     private static SerMgrThread instance;
     private static Thread t;
 
-    private CtxSubscriber ctxSubscriber;
+    private CtxBaseCtxServer ctxBaseCtxServer;
 
     private CancerServer cancerServer;
 
@@ -35,11 +36,11 @@ public class SerMgrThread implements Runnable{
     public void run() {
         //init cxt & inv
         if (Configuration.getCtxServerConfig().isServerOn()) {
-            ctxSubscriber = CtxSubscriber.getInstance();
+            ctxBaseCtxServer = CtxBaseCtxServer.getInstance();
             for (SubConfig subConfig : Configuration.getCtxServerConfig().getSubConfigs()) {
-                ctxSubscriber.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
+                ctxBaseCtxServer.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
             }
-            ctxSubscriber.start();
+            ctxBaseCtxServer.start();
         }
 
         if (Configuration.getInvServerConfig().isServerOn()) {
@@ -53,8 +54,8 @@ public class SerMgrThread implements Runnable{
         Platform.incrMgrStartFlag();
     }
 
-    public CtxSubscriber getCxtSubscriber() {
-        return ctxSubscriber;
+    public CtxBaseCtxServer getCtxBaseCtxServer() {
+        return ctxBaseCtxServer;
     }
 
     public CancerServer getCancerServer() {

@@ -72,7 +72,7 @@ public class Configuration {
         List<SensorConfig> listOfSensorObj = resourceConfig.getListOfSensorObj();
         SensorLength = listOfSensorObj.size();
         for (SensorConfig sensorConfig : listOfSensorObj) {
-            ctxServerConfig.addSensor(sensorConfig.getSensorName());
+            ctxServerConfig.addSensorConfig(sensorConfig);
         }
         //System.out.println("SensorLength"+SensorLength);
     }

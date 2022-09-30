@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<rules>
+
+    <rule>
+        <id>rule_01</id>
+        <formula>
+            <forall var = "v1" in = "pat_001">
+                <forall var = "v2" in = "pat_002">
+                    <implies>
+                        <and>
+                            <not>
+                                <bfunction name = "same">
+                                    <param pos = "1" var = "v1" field = "subject" />
+                                    <param pos = "2" var = "v2" field = "subject" />
+                                </bfunction>
+                            </not>
+                            <bfunction name = "sz_loc_close">
+                                <param pos = "1" var = "v1" field = "object" />
+                                <param pos = "2" var = "v2" field = "object" />
+                            </bfunction>
+                        </and>
+                        <bfunction name = "sz_spd_close">
+                            <param pos = "1" var = "v1" field = "object" />
+                            <param pos = "2" var = "v2" field = "object" />
+                        </bfunction>
+                    </implies>
+                </forall>
+            </forall>
+        </formula>
+    </rule>
+
+</rules>

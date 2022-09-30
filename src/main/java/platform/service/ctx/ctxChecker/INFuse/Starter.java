@@ -34,23 +34,19 @@ public class Starter implements Runnable{
     private ContextHandler contextHandler;
     private ContextPool contextPool;
 
-    private String dataFile;
     private String ruleFile;
     private String patternFile;
     private String bfuncFile;
 
-    private String outputFile;
 
     private Scheduler scheduler;
     private Checker checker;
 
     public Starter(CtxServerConfig config) {
-        INFuseConfig inFuseConfig = config.getInFuseConfig();
-        this.dataFile = inFuseConfig.getDataFile();
+        INFuseConfig inFuseConfig = CtxServerConfig.getInFuseConfig();
         this.ruleFile = inFuseConfig.getRuleFilePath();
         this.patternFile = inFuseConfig.getPatternFilePath();
         this.bfuncFile = inFuseConfig.getBfuncFile();
-        this.outputFile = inFuseConfig.getOutPutFilePath();
         String approach = inFuseConfig.getCtxCleaner();
 
         this.ruleHandler = new RuleHandler();

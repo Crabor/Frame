@@ -1,20 +1,14 @@
 {
   "CtxServerConfiguration": {
     "serverOn": true,
-    "isCtxCleanOn": true,
-    "isCtxFixOn": true,
     "CtxCleaner": "ECC+IMD",
     "CtxFixer": "Drop",
     "BUFFER_RAW_MAX": 2,
-    "BUFFER_CLEAN_MAX": 50,
     "delay_allowed": 20000, //ms  <= 1000*20
-    "dataFile": "data28/wrongData3.txt",
-    "changeHandlerType": "static-change-based",
-    "logFilePath": "output3.txt",
-    "ruleFilePath": "Resources/rules.xml",
-    "patternFilePath": "Resources/patterns.xml",
-    "bfuncFilePath": "Resources/Bfunction.class",
-    "oracleFilePath": "oracle.txt",
+    "baseRuleFile": "Resources/rules.xml",
+    "baseBfuncFile": "Resources/Bfunction.class",
+    "basePatternFile": "Resources/patterns.xml",
+    "baseMfuncFile": "Resources/Mfunction.class",
     "subscribe": [
       {
         "channel": "sensor",
@@ -91,6 +85,10 @@
       },
       {
         "SensorName": "right",
+      },
+      {
+        "SensorName": "taxis",
+        "fieldNames": "timestamp,taxiId,longitude,latitude,speed,direction,status"
       }
     ],
     "ActorConfiguration": [

@@ -3,67 +3,49 @@ package platform.config;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CtxServerConfig {
-    private static CtxServerConfig INSTANCE = null;
+    private volatile static CtxServerConfig INSTANCE = null;
     public static AtomicInteger ctxIndex = new AtomicInteger();
     private boolean serverOn;
-    public boolean isCtxFixOn;
-    public boolean isCtxCleanOn;
     private String CtxFixer;
     private String CtxCleaner;
     private String CtxChecker;
     private String CtxScheduler;
     private int buffer_raw_max;
-    private int buffer_clean_max;
     private int delay_allowed;
-    private LinkedList<String> sensorNameList;
-
+    private List<SensorConfig> sensorConfigList;
     private LinkedList<SubConfig> subConfigs = new LinkedList<>();
-
-    private static CMIDConfig CMID_CONFIG = null;
     private static INFuseConfig inFuseConfig = null;
 
-    public static LinkedList<String> changeListForChecking = new LinkedList<>();
 
     public static CtxServerConfig getInstace(){
         return INSTANCE;
     }
     public static CtxServerConfig getInstace(JSONObject object){
         INSTANCE = new CtxServerConfig(object);
-        CMID_CONFIG = new CMIDConfig(INSTANCE.CtxChecker, INSTANCE.CtxScheduler, INSTANCE.CtxFixer,object.getString("dataFile"), object.getString("changeHandlerType"),
-                object.getString("logFilePath"), object.getString("ruleFilePath"),
-                object.getString("patternFilePath"));
-        inFuseConfig = new INFuseConfig(object.getString("dataFile"), object.getString("bfuncFilePath"), object.getString("logFilePath"),
-                object.getString("ruleFilePath"), object.getString("patternFilePath"), INSTANCE.CtxFixer, INSTANCE.CtxCleaner);
+        inFuseConfig = new INFuseConfig(object.getString("baseRuleFile"), object.getString("baseBfuncFile"),
+                object.getString("basePatternFile"), object.getString("baseMfuncFile"), INSTANCE.CtxFixer, INSTANCE.CtxCleaner);
         return INSTANCE;
     }
-    public static CMIDConfig getCMIDConfig(){
-        return CMID_CONFIG;
-    }
+
     public static INFuseConfig getInFuseConfig() {
         return inFuseConfig;
     }
-    public static LinkedList<String> getChangeListForChecking() {
-        return changeListForChecking;
-    }
-    public LinkedList<String> getSensorNameList() {
-        return sensorNameList;
-    }
+    public List<SensorConfig> getSensorConfigList() {return sensorConfigList;}
 
-    CtxServerConfig(JSONObject object){
+    private CtxServerConfig(JSONObject object){
         serverOn = object.getBoolean("serverOn");
-        isCtxFixOn = object.getBoolean("isCtxFixOn");
-        isCtxCleanOn = object.getBoolean("isCtxCleanOn");
         CtxFixer = object.getString("CtxFixer");
         CtxCleaner = object.getString("CtxCleaner");
         CtxChecker = CtxCleaner.split("\\+")[0];
         CtxScheduler = CtxCleaner.split("\\+")[1];
         buffer_raw_max = object.getIntValue("BUFFER_RAW_MAX");
-        buffer_clean_max = object.getIntValue("BUFFER_CLEAN_MAX");
-        sensorNameList = new LinkedList<>();
+        sensorConfigList = new ArrayList<>();
         delay_allowed = object.getIntValue("delay_allowed");
         JSONArray subs = object.getJSONArray("subscribe");
         for (int i = 0; i < subs.size(); i++) {
@@ -79,8 +61,8 @@ public class CtxServerConfig {
         return delay_allowed;
     }
 
-    public void addSensor(String sensorName){
-        sensorNameList.add(sensorName);
+    public void addSensorConfig(SensorConfig sensorConfig){
+        sensorConfigList.add(sensorConfig);
     }
     public boolean isCtxFixOn() {
         return isCtxFixOn;
@@ -163,7 +145,7 @@ public class CtxServerConfig {
                 ", buffer_raw_max=" + buffer_raw_max +
                 ", buffer_clean_max=" + buffer_clean_max +
                 ", delay_allowed=" + delay_allowed +
-                ", sensorNameList=" + sensorNameList +
+                ", sensorConfigList=" + sensorConfigList +
                 ", subConfigs=" + subConfigs +
                 '}';
     }

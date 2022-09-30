@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+
+<patterns>
+
+    <!-- 一个pattern对应一个sensor -->
+    <pattern>
+        <id>pat_template1</id>
+        <freshness>
+            <type>number</type>
+            <value>10</value>
+        </freshness>
+        <dataSource>
+            <type>sensor</type>
+            <sourceList>
+                <name>taxis</name>
+            </sourceList>
+        </dataSource>
+        <matcher>
+            <type>function</type>
+            <funcName>taxiFilter</funcName>
+            <fieldList>
+                <field>status</field>
+                <field>taxiId</field>
+            </fieldList>
+            <auxiliaryValueList>
+                <value>0</value> <!-- 由用户自定义，此处为对应status是否为0-->
+                <value>A</value> <!-- 由用户自定义，此处为对应taxiId以A结尾-->
+            </auxiliaryValueList>
+        </matcher>
+    </pattern>
+
+    <!-- 一个pattern对应多个sensor, 应该保证多个sensor的field是相同的 -->
+    <pattern>
+        <id>pat_template2</id>
+        <freshness>
+            <type>time</type> <!--可选项有time(ms)和number(#)-->
+            <value>2000</value> <!--2000ms-->
+        </freshness>
+        <dataSource>
+            <type>pattern</type>
+            <sourceList>
+                <name>pat_template1</name>
+            </sourceList>
+        </dataSource>
+        <matcher>
+            <type>primaryKey</type>
+            <field>carId</field>
+            <optionalValueList>
+                <value>orange_car</value>
+                <value>black_car</value>
+            </optionalValueList>
+        </matcher>
+    </pattern>
+
+</patterns>

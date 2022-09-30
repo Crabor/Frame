@@ -2,9 +2,14 @@ package platform.config;
 
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class SensorConfig {
     private String SensorType;
     private String SensorName;
+    private List<String> fieldNames;
     private boolean isValid;
     private int SensorFreq; // per second;
     private String IPAddress;
@@ -14,9 +19,16 @@ public class SensorConfig {
         try {
             SensorType = object.getString("SensorType");
         } catch (NullPointerException e) {
-            SensorType = "Double";
+            SensorType = "String";
         }
         SensorName = object.getString("SensorName");
+        try{
+            fieldNames = Arrays.asList(object.getString("fieldNames").split(","));
+        } catch (NullPointerException e){
+            fieldNames = new ArrayList<>();
+            fieldNames.add(object.getString("SensorName"));
+        }
+
 //        isValid = object.getBoolean("isValid");
 //        SensorFreq = object.getIntValue("SensorFreq");
 //        IPAddress = object.getString("IPAddress");
@@ -29,6 +41,10 @@ public class SensorConfig {
 
     public String getSensorName() {
         return SensorName;
+    }
+
+    public List<String> getFieldNames() {
+        return fieldNames;
     }
 
     public boolean isValid() {
@@ -52,6 +68,7 @@ public class SensorConfig {
         return "SensorConfig{" +
                 "SensorType='" + SensorType + '\'' +
                 ", SensorName='" + SensorName + '\'' +
+                ", fieldNames=" + fieldNames +
                 ", isValid=" + isValid +
                 ", SensorFreq=" + SensorFreq +
                 ", IPAddress='" + IPAddress + '\'' +
