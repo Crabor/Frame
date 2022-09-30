@@ -157,14 +157,14 @@ public class ContextManager<T> {
         return results;
     }
     public static void registContextManager(String name){
-        ContextBufferList.put(name, new ContextBuffer(CtxServerConfig.getInstace().getBuffer_raw_max(),
+        ContextBufferList.put(name, new ContextBuffer(CtxServerConfig.getInstace().getRawDataBufferSize(),
                 CtxServerConfig.getInstace().getBuffer_clean_max()));
     }
     public static void registContextManagerAll() {
         LinkedList<String> temp = CtxServerConfig.getInstace().getSensorNameList();
         for (int i = 0; i < temp.size(); i++) {
             String name = temp.get(i);
-            ContextBufferList.put(name, new ContextBuffer(CtxServerConfig.getInstace().getBuffer_raw_max(),
+            ContextBufferList.put(name, new ContextBuffer(CtxServerConfig.getInstace().getRawDataBufferSize(),
                     CtxServerConfig.getInstace().getBuffer_clean_max()));
             CtxStatistics.put(name, new RedisCtxCustom(name, "sensor info"));
         }

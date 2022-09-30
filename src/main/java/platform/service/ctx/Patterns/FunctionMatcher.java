@@ -7,13 +7,11 @@ import java.util.List;
 
 public class FunctionMatcher extends AbstractMatcher{
     private final String funcName;
-    private final List<String> fieldList;
-    private final List<String> auxiliaryValueList;
+    private final List<String> extraArgList;
 
     public FunctionMatcher(String funcName){
         this.funcName = funcName;
-        this.fieldList = new ArrayList<>();
-        this.auxiliaryValueList = new ArrayList<>();
+        this.extraArgList = new ArrayList<>();
     }
 
     @Override
@@ -21,23 +19,15 @@ public class FunctionMatcher extends AbstractMatcher{
         return false;
     }
 
-    public void addField(String field){
-        this.fieldList.add(field);
-    }
-
-    public void addAuxiliaryValue(String auxiliaryValue){
-        this.auxiliaryValueList.add(auxiliaryValue);
+    public void addExtraArg(String extraArg){
+        this.extraArgList.add(extraArg);
     }
 
     public String getFuncName() {
         return funcName;
     }
 
-    public List<String> getFieldList() {
-        return fieldList;
-    }
-
-    public List<String> getAuxiliaryValueList() {
-        return auxiliaryValueList;
+    public List<String> getExtraArgList() {
+        return extraArgList;
     }
 }

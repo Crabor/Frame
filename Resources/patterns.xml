@@ -3,42 +3,59 @@
 <patterns>
 
 	<pattern>
-		<id>pat_front</id>
-		<freshness>4000</freshness>  <!-- ms -->
-		<category>entities</category>
-		<subject>any</subject>
-		<predicate>any</predicate>
-		<object>any</object>
-		<site>any</site>
+		<id>pat_font</id>
+		<freshness>
+			<type>time</type>
+			<value>100</value>
+		</freshness>
+		<dataSource>
+			<type>sensor</type>
+			<sourceList>
+				<source>front</source>
+			</sourceList>
+		</dataSource>
 	</pattern>
 
 	<pattern>
 		<id>pat_back</id>
-		<freshness>4000</freshness>  <!-- ms -->
-		<category>entities</category>
-		<subject>any</subject>
-		<predicate>any</predicate>
-		<object>any</object>
-		<site>any</site>
+		<freshness>
+			<type>time</type>
+			<value>100</value>
+		</freshness>
+		<dataSource>
+			<type>sensor</type>
+			<sourceList>
+				<source>back</source>
+			</sourceList>
+		</dataSource>
 	</pattern>
 
 	<pattern>
 		<id>pat_left</id>
-		<freshness>4000</freshness>  <!-- ms -->
-		<category>entities</category>
-		<subject>any</subject>
-		<predicate>any</predicate>
-		<object>any</object>
-		<site>any</site>
+		<freshness>
+			<type>time</type>
+			<value>100</value>
+		</freshness>
+		<dataSource>
+			<type>sensor</type>
+			<sourceList>
+				<source>left</source>
+			</sourceList>
+		</dataSource>
 	</pattern>
 
 	<pattern>
 		<id>pat_right</id>
-		<freshness>4000</freshness>  <!-- ms -->
-		<category>entities</category>
-		<subject>any</subject>
-		<predicate>any</predicate>
-		<object>any</object>
-		<site>any</site>
+		<freshness>
+			<type>time</type>
+			<value>100</value>
+		</freshness>
+		<dataSource>
+			<type>sensor</type>
+			<sourceList>
+				<source>right</source>
+			</sourceList>
+		</dataSource>
 	</pattern>
+
 </patterns>

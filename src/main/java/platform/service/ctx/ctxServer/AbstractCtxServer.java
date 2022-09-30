@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//app对应的server要设置rawdata的存储大小，base直接发给app的server
 public abstract class AbstractCtxServer extends AbstractSubscriber implements Runnable{
     protected final Map<String, Long> registeredSensorCounter = new HashMap<>();
     protected ChgGenerator chgGenerator;

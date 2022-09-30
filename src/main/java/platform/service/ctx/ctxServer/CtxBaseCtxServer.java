@@ -2,13 +2,21 @@ package platform.service.ctx.ctxServer;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import platform.config.Configuration;
 import platform.config.CtxServerConfig;
+import platform.config.SensorConfig;
+import platform.service.ctx.Patterns.Pattern;
+import platform.service.ctx.ctxChecker.INFuse.Starter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CtxBaseCtxServer extends AbstractCtxServer {
     private Thread t;
+    private HashMap<String, Pattern> patternMap;
+    public static AtomicInteger ctxIndex = new AtomicInteger();
 
     private static final class CtxBaseServerHolder {
         private static final CtxBaseCtxServer instance = new CtxBaseCtxServer();
@@ -19,35 +27,20 @@ public class CtxBaseCtxServer extends AbstractCtxServer {
     }
 
     public CtxBaseCtxServer(){
-        this.chgGenerator = new ChgGenerator(this);
-
-    }
-
-
-
-
-
-
-    public CtxBaseCtxServer() {
-        //init sensorCounter
         initSensorCounter();
-        //init baseChecker with CMID
-        Thread baseChecker = new Thread(new CheckerBuilder(CtxServerConfig.getInstace()));
-        baseChecker.setPriority(Thread.MAX_PRIORITY);
-        baseChecker.start();
-        //init baseChecker with INFuse
-//        Thread baseChecker = new Thread(new Starter(CtxServerConfig.getInstace()));
-//        baseChecker.setPriority(Thread.MAX_PRIORITY);
-//        baseChecker.start();
-
+        if(Configuration.getCtxServerConfig().isServerOn()){
+            this.chgGenerator = new ChgGenerator(CtxBaseCtxServer.getInstance());
+            this.patternMap = this.chgGenerator.buildPatterns(CtxServerConfig.getInstance().getBasePatternFile());
+            //Thread baseChecker = new Thread(new Starter());
+        }
     }
 
     @Override
     protected void initSensorCounter(){
         assert registeredSensorCounter != null;
         synchronized (registeredSensorCounter){
-            for(String sensorName : CtxServerConfig.getInstace().getSensorNameList()){
-                registeredSensorCounter.put(sensorName, 0L);
+            for(SensorConfig sensorConfig : CtxServerConfig.getInstance().getSensorConfigList()){
+                registeredSensorCounter.put(sensorConfig.getSensorName(), 0L);
             }
         }
     }
@@ -74,16 +67,8 @@ public class CtxBaseCtxServer extends AbstractCtxServer {
     }
 
 
-    @Override
-    public void run() {
-
-    }
-
-    public void start() {
-        if (t == null) {
-            t = new Thread(this, getClass().getName());
-            t.start();
-        }
+    public HashMap<String, Pattern> getPatternMap() {
+        return patternMap;
     }
 
     @Override
@@ -96,6 +81,19 @@ public class CtxBaseCtxServer extends AbstractCtxServer {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
         //
+    }
+
+
+    @Override
+    public void run() {
+
+    }
+
+    public void start() {
+        if (t == null) {
+            t = new Thread(this, getClass().getName());
+            t.start();
+        }
     }
 
 

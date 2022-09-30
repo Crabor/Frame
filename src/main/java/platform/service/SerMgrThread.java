@@ -2,7 +2,6 @@ package platform.service;
 
 import platform.Platform;
 import platform.config.Configuration;
-import platform.service.ctx.CtxSubscriber;
 import platform.service.ctx.ctxServer.CtxBaseCtxServer;
 import platform.service.inv.CancerServer;
 import platform.config.SubConfig;
@@ -35,13 +34,12 @@ public class SerMgrThread implements Runnable{
     @Override
     public void run() {
         //init cxt & inv
-        if (Configuration.getCtxServerConfig().isServerOn()) {
-            ctxBaseCtxServer = CtxBaseCtxServer.getInstance();
-            for (SubConfig subConfig : Configuration.getCtxServerConfig().getSubConfigs()) {
-                ctxBaseCtxServer.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
-            }
-            ctxBaseCtxServer.start();
+        //serverOn==false也要允许应用程序自主注册sensor，此时server起到一个转发的作用
+        ctxBaseCtxServer = CtxBaseCtxServer.getInstance();
+        for (SubConfig subConfig : Configuration.getCtxServerConfig().getSubConfigList()) {
+            ctxBaseCtxServer.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
         }
+        ctxBaseCtxServer.start();
 
         if (Configuration.getInvServerConfig().isServerOn()) {
             cancerServer = CancerServer.getInstance();

@@ -12,20 +12,16 @@
         <dataSource>
             <type>sensor</type>
             <sourceList>
-                <name>taxis</name>
+                <source>sensorOne</source>
             </sourceList>
         </dataSource>
-        <matcher>
+        <matcher> <!-- 可选项 -->
             <type>function</type>
-            <funcName>taxiFilter</funcName>
-            <fieldList>
-                <field>status</field>
-                <field>taxiId</field>
-            </fieldList>
-            <auxiliaryValueList>
-                <value>0</value> <!-- 由用户自定义，此处为对应status是否为0-->
-                <value>A</value> <!-- 由用户自定义，此处为对应taxiId以A结尾-->
-            </auxiliaryValueList>
+            <functionName>filter</functionName>
+            <extraArgumentList> <!-- 可选项 --><!-- 由用户自定义的匹配函数除context之外的额外参数 -->
+                <argument>argOne</argument>
+                <argument>argTwo</argument>
+            </extraArgumentList>
         </matcher>
     </pattern>
 
@@ -39,12 +35,12 @@
         <dataSource>
             <type>pattern</type>
             <sourceList>
-                <name>pat_template1</name>
+                <source>pat_template1</source>
             </sourceList>
         </dataSource>
-        <matcher>
+        <matcher> <!-- 可选项 -->
             <type>primaryKey</type>
-            <field>carId</field>
+            <primaryKey>id</primaryKey>
             <optionalValueList>
                 <value>orange_car</value>
                 <value>black_car</value>

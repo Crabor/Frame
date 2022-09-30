@@ -62,6 +62,8 @@ public class CtxSubscriber extends AbstractSubscriber implements Runnable {
         logger.debug("ctx recv: " + msg);
         JSONObject jo = JSON.parseObject(msg);
 
+
+
         int index = CtxServerConfig.ctxIndex.getAndIncrement();
         Date date = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");

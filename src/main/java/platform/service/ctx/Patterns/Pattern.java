@@ -7,12 +7,16 @@ public class Pattern {
     private String patternId;
     private String freshnessType;
     private String freshnessValue;
-    private final List<String> sensorList;
+    private String dataSourceType;
+    private final List<String> dataSourceList;
     private AbstractMatcher matcher;
 
     public Pattern() {
-        this.sensorList = new ArrayList<>();
+        this.dataSourceList = new ArrayList<>();
     }
+
+
+    public void addDataSource(String dataSource) {this.dataSourceList.add(dataSource);}
 
     public void setPatternId(String patternId) {
         this.patternId = patternId;
@@ -26,8 +30,8 @@ public class Pattern {
         this.freshnessValue = freshnessValue;
     }
 
-    public void addSensor(String sensor){
-        this.sensorList.add(sensor);
+    public void setDataSourceType(String dataSourceType) {
+        this.dataSourceType = dataSourceType;
     }
 
     public void setMatcher(AbstractMatcher matcher) {
@@ -46,8 +50,12 @@ public class Pattern {
         return freshnessValue;
     }
 
-    public List<String> getSensorList() {
-        return sensorList;
+    public String getDataSourceType() {
+        return dataSourceType;
+    }
+
+    public List<String> getDataSourceList() {
+        return dataSourceList;
     }
 
     public AbstractMatcher getMatcher() {
@@ -57,10 +65,11 @@ public class Pattern {
     @Override
     public String toString() {
         return "Pattern{" +
-                "pattern_id='" + patternId + '\'' +
+                "patternId='" + patternId + '\'' +
                 ", freshnessType='" + freshnessType + '\'' +
                 ", freshnessValue='" + freshnessValue + '\'' +
-                ", sensorList=" + sensorList +
+                ", dataSourceType='" + dataSourceType + '\'' +
+                ", dataSourceList=" + dataSourceList +
                 ", matcher=" + matcher +
                 '}';
     }

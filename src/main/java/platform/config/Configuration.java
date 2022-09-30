@@ -53,7 +53,7 @@ public class Configuration {
             JSONObject resourceObj = (JSONObject) obj.get("ResourceConfiguration");
             JSONObject redisObj = (JSONObject) obj.get("RedisConfig");
             //System.out.println(ctxObj.toJSONString());
-            ctxServerConfig  = CtxServerConfig.getInstace(ctxObj);
+            ctxServerConfig  = CtxServerConfig.getInstance(ctxObj);
             for (int i = 0; i < appObj.size(); i++) {
                 JSONObject temp = (JSONObject) appObj.get(i);
                 listOfAppObj.add(new AppConfig(temp));

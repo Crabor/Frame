@@ -1,10 +1,8 @@
 {
   "CtxServerConfiguration": {
     "serverOn": true,
-    "CtxCleaner": "ECC+IMD",
+    "CtxValidator": "ECC+IMD",
     "CtxFixer": "Drop",
-    "BUFFER_RAW_MAX": 2,
-    "delay_allowed": 20000, //ms  <= 1000*20
     "baseRuleFile": "Resources/rules.xml",
     "baseBfuncFile": "Resources/Bfunction.class",
     "basePatternFile": "Resources/patterns.xml",
