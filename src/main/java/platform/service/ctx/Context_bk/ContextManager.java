@@ -108,7 +108,7 @@ public class ContextManager<T> {
                 }
                 if(checkMsgID.containsKey(Msgindex)&&checkMsgID.get(Msgindex)==Configuration.getSensorLength()) {
                     if (!errorMsgID.contains(Msgindex)) {
-                        addMsgBufferFixed(message);
+                         addMsgBufferFixed(message);
 //                        logger.info("Fixed: " +message.index + "---"+message);
                     } else {
                         errorMsgID.remove(Msgindex);
