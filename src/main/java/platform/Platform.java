@@ -6,9 +6,9 @@ import platform.pubsub.Channel;
 import platform.resource.ResMgrThread;
 import platform.pubsub.Publisher;
 import platform.pubsub.AbstractSubscriber;
-import platform.service.SerMgrThread;
 import io.lettuce.core.RedisClient;
 import platform.util.Util;
+import platform.service.SerMgrThread;
 
 import java.io.File;
 import java.util.concurrent.locks.Lock;

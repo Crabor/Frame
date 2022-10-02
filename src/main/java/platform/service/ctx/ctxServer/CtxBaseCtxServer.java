@@ -25,13 +25,11 @@ public class CtxBaseCtxServer extends AbstractCtxServer {
     @Override
     public void init() {
         initSensorCounter();
+        increaseSensorCounter("taxis");
         if(Configuration.getCtxServerConfig().isServerOn()){
             this.chgGenerator = new ChgGenerator(CtxBaseCtxServer.getInstance());
             this.patternMap = this.chgGenerator.buildPatterns(CtxServerConfig.getInstance().getBasePatternFile(), CtxServerConfig.getInstance().getBaseMfuncFile());
             //Thread baseChecker = new Thread(new Starter());
-            this.patternMap.forEach((s, pattern) -> {
-                System.out.println(pattern.toString());
-            });
 
             this.chgGenerator.start();
         }
@@ -104,16 +102,14 @@ public class CtxBaseCtxServer extends AbstractCtxServer {
     @Override
     public void run() {
         while(true){
-            System.out.println("test");
             List<ContextChange> contextChangeList = changeBufferConsumer();
             System.out.println(contextChangeList);
             try {
-                Thread.sleep(10000);
+                Thread.sleep(5000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
-
     }
 
     public void start() {

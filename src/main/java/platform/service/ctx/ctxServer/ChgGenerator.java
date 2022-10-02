@@ -173,10 +173,10 @@ public class ChgGenerator implements Runnable {
     private void cleanOverdueContexts(List<ContextChange> changeList){
         long currentTime = new Date().getTime();
         while(!activateContextsTimeQue.isEmpty()){
-            long time = activateContextsTimeQue.peek().getKey();
+            long overdueTime = activateContextsTimeQue.peek().getKey();
             String patternId = activateContextsTimeQue.peek().getValue().getKey();
             Context context = activateContextsTimeQue.peek().getValue().getValue();
-            if(time <= currentTime){
+            if(overdueTime <= currentTime){
                 ContextChange delChange = new ContextChange();
                 delChange.setChangeType(ContextChange.ChangeType.DELETION);
                 delChange.setPatternId(patternId);
@@ -218,19 +218,30 @@ public class ChgGenerator implements Runnable {
         addChange.setPatternId(pattern.getPatternId());
         addChange.setContext(context);
         changeList.add(addChange);
+
+        //更新activateContexts容器
+        if(pattern.getFreshnessType() == FreshnessType.number){
+            LinkedBlockingQueue<Context> queue = activateContextsNumberMap.get(pattern.getPatternId());
+            queue.add(context);
+        }
+        else if(pattern.getFreshnessType() == FreshnessType.time){
+            long overdueTime = new Date().getTime() + Long.parseLong(pattern.getFreshnessValue());
+            activateContextsTimeQue.add(new AbstractMap.SimpleEntry<>(overdueTime, new AbstractMap.SimpleEntry<>(pattern.getPatternId(), context)));
+        }
+
         return changeList;
     }
 
     @Override
     public void run() {
-//        while(true){
-//            try {
-//                Thread.sleep(100000);
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//            generateChanges(null);
-//        }
+        while(true){
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            generateChanges(null);
+        }
     }
 
     public void start(){
