@@ -13,6 +13,7 @@
             <type>sensor</type>
             <sourceList>
                 <source>sensorOne</source>
+                <source>sensorTwo</source>
             </sourceList>
         </dataSource>
         <matcher> <!-- 可选项 -->

@@ -43,9 +43,4 @@ public class Context {
     public String toString() {
         return "ctx_id=" + ctx_id ;
     }
-
-    public String fieldsString(){
-        String result = "";
-        for
-    }
 }

@@ -22,13 +22,7 @@ public class SensorConfig {
             SensorType = "String";
         }
         SensorName = object.getString("SensorName");
-        try{
-            fieldNames = Arrays.asList(object.getString("fieldNames").split(","));
-        } catch (NullPointerException e){
-            fieldNames = new ArrayList<>();
-            fieldNames.add(object.getString("SensorName"));
-        }
-
+        fieldNames = Arrays.asList(object.getString("fieldNames").split(","));
 //        isValid = object.getBoolean("isValid");
 //        SensorFreq = object.getIntValue("SensorFreq");
 //        IPAddress = object.getString("IPAddress");

@@ -7,6 +7,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import platform.service.ctx.Contexts.Context;
 import platform.service.ctx.Contexts.ContextChange;
+import platform.service.ctx.Messages.Message;
 import platform.service.ctx.Patterns.FunctionMatcher;
 import platform.service.ctx.Patterns.Pattern;
 import platform.service.ctx.Patterns.PrimaryKeyMatcher;
@@ -100,11 +101,12 @@ public class ChgGenerator {
         return patternHashMap;
     }
 
-    public void generateChanges(JSONObject jsonObject){
+    public void generateChanges(Message message){
+        for(Pattern pattern : server.getPatternMap().values()){
 
+        }
 
         /*
-            1. buildContexts
             2. patternMatch
             3. generateChanges
             4. writeChanges

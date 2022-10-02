@@ -5,22 +5,18 @@ import com.alibaba.fastjson.JSONObject;
 import platform.config.Configuration;
 import platform.config.CtxServerConfig;
 import platform.config.SensorConfig;
+import platform.service.ctx.Messages.Message;
+import platform.service.ctx.Messages.MessageBuilder;
 import platform.service.ctx.Patterns.Pattern;
-import platform.service.ctx.ctxChecker.INFuse.Starter;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class CtxBaseCtxServer extends AbstractCtxServer {
     private Thread t;
-    private HashMap<String, Pattern> patternMap;
-    public static AtomicLong msgIndex=  new AtomicLong();
 
     private static final class CtxBaseServerHolder {
         private static final CtxBaseCtxServer instance = new CtxBaseCtxServer();
@@ -42,8 +38,8 @@ public class CtxBaseCtxServer extends AbstractCtxServer {
     @Override
     protected void initSensorCounter(){
         this.registeredSensorCounter = new ConcurrentHashMap<>();
-        for(SensorConfig sensorConfig : CtxServerConfig.getInstance().getSensorConfigList()){
-            registeredSensorCounter.put(sensorConfig.getSensorName(), 0L);
+        for(String sensorName : CtxServerConfig.getInstance().getSensorConfigMap().keySet()){
+            registeredSensorCounter.put(sensorName, 0L);
         }
     }
 
@@ -82,10 +78,6 @@ public class CtxBaseCtxServer extends AbstractCtxServer {
         return jsonObject;
     }
 
-    public HashMap<String, Pattern> getPatternMap() {
-        return patternMap;
-    }
-
     @Override
     public void onMessage(String channel, String msg) {
         logger.debug("ctx recv: " + msg);
@@ -94,11 +86,10 @@ public class CtxBaseCtxServer extends AbstractCtxServer {
             return;
         }
 
-        long timestamp = new Date().getTime();
-        long index = msgIndex.getAndIncrement();
-        addMsg(timestamp, index, jsonObject);
+        Message message = MessageBuilder.jsonObject2Message(jsonObject);
+        addMsg(message);
         if(CtxServerConfig.getInstance().isServerOn()){
-            chgGenerator.generateChanges(jsonObject);
+            chgGenerator.generateChanges(message);
             //TODO()
         }
         else{

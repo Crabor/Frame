@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CtxServerConfig {
     private volatile static CtxServerConfig INSTANCE = null;
@@ -17,7 +19,7 @@ public class CtxServerConfig {
     private final String baseBfuncFile;
     private final String basePatternFile;
     private final String baseMfuncFile;
-    private final List<SensorConfig> sensorConfigList;
+    private final Map<String, SensorConfig> sensorConfigMap;
     private final List<SubConfig> subConfigList;
 
 
@@ -40,7 +42,7 @@ public class CtxServerConfig {
         baseBfuncFile = object.getString("baseBfuncFile");
         basePatternFile = object.getString("basePatternFile");
         baseMfuncFile = object.getString("baseMfuncFile");
-        sensorConfigList = new ArrayList<>();
+        sensorConfigMap = new HashMap<>();
         subConfigList = new ArrayList<>();
         JSONArray subs = object.getJSONArray("subscribe");
         for (int i = 0; i < subs.size(); i++) {
@@ -51,7 +53,7 @@ public class CtxServerConfig {
 
 
     public void addSensorConfig(SensorConfig sensorConfig){
-        this.sensorConfigList.add(sensorConfig);
+        this.sensorConfigMap.put(sensorConfig.getSensorName(), sensorConfig);
     }
 
 
@@ -91,7 +93,9 @@ public class CtxServerConfig {
         return baseMfuncFile;
     }
 
-    public List<SensorConfig> getSensorConfigList() {return sensorConfigList;}
+    public Map<String, SensorConfig> getSensorConfigMap() {
+        return sensorConfigMap;
+    }
 
     public List<SubConfig> getSubConfigList() {
         return subConfigList;
@@ -109,7 +113,7 @@ public class CtxServerConfig {
                 ", baseBfuncFile='" + baseBfuncFile + '\'' +
                 ", basePatternFile='" + basePatternFile + '\'' +
                 ", baseMfuncFile='" + baseMfuncFile + '\'' +
-                ", sensorConfigList=" + sensorConfigList +
+                ", sensorConfigMap=" + sensorConfigMap +
                 ", subConfigs=" + subConfigList +
                 '}';
     }

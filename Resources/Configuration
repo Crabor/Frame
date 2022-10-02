@@ -74,19 +74,23 @@
     "SensorConfiguration": [
       {
         "SensorName": "front",
+        "fieldNames": "frontValue",
       },
       {
         "SensorName": "back",
+        "fieldNames": "backValue",
       },
       {
         "SensorName": "left",
+        "fieldNames": "leftValue",
       },
       {
         "SensorName": "right",
+        "fieldNames": "rightValue",
       },
       {
         "SensorName": "taxis",
-        "fieldNames": "timestamp,taxiId,longitude,latitude,speed,direction,status"
+        "fieldNames": "timestamp,taxiId,longitude,latitude,speed,direction,status",
       }
     ],
     "ActorConfiguration": [
