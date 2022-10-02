@@ -36,6 +36,7 @@ public class SerMgrThread implements Runnable{
         //init cxt & inv
         //serverOn==false也要允许应用程序自主注册sensor，此时server起到一个转发的作用
         ctxBaseCtxServer = CtxBaseCtxServer.getInstance();
+        ctxBaseCtxServer.init();
         for (SubConfig subConfig : Configuration.getCtxServerConfig().getSubConfigList()) {
             ctxBaseCtxServer.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
         }

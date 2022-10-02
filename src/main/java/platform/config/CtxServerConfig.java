@@ -35,7 +35,7 @@ public class CtxServerConfig {
     private CtxServerConfig(JSONObject object){
         serverOn = object.getBoolean("serverOn");
         ctxFixer = object.getString("CtxFixer");
-        ctxValidator = object.getString("CtxCleaner");
+        ctxValidator = object.getString("CtxValidator");
         ctxChecker = ctxValidator.split("\\+")[0];
         ctxScheduler = ctxValidator.split("\\+")[1];
         baseRuleFile = object.getString("baseRuleFile");

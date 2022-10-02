@@ -16,7 +16,7 @@
         </dataSource>
         <matcher>
             <type>function</type>
-            <functionName>taxiFilter</functionName>
+            <functionName>onService</functionName>
             <extraArgumentList>
                 <argument>0</argument>
             </extraArgumentList>
@@ -37,7 +37,7 @@
         </dataSource>
         <matcher>
             <type>function</type>
-            <functionName>taxiFilter</functionName>
+            <functionName>onService</functionName>
             <extraArgumentList>
                 <argument>0</argument>
             </extraArgumentList>

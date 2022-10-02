@@ -1,6 +1,6 @@
 package platform.service.ctx.ctxServer;
 
-import com.alibaba.fastjson.JSONObject;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -11,21 +11,39 @@ import platform.service.ctx.Messages.Message;
 import platform.service.ctx.Patterns.FunctionMatcher;
 import platform.service.ctx.Patterns.Pattern;
 import platform.service.ctx.Patterns.PrimaryKeyMatcher;
+import platform.service.ctx.Patterns.Types.DataSourceType;
+import platform.service.ctx.Patterns.Types.FreshnessType;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 
-public class ChgGenerator {
+public class ChgGenerator implements Runnable {
+    private Thread t;
+
     private final AbstractCtxServer server;
-
+    private final PriorityBlockingQueue<Map.Entry<Long, Map.Entry<String, Context>>> activateContextsTimeQue;
+    private final ConcurrentHashMap<String, LinkedBlockingQueue<Context>> activateContextsNumberMap;
 
     public ChgGenerator(AbstractCtxServer server){
         this.server = server;
+        this.activateContextsTimeQue = new PriorityBlockingQueue<>(50, (o1, o2) -> (int) (o1.getKey() - o2.getKey()));
+        this.activateContextsNumberMap = new ConcurrentHashMap<>();
     }
 
-    public HashMap<String, Pattern> buildPatterns(String patternFile){
+    public HashMap<String, Pattern> buildPatterns(String patternFile, String mfuncFile){
+        Object mfuncInstance = loadMfuncFile(mfuncFile);
+
         HashMap<String, Pattern> patternHashMap = new HashMap<>();
         try {
             SAXReader saxReader = new SAXReader();
@@ -44,7 +62,7 @@ public class ChgGenerator {
                 assert freshnessElements.size() == 2;
                 assert freshnessElements.get(0).getName().equals("type");
                 assert freshnessElements.get(1).getName().equals("value");
-                pattern.setFreshnessType(freshnessElements.get(0).getText());
+                pattern.setFreshnessType(FreshnessType.valueOf(freshnessElements.get(0).getText()));
                 pattern.setFreshnessValue(freshnessElements.get(1).getText());
                 //dataSource
                 assert labelElements.get(2).getName().equals("dataSource");
@@ -52,7 +70,7 @@ public class ChgGenerator {
                 assert dataSourceElements.size() == 2;
                 assert dataSourceElements.get(0).getName().equals("type");
                 assert dataSourceElements.get(1).getName().equals("sourceList");
-                pattern.setDataSourceType(dataSourceElements.get(0).getText());
+                pattern.setDataSourceType(DataSourceType.valueOf(dataSourceElements.get(0).getText()));
                 List<Element> sourceElements = dataSourceElements.get(1).elements();
                 for(Element sourceElement : sourceElements){
                     assert sourceElement.getName().equals("source");
@@ -77,7 +95,7 @@ public class ChgGenerator {
                     }
                     else if(matcherType.equals("function")){
                         assert matcherElements.get(1).getName().equals("functionName");
-                        FunctionMatcher functionMatcher = new FunctionMatcher(matcherElements.get(1).getText());
+                        FunctionMatcher functionMatcher = new FunctionMatcher(matcherElements.get(1).getText(), mfuncInstance);
                         //extraArgumentList (optional)
                         if(matcherElements.size() == 3){
                             assert matcherElements.get(2).getName().equals("extraArgumentList");
@@ -98,35 +116,127 @@ public class ChgGenerator {
         } catch (DocumentException e) {
             throw new RuntimeException(e);
         }
+        //init activateMaps
+        initActivateContextsNumberMap(patternHashMap);
         return patternHashMap;
     }
 
-    public void generateChanges(Message message){
-        for(Pattern pattern : server.getPatternMap().values()){
+    private Object loadMfuncFile(String mfuncFile) {
+        Object mfuncInstance;
+        Path mfuncPath = Paths.get(mfuncFile).toAbsolutePath();
+        try (URLClassLoader classLoader = new URLClassLoader(new URL[]{mfuncPath.getParent().toFile().toURI().toURL()})) {
+            Class<?> clazz = classLoader.loadClass(mfuncPath.getFileName().toString().split("\\.")[0]);
+            Constructor<?> constructor = clazz.getConstructor();
+            mfuncInstance = constructor.newInstance();
+        } catch (IOException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
+                 InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return mfuncInstance;
+    }
 
+    private void initActivateContextsNumberMap(HashMap<String, Pattern> patternHashMap){
+        for(Pattern pattern : patternHashMap.values()){
+            if(pattern.getFreshnessType() == FreshnessType.number){
+                activateContextsNumberMap.put(pattern.getPatternId(), new LinkedBlockingQueue<>());
+            }
+        }
+    }
+
+    public synchronized void generateChanges(Message message){
+        List<ContextChange> changeList = new ArrayList<>();
+        //根据当前时间清理过时的contexts，生成相应的changes
+        cleanOverdueContexts(changeList);
+
+        if(message != null){
+            //为message中的每一个context寻找对应的patterns，并生成相应的changes
+            for(String contextId : message.getContextMap().keySet()){
+                String fromSensorName = contextId.substring(0, contextId.lastIndexOf("_"));
+                for(Pattern pattern : server.getPatternMap().values()){
+                    if(pattern.getDataSourceType() == DataSourceType.pattern){
+                        continue;
+                    }
+                    if(pattern.getDataSourceSet().contains(fromSensorName)){
+                        Context context = message.getContextMap().get(contextId);
+                        if(match(pattern, context)){
+                            changeList.addAll(generate(pattern, context));
+                        }
+                    }
+                }
+            }
         }
 
-        /*
-            2. patternMatch
-            3. generateChanges
-            4. writeChanges
-         */
+        //将changes写入buffer
+        server.changeBufferProducer(changeList);
     }
 
-    //每一个sensor对应一个context（element）
-    private List<Context> buildContexts(JSONObject jsonObject){
-        return null;
+    private void cleanOverdueContexts(List<ContextChange> changeList){
+        long currentTime = new Date().getTime();
+        while(!activateContextsTimeQue.isEmpty()){
+            long time = activateContextsTimeQue.peek().getKey();
+            String patternId = activateContextsTimeQue.peek().getValue().getKey();
+            Context context = activateContextsTimeQue.peek().getValue().getValue();
+            if(time <= currentTime){
+                ContextChange delChange = new ContextChange();
+                delChange.setChangeType(ContextChange.ChangeType.DELETION);
+                delChange.setPatternId(patternId);
+                delChange.setContext(context);
+                //TODO(): inducing from-pattern changes.
+                changeList.add(delChange);
+
+                activateContextsTimeQue.poll();
+            }
+            else{
+                break;
+            }
+        }
     }
 
-    //调用pattern中的matcher的match方法
     private boolean match(Pattern pattern, Context context){
-        return false;
+        return pattern.getMatcher().match(context);
     }
 
     private List<ContextChange> generate(Pattern pattern, Context context){
         List<ContextChange> changeList = new ArrayList<>();
-        //TODO()
+        //判断是否是number，如果是，判断是否满容量，如果是，先生成delChange，如果有delChange，则要考虑 inducing from-pattern changes.
+        if(pattern.getFreshnessType() == FreshnessType.number){
+            LinkedBlockingQueue<Context> queue = activateContextsNumberMap.get(pattern.getPatternId());
+            if(queue.size() == Integer.parseInt(pattern.getFreshnessValue())){
+                Context oldContext = queue.poll();
+                assert oldContext != null;
+                ContextChange delChange = new ContextChange();
+                delChange.setChangeType(ContextChange.ChangeType.DELETION);
+                delChange.setPatternId(pattern.getPatternId());
+                delChange.setContext(oldContext);
+                changeList.add(delChange);
+                //TODO(): inducing from-pattern changes.
+            }
+        }
+        //生成addChange
+        ContextChange addChange = new ContextChange();
+        addChange.setChangeType(ContextChange.ChangeType.ADDITION);
+        addChange.setPatternId(pattern.getPatternId());
+        addChange.setContext(context);
+        changeList.add(addChange);
         return changeList;
     }
 
+    @Override
+    public void run() {
+//        while(true){
+//            try {
+//                Thread.sleep(100000);
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//            generateChanges(null);
+//        }
+    }
+
+    public void start(){
+        if (t == null) {
+            t = new Thread(this, getClass().getName());
+            t.start();
+        }
+    }
 }

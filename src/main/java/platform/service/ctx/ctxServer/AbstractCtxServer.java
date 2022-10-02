@@ -18,6 +18,8 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
     protected final LinkedBlockingQueue<ContextChange> changeBuffer = new LinkedBlockingQueue<>();
 
 
+    public abstract void init();
+
     //注册sensor
     protected abstract void initSensorCounter();
     public abstract void increaseSensorCounter(String sensorName);

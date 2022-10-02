@@ -3,10 +3,10 @@
     "serverOn": true,
     "CtxValidator": "ECC+IMD",
     "CtxFixer": "Drop",
-    "baseRuleFile": "Resources/rules.xml",
+    "baseRuleFile": "Resources/taxiTest/taxiRules.xml",
     "baseBfuncFile": "Resources/Bfunction.class",
-    "basePatternFile": "Resources/patterns.xml",
-    "baseMfuncFile": "Resources/Mfunction.class",
+    "basePatternFile": "Resources/taxiTest/taxiPatterns.xml",
+    "baseMfuncFile": "Resources/taxiTest/Mfunction.class",
     "subscribe": [
       {
         "channel": "sensor",
@@ -15,7 +15,7 @@
     ],
   },
   "InvServerConfiguration": {
-      "serverOn": true,
+      "serverOn": false,
       "groupThro": 20,
       "kMeansGroupSize": 1,
       "dosThro": 0.5,

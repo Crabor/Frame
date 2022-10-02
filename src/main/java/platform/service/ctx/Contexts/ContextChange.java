@@ -1,7 +1,7 @@
 package platform.service.ctx.Contexts;
 
 public class ContextChange {
-    public enum ChangeType {ADDITION, DELETION};
+    public enum ChangeType {ADDITION, DELETION}
 
     private ChangeType changeType;
     private String patternId;
@@ -33,6 +33,6 @@ public class ContextChange {
 
     @Override
     public String toString() {
-        return "<" + (changeType == ChangeType.ADDITION ? "+" : "-") + ", " + patternId + ", " + context.getCtx_id() + ">";
+        return "<" + (changeType == ChangeType.ADDITION ? "+" : "-") + ", " + patternId + ", " + context.getContextId() + ">";
     }
 }

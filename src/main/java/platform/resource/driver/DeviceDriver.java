@@ -8,8 +8,9 @@ import platform.pubsub.AbstractSubscriber;
 import platform.service.inv.CancerServer;
 import platform.util.Util;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 
 import static java.lang.Thread.sleep;
 
@@ -36,21 +37,38 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
     @Override
     public void run() {
         //receive msg from car than publish to sensor channel
-        while (true) {
-            // wang hui yan
-            try {
-                byte[] data = new byte[1024];
-                DatagramPacket packet = new DatagramPacket(data, data.length);
-                socket.receive(packet);
-                String sensorData = new String(data, 0, packet.getLength());
-//                Thread.sleep(50);
-//                String sensorData = Util.randomJSONCarData();
-                logger.debug("dd recv: " + sensorData);
-                publish("sensor", sensorData);
-            } catch (Exception e) {
-                e.printStackTrace();
+        try {
+            InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream("Resources/taxiTest/testdata.txt"), StandardCharsets.UTF_8);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String line = null;
+            while((line = bufferedReader.readLine()) != null){
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("taxis", line);
+                logger.debug("dd recv: " + jsonObject.toJSONString());
+                publish("sensor", jsonObject.toJSONString());
             }
+            bufferedReader.close();
+            inputStreamReader.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+
+
+//        while (true) {
+//            // wang hui yan
+//            try {
+//                byte[] data = new byte[1024];
+//                DatagramPacket packet = new DatagramPacket(data, data.length);
+//                socket.receive(packet);
+//                String sensorData = new String(data, 0, packet.getLength());
+////                Thread.sleep(50);
+////                String sensorData = Util.randomJSONCarData();
+//                logger.debug("dd recv: " + sensorData);
+//                publish("sensor", sensorData);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     public void start() {

@@ -1,28 +1,31 @@
 package platform.service.ctx.Patterns;
 
-import java.util.ArrayList;
-import java.util.List;
+import platform.service.ctx.Patterns.Types.DataSourceType;
+import platform.service.ctx.Patterns.Types.FreshnessType;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class Pattern {
     private String patternId;
-    private String freshnessType;
+    private FreshnessType freshnessType;
     private String freshnessValue;
-    private String dataSourceType;
-    private final List<String> dataSourceList;
+    private DataSourceType dataSourceType;
+    private final Set<String> dataSourceSet;
     private AbstractMatcher matcher;
 
     public Pattern() {
-        this.dataSourceList = new ArrayList<>();
+        this.dataSourceSet = new HashSet<>();
     }
 
 
-    public void addDataSource(String dataSource) {this.dataSourceList.add(dataSource);}
+    public void addDataSource(String dataSource) {this.dataSourceSet.add(dataSource);}
 
     public void setPatternId(String patternId) {
         this.patternId = patternId;
     }
 
-    public void setFreshnessType(String freshnessType) {
+    public void setFreshnessType(FreshnessType freshnessType) {
         this.freshnessType = freshnessType;
     }
 
@@ -30,7 +33,7 @@ public class Pattern {
         this.freshnessValue = freshnessValue;
     }
 
-    public void setDataSourceType(String dataSourceType) {
+    public void setDataSourceType(DataSourceType dataSourceType) {
         this.dataSourceType = dataSourceType;
     }
 
@@ -42,7 +45,7 @@ public class Pattern {
         return patternId;
     }
 
-    public String getFreshnessType() {
+    public FreshnessType getFreshnessType() {
         return freshnessType;
     }
 
@@ -50,12 +53,12 @@ public class Pattern {
         return freshnessValue;
     }
 
-    public String getDataSourceType() {
+    public DataSourceType getDataSourceType() {
         return dataSourceType;
     }
 
-    public List<String> getDataSourceList() {
-        return dataSourceList;
+    public Set<String> getDataSourceSet() {
+        return dataSourceSet;
     }
 
     public AbstractMatcher getMatcher() {
@@ -69,7 +72,7 @@ public class Pattern {
                 ", freshnessType='" + freshnessType + '\'' +
                 ", freshnessValue='" + freshnessValue + '\'' +
                 ", dataSourceType='" + dataSourceType + '\'' +
-                ", dataSourceList=" + dataSourceList +
+                ", dataSourceList=" + dataSourceSet +
                 ", matcher=" + matcher +
                 '}';
     }

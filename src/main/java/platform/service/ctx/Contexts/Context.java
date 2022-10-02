@@ -4,24 +4,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Context {
-    private String ctx_id;
+    private String contextId;
 
-    private final Map<String, String> ctx_fields;
+    private final Map<String, String> contextFields;
 
     public Context() {
-        this.ctx_fields = new HashMap<>();
+        this.contextFields = new HashMap<>();
     }
 
-    public String getCtx_id() {
-        return ctx_id;
+    public String getContextId() {
+        return contextId;
     }
 
-    public Map<String, String> getCtx_fields() {
-        return ctx_fields;
+    public Map<String, String> getContextFields() {
+        return contextFields;
     }
 
-    public void setCtx_id(String ctx_id) {
-        this.ctx_id = ctx_id;
+    public void setContextId(String contextId) {
+        this.contextId = contextId;
     }
 
     @Override
@@ -31,16 +31,16 @@ public class Context {
 
         platform.service.ctx.Contexts.Context context = (platform.service.ctx.Contexts.Context) o;
 
-        return ctx_id.equals(context.ctx_id);
+        return contextId.equals(context.contextId);
     }
 
     @Override
     public int hashCode() {
-        return ctx_id.hashCode();
+        return contextId.hashCode();
     }
 
     @Override
     public String toString() {
-        return "ctx_id=" + ctx_id ;
+        return "ctx_id=" + contextId;
     }
 }
