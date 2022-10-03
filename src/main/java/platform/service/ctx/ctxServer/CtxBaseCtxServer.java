@@ -91,7 +91,6 @@ public class CtxBaseCtxServer extends AbstractCtxServer {
 
         if(CtxServerConfig.getInstance().isServerOn()){
             chgGenerator.generateChanges(message);
-            //TODO()
         }
         else{
             //TODO()
@@ -101,15 +100,8 @@ public class CtxBaseCtxServer extends AbstractCtxServer {
 
     @Override
     public void run() {
-        while(true){
-            List<ContextChange> contextChangeList = changeBufferConsumer();
-            System.out.println(contextChangeList);
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
+
+
     }
 
     public void start() {

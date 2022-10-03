@@ -1,19 +1,31 @@
 package platform.service.ctx.ctxChecker.INFuse.Contexts;
 
-import platform.service.ctx.ctxChecker.INFuse.Patterns.PatternHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ContextHandler {
-    private final PatternHandler patternHandler;
+public class ContextHandler {
 
-    public ContextHandler(PatternHandler patternHandler) {
-        this.patternHandler = patternHandler;
+    public List<ContextChange> convertContextChanges(List<platform.service.ctx.Contexts.ContextChange> platChanges){
+        List<ContextChange> changeList = new ArrayList<>();
+        for(platform.service.ctx.Contexts.ContextChange platChange : platChanges){
+            changeList.add(convertSingleChange(platChange));
+        }
+        return changeList;
     }
 
-    public PatternHandler getPatternHandler() {
-        return patternHandler;
+    private ContextChange convertSingleChange(platform.service.ctx.Contexts.ContextChange platChange){
+        ContextChange engineChange = new ContextChange();
+        engineChange.setChange_type(ContextChange.Change_Type.valueOf(platChange.getChangeType().toString()));
+        engineChange.setPattern_id(platChange.getPatternId());
+        engineChange.setContext(convertContext(platChange.getContext()));
+        return engineChange;
     }
 
-    public abstract void generateChanges(String line, List<ContextChange> changeList) throws Exception;
+    private Context convertContext(platform.service.ctx.Contexts.Context platContext){
+        Context engineContext = new Context();
+        engineContext.setCtx_id(platContext.getContextId());
+        engineContext.getCtx_fields().putAll(platContext.getContextFields());
+        return engineContext;
+    }
 }
