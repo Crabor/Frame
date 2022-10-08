@@ -53,7 +53,6 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
             throw new RuntimeException(e);
         }
 
-
 //        while (true) {
 //            // wang hui yan
 //            try {
