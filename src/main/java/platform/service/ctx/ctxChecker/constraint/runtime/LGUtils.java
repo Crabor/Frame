@@ -1,4 +1,4 @@
-package platform.service.ctx.ctxChecker.constraints.runtime;
+package platform.service.ctx.ctxChecker.constraint.runtime;
 
 import java.util.HashSet;
 import java.util.Set;

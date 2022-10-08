@@ -1,18 +1,21 @@
-package platform.service.ctx.ctxServiceFrame;
+package platform.service.ctx.ctxServer;
 
-import platform.service.ctx.ctxChecker.constraints.runtime.Link;
-import platform.service.ctx.ctxChecker.contexts.Context;
-import platform.service.ctx.ctxServiceFrame.ctxServer.AbstractCtxServer;
+import platform.service.ctx.ctxChecker.constraint.runtime.Link;
+import platform.service.ctx.ctxChecker.context.Context;
 
 import java.util.*;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class CtxFixer {
     private final AbstractCtxServer ctxServer;
     private final HashMap<String, Set<String>> ctxId2IncRuleIdSet;
 
+    private final LinkedBlockingQueue<Context> fixedContextQue;
+
     public CtxFixer(AbstractCtxServer ctxServer) {
         this.ctxServer = ctxServer;
         this.ctxId2IncRuleIdSet = new HashMap<>();
+        this.fixedContextQue = new LinkedBlockingQueue<>();
     }
 
     public void filterInconsistencies(Map<String, Set<Link>> ruleId2LinkSet){
@@ -31,9 +34,13 @@ public class CtxFixer {
 
     public void fixContext(Context context){
         if(!ctxId2IncRuleIdSet.containsKey(context.getContextId())){
-
+            fixedContextQue.add(context);
         }
 
 
+    }
+
+    public LinkedBlockingQueue<Context> getFixedContextQue() {
+        return fixedContextQue;
     }
 }

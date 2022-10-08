@@ -1,13 +1,11 @@
-package platform.service.ctx.ctxServiceFrame;
+package platform.service.ctx.ctxServer;
 
 
-import platform.service.ctx.messages.Message;
-import platform.service.ctx.patterns.Pattern;
-import platform.service.ctx.patterns.types.DataSourceType;
-import platform.service.ctx.patterns.types.FreshnessType;
-import platform.service.ctx.ctxChecker.contexts.Context;
-import platform.service.ctx.ctxChecker.contexts.ContextChange;
-import platform.service.ctx.ctxServiceFrame.ctxServer.AbstractCtxServer;
+import platform.service.ctx.pattern.Pattern;
+import platform.service.ctx.pattern.types.DataSourceType;
+import platform.service.ctx.pattern.types.FreshnessType;
+import platform.service.ctx.ctxChecker.context.Context;
+import platform.service.ctx.ctxChecker.context.ContextChange;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,21 +34,21 @@ public class ChgGenerator implements Runnable {
         }
     }
 
-    public synchronized void generateChanges(Message message){
+    public synchronized void generateChanges(Map<String, Context> contextMap){
         List<ContextChange> changeList = new ArrayList<>();
         //根据当前时间清理过时的contexts，生成相应的changes
         cleanOverdueContexts(changeList);
 
-        if(message != null){
+        if(contextMap != null){
             //为message中的每一个context寻找对应的patterns，并生成相应的changes
-            for(String contextId : message.getContextMap().keySet()){
+            for(String contextId : contextMap.keySet()){
                 String fromSensorName = contextId.substring(0, contextId.lastIndexOf("_"));
                 for(Pattern pattern : server.getPatternMap().values()){
                     if(pattern.getDataSourceType() == DataSourceType.pattern){
                         continue;
                     }
                     if(pattern.getDataSourceSet().contains(fromSensorName)){
-                        Context context = message.getContextMap().get(contextId);
+                        Context context = contextMap.get(contextId);
                         if(match(pattern, context)){
                             changeList.addAll(generate(pattern, context));
                         }

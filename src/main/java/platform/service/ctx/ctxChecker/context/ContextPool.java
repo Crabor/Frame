@@ -1,8 +1,8 @@
-package platform.service.ctx.ctxChecker.contexts;
+package platform.service.ctx.ctxChecker.context;
 
 
 
-import platform.service.ctx.rules.Rule;
+import platform.service.ctx.rule.Rule;
 
 import java.util.*;
 

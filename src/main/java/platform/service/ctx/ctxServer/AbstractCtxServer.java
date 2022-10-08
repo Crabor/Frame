@@ -1,25 +1,25 @@
-package platform.service.ctx.ctxServiceFrame.ctxServer;
+package platform.service.ctx.ctxServer;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import platform.pubsub.AbstractSubscriber;
-import platform.service.ctx.messages.Message;
-import platform.service.ctx.patterns.matchers.FunctionMatcher;
-import platform.service.ctx.patterns.matchers.PrimaryKeyMatcher;
-import platform.service.ctx.patterns.Pattern;
-import platform.service.ctx.patterns.types.DataSourceType;
-import platform.service.ctx.patterns.types.FreshnessType;
-import platform.service.ctx.rules.resolvers.Resolver;
-import platform.service.ctx.rules.resolvers.ResolverType;
-import platform.service.ctx.rules.Rule;
-import platform.service.ctx.ctxChecker.constraints.formulas.*;
-import platform.service.ctx.ctxChecker.constraints.runtime.RuntimeNode;
-import platform.service.ctx.ctxChecker.contexts.ContextChange;
-import platform.service.ctx.ctxServiceFrame.ChgGenerator;
-import platform.service.ctx.ctxServiceFrame.CtxFixer;
+import platform.service.ctx.ctxChecker.context.Context;
+import platform.service.ctx.pattern.matcher.FunctionMatcher;
+import platform.service.ctx.pattern.matcher.PrimaryKeyMatcher;
+import platform.service.ctx.pattern.Pattern;
+import platform.service.ctx.pattern.types.DataSourceType;
+import platform.service.ctx.pattern.types.FreshnessType;
+import platform.service.ctx.rule.resolver.Resolver;
+import platform.service.ctx.rule.resolver.ResolverType;
+import platform.service.ctx.rule.Rule;
+import platform.service.ctx.ctxChecker.constraint.formulas.*;
+import platform.service.ctx.ctxChecker.constraint.runtime.RuntimeNode;
+import platform.service.ctx.ctxChecker.context.ContextChange;
+import platform.service.ctx.sensorStatitic.AbstractSensorStatistics;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,9 +34,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 
 public abstract class AbstractCtxServer extends AbstractSubscriber implements Runnable{
-    protected Map<String, Long> registeredSensorCounter;
-
-    protected final LinkedBlockingQueue<Message> msgBuffer = new LinkedBlockingQueue<>();
+    protected AbstractSensorStatistics sensorStatistics;
     protected HashMap<String, Pattern> patternMap;
 
     protected HashMap<String, Rule> ruleMap;
@@ -47,13 +45,14 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
 
     protected CtxFixer ctxFixer;
 
+
     public abstract void init();
 
+
     //sensor related
-    protected abstract void initSensorCounter();
-    public abstract void increaseSensorCounter(String sensorName);
-    public abstract void decreaseSensorCounter(String sensorName);
-    protected abstract Set<String> getRegisteredSensors();
+    public AbstractSensorStatistics getSensorStatistics() {
+        return sensorStatistics;
+    }
 
     //pattern related
     public void buildPatterns(String patternFile, String mfuncFile){
@@ -304,9 +303,15 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
     }
 
     //message related
-    protected abstract JSONObject filterMessage(String msg);
-    public void addMsg(Message message){
-        msgBuffer.offer(message);
+    protected JSONObject filterMessage(String msg){
+        JSONObject jsonObject = JSON.parseObject(msg);
+        Set<String> registeredSensorSet = this.sensorStatistics.getRegisteredSensorSet();
+        for(String msgSensor : jsonObject.keySet()){
+            if(!registeredSensorSet.contains(msgSensor)){
+                jsonObject.remove(msgSensor);
+            }
+        }
+        return jsonObject;
     }
 
     //chgGenerator related
@@ -331,10 +336,7 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
     }
 
     //fixer related
-    public CtxFixer getFixer() {
+    public CtxFixer getCtxFixer() {
         return ctxFixer;
     }
-
-
-
 }

@@ -1,19 +1,18 @@
-package platform.service.ctx.ctxChecker.INFuse.Middleware.Schedulers;
+package platform.service.ctx.ctxChecker.middleware.schedulers;
 
 
-import platform.service.ctx.ctxChecker.INFuse.Constraints.RuleHandler;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.ContextChange;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.ContextPool;
-import platform.service.ctx.ctxChecker.INFuse.Middleware.Checkers.Checker;
-import platform.service.ctx.ctxChecker.INFuse.Middleware.Checkers.ConC;
-import platform.service.ctx.ctxChecker.INFuse.Middleware.Checkers.INFUSE_C;
+import platform.service.ctx.ctxChecker.context.ContextChange;
+import platform.service.ctx.ctxChecker.context.ContextPool;
+import platform.service.ctx.ctxChecker.middleware.checkers.Checker;
+import platform.service.ctx.ctxChecker.middleware.checkers.ConC;
+import platform.service.ctx.ctxChecker.middleware.checkers.INFUSE_C;
 
 
 public class IMD extends Scheduler{
 
 
-    public IMD(RuleHandler ruleHandler, ContextPool contextPool, Checker checker) {
-        super(ruleHandler, contextPool, checker);
+    public IMD(ContextPool contextPool, Checker checker) {
+        super(contextPool, checker);
         this.strategy = "IMD";
     }
 

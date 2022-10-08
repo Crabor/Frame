@@ -1,8 +1,8 @@
-package platform.service.ctx.patterns;
+package platform.service.ctx.pattern;
 
-import platform.service.ctx.patterns.matchers.AbstractMatcher;
-import platform.service.ctx.patterns.types.DataSourceType;
-import platform.service.ctx.patterns.types.FreshnessType;
+import platform.service.ctx.pattern.matcher.AbstractMatcher;
+import platform.service.ctx.pattern.types.DataSourceType;
+import platform.service.ctx.pattern.types.FreshnessType;
 
 import java.util.HashSet;
 import java.util.Set;

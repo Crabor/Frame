@@ -1,6 +1,6 @@
-package platform.service.ctx.messages;
+package platform.service.ctx.message;
 
-import platform.service.ctx.ctxChecker.contexts.Context;
+import platform.service.ctx.ctxChecker.context.Context;
 
 import java.util.HashMap;
 import java.util.Map;

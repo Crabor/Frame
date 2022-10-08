@@ -1,4 +1,4 @@
-package platform.service.ctx.ctxChecker.contexts;
+package platform.service.ctx.ctxChecker.context;
 
 import java.util.HashMap;
 import java.util.Map;

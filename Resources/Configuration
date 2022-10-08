@@ -4,7 +4,7 @@
     "CtxValidator": "ECC+IMD",
     "CtxFixer": "Drop",
     "baseRuleFile": "Resources/taxiTest/taxiRules.xml",
-    "baseBfuncFile": "Resources/Bfunction.class",
+    "baseBfuncFile": "Resources/taxiTest/Bfunction.class",
     "basePatternFile": "Resources/taxiTest/taxiPatterns.xml",
     "baseMfuncFile": "Resources/taxiTest/Mfunction.class",
     "subscribe": [

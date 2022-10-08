@@ -1,7 +1,7 @@
-package platform.service.ctx.patterns.matchers;
+package platform.service.ctx.pattern.matcher;
 
-import platform.service.ctx.patterns.types.MatcherType;
-import platform.service.ctx.ctxChecker.contexts.Context;
+import platform.service.ctx.pattern.types.MatcherType;
+import platform.service.ctx.ctxChecker.context.Context;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

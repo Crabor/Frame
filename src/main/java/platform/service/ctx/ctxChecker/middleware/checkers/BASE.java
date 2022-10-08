@@ -1,26 +1,26 @@
-package platform.service.ctx.ctxChecker.INFuse.Middleware.Checkers;
+package platform.service.ctx.ctxChecker.middleware.checkers;
 
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Rule;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.RuleHandler;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Runtime.Link;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.ContextChange;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.ContextPool;
-import platform.service.ctx.ctxChecker.INFuse.Middleware.NotSupportedException;
+import platform.service.ctx.rule.Rule;
+import platform.service.ctx.ctxChecker.constraint.runtime.Link;
+import platform.service.ctx.ctxChecker.context.ContextChange;
+import platform.service.ctx.ctxChecker.context.ContextPool;
+import platform.service.ctx.ctxChecker.middleware.NotSupportedException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class BASE extends ConC{
 
-    public BASE(RuleHandler ruleHandler, ContextPool contextPool, Object bfunctions) {
-        super(ruleHandler, contextPool, bfunctions);
+    public BASE(Map<String, Rule> ruleMap, ContextPool contextPool, Object bfunctions) {
+        super(ruleMap, contextPool, bfunctions);
         this.technique = "BASE";
     }
 
     @Override
     public void ctxChangeCheckIMD(ContextChange contextChange) {
-        for(Rule rule : ruleHandler.getRuleList()){
-            if(rule.getRelatedPatterns().contains(contextChange.getPattern_id())){
+        for(Rule rule : ruleMap.values()){
+            if(rule.getRelatedPatterns().contains(contextChange.getPatternId())){
                 //apply changes
                 contextPool.ApplyChange(rule.getRule_id(), contextChange);
                 rule.UpdateAffectedWithOneChange(contextChange, this);

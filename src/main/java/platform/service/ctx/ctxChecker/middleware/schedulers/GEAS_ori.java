@@ -1,28 +1,30 @@
-package platform.service.ctx.ctxChecker.INFuse.Middleware.Schedulers;
+package platform.service.ctx.ctxChecker.middleware.schedulers;
 
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Rule;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.RuleHandler;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.ContextChange;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.ContextPool;
-import platform.service.ctx.ctxChecker.INFuse.Middleware.Checkers.Checker;
-import platform.service.ctx.ctxChecker.INFuse.Middleware.Checkers.ConC;
-import platform.service.ctx.ctxChecker.INFuse.Middleware.Checkers.INFUSE_C;
-import platform.service.ctx.ctxChecker.INFuse.Middleware.NotSupportedException;
+import platform.service.ctx.rule.Rule;
+import platform.service.ctx.ctxChecker.context.ContextChange;
+import platform.service.ctx.ctxChecker.context.ContextPool;
+import platform.service.ctx.ctxChecker.middleware.checkers.Checker;
+import platform.service.ctx.ctxChecker.middleware.checkers.ConC;
+import platform.service.ctx.ctxChecker.middleware.checkers.INFUSE_C;
+import platform.service.ctx.ctxChecker.middleware.NotSupportedException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class GEAS_ori extends Scheduler{
+    protected final Map<String, Rule> ruleMap;
 
-    public GEAS_ori(RuleHandler ruleHandler, ContextPool contextPool, Checker checker) {
-        super(ruleHandler, contextPool, checker);
+    public GEAS_ori(Map<String, Rule> ruleMap, ContextPool contextPool, Checker checker) {
+        super(contextPool, checker);
+        this.ruleMap = ruleMap;
         this.strategy = "GEAS_ori";
     }
 
     @Override
     public void doSchedule(ContextChange contextChange) throws Exception {
         Batch_Form(contextChange);
-        for(Rule rule : ruleHandler.getRuleList()){
+        for(Rule rule : ruleMap.values()){
             if(rule.getNewBatch() != null){
                 this.checker.ctxChangeCheckBatch(rule, rule.getBatch());
                 rule.setBatch(rule.getNewBatch());
@@ -32,8 +34,8 @@ public class GEAS_ori extends Scheduler{
     }
 
     private void Batch_Form(ContextChange newChange){
-        for(Rule rule : ruleHandler.getRuleList()){
-            if(!rule.getRelatedPatterns().contains(newChange.getPattern_id()))
+        for(Rule rule : ruleMap.values()){
+            if(!rule.getRelatedPatterns().contains(newChange.getPatternId()))
                 continue;
             if(S_Condition_Match(rule, newChange)){
                 List<ContextChange> newBatch = new ArrayList<>();
@@ -90,7 +92,7 @@ public class GEAS_ori extends Scheduler{
 
     protected void CleanUp() throws NotSupportedException {
         //最后一次检测
-        for(Rule rule : ruleHandler.getRuleList()){
+        for(Rule rule : ruleMap.values()){
             if(rule.getBatch() != null){
                 this.checker.ctxChangeCheckBatch(rule, rule.getBatch());
                 rule.setBatch(null);

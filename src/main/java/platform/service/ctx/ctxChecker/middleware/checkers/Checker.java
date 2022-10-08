@@ -1,16 +1,17 @@
-package platform.service.ctx.ctxChecker.INFuse.Middleware.Checkers;
+package platform.service.ctx.ctxChecker.middleware.checkers;
 
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Rule;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.RuleHandler;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Runtime.Link;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.ContextChange;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.ContextPool;
-import platform.service.ctx.ctxChecker.INFuse.Middleware.NotSupportedException;
+
+import platform.service.ctx.rule.Rule;
+import platform.service.ctx.ctxChecker.constraint.runtime.Link;
+import platform.service.ctx.ctxChecker.context.ContextPool;
+import platform.service.ctx.ctxChecker.context.ContextChange;
+import platform.service.ctx.ctxChecker.middleware.NotSupportedException;
 
 import java.util.*;
 
 public abstract class Checker {
-    protected RuleHandler ruleHandler;
+    protected final Map<String, Rule> ruleMap;
+
     protected ContextPool contextPool;
     protected String technique;
     protected Object bfuncInstance;
@@ -21,8 +22,8 @@ public abstract class Checker {
     protected Map<String, Set<Link>> tempRuleLinksMap;
 
 
-    public Checker(RuleHandler ruleHandler, ContextPool contextPool, Object bfuncInstance) {
-        this.ruleHandler = ruleHandler;
+    public Checker(Map<String, Rule> ruleMap, ContextPool contextPool, Object bfuncInstance) {
+        this.ruleMap = ruleMap;
         this.contextPool = contextPool;
         this.bfuncInstance = bfuncInstance;
         this.ruleLinksMap = new HashMap<>();
@@ -40,7 +41,7 @@ public abstract class Checker {
     }
 
     public void checkInit(){
-        for(Rule rule : ruleHandler.getRuleList()){
+        for(Rule rule : ruleMap.values()){
             rule.BuildCCT_ECCPCC(this);
             rule.TruthEvaluation_ECC(this);
             rule.LinksGeneration_ECC(this);
@@ -51,10 +52,6 @@ public abstract class Checker {
 
 
     //getter
-    public RuleHandler getRuleHandler() {
-        return ruleHandler;
-    }
-
     public ContextPool getContextPool() {
         return contextPool;
     }

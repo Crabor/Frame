@@ -1,4 +1,4 @@
-package platform.service.ctx.rules.resolvers;
+package platform.service.ctx.rule.resolver;
 
 public class Resolver {
     private ResolverType resolverType;

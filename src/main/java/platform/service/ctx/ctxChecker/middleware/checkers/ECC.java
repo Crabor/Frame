@@ -1,26 +1,27 @@
-package platform.service.ctx.ctxChecker.INFuse.Middleware.Checkers;
+package platform.service.ctx.ctxChecker.middleware.checkers;
 
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Rule;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.RuleHandler;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Runtime.Link;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.ContextChange;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.ContextPool;
+
+import platform.service.ctx.rule.Rule;
+import platform.service.ctx.ctxChecker.constraint.runtime.Link;
+import platform.service.ctx.ctxChecker.context.ContextChange;
+import platform.service.ctx.ctxChecker.context.ContextPool;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class ECC extends Checker{
 
-    public ECC(RuleHandler ruleHandler, ContextPool contextPool, Object bfunctions) {
-        super(ruleHandler, contextPool, bfunctions);
+    public ECC(Map<String, Rule> ruleMap, ContextPool contextPool, Object bfunctions) {
+        super(ruleMap, contextPool, bfunctions);
         this.technique = "ECC";
     }
 
     @Override
     public void ctxChangeCheckIMD(ContextChange contextChange) {
         //consistency checking
-        for(Rule rule : this.ruleHandler.getRuleList()){
-            if (rule.getRelatedPatterns().contains(contextChange.getPattern_id())){
+        for(Rule rule : this.ruleMap.values()){
+            if (rule.getRelatedPatterns().contains(contextChange.getPatternId())){
                 //apply change
                 contextPool.ApplyChange(rule.getRule_id(), contextChange);
                 //build CCT

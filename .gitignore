@@ -27,3 +27,5 @@ out
 
 #file
 output3.txt
+
+*.DS_Store

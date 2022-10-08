@@ -1,19 +1,20 @@
-package platform.service.ctx.ctxChecker.INFuse.Middleware.Checkers;
+package platform.service.ctx.ctxChecker.middleware.checkers;
 
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Formulas.FExists;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Formulas.FForall;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Formulas.Formula;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Rule;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.RuleHandler;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Runtime.Link;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Runtime.RuntimeNode;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.Context;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.ContextChange;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.ContextPool;
-import platform.service.ctx.ctxChecker.INFuse.Middleware.NotSupportedException;
+import platform.service.ctx.rule.Rule;
+import platform.service.ctx.ctxChecker.constraint.formulas.FForall;
+
+import platform.service.ctx.ctxChecker.constraint.formulas.Formula;
+import platform.service.ctx.ctxChecker.constraint.runtime.Link;
+import platform.service.ctx.ctxChecker.constraint.runtime.RuntimeNode;
+import platform.service.ctx.ctxChecker.context.Context;
+import platform.service.ctx.ctxChecker.context.ContextPool;
+import platform.service.ctx.ctxChecker.constraint.formulas.FExists;
+import platform.service.ctx.ctxChecker.context.ContextChange;
+import platform.service.ctx.ctxChecker.middleware.NotSupportedException;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -23,8 +24,8 @@ public class ConC extends Checker {
 
     public final ExecutorService ThreadPool;
 
-    public ConC(RuleHandler ruleHandler, ContextPool contextPool, Object bfunctions) {
-        super(ruleHandler, contextPool, bfunctions);
+    public ConC(Map<String,Rule> ruleMap, ContextPool contextPool, Object bfunctions) {
+        super(ruleMap, contextPool, bfunctions);
         ThreadPool = Executors.newFixedThreadPool(13);
         this.technique = "ConC";
     }
@@ -106,8 +107,8 @@ public class ConC extends Checker {
     @Override
     public void ctxChangeCheckIMD(ContextChange contextChange) {
         //consistency checking
-        for(Rule rule : ruleHandler.getRuleList()){
-            if(rule.getRelatedPatterns().contains(contextChange.getPattern_id())){
+        for(Rule rule : ruleMap.values()){
+            if(rule.getRelatedPatterns().contains(contextChange.getPatternId())){
                 //apply changes
                 contextPool.ApplyChange(rule.getRule_id(), contextChange);
                 //build CCT

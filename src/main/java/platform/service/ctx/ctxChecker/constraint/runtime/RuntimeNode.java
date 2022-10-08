@@ -1,9 +1,9 @@
-package platform.service.ctx.ctxChecker.constraints.runtime;
+package platform.service.ctx.ctxChecker.constraint.runtime;
 
-import platform.service.ctx.ctxChecker.constraints.formulas.FExists;
-import platform.service.ctx.ctxChecker.constraints.formulas.FForall;
-import platform.service.ctx.ctxChecker.constraints.formulas.Formula;
-import platform.service.ctx.ctxChecker.contexts.Context;
+import platform.service.ctx.ctxChecker.constraint.formulas.FExists;
+import platform.service.ctx.ctxChecker.constraint.formulas.FForall;
+import platform.service.ctx.ctxChecker.constraint.formulas.Formula;
+import platform.service.ctx.ctxChecker.context.Context;
 
 import java.util.*;
 

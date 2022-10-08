@@ -1,16 +1,12 @@
-package platform.service.ctx.ctxChecker.Constraints;
+package platform.service.ctx.rule;
 
-import platform.service.ctx.ctxChecker.Constraints.Runtime.Link;
-import platform.service.ctx.ctxChecker.Constraints.Runtime.RuntimeNode;
-import platform.service.ctx.ctxChecker.Constraints.Formulas.Formula;
-import platform.service.ctx.ctxChecker.Contexts.Context;
-import platform.service.ctx.ctxChecker.Contexts.ContextChange;
-import platform.service.ctx.ctxChecker.Middleware.Checkers.Checker;
+import platform.service.ctx.ctxChecker.constraint.runtime.Link;
+import platform.service.ctx.ctxChecker.constraint.runtime.RuntimeNode;
+import platform.service.ctx.ctxChecker.constraint.formulas.Formula;
+import platform.service.ctx.ctxChecker.context.Context;
+import platform.service.ctx.ctxChecker.context.ContextChange;
+import platform.service.ctx.ctxChecker.middleware.checkers.Checker;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.*;
 
 public class Rule {
@@ -45,14 +41,6 @@ public class Rule {
     //GEAS C-condition
     private final Set<String> criticalSet;
 
-    //counting
-    public List<ContextChange> oracleBatch;
-    public Set<Link> bufferedLinks;
-    public Set<Link> detectedLinks;
-    public BufferedWriter bufferedWriter;
-    public FileWriter fileWriter;
-
-    public long launchTimeTE, launchTimeLG, traverseTimeTE, traverseTimeLG;
 
     //constructor
     public Rule(String rule_id){
@@ -72,40 +60,6 @@ public class Rule {
         this.patToRuntimeNode = new HashMap<>();
         this.patToDepth = new HashMap<>();
         this.depthToPat = new TreeMap<>();
-
-        //统计Batch
-        this.oracleBatch = new ArrayList<>();
-        this.bufferedLinks = new HashSet<>();
-        this.detectedLinks = new HashSet<>();
-
-        this.launchTimeTE = 0;
-        this.launchTimeLG = 0;
-        this.traverseTimeTE = 0;
-        this.traverseTimeLG = 0;
-    }
-
-    public void batchInit(String strategy, String dataFile){
-        //assets/Data2011/MyData/originalData/data_5/7.txt;
-        StringTokenizer st = new StringTokenizer(dataFile,"/");
-        st.nextToken(); //assets
-        st.nextToken(); //Data2011
-        st.nextToken(); //MyData
-        st.nextToken(); //originalData
-        String dataSeg = st.nextToken();//data_5
-        String file = st.nextToken();//7.txt
-
-        try {
-            String dir = "assets/Data2011-4-8/batchCount/" + strategy + "/" + dataSeg + "/" + file.substring(0, file.length() - 4);
-            File dirFile = new File(dir);
-            if(!dirFile.exists() && !dirFile.isDirectory()){
-                boolean mkdirflag = dirFile.mkdirs();
-                System.err.println("mkdirs: " + mkdirflag);
-            }
-            fileWriter = new FileWriter(dir + "/" + this.rule_id + ".txt");
-            bufferedWriter = new BufferedWriter(fileWriter);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     //functional methods
@@ -152,65 +106,6 @@ public class Rule {
     //DIS
     public void DeriveRCRESets(){
         this.formula.DeriveRCRESets(true);
-    }
-
-
-    //counting
-    public void oracleCount(Set<Link> newLinks, ContextChange contextChange){
-        boolean noEliminate = true;
-        for(Link bufferedLink : bufferedLinks){
-            if(!newLinks.contains(bufferedLink)){
-                //缓存的link不再被检测出来，说明有link消失了，在此处需检测。
-                //1. 将缓存的link都标记为被检测
-                detectedLinks.addAll(bufferedLinks);
-                bufferedLinks.clear();
-                //2. 将当前batch保存下来
-                try {
-                    bufferedWriter.write(oracleBatch.size() + ": " + oracleBatch.toString() + "\n\n");
-                    bufferedWriter.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                oracleBatch.clear();
-                oracleBatch.add(contextChange);
-                //3. 更新缓存的link
-                for(Link newLink : newLinks){
-                    if(!detectedLinks.contains(newLink)){
-                        bufferedLinks.add(newLink);
-                    }
-                }
-                //4. 设置noEliminate
-                noEliminate = false;
-                break;
-            }
-        }
-        if(noEliminate){
-            //没有缓存的link消失，则更新缓存的link
-            for(Link newLink : newLinks){
-                if(!detectedLinks.contains(newLink)){
-                    bufferedLinks.addAll(newLinks);
-                }
-            }
-            oracleBatch.add(contextChange);
-        }
-    }
-
-    public void oracleClean(){
-        try {
-            bufferedWriter.write(oracleBatch.size() + ": " + oracleBatch.toString() + "\n\n");
-            bufferedWriter.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void intoFile(List<ContextChange> changeList){
-        try {
-            bufferedWriter.write(changeList.size() + ": " + changeList + "\n\n");
-            bufferedWriter.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     //PCC

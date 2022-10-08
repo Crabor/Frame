@@ -1,33 +1,33 @@
-package platform.service.ctx.ctxChecker.INFuse.Middleware.Schedulers;
+package platform.service.ctx.ctxChecker.middleware.schedulers;
 
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Formulas.FExists;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Formulas.FForall;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Formulas.Formula;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Rule;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.RuleHandler;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Runtime.RuntimeNode;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.Context;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.ContextChange;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.ContextPool;
-import platform.service.ctx.ctxChecker.INFuse.Middleware.Checkers.Checker;
-import platform.service.ctx.ctxChecker.INFuse.Middleware.Checkers.ConC;
-import platform.service.ctx.ctxChecker.INFuse.Middleware.Checkers.INFUSE_C;
-import platform.service.ctx.ctxChecker.INFuse.Middleware.NotSupportedException;
+import platform.service.ctx.rule.Rule;
+import platform.service.ctx.ctxChecker.constraint.runtime.RuntimeNode;
+import platform.service.ctx.ctxChecker.context.Context;
+import platform.service.ctx.ctxChecker.constraint.formulas.FExists;
+import platform.service.ctx.ctxChecker.constraint.formulas.FForall;
+import platform.service.ctx.ctxChecker.constraint.formulas.Formula;
+import platform.service.ctx.ctxChecker.context.ContextChange;
+import platform.service.ctx.ctxChecker.context.ContextPool;
+import platform.service.ctx.ctxChecker.middleware.checkers.Checker;
+import platform.service.ctx.ctxChecker.middleware.checkers.ConC;
+import platform.service.ctx.ctxChecker.middleware.checkers.INFUSE_C;
+import platform.service.ctx.ctxChecker.middleware.NotSupportedException;
 
 import java.util.*;
 
 public class INFUSE_S extends Scheduler{
+    private final Map<String, Rule> ruleMap;
 
-
-    public INFUSE_S(RuleHandler ruleHandler, ContextPool contextPool, Checker checker) {
-        super(ruleHandler, contextPool, checker);
+    public INFUSE_S(Map<String, Rule> ruleMap, ContextPool contextPool, Checker checker) {
+        super(contextPool, checker);
+        this.ruleMap = ruleMap;
         this.strategy = "INFUSE_S";
     }
 
     @Override
     public void doSchedule(ContextChange contextChange) throws Exception {
         Batch_Form_DIS(contextChange);
-        for(Rule rule : ruleHandler.getRuleList()){
+        for(Rule rule : ruleMap.values()){
             if(rule.getNewBatch() != null){
                 this.checker.ctxChangeCheckBatch(rule, rule.getBatch());
                 rule.setBatch(rule.getNewBatch());
@@ -38,8 +38,8 @@ public class INFUSE_S extends Scheduler{
     }
 
     private void Batch_Form_DIS(ContextChange newChange){
-        for(Rule rule : ruleHandler.getRuleList()){
-            if(!rule.getRelatedPatterns().contains(newChange.getPattern_id()))
+        for(Rule rule : ruleMap.values()){
+            if(!rule.getRelatedPatterns().contains(newChange.getPatternId()))
                 continue;
 
             if(riskMatch(rule, newChange)){
@@ -61,10 +61,10 @@ public class INFUSE_S extends Scheduler{
     }
 
     private boolean riskMatch(Rule rule, ContextChange newChange){
-        String pattern_id = newChange.getPattern_id();
+        String pattern_id = newChange.getPatternId();
         Formula formula = rule.getPatToFormula().get(pattern_id);
-        Map<ContextChange.Change_Type, Set<RuntimeNode.Virtual_Truth_Type>> rcSet = null;
-        Map<ContextChange.Change_Type, Set<RuntimeNode.Virtual_Truth_Type>> reSet = null;
+        Map<ContextChange.ChangeType, Set<RuntimeNode.Virtual_Truth_Type>> rcSet = null;
+        Map<ContextChange.ChangeType, Set<RuntimeNode.Virtual_Truth_Type>> reSet = null;
         if(formula.getFormula_type() == Formula.Formula_Type.FORALL){
             rcSet = ((FForall) formula).getRcSet();
             reSet = ((FForall) formula).getReSet();
@@ -76,11 +76,11 @@ public class INFUSE_S extends Scheduler{
         assert rcSet != null && reSet != null;
         //匹配
         if(rule.isRiskAlready()){
-            ContextChange.Change_Type reType = reSet.containsKey(ContextChange.Change_Type.ADDITION) ? ContextChange.Change_Type.ADDITION : ContextChange.Change_Type.DELETION;
+            ContextChange.ChangeType reType = reSet.containsKey(ContextChange.ChangeType.ADDITION) ? ContextChange.ChangeType.ADDITION : ContextChange.ChangeType.DELETION;
             Set<RuntimeNode> runtimeNodeSet = rule.getPatToRuntimeNode().get(pattern_id);
             boolean reFlag = false;
-            if(newChange.getChange_type() == ContextChange.Change_Type.ADDITION){
-                if(newChange.getChange_type() == reType){
+            if(newChange.getChangeType() == ContextChange.ChangeType.ADDITION){
+                if(newChange.getChangeType() == reType){
                     reFlag = true;
                 }
                 if(!reFlag){
@@ -92,7 +92,7 @@ public class INFUSE_S extends Scheduler{
                 }
             }
             else{
-                if(newChange.getChange_type() == reType){
+                if(newChange.getChangeType() == reType){
                     for(RuntimeNode runtimeNode : runtimeNodeSet){
                         HashMap<Context, RuntimeNode.Virtual_Truth_Type> kidsVT = runtimeNode.getKidsVT();
                         RuntimeNode.Virtual_Truth_Type kidVT = kidsVT.get(newChange.getContext());
@@ -104,8 +104,8 @@ public class INFUSE_S extends Scheduler{
                     if(!reFlag){
                         //检查batch
                         for(ContextChange change : rule.getBatch()){
-                            if(change.getChange_type() == ContextChange.Change_Type.ADDITION &&
-                                change.getPattern_id().equals(pattern_id) &&
+                            if(change.getChangeType() == ContextChange.ChangeType.ADDITION &&
+                                change.getPatternId().equals(pattern_id) &&
                                 change.getContext().equals(newChange.getContext())){
                                 reFlag = true;
                                 break;
@@ -126,11 +126,11 @@ public class INFUSE_S extends Scheduler{
             return reFlag;
         }
         else{
-            ContextChange.Change_Type rcType = rcSet.containsKey(ContextChange.Change_Type.ADDITION) ? ContextChange.Change_Type.ADDITION : ContextChange.Change_Type.DELETION;
+            ContextChange.ChangeType rcType = rcSet.containsKey(ContextChange.ChangeType.ADDITION) ? ContextChange.ChangeType.ADDITION : ContextChange.ChangeType.DELETION;
             Set<RuntimeNode> runtimeNodeSet = rule.getPatToRuntimeNode().get(pattern_id);
             boolean rcFlag = false;
-            if(newChange.getChange_type() == ContextChange.Change_Type.ADDITION){
-                if(newChange.getChange_type() == rcType){
+            if(newChange.getChangeType() == ContextChange.ChangeType.ADDITION){
+                if(newChange.getChangeType() == rcType){
                     rcFlag = true;
                 }
                 long oldTime = System.nanoTime();
@@ -139,11 +139,11 @@ public class INFUSE_S extends Scheduler{
                 }
             }
             else{
-                if(newChange.getChange_type() == rcType){
+                if(newChange.getChangeType() == rcType){
                     for(RuntimeNode runtimeNode : runtimeNodeSet){
                         HashMap<Context, RuntimeNode.Virtual_Truth_Type> kidsVT = runtimeNode.getKidsVT();
                         RuntimeNode.Virtual_Truth_Type kidVT = kidsVT.get(newChange.getContext());
-                        if(kidVT != null && rcSet.get(ContextChange.Change_Type.DELETION).contains(kidVT)){
+                        if(kidVT != null && rcSet.get(ContextChange.ChangeType.DELETION).contains(kidVT)){
                             rcFlag = true;
                             break;
                         }
@@ -187,7 +187,7 @@ public class INFUSE_S extends Scheduler{
 
     protected void CleanUp() throws NotSupportedException {
         //最后一次检测
-        for(Rule rule : ruleHandler.getRuleList()){
+        for(Rule rule : ruleMap.values()){
             if(rule.getBatch() != null){
                 this.checker.ctxChangeCheckBatch(rule, rule.getBatch());
                 rule.setBatch(null);

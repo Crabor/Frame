@@ -2,14 +2,12 @@ package platform.service.ctx.ctxChecker;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import platform.service.ctx.Resolvers.Resolver;
-import platform.service.ctx.ctxChecker.Constraints.Rule;
-import platform.service.ctx.ctxChecker.Constraints.RuleHandler;
-import platform.service.ctx.ctxChecker.Contexts.Context;
-import platform.service.ctx.ctxChecker.Contexts.ContextChange;
-import platform.service.ctx.ctxChecker.Contexts.ContextPool;
-import platform.service.ctx.ctxChecker.Middleware.Checkers.*;
-import platform.service.ctx.ctxChecker.Middleware.Schedulers.*;
+import platform.service.ctx.rule.Rule;
+import platform.service.ctx.ctxChecker.context.Context;
+import platform.service.ctx.ctxChecker.context.ContextChange;
+import platform.service.ctx.ctxChecker.context.ContextPool;
+import platform.service.ctx.ctxChecker.middleware.checkers.*;
+import platform.service.ctx.ctxChecker.middleware.schedulers.*;
 import platform.service.ctx.ctxServer.AbstractCtxServer;
 
 import java.lang.reflect.Constructor;
@@ -20,36 +18,23 @@ import java.nio.file.Paths;
 import java.util.*;
 
 
-public class Starter implements Runnable{
+public class CheckerStarter implements Runnable{
 
-    private static final Log logger = LogFactory.getLog(Starter.class);
-    private static HashMap<String, Long> checkPointLog;
+    private static final Log logger = LogFactory.getLog(CheckerStarter.class);
 
     private AbstractCtxServer ctxServer;
-    private RuleHandler ruleHandler;
     private ContextPool contextPool;
-
-    private String ruleFile;
     private String bfuncFile;
 
     private Scheduler scheduler;
     private Checker checker;
 
-    public Starter(AbstractCtxServer ctxServer, String ruleFile, String bfuncFile, String ctxValidator) {
+    public CheckerStarter(AbstractCtxServer ctxServer, String bfuncFile, String ctxValidator) {
         this.ctxServer = ctxServer;
-
-        this.ruleFile = ruleFile;
         this.bfuncFile = bfuncFile;
-
-        this.ruleHandler = new RuleHandler();
         this.contextPool = new ContextPool();
 
-
-        try {
-            ctxServer.getFixer().initRuleId2Resolver(buildRules());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        preprocess();
 
         Object bfuncInstance = null;
         try {
@@ -63,54 +48,46 @@ public class Starter implements Runnable{
 
         switch (technique) {
             case "ECC":
-                this.checker = new ECC(this.ruleHandler, this.contextPool, bfuncInstance);
+                this.checker = new ECC(ctxServer.getRuleMap(), this.contextPool, bfuncInstance);
                 break;
             case "ConC":
-                this.checker = new ConC(this.ruleHandler, this.contextPool, bfuncInstance);
+                this.checker = new ConC(ctxServer.getRuleMap(), this.contextPool, bfuncInstance);
                 break;
             case "PCC":
-                this.checker = new PCC(this.ruleHandler, this.contextPool, bfuncInstance);
+                this.checker = new PCC(ctxServer.getRuleMap(), this.contextPool, bfuncInstance);
                 break;
             case "INFUSE_base":
-                this.checker = new BASE(this.ruleHandler, this.contextPool, bfuncInstance);
+                this.checker = new BASE(ctxServer.getRuleMap(), this.contextPool, bfuncInstance);
                 break;
             case "INFUSE_C":
-                this.checker = new INFUSE_C(this.ruleHandler, this.contextPool, bfuncInstance);
+                this.checker = new INFUSE_C(ctxServer.getRuleMap(), this.contextPool, bfuncInstance);
                 break;
         }
 
         switch (schedule){
             case "IMD":
-                this.scheduler = new IMD(ruleHandler, contextPool, checker);
+                this.scheduler = new IMD(contextPool, checker);
                 break;
             case "GEAS_ori":
-                this.scheduler = new GEAS_ori(ruleHandler, contextPool, checker);
+                this.scheduler = new GEAS_ori(ctxServer.getRuleMap(), contextPool, checker);
                 break;
             case "GEAS_opt_s":
-                this.scheduler = new GEAS_opt_s(ruleHandler, contextPool, checker);
+                this.scheduler = new GEAS_opt_s(ctxServer.getRuleMap(), contextPool, checker);
                 break;
             case "GEAS_opt_c":
-                this.scheduler = new GEAS_opt_c(ruleHandler, contextPool, checker);
+                this.scheduler = new GEAS_opt_c(ctxServer.getRuleMap(), contextPool, checker);
                 break;
             case "INFUSE_S":
-                this.scheduler = new INFUSE_S(ruleHandler, contextPool, checker);
+                this.scheduler = new INFUSE_S(ctxServer.getRuleMap(), contextPool, checker);
                 break;
         }
 
         //check init
         this.checker.checkInit();
-
-        //checkPoint init
-        checkPointLog = new HashMap<>();
-        for(String pattern_id : ctxServer.getPatternMap().keySet()){
-            checkPointLog.put(pattern_id, 0L);
-        }
     }
 
-    private HashMap<String, Resolver> buildRules() throws Exception {
-        HashMap<String, Resolver> resolverHashMap = this.ruleHandler.buildRules(ruleFile);
-
-        for(Rule rule : ruleHandler.getRuleList()){
+    private void preprocess(){
+        for(Rule rule : ctxServer.getRuleMap().values()){
             contextPool.PoolInit(rule);
             //S-condition
             rule.DeriveSConditions();
@@ -121,8 +98,6 @@ public class Starter implements Runnable{
         for(String pattern_id : ctxServer.getPatternMap().keySet()){
             contextPool.ThreeSetsInit(pattern_id);
         }
-
-        return resolverHashMap;
     }
 
     private Object loadBfuncFile() throws Exception {
@@ -142,6 +117,7 @@ public class Starter implements Runnable{
 
         while (true) {
             List<ContextChange> changeList = ctxServer.changeBufferConsumer();
+            System.out.println(changeList);
             while(!changeList.isEmpty()){
                 ContextChange chg = changeList.get(0);
                 changeList.remove(0);
@@ -153,17 +129,18 @@ public class Starter implements Runnable{
             }
 
             //将生成的link丢给fixer
-            ctxServer.getFixer().filterInconsistencies(checker.getTempRuleLinksMap());
+            ctxServer.getCtxFixer().filterInconsistencies(checker.getTempRuleLinksMap());
+            System.out.println(checker.getTempRuleLinksMap());
             checker.getTempRuleLinksMap().clear();
 
-            //检查哪些上下文已被完全删除
+            //当上下文被完全删除后，开始修复该上下文
             HashMap<Context, Set<String>> activateCtxMap = contextPool.getActivateCtxMap();
             Iterator<Context> iterator = activateCtxMap.keySet().iterator();
             while(iterator.hasNext()) {
                 Context context = iterator.next();
                 Set<String> patternIdSets = activateCtxMap.get(context);
                 if(patternIdSets.isEmpty()){
-                    ctxServer.getFixer().fixContext(context);
+                    //ctxServer.getFixer().fixContext(context);
                     iterator.remove();
                 }
             }

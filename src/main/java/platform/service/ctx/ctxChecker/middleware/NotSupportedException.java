@@ -1,4 +1,4 @@
-package platform.service.ctx.ctxChecker.INFuse.Middleware;
+package platform.service.ctx.ctxChecker.middleware;
 
 public class NotSupportedException extends Exception{
     public NotSupportedException() {

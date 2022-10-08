@@ -1,21 +1,17 @@
-package platform.service.ctx.ctxChecker.INFuse.Middleware.Checkers;
+package platform.service.ctx.ctxChecker.middleware.checkers;
 
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Formulas.FExists;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Formulas.FForall;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Formulas.Formula;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Rule;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.RuleHandler;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Runtime.Link;
-import platform.service.ctx.ctxChecker.INFuse.Constraints.Runtime.RuntimeNode;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.Context;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.ContextChange;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.ContextPool;
-import platform.service.ctx.ctxChecker.INFuse.Middleware.NotSupportedException;
+import platform.service.ctx.rule.Rule;
+import platform.service.ctx.ctxChecker.constraint.formulas.FExists;
+import platform.service.ctx.ctxChecker.constraint.formulas.FForall;
+import platform.service.ctx.ctxChecker.constraint.formulas.Formula;
+import platform.service.ctx.ctxChecker.constraint.runtime.Link;
+import platform.service.ctx.ctxChecker.constraint.runtime.RuntimeNode;
+import platform.service.ctx.ctxChecker.context.Context;
+import platform.service.ctx.ctxChecker.context.ContextChange;
+import platform.service.ctx.ctxChecker.context.ContextPool;
+import platform.service.ctx.ctxChecker.middleware.NotSupportedException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,8 +19,8 @@ import java.util.concurrent.Executors;
 public class INFUSE_C extends Checker{
     public final ExecutorService ThreadPool;
 
-    public INFUSE_C(RuleHandler ruleHandler, ContextPool contextPool, Object bfunctions) {
-        super(ruleHandler, contextPool, bfunctions);
+    public INFUSE_C(Map<String, Rule> ruleMap, ContextPool contextPool, Object bfunctions) {
+        super(ruleMap, contextPool, bfunctions);
         ThreadPool = Executors.newFixedThreadPool(13);
         this.technique = "CPCC_NB";
     }
@@ -161,7 +157,7 @@ public class INFUSE_C extends Checker{
 
     @Override
     public void checkInit() {
-        for(Rule rule : this.ruleHandler.getRuleList()){
+        for(Rule rule : ruleMap.values()){
             rule.BuildCCT_CPCC_NB(this);
             rule.TruthEvaluation_CPCC_NB(this, true);
             rule.LinksGeneration_CPCC_NB(this);
@@ -199,8 +195,8 @@ public class INFUSE_C extends Checker{
 
     @Override
     public void ctxChangeCheckIMD(ContextChange contextChange) {
-        for(Rule rule : ruleHandler.getRuleList()) {
-            if (rule.getRelatedPatterns().contains(contextChange.getPattern_id())) {
+        for(Rule rule : ruleMap.values()) {
+            if (rule.getRelatedPatterns().contains(contextChange.getPatternId())) {
                 List<ContextChange> batch = new ArrayList<>();
                 batch.add(contextChange);
 

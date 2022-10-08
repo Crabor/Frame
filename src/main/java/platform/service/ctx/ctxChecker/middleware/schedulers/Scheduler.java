@@ -1,18 +1,15 @@
-package platform.service.ctx.ctxChecker.INFuse.Middleware.Schedulers;
+package platform.service.ctx.ctxChecker.middleware.schedulers;
 
-import platform.service.ctx.ctxChecker.INFuse.Constraints.RuleHandler;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.ContextChange;
-import platform.service.ctx.ctxChecker.INFuse.Contexts.ContextPool;
-import platform.service.ctx.ctxChecker.INFuse.Middleware.Checkers.Checker;
+import platform.service.ctx.ctxChecker.context.ContextChange;
+import platform.service.ctx.ctxChecker.context.ContextPool;
+import platform.service.ctx.ctxChecker.middleware.checkers.Checker;
 
 public abstract class Scheduler {
     protected String strategy;
-    protected RuleHandler ruleHandler;
     protected ContextPool contextPool;
     protected Checker checker;
 
-    public Scheduler(RuleHandler ruleHandler, ContextPool contextPool, Checker checker){
-        this.ruleHandler = ruleHandler;
+    public Scheduler(ContextPool contextPool, Checker checker){
         this.contextPool = contextPool;
         this.checker = checker;
     }

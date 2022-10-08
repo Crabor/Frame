@@ -1,4 +1,4 @@
-package platform.service.ctx.ctxChecker.contexts;
+package platform.service.ctx.ctxChecker.context;
 
 public class ContextChange {
 

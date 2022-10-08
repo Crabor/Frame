@@ -1,9 +1,9 @@
-package platform.service.ctx.ctxChecker.constraints.formulas;
+package platform.service.ctx.ctxChecker.constraint.formulas;
 
-import platform.service.ctx.rules.Rule;
-import platform.service.ctx.ctxChecker.constraints.runtime.Link;
-import platform.service.ctx.ctxChecker.constraints.runtime.RuntimeNode;
-import platform.service.ctx.ctxChecker.contexts.ContextChange;
+import platform.service.ctx.rule.Rule;
+import platform.service.ctx.ctxChecker.constraint.runtime.Link;
+import platform.service.ctx.ctxChecker.constraint.runtime.RuntimeNode;
+import platform.service.ctx.ctxChecker.context.ContextChange;
 import platform.service.ctx.ctxChecker.middleware.checkers.Checker;
 import platform.service.ctx.ctxChecker.middleware.schedulers.Scheduler;
 

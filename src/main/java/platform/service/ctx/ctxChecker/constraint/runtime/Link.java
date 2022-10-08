@@ -1,6 +1,6 @@
-package platform.service.ctx.ctxChecker.constraints.runtime;
+package platform.service.ctx.ctxChecker.constraint.runtime;
 
-import platform.service.ctx.ctxChecker.contexts.Context;
+import platform.service.ctx.ctxChecker.context.Context;
 
 import java.util.AbstractMap;
 import java.util.HashSet;
