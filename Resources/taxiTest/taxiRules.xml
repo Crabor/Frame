@@ -54,8 +54,9 @@
             </forall>
         </formula>
         <resovler>
-            <type>drop</type> <!-- drop / fix -->
+            <type>fix</type> <!-- drop / fix -->
             <variable>v1</variable>
+            <value>2011-04-08 04:00:00:088,B154Z1,114.04787,22.5398,0,90,0</value>
             <!-- value-->
         </resovler>
     </rule>

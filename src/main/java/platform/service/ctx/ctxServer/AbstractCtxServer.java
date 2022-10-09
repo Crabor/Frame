@@ -291,6 +291,11 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
         //variable
         assert resolverElements.get(1).getName().equals("variable");
         resolver.setVariable(resolverElements.get(1).getText());
+        //value
+        if(resolverElements.size() == 3){
+            assert resolverElements.get(2).getName().equals("value");
+            resolver.setValue(resolverElements.get(2).getText());
+        }
         return resolver;
     }
 

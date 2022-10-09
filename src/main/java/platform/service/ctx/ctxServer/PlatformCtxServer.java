@@ -7,7 +7,7 @@ import platform.config.CtxServerConfig;
 import platform.config.SubConfig;
 import platform.service.ctx.ctxChecker.context.Context;
 import platform.service.ctx.message.Message;
-import platform.service.ctx.message.MessageBuilder;
+import platform.service.ctx.message.MessageHandler;
 import platform.service.ctx.ctxChecker.CheckerStarter;
 import platform.service.ctx.sensorStatitic.PlatformSensorStatistics;
 
@@ -70,7 +70,7 @@ public class PlatformCtxServer extends AbstractCtxServer {
         }
 
         if(CtxServerConfig.getInstance().isServerOn()){
-            Message message = MessageBuilder.jsonObject2Message(jsonObject);
+            Message message = MessageHandler.jsonObject2Message(jsonObject);
             chgGenerator.generateChanges(message.getContextMap());
         }
         else{
@@ -83,12 +83,14 @@ public class PlatformCtxServer extends AbstractCtxServer {
     public void run() {
         while(true){
             try {
-                Context fixedCtx = ctxFixer.getFixedContextQue().take();
-                long index = Long.parseLong(fixedCtx.getContextId().substring(fixedCtx.getContextId().lastIndexOf("_") + 1));
-                Message message = fixedMsgMap.getOrDefault(index, new Message(index));
-                message.addContext(fixedCtx);
-                fixedMsgMap.put(index, message);
-                
+                Map.Entry<String, Context> fixedContext = ctxFixer.getFixedContextQue().take();
+                System.out.println(fixedContext);
+//                String contextId = fixedContext.getKey();
+//                Context context = fixedContext.getValue();
+//                long index = Long.parseLong(contextId.substring(contextId.lastIndexOf("_")) + 1);
+//                Message message = fixedMsgMap.getOrDefault(index, new Message(index));
+//                message.addContext(contextId, context);
+//                fixedMsgMap.put(index, message);
 
 
             } catch (InterruptedException e) {

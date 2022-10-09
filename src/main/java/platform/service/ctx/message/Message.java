@@ -19,6 +19,10 @@ public class Message {
         contextMap.put(context.getContextId(), context);
     }
 
+    public void addContext(String contextId, Context context){
+        contextMap.put(contextId, context);
+    }
+
     public Map<String, Context> getContextMap() {
         return contextMap;
     }

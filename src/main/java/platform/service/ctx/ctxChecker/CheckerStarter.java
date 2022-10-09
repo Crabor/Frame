@@ -140,7 +140,7 @@ public class CheckerStarter implements Runnable{
                 Context context = iterator.next();
                 Set<String> patternIdSets = activateCtxMap.get(context);
                 if(patternIdSets.isEmpty()){
-                    //ctxServer.getFixer().fixContext(context);
+                    ctxServer.getCtxFixer().fixContext(context);
                     iterator.remove();
                 }
             }

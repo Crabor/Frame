@@ -23,7 +23,9 @@ public class Bfunction {
         else if("sz_spd_close".equals(funcName)){
             return sz_spd_close(vcMap);
         }
-        throw new Exception("Illegal bfuncName");
+        else{
+            throw new Exception("Illegal bfuncName");
+        }
     }
 
     private boolean oneLayer(Map<String, Map<String, String>> vcMap){

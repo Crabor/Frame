@@ -39,8 +39,17 @@ public class Context {
         return contextId.hashCode();
     }
 
+//    @Override
+//    public String toString() {
+//        return "ctx_id=" + contextId;
+//    }
+
+
     @Override
     public String toString() {
-        return "ctx_id=" + contextId;
+        return "Context{" +
+                "contextId='" + contextId + '\'' +
+                ", contextFields=" + contextFields +
+                '}';
     }
 }
