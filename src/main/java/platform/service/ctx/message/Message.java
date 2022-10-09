@@ -7,14 +7,13 @@ import java.util.Map;
 
 public class Message {
     private final long index;
-    private final long timestamp;
     private final Map<String, Context> contextMap;
 
-    public Message(long index, long timestamp) {
+    public Message(long index) {
         this.index = index;
-        this.timestamp = timestamp;
         this.contextMap = new HashMap<>();
     }
+
 
     public void addContext(Context context){
         contextMap.put(context.getContextId(), context);
@@ -22,10 +21,6 @@ public class Message {
 
     public Map<String, Context> getContextMap() {
         return contextMap;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
     }
 
     public long getIndex() {
@@ -36,7 +31,6 @@ public class Message {
     public String toString() {
         return "Message{" +
                 "index=" + index +
-                ", timestamp=" + timestamp +
                 ", contextMap=" + contextMap +
                 '}';
     }

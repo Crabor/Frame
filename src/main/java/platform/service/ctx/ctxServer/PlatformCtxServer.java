@@ -34,7 +34,7 @@ public class PlatformCtxServer extends AbstractCtxServer {
         this.patternMap = new HashMap<>();
         this.ruleMap = new HashMap<>();
         this.resolverMap = new HashMap<>();
-        this.fixedMsgMap = new HashMap<>();
+        this.fixedMsgMap = new TreeMap<>((Long::compareTo));
     }
 
     @Override
@@ -84,10 +84,11 @@ public class PlatformCtxServer extends AbstractCtxServer {
         while(true){
             try {
                 Context fixedCtx = ctxFixer.getFixedContextQue().take();
-                String ctxId = fixedCtx.getContextId();
-                String fromSensor = ctxId.substring(0, ctxId.lastIndexOf("_"));
-                long index = Long.parseLong(ctxId.substring(ctxId.lastIndexOf("_") + 1));
-                Message message = fixedMsgMap.getOrDefault(index, new Message());
+                long index = Long.parseLong(fixedCtx.getContextId().substring(fixedCtx.getContextId().lastIndexOf("_") + 1));
+                Message message = fixedMsgMap.getOrDefault(index, new Message(index));
+                message.addContext(fixedCtx);
+                fixedMsgMap.put(index, message);
+                
 
 
             } catch (InterruptedException e) {

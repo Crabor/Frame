@@ -10,15 +10,12 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class MessageBuilder {
 
+    //如果支持新增ctx，那应该改成double
     public static final AtomicLong msgIndex=  new AtomicLong();
 
     public static Message jsonObject2Message(JSONObject msgObj){
-        long index = -1;
-        synchronized (msgIndex){
-            index = msgIndex.getAndIncrement();
-        }
-        long timestamp = new Date().getTime();
-        Message message = new Message(index, timestamp);
+        long index = msgIndex.getAndIncrement();
+        Message message = new Message(index);
         for(String sensorName : msgObj.keySet()){
             Context context = buildContext(index, sensorName, msgObj.getString(sensorName));
             message.addContext(context);
