@@ -1,6 +1,9 @@
 package platform.service.ctx.ctxChecker.context;
 
+import platform.config.CtxServerConfig;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Context {
@@ -39,17 +42,27 @@ public class Context {
         return contextId.hashCode();
     }
 
-//    @Override
-//    public String toString() {
-//        return "ctx_id=" + contextId;
-//    }
-
-
     @Override
     public String toString() {
-        return "Context{" +
-                "contextId='" + contextId + '\'' +
-                ", contextFields=" + contextFields +
-                '}';
+        return "ctx_id=" + contextId;
     }
+
+    public String toAllString(){
+        return "Context{" +
+        "contextId='" + contextId + '\'' +
+        ", contextFields=" + contextFields +
+        '}';
+    }
+
+    public String toMsgString(){
+        StringBuilder stringBuilder = new StringBuilder();
+        String sensorName = contextId.substring(0, contextId.lastIndexOf("_"));
+        List<String> sensorFields = CtxServerConfig.getInstance().getSensorConfigMap().get(sensorName).getFieldNames();
+        for(String field : sensorFields){
+            stringBuilder.append(contextFields.get(field)).append(",");
+        }
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        return stringBuilder.toString();
+    }
+
 }

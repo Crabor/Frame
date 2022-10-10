@@ -47,8 +47,8 @@
             <forall var = "v1" in = "pat_001">
                 <forall var="v2" in="pat_002">
                     <bfunction name="two-layer">
-                        <param pos="1" var="v1" field="subject"/>
-                        <param pos="2" var="v2" field="subject"/>
+                        <param pos="1" var="v1"/>
+                        <param pos="2" var="v2"/>
                     </bfunction>
                 </forall>
             </forall>
@@ -56,8 +56,16 @@
         <resovler>
             <type>fix</type> <!-- drop / fix -->
             <variable>v1</variable>
-            <value>2011-04-08 04:00:00:088,B154Z1,114.04787,22.5398,0,90,0</value>
-            <!-- value-->
+            <fixingPairList>
+                <fixingPair>
+                    <field>taxiId</field>
+                    <value>B154Z1</value>
+                </fixingPair>
+                <fixingPair>
+                    <field>status</field>
+                    <value>0</value>
+                </fixingPair>
+            </fixingPairList>
         </resovler>
     </rule>
 

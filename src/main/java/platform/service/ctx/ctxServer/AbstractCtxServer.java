@@ -7,7 +7,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import platform.pubsub.AbstractSubscriber;
-import platform.service.ctx.ctxChecker.context.Context;
+import platform.service.ctx.message.Message;
 import platform.service.ctx.pattern.matcher.FunctionMatcher;
 import platform.service.ctx.pattern.matcher.PrimaryKeyMatcher;
 import platform.service.ctx.pattern.Pattern;
@@ -19,7 +19,6 @@ import platform.service.ctx.rule.Rule;
 import platform.service.ctx.ctxChecker.constraint.formulas.*;
 import platform.service.ctx.ctxChecker.constraint.runtime.RuntimeNode;
 import platform.service.ctx.ctxChecker.context.ContextChange;
-import platform.service.ctx.sensorStatitic.AbstractSensorStatistics;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,29 +29,24 @@ import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 
 public abstract class AbstractCtxServer extends AbstractSubscriber implements Runnable{
-    protected AbstractSensorStatistics sensorStatistics;
     protected HashMap<String, Pattern> patternMap;
-
     protected HashMap<String, Rule> ruleMap;
     protected HashMap<String, Resolver> resolverMap;
-    protected ChgGenerator chgGenerator;
+    protected final Map<Long, Message> originalMsgSet = new ConcurrentHashMap<>();
+    protected final Map<Long, Message> fixingMsgSet = new HashMap<>();
 
+    protected ChgGenerator chgGenerator;
     protected final LinkedBlockingQueue<ContextChange> changeBuffer = new LinkedBlockingQueue<>();
 
     protected CtxFixer ctxFixer;
 
 
     public abstract void init();
-
-
-    //sensor related
-    public AbstractSensorStatistics getSensorStatistics() {
-        return sensorStatistics;
-    }
 
     //pattern related
     public void buildPatterns(String patternFile, String mfuncFile){
@@ -236,7 +230,7 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
                 // bfunc has several params
                 List<Element> Eparamlist = eFormula.elements();
                 for(Element Eparam : Eparamlist){
-                    tempbfunc.addParam(Eparam.attributeValue("pos"), Eparam.attributeValue("var"), Eparam.attributeValue("field"));
+                    tempbfunc.addParam(Eparam.attributeValue("pos"), Eparam.attributeValue("var"));
                 }
                 retformula = tempbfunc;
                 break;
@@ -291,10 +285,16 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
         //variable
         assert resolverElements.get(1).getName().equals("variable");
         resolver.setVariable(resolverElements.get(1).getText());
-        //value
+        //fixingPairList
         if(resolverElements.size() == 3){
-            assert resolverElements.get(2).getName().equals("value");
-            resolver.setValue(resolverElements.get(2).getText());
+            assert resolverElements.get(2).getName().equals("fixingPairList");
+            List<Element> fixingPairElements = resolverElements.get(2).elements();
+            for(Element fixingPairElement : fixingPairElements){
+                assert fixingPairElement.getName().equals("fixingPair");
+                assert fixingPairElement.elements().get(0).getName().equals("field");
+                assert fixingPairElement.elements().get(1).getName().equals("value");
+                resolver.addFixingPair(fixingPairElement.elements().get(0).getText(), fixingPairElement.elements().get(1).getText());
+            }
         }
         return resolver;
     }
@@ -308,16 +308,39 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
     }
 
     //message related
-    protected JSONObject filterMessage(String msg){
-        JSONObject jsonObject = JSON.parseObject(msg);
-        Set<String> registeredSensorSet = this.sensorStatistics.getRegisteredSensorSet();
-        for(String msgSensor : jsonObject.keySet()){
+    protected void filterMessage(JSONObject msgJsonObj){
+        Set<String> registeredSensorSet = SensorStatistics.getInstance().getAllRegisteredSensorSet();
+        for(String msgSensor : msgJsonObj.keySet()){
+            if(msgSensor.equals("index"))
+                continue;
             if(!registeredSensorSet.contains(msgSensor)){
-                jsonObject.remove(msgSensor);
+                msgJsonObj.remove(msgSensor);
             }
         }
-        return jsonObject;
     }
+
+    protected void addOriginalMsg(Message message){
+        this.originalMsgSet.put(message.getIndex(), message);
+    }
+
+    protected Message getOriginalMsg(long index){
+        return this.originalMsgSet.get(index);
+    }
+
+    protected Message getOrPutDefaultFixingMsg(long index){
+        Message message = this.fixingMsgSet.getOrDefault(index, new Message(index));
+        this.fixingMsgSet.put(index, message);
+        return message;
+    }
+
+    protected void removeOriginalMsg(long index){
+        this.originalMsgSet.remove(index);
+    }
+
+    protected void removeFixingMsg(long index){
+        this.fixingMsgSet.remove(index);
+    }
+
 
     //chgGenerator related
     public void changeBufferProducer(List<ContextChange> changeList){

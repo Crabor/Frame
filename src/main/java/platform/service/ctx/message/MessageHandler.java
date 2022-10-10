@@ -3,22 +3,27 @@ package platform.service.ctx.message;
 import com.alibaba.fastjson.JSONObject;
 import platform.config.CtxServerConfig;
 import platform.service.ctx.ctxChecker.context.Context;
+import platform.service.ctx.ctxServer.SensorStatistics;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class MessageHandler {
 
-    //如果支持新增ctx，那应该改成double
-    public static final AtomicLong msgIndex=  new AtomicLong();
-
     public static Message jsonObject2Message(JSONObject msgObj){
-        long index = msgIndex.getAndIncrement();
+        long index = Long.parseLong(msgObj.getString("index"));
         Message message = new Message(index);
         for(String sensorName : msgObj.keySet()){
+            if(sensorName.equals("index"))
+                continue;
             Context context = buildContext(index, sensorName, msgObj.getString(sensorName));
             message.addContext(context);
+            Set<String> appNameSet = SensorStatistics.getInstance().getAppNames(sensorName);
+            for(String appName : appNameSet){
+                message.addAppSensorInfo(appName, sensorName);
+            }
         }
         return message;
     }
@@ -35,6 +40,7 @@ public class MessageHandler {
     }
 
     public static Context cloneContext(final Context context){
+        assert context != null;
         Context retContext = new Context();
         retContext.setContextId(context.getContextId());
         for(Map.Entry<String, String> field : context.getContextFields().entrySet()){
@@ -43,14 +49,30 @@ public class MessageHandler {
         return retContext;
     }
 
-    public static Context fixAndCloneContext(final Context context, String sensorName, String data){
+    public static Context fixAndCloneContext(final Context context, final Map<String, String> fixingPairs){
+        assert context != null;
+        assert fixingPairs != null;
         Context retContext = new Context();
         retContext.setContextId(context.getContextId());
-        String[] values = data.split(",");
-        List<String> sensorFields = CtxServerConfig.getInstance().getSensorConfigMap().get(sensorName).getFieldNames();
-        for(int i = 0 ; i< sensorFields.size(); ++i){
-            retContext.getContextFields().put(sensorFields.get(i), values[i]);
+        for(String field : context.getContextFields().keySet()){
+            if(fixingPairs.containsKey(field)){
+                retContext.getContextFields().put(field, fixingPairs.get(field));
+            }
+            else{
+                retContext.getContextFields().put(field, context.getContextFields().get(field));
+            }
         }
         return retContext;
+    }
+
+    public static String buildPubMsgStr(final Message fixingMsg, final Set<String> sensorInfos){
+        JSONObject pubMsgJsonObj = new JSONObject();
+        long index = fixingMsg.getIndex();
+        pubMsgJsonObj.put("index", String.valueOf(index));
+        for(String sensorName : sensorInfos){
+            Context context = fixingMsg.getContextMap().get(sensorName + "_" + index);
+            pubMsgJsonObj.put(sensorName, context.toMsgString());
+        }
+        return pubMsgJsonObj.toJSONString();
     }
 }

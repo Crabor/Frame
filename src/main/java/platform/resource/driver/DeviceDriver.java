@@ -42,14 +42,17 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String line = null;
             while((line = bufferedReader.readLine()) != null){
+                Thread.sleep(5000);
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("taxis", line);
                 logger.debug("dd recv: " + jsonObject.toJSONString());
-                publish("sensor", jsonObject.toJSONString());
+                publish("sensor", 0, jsonObject.toJSONString());
             }
             bufferedReader.close();
             inputStreamReader.close();
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 

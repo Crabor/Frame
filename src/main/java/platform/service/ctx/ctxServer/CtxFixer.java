@@ -42,22 +42,21 @@ public class CtxFixer {
         }
         String contextId = context.getContextId();
         ResolverType resolverType = null;
-        String fixingValue = null;
+        Map<String, String> fixingPairs = null;
         for(String ruleId : ctxId2IncRuleIdSet.get(contextId)){
             ResolverType tmpType = ctxServer.getResolverMap().get(ruleId).getResolverType();
             if(resolverType != ResolverType.drop){
                 resolverType = tmpType;
             }
             if(resolverType == ResolverType.fix){
-                fixingValue = ctxServer.getResolverMap().get(ruleId).getValue();
+                fixingPairs = ctxServer.getResolverMap().get(ruleId).getFixingPairs();
             }
         }
         if(resolverType == ResolverType.drop){
             fixedContextQue.add(new AbstractMap.SimpleEntry<>(contextId, null));
         }
         else if(resolverType == ResolverType.fix){
-            String sensorName = contextId.substring(0, contextId.lastIndexOf("_"));
-            fixedContextQue.add(new AbstractMap.SimpleEntry<>(contextId, MessageHandler.fixAndCloneContext(context, sensorName, fixingValue)));
+            fixedContextQue.add(new AbstractMap.SimpleEntry<>(contextId, MessageHandler.fixAndCloneContext(context, fixingPairs)));
         }
         //TODO: maybe other resolverTypes
     }

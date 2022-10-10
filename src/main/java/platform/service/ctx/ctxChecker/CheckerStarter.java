@@ -130,7 +130,7 @@ public class CheckerStarter implements Runnable{
 
             //将生成的link丢给fixer
             ctxServer.getCtxFixer().filterInconsistencies(checker.getTempRuleLinksMap());
-            System.out.println(checker.getTempRuleLinksMap());
+            //System.out.println(checker.getTempRuleLinksMap());
             checker.getTempRuleLinksMap().clear();
 
             //当上下文被完全删除后，开始修复该上下文

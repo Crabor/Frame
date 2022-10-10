@@ -1,10 +1,21 @@
 package platform.service.ctx.rule.resolver;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Resolver {
     private ResolverType resolverType;
     private String variable;
-    private String value;
 
+    private final Map<String, String> fixingPairs;
+
+    public Resolver() {
+        this.fixingPairs = new HashMap<>();
+    }
+
+    public void addFixingPair(String field, String value){
+        this.fixingPairs.put(field, value);
+    }
 
     public void setResolverType(ResolverType resolverType) {
         this.resolverType = resolverType;
@@ -12,10 +23,6 @@ public class Resolver {
 
     public void setVariable(String variable) {
         this.variable = variable;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 
     public ResolverType getResolverType() {
@@ -26,7 +33,7 @@ public class Resolver {
         return variable;
     }
 
-    public String getValue() {
-        return value;
+    public Map<String, String> getFixingPairs() {
+        return fixingPairs;
     }
 }

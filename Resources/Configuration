@@ -10,6 +10,7 @@
     "subscribe": [
       {
         "channel": "sensor",
+        "groupId": 0,
         "priorityId": 1,
       },
     ],
@@ -37,6 +38,7 @@
       "subscribe": [
         {
           "channel": "sensor",
+          "groupId": 1,
         },
       ],
     },
