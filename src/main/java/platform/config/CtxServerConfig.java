@@ -11,7 +11,6 @@ import java.util.Map;
 public class CtxServerConfig {
     private volatile static CtxServerConfig INSTANCE = null;
     private final boolean serverOn;
-    private final String ctxFixer;
     private final String ctxValidator;
     private final String ctxChecker;
     private final String ctxScheduler;
@@ -34,7 +33,6 @@ public class CtxServerConfig {
 
     private CtxServerConfig(JSONObject object){
         serverOn = object.getBoolean("serverOn");
-        ctxFixer = object.getString("CtxFixer");
         ctxValidator = object.getString("CtxValidator");
         ctxChecker = ctxValidator.split("\\+")[0];
         ctxScheduler = ctxValidator.split("\\+")[1];
@@ -59,10 +57,6 @@ public class CtxServerConfig {
 
     public boolean isServerOn() {
         return serverOn;
-    }
-
-    public String getCtxFixer() {
-        return ctxFixer;
     }
 
     public String getCtxValidator() {
@@ -105,7 +99,6 @@ public class CtxServerConfig {
     public String toString() {
         return "CtxServerConfig{" +
                 "serverOn=" + serverOn +
-                ", ctxFixer='" + ctxFixer + '\'' +
                 ", ctxValidator='" + ctxValidator + '\'' +
                 ", ctxChecker='" + ctxChecker + '\'' +
                 ", ctxScheduler='" + ctxScheduler + '\'' +

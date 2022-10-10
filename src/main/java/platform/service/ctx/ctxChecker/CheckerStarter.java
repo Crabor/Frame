@@ -111,10 +111,6 @@ public class CheckerStarter implements Runnable{
     @Override
     public void run() {
         logger.info("begin to check contexts");
-        int count = 0;
-        long timeSum = 0L;
-
-
         while (true) {
             List<ContextChange> changeList = ctxServer.changeBufferConsumer();
             System.out.println(changeList);
@@ -130,7 +126,6 @@ public class CheckerStarter implements Runnable{
 
             //将生成的link丢给fixer
             ctxServer.getCtxFixer().filterInconsistencies(checker.getTempRuleLinksMap());
-            //System.out.println(checker.getTempRuleLinksMap());
             checker.getTempRuleLinksMap().clear();
 
             //当上下文被完全删除后，开始修复该上下文
@@ -144,54 +139,7 @@ public class CheckerStarter implements Runnable{
                     iterator.remove();
                 }
             }
-
-//            long startTime = System.nanoTime();
-//            for ( : changes) {
-//                changeList.clear();
-//                try {
-//                    contextHandler.generateChanges(chgStr, changeList);
-//                    while(!changeList.isEmpty()){
-//                        ContextChange chg = changeList.get(0);
-//                        changeList.remove(0);
-//                        this.scheduler.doSchedule(chg);
-//                    }
-//                } catch (Exception e) {
-//                    throw new RuntimeException(e);
-//                }
-//
-//                if(chgStr.startsWith("+")) {
-//                    msgStatistics.addChk();
-//                    String[] parts = chgStr.split(","); //+,11,pat_right,5.264847945235763,2022-04-20 05:51:45
-//                    long index = Long.parseLong(parts[1]);
-//                    addcheckMsgID(String.valueOf(index));
-//                    String pat = parts[2];
-//                    checkPointLog.put(pat, index);
-//                    CtxStatistics.get(pat.replace("pat_","")).addChecked();
-//                }
-//            }
-//            long endTime = System.nanoTime(); //获取结束时间
-//            timeSum += (endTime - startTime);
-//            count = changes.size() + count;
-//
-//            List<String> errorMsgIDs = new ArrayList<>();
-//
-//            Map<String, Set<Link>> tempRuleLinksMap = checker.getTempRuleLinksMap();
-//            for(String rule_id : tempRuleLinksMap.keySet()){
-//                for(Link link : tempRuleLinksMap.get(rule_id))
-//                {
-//                    Set<Map.Entry<String, Context>> vaSet = link.getVaSet();
-//                    for(Map.Entry<String, Context> va : vaSet){
-//                        errorMsgIDs.add(va.getValue().getCtx_id().substring(4));
-//                    }
-//                }
-//            }
-//
-//            ContextManager.adderrorMsgIDList(errorMsgIDs);
-//            checker.getTempRuleLinksMap().clear();
-//            long process_Tag = minInCheckPointLog();
-//            ContextManager.fixMsgElementsUntil(process_Tag);
         }
-
     }
 
 }

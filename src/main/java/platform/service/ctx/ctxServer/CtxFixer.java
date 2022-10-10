@@ -38,7 +38,7 @@ public class CtxFixer {
 
     public void fixContext(Context context){
         if(!ctxId2IncRuleIdSet.containsKey(context.getContextId())){
-            fixedContextQue.add(new AbstractMap.SimpleEntry<>(context.getContextId(), MessageHandler.cloneContext(context)));
+            addFixedContext(context.getContextId(), MessageHandler.cloneContext(context));
         }
         String contextId = context.getContextId();
         ResolverType resolverType = null;
@@ -53,12 +53,16 @@ public class CtxFixer {
             }
         }
         if(resolverType == ResolverType.drop){
-            fixedContextQue.add(new AbstractMap.SimpleEntry<>(contextId, null));
+            addFixedContext(contextId, null);
         }
         else if(resolverType == ResolverType.fix){
-            fixedContextQue.add(new AbstractMap.SimpleEntry<>(contextId, MessageHandler.fixAndCloneContext(context, fixingPairs)));
+            addFixedContext(contextId, MessageHandler.fixAndCloneContext(context, fixingPairs));
         }
         //TODO: maybe other resolverTypes
+    }
+
+    public void addFixedContext(String contextId, Context context){
+        fixedContextQue.add(new AbstractMap.SimpleEntry<>(contextId, context));
     }
 
     public LinkedBlockingQueue<Map.Entry<String, Context>> getFixedContextQue() {

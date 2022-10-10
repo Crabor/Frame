@@ -1,6 +1,7 @@
 package platform.service.ctx.ctxServer;
 
 
+import platform.service.ctx.message.MessageHandler;
 import platform.service.ctx.pattern.Pattern;
 import platform.service.ctx.pattern.types.DataSourceType;
 import platform.service.ctx.pattern.types.FreshnessType;
@@ -42,17 +43,22 @@ public class ChgGenerator implements Runnable {
         if(contextMap != null){
             //为message中的每一个context寻找对应的patterns，并生成相应的changes
             for(String contextId : contextMap.keySet()){
+                boolean matched = false;
                 String fromSensorName = contextId.substring(0, contextId.lastIndexOf("_"));
                 for(Pattern pattern : server.getPatternMap().values()){
                     if(pattern.getDataSourceType() == DataSourceType.pattern){
                         continue;
                     }
                     if(pattern.getDataSourceSet().contains(fromSensorName)){
+                        matched = true;
                         Context context = contextMap.get(contextId);
                         if(match(pattern, context)){
                             changeList.addAll(generate(pattern, context));
                         }
                     }
+                }
+                if(!matched){
+                    server.getCtxFixer().addFixedContext(contextId, MessageHandler.cloneContext(contextMap.get(contextId)));
                 }
             }
         }

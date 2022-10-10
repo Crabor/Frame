@@ -50,6 +50,9 @@ public class PlatformCtxServer extends AbstractCtxServer {
             );
             baseChecker.start();
         }
+        else{
+            this.ctxFixer = new CtxFixer(PlatformCtxServer.getInstance());
+        }
     }
 
     @Override
@@ -71,7 +74,9 @@ public class PlatformCtxServer extends AbstractCtxServer {
             chgGenerator.generateChanges(originalMsg.getContextMap());
         }
         else{
-            //TODO()
+            for(String contextId : originalMsg.getContextMap().keySet()){
+                ctxFixer.addFixedContext(contextId, MessageHandler.cloneContext(originalMsg.getContextMap().get(contextId)));
+            }
         }
     }
 

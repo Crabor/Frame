@@ -1,8 +1,7 @@
 {
   "CtxServerConfiguration": {
-    "serverOn": true,
+    "serverOn": false,
     "CtxValidator": "ECC+IMD",
-    "CtxFixer": "Drop",
     "baseRuleFile": "Resources/taxiTest/taxiRules.xml",
     "baseBfuncFile": "Resources/taxiTest/Bfunction.class",
     "basePatternFile": "Resources/taxiTest/taxiPatterns.xml",
