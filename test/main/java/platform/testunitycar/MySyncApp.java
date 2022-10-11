@@ -1,6 +1,7 @@
 package platform.testunitycar;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import platform.app.AbstractSyncApp;
 import platform.service.ctx.ctxServer.CtxInteractor;
 import platform.service.inv.CancerArray;
@@ -17,6 +18,10 @@ public class MySyncApp extends AbstractSyncApp {
     @Override
     public void iter(String channel, String msg) {
         System.out.println("app recv " + msg);
+        JSONObject msgJsonObg = JSONObject.parseObject(msg);
+        if(msgJsonObg.get("index").equals("2")){
+            ctxInteractor.cancelSensor("taxis");
+        }
 //        logger.debug("app recv: " + msg);
 //        Actor actor = new Actor(5, 0, 0);
 //
