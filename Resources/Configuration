@@ -1,6 +1,6 @@
 {
   "CtxServerConfiguration": {
-    "serverOn": false,
+    "serverOn": true,
     "CtxValidator": "ECC+IMD",
     "baseRuleFile": "Resources/taxiTest/taxiRules.xml",
     "baseBfuncFile": "Resources/taxiTest/Bfunction.class",

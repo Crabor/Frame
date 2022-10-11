@@ -38,7 +38,7 @@ public class PlatformCtxServer extends AbstractCtxServer {
 
     @Override
     public void init() {
-        SensorStatistics.getInstance().registerSensor("platform.testunitycar.MySyncApp", "taxis");
+        //SensorStatistics.getInstance().registerSensor("platform.testunitycar.MySyncApp", "taxis");
         if(Configuration.getCtxServerConfig().isServerOn()){
             buildPatterns(CtxServerConfig.getInstance().getBasePatternFile(), CtxServerConfig.getInstance().getBaseMfuncFile());
             buildRules(CtxServerConfig.getInstance().getBaseRuleFile());

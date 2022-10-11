@@ -2,6 +2,7 @@ package platform.testunitycar;
 
 import com.alibaba.fastjson.JSON;
 import platform.app.AbstractSyncApp;
+import platform.service.ctx.ctxServer.CtxInteractor;
 import platform.service.inv.CancerArray;
 import platform.service.inv.CancerObject;
 import platform.service.inv.struct.CheckInfo;
@@ -10,6 +11,7 @@ import platform.service.inv.struct.CheckState;
 public class MySyncApp extends AbstractSyncApp {
 
     public MySyncApp(){
+        ctxInteractor.registerSensor("taxis");
     }
 
     @Override

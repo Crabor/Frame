@@ -1,6 +1,7 @@
 package platform.app;
 
 import platform.pubsub.AbstractSubscriber;
+import platform.service.ctx.ctxServer.CtxInteractor;
 import platform.service.inv.CancerServer;
 
 public abstract class AbstractSyncApp extends AbstractSubscriber implements SyncApp {
@@ -8,9 +9,12 @@ public abstract class AbstractSyncApp extends AbstractSubscriber implements Sync
     private int sleepTime;
     protected int iterId;
 
+    protected final CtxInteractor ctxInteractor;
+
     public AbstractSyncApp() {
         appName = getClass().getName();
         iterId = 0;
+        ctxInteractor = new CtxInteractor(false, appName);
     }
 
     public void setSleepTime(int sleepTime) {

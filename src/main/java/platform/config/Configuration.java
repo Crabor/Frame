@@ -20,7 +20,6 @@ public class Configuration {
     private static ResourceConfig resourceConfig;
 
     private static RedisConfig redisConfig;
-    private static int SensorLength;
 
     public static List<AppConfig> getListOfAppObj() {
         return listOfAppObj;
@@ -70,14 +69,9 @@ public class Configuration {
             e.printStackTrace();
         }
         List<SensorConfig> listOfSensorObj = resourceConfig.getListOfSensorObj();
-        SensorLength = listOfSensorObj.size();
         for (SensorConfig sensorConfig : listOfSensorObj) {
             ctxServerConfig.addSensorConfig(sensorConfig);
         }
-        //System.out.println("SensorLength"+SensorLength);
     }
 
-    public static int getSensorLength() {
-        return SensorLength;
-    }
 }

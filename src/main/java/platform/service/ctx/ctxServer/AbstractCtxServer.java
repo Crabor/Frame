@@ -310,11 +310,13 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
     //message related
     protected void filterMessage(JSONObject msgJsonObj){
         Set<String> registeredSensorSet = SensorStatistics.getInstance().getAllRegisteredSensorSet();
-        for(String msgSensor : msgJsonObj.keySet()){
+        Iterator<String> iterator = msgJsonObj.keySet().iterator();
+        while(iterator.hasNext()){
+            String msgSensor = iterator.next();
             if(msgSensor.equals("index"))
                 continue;
             if(!registeredSensorSet.contains(msgSensor)){
-                msgJsonObj.remove(msgSensor);
+                iterator.remove();
             }
         }
     }

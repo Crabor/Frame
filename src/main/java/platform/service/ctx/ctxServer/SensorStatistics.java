@@ -15,32 +15,18 @@ public class SensorStatistics {
         return SensorStatisticsHolder.instance;
     }
 
-    private final Map<String, Long> sensorRegistrationCount;
-
     private final Map<String, Set<String>> sensor2Apps;
 
     protected SensorStatistics() {
-        this.sensorRegistrationCount = new ConcurrentHashMap<>();
         this.sensor2Apps = new ConcurrentHashMap<>();
     }
 
     public void registerSensor(String appName, String sensorName){
-        //counter
-        sensorRegistrationCount.putIfAbsent(sensorName, 0L);
-        sensorRegistrationCount.computeIfPresent(sensorName, (k, v) -> v + 1);
-        //sensor2Apps
         sensor2Apps.computeIfAbsent(sensorName, k -> ConcurrentHashMap.newKeySet());
         sensor2Apps.get(sensorName).add(appName);
     }
 
     public void cancelSensor(String appName, String sensorName){
-        //counter
-        assert sensorRegistrationCount.containsKey(sensorName);
-        sensorRegistrationCount.computeIfPresent(sensorName, (k,v) -> v - 1);
-        if(sensorRegistrationCount.get(sensorName) <= 0){
-            sensorRegistrationCount.remove(sensorName);
-        }
-        //sensor2Apps
         assert sensor2Apps.containsKey(sensorName);
         assert sensor2Apps.get(sensorName).contains(appName);
         sensor2Apps.get(sensorName).remove(appName);
@@ -50,7 +36,7 @@ public class SensorStatistics {
     }
 
     public Set<String> getAllRegisteredSensorSet(){
-        return new HashSet<>(sensorRegistrationCount.keySet());
+        return new HashSet<>(sensor2Apps.keySet());
     }
 
     public Set<String> getAppNames(String sensorName){
