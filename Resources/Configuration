@@ -2,15 +2,14 @@
   "CtxServerConfiguration": {
     "serverOn": true,
     "CtxValidator": "ECC+IMD",
-    "baseRuleFile": "Resources/taxiTest/taxiRules.xml",
-    "baseBfuncFile": "Resources/taxiTest/Bfunction.class",
-    "basePatternFile": "Resources/taxiTest/taxiPatterns.xml",
-    "baseMfuncFile": "Resources/taxiTest/Mfunction.class",
+    "baseRuleFile": "Resources/platform/platformRules.xml",
+    "baseBfuncFile": "Resources/platform/platformBfunction.class",
+    "basePatternFile": "Resources/platform/platformPatterns.xml",
+    "baseMfuncFile": "",
     "subscribe": [
       {
         "channel": "sensor",
         "groupId": 0,
-        "priorityId": 1,
       },
     ],
   },
@@ -33,11 +32,20 @@
   },
   "AppConfiguration": [
     {
-      "appName": "platform.testunitycar.MySyncApp",
+      "appName": "platform.testTaxi.taxiSyncAppOne",
       "subscribe": [
         {
           "channel": "sensor",
           "groupId": 1,
+        },
+      ],
+    },
+    {
+      "appName": "platform.testTaxi.taxiSyncAppTwo",
+      "subscribe": [
+        {
+          "channel": "sensor",
+          "groupId": 2,
         },
       ],
     },
@@ -75,19 +83,19 @@
     "SensorConfiguration": [
       {
         "SensorName": "front",
-        "fieldNames": "frontValue",
+        "fieldNames": "value",
       },
       {
         "SensorName": "back",
-        "fieldNames": "backValue",
+        "fieldNames": "value",
       },
       {
         "SensorName": "left",
-        "fieldNames": "leftValue",
+        "fieldNames": "value",
       },
       {
         "SensorName": "right",
-        "fieldNames": "rightValue",
+        "fieldNames": "value",
       },
       {
         "SensorName": "taxis",

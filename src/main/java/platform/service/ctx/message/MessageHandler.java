@@ -16,10 +16,17 @@ public class MessageHandler {
         long index = Long.parseLong(msgObj.getString("index"));
         Message message = new Message(index);
         for(String sensorName : msgObj.keySet()){
-            if(sensorName.equals("index"))
+            if(sensorName.equals("index")){
                 continue;
-            Context context = buildContext(index, sensorName, msgObj.getString(sensorName));
-            message.addContext(context);
+            }
+            if(msgObj.getString(sensorName).equals("")){
+                //被丢弃或者没有获得
+                message.addContext(sensorName + "_" + index, null);
+            }
+            else{
+                Context context = buildContext(index, sensorName, msgObj.getString(sensorName));
+                message.addContext(context);
+            }
             Set<String> appNameSet = SensorStatistics.getInstance().getAppNames(sensorName);
             for(String appName : appNameSet){
                 message.addAppSensorInfo(appName, sensorName);
@@ -71,7 +78,7 @@ public class MessageHandler {
         pubMsgJsonObj.put("index", String.valueOf(index));
         for(String sensorName : sensorInfos){
             Context context = fixingMsg.getContextMap().get(sensorName + "_" + index);
-            pubMsgJsonObj.put(sensorName, context.toMsgString());
+            pubMsgJsonObj.put(sensorName, context == null ? "" : context.toMsgString());
         }
         return pubMsgJsonObj.toJSONString();
     }

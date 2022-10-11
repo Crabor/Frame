@@ -14,7 +14,11 @@ public abstract class AbstractSyncApp extends AbstractSubscriber implements Sync
     public AbstractSyncApp() {
         appName = getClass().getName();
         iterId = 0;
+
+        //for customized ctx server
         ctxInteractor = new CtxInteractor(false, appName);
+        customizeCtxServer();
+        ctxInteractor.initCtxServer();
     }
 
     public void setSleepTime(int sleepTime) {
@@ -33,4 +37,6 @@ public abstract class AbstractSyncApp extends AbstractSubscriber implements Sync
         iter(channel, msg);
         CancerServer.iterExit(appName, iterId);
     }
+
+    protected abstract void customizeCtxServer();
 }

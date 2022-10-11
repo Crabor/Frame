@@ -11,6 +11,10 @@
 				</bfunction>
 			</forall>
 		</formula>
+		<resovler>
+			<type>drop</type> <!-- drop / fix -->
+			<variable>v1</variable>
+		</resovler>
 	</rule>
 
 	<rule>
@@ -18,10 +22,14 @@
 		<formula>
 			<forall var = "v1" in = "pat_back">
 				<bfunction name = "isValid">
-						<param pos = "1" var = "v1" field = "type" />
+					<param pos = "1" var = "v1" field = "type" />
 				</bfunction>
 			</forall>
 		</formula>
+		<resovler>
+			<type>drop</type> <!-- drop / fix -->
+			<variable>v1</variable>
+		</resovler>
 	</rule>
 
 	<rule>
@@ -29,10 +37,14 @@
 		<formula>
 			<forall var = "v1" in = "pat_left">
 				<bfunction name = "isValid">
-						<param pos = "1" var = "v1" field = "type" />
+					<param pos = "1" var = "v1" field = "type" />
 				</bfunction>
 			</forall>
 		</formula>
+		<resovler>
+			<type>drop</type> <!-- drop / fix -->
+			<variable>v1</variable>
+		</resovler>
 	</rule>
 
 	<rule>
@@ -40,10 +52,14 @@
 		<formula>
 			<forall var = "v1" in = "pat_right">
 				<bfunction name = "isValid">
-						<param pos = "1" var = "v1" field = "type" />
+					<param pos = "1" var = "v1" field = "type" />
 				</bfunction>
 			</forall>
 		</formula>
+		<resovler>
+			<type>drop</type> <!-- drop / fix -->
+			<variable>v1</variable>
+		</resovler>
 	</rule>
-	
+
 </rules>

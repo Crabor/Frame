@@ -101,6 +101,9 @@ public class CheckerStarter implements Runnable{
     }
 
     private Object loadBfuncFile() throws Exception {
+        if(bfuncFile == null || bfuncFile.equals("")){
+            return null;
+        }
         Path bfuncPath = Paths.get(bfuncFile).toAbsolutePath();
         URLClassLoader classLoader = new URLClassLoader(new URL[]{ bfuncPath.getParent().toFile().toURI().toURL()});
         Class<?> c = classLoader.loadClass(bfuncPath.getFileName().toString().substring(0, bfuncPath.getFileName().toString().length() - 6));
@@ -113,7 +116,7 @@ public class CheckerStarter implements Runnable{
         logger.info("begin to check contexts");
         while (true) {
             List<ContextChange> changeList = ctxServer.changeBufferConsumer();
-            System.out.println(changeList);
+            //System.out.println(changeList);
             while(!changeList.isEmpty()){
                 ContextChange chg = changeList.get(0);
                 changeList.remove(0);

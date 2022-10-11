@@ -43,22 +43,30 @@ public class ChgGenerator implements Runnable {
         if(contextMap != null){
             //为message中的每一个context寻找对应的patterns，并生成相应的changes
             for(String contextId : contextMap.keySet()){
-                boolean matched = false;
-                String fromSensorName = contextId.substring(0, contextId.lastIndexOf("_"));
-                for(Pattern pattern : server.getPatternMap().values()){
-                    if(pattern.getDataSourceType() == DataSourceType.pattern){
-                        continue;
-                    }
-                    if(pattern.getDataSourceSet().contains(fromSensorName)){
-                        matched = true;
-                        Context context = contextMap.get(contextId);
-                        if(match(pattern, context)){
-                            changeList.addAll(generate(pattern, context));
+                Context context = contextMap.get(contextId);
+                if(context == null){
+                    //由于被丢弃或者没获得，所以在生成Message的时候被设置为了null
+                    server.getCtxFixer().addFixedContext(contextId, null);
+                }
+                else{
+                    boolean matched = false;
+                    String fromSensorName = contextId.substring(0, contextId.lastIndexOf("_"));
+                    for(Pattern pattern : server.getPatternMap().values()){
+                        if(pattern.getDataSourceType() == DataSourceType.pattern){
+                            assert false;
+                            continue;
+                            //TODO()
+                        }
+                        if(pattern.getDataSourceSet().contains(fromSensorName)){
+                            if(pattern.getMatcher() == null || match(pattern, context)){
+                                matched = true;
+                                changeList.addAll(generate(pattern, context));
+                            }
                         }
                     }
-                }
-                if(!matched){
-                    server.getCtxFixer().addFixedContext(contextId, MessageHandler.cloneContext(contextMap.get(contextId)));
+                    if(!matched){
+                        server.getCtxFixer().addFixedContext(contextId, MessageHandler.cloneContext(contextMap.get(contextId)));
+                    }
                 }
             }
         }

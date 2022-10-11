@@ -53,7 +53,7 @@ public class SerMgrThread implements Runnable{
         Platform.incrMgrStartFlag();
     }
 
-    public PlatformCtxServer getCtxBaseCtxServer() {
+    public PlatformCtxServer getPlatformCtxServer() {
         return platformCtxServer;
     }
 

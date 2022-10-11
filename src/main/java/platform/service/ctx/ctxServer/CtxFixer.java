@@ -39,6 +39,7 @@ public class CtxFixer {
     public void fixContext(Context context){
         if(!ctxId2IncRuleIdSet.containsKey(context.getContextId())){
             addFixedContext(context.getContextId(), MessageHandler.cloneContext(context));
+            return;
         }
         String contextId = context.getContextId();
         ResolverType resolverType = null;

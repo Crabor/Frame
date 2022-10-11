@@ -1,12 +1,12 @@
 package platform.service.ctx.ctxServer;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import platform.pubsub.AbstractSubscriber;
+import platform.service.ctx.ctxChecker.context.Context;
 import platform.service.ctx.message.Message;
 import platform.service.ctx.pattern.matcher.FunctionMatcher;
 import platform.service.ctx.pattern.matcher.PrimaryKeyMatcher;
@@ -34,6 +34,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 
 public abstract class AbstractCtxServer extends AbstractSubscriber implements Runnable{
+    protected Thread t;
     protected HashMap<String, Pattern> patternMap;
     protected HashMap<String, Rule> ruleMap;
     protected HashMap<String, Resolver> resolverMap;
@@ -50,8 +51,11 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
 
     //pattern related
     public void buildPatterns(String patternFile, String mfuncFile){
-        Object mfuncInstance = loadMfuncFile(mfuncFile);
+        if(patternFile == null || patternFile.equals("")){
+            return;
+        }
 
+        Object mfuncInstance = loadMfuncFile(mfuncFile);
         try {
             SAXReader saxReader = new SAXReader();
             Document document = saxReader.read(new File(patternFile));
@@ -126,6 +130,9 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
     }
 
     private Object loadMfuncFile(String mfuncFile) {
+        if(mfuncFile == null || mfuncFile.equals("")){
+            return null;
+        }
         Object mfuncInstance;
         Path mfuncPath = Paths.get(mfuncFile).toAbsolutePath();
         try (URLClassLoader classLoader = new URLClassLoader(new URL[]{mfuncPath.getParent().toFile().toURI().toURL()})) {
@@ -145,6 +152,10 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
 
     //rule related
     public void buildRules(String ruleFile){
+        if(ruleFile == null || ruleFile.equals("")){
+            return;
+        }
+
         try {
             SAXReader saxReader = new SAXReader();
             Document document = null;
@@ -343,6 +354,7 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
         this.fixingMsgSet.remove(index);
     }
 
+    protected abstract void publishAndClean(Message fixingMsg);
 
     //chgGenerator related
     public void changeBufferProducer(List<ContextChange> changeList){
@@ -368,5 +380,28 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
     //fixer related
     public CtxFixer getCtxFixer() {
         return ctxFixer;
+    }
+
+    //run
+    @Override
+    public void run() {
+        while(true){
+            try {
+                Map.Entry<String, Context> fixedContext = ctxFixer.getFixedContextQue().take();
+                long index = Long.parseLong(fixedContext.getKey().substring(fixedContext.getKey().lastIndexOf("_") + 1));
+                Message fixingMsg = getOrPutDefaultFixingMsg(index);
+                fixingMsg.addContext(fixedContext.getKey(), fixedContext.getValue());
+                publishAndClean(fixingMsg);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void start() {
+        if (t == null) {
+            t = new Thread(this, getClass().getName());
+            t.start();
+        }
     }
 }
