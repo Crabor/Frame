@@ -39,7 +39,7 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
     protected HashMap<String, Rule> ruleMap;
     protected HashMap<String, Resolver> resolverMap;
     protected final Map<Long, Message> originalMsgSet = new ConcurrentHashMap<>();
-    protected final Map<Long, Message> fixingMsgSet = new HashMap<>();
+    protected final Map<Long, Message> fixingMsgSet = new TreeMap<>(Long::compareTo);
 
     protected ChgGenerator chgGenerator;
     protected final LinkedBlockingQueue<ContextChange> changeBuffer = new LinkedBlockingQueue<>();
@@ -354,7 +354,7 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
         this.fixingMsgSet.remove(index);
     }
 
-    protected abstract void publishAndClean(Message fixingMsg);
+    protected abstract void publishAndClean(long indexLimit);
 
     //chgGenerator related
     public void changeBufferProducer(List<ContextChange> changeList){
@@ -391,7 +391,7 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
                 long index = Long.parseLong(fixedContext.getKey().substring(fixedContext.getKey().lastIndexOf("_") + 1));
                 Message fixingMsg = getOrPutDefaultFixingMsg(index);
                 fixingMsg.addContext(fixedContext.getKey(), fixedContext.getValue());
-                publishAndClean(fixingMsg);
+                publishAndClean(index);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

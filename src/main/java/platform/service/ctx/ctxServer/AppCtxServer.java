@@ -7,6 +7,7 @@ import platform.service.ctx.message.Message;
 import platform.service.ctx.message.MessageHandler;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,23 +54,38 @@ public class AppCtxServer extends AbstractCtxServer{
     }
 
     @Override
-    protected void publishAndClean(Message fixingMsg) {
-        long index = fixingMsg.getIndex();
-        Message originalMsg = getOriginalMsg(index);
-        //查看是否这条信息所有context都已收齐
-        Set<String> originalMsgContextIds = originalMsg.getContextMap().keySet();
-        Set<String> fixingMsgContextIds = fixingMsg.getContextMap().keySet();
-        if(originalMsgContextIds.containsAll(fixingMsgContextIds) && fixingMsgContextIds.containsAll(originalMsgContextIds)){
-            //发送消息
-            String pubMsgStr = MessageHandler.buildPubMsgStr(fixingMsg, originalMsg.getSensorInfos(ctxInteractor.getAppConfig().getAppName()));
-            SubConfig sensorPubConfig = null;
-            for(SubConfig subConfig : ctxInteractor.getAppConfig().getSubConfigs()){
-                if(subConfig.channel.equals("sensor")){
-                    sensorPubConfig = subConfig;
+    protected void publishAndClean(long indexLimit) {
+        Iterator<Long> iterator = fixingMsgSet.keySet().iterator();
+        while(iterator.hasNext()){
+            long index = iterator.next();
+            if(index > indexLimit){
+                break;
+            }
+            else{
+                Message originalMsg = getOriginalMsg(index);
+                Message fixingMsg = getOrPutDefaultFixingMsg(index);
+                //查看是否这条信息所有context都已收齐
+                Set<String> originalMsgContextIds = originalMsg.getContextMap().keySet();
+                Set<String> fixingMsgContextIds = fixingMsg.getContextMap().keySet();
+                if(originalMsgContextIds.containsAll(fixingMsgContextIds) && fixingMsgContextIds.containsAll(originalMsgContextIds)){
+                    //发送消息
+                    String pubMsgStr = MessageHandler.buildPubMsgStr(fixingMsg, originalMsg.getSensorInfos(ctxInteractor.getAppConfig().getAppName()));
+                    SubConfig sensorPubConfig = null;
+                    for(SubConfig subConfig : ctxInteractor.getAppConfig().getSubConfigs()){
+                        if(subConfig.channel.equals("sensor")){
+                            sensorPubConfig = subConfig;
+                        }
+                    }
+                    assert sensorPubConfig != null;
+                    publish("sensor", sensorPubConfig.groupId, sensorPubConfig.priorityId, pubMsgStr);
+                    //删除消息
+                    originalMsgSet.remove(index);
+                    iterator.remove();
+                }
+                else{
+                    break;
                 }
             }
-            assert sensorPubConfig != null;
-            publish("sensor", sensorPubConfig.groupId, sensorPubConfig.priorityId, pubMsgStr);
         }
     }
 

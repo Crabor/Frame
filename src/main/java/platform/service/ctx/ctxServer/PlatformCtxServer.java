@@ -74,33 +74,46 @@ public class PlatformCtxServer extends AbstractCtxServer {
         }
     }
 
+    //<= index的都检查一遍，以保证顺序
     @Override
-    protected void publishAndClean(Message fixingMsg){
-        long index = fixingMsg.getIndex();
-        Message originalMsg = getOriginalMsg(index);
-        //查看是否这条信息的所有context都已收齐
-        Set<String> originalMsgContextIds = originalMsg.getContextMap().keySet();
-        Set<String> fixingMsgContextIds = fixingMsg.getContextMap().keySet();
-        if(originalMsgContextIds.containsAll(fixingMsgContextIds) && fixingMsgContextIds.containsAll(originalMsgContextIds)){
-            //为每个app发送相应的信息
-            for(AppConfig appConfig : Configuration.getListOfAppObj()){
-                String appName = appConfig.getAppName();
-                Set<String> sensorInfos = originalMsg.getSensorInfos(appName);
-                if(sensorInfos == null)
-                    continue;
-                String pubMsgStr = MessageHandler.buildPubMsgStr(fixingMsg, sensorInfos);
-                SubConfig sensorPubConfig = null;
-                for(SubConfig subConfig : appConfig.getSubConfigs()){
-                    if(subConfig.channel.equals("sensor")){
-                        sensorPubConfig = subConfig;
-                    }
-                }
-                assert sensorPubConfig != null;
-                publish("sensor", sensorPubConfig.groupId, pubMsgStr);
+    protected void publishAndClean(long indexLimit){
+        Iterator<Long> iterator = fixingMsgSet.keySet().iterator();
+        while(iterator.hasNext()){
+            long index = iterator.next();
+            if(index > indexLimit){
+                break;
             }
-            //删除消息
-            originalMsgSet.remove(index);
-            fixingMsgSet.remove(index);
+            else{
+                Message originalMsg = getOriginalMsg(index);
+                Message fixingMsg = getOrPutDefaultFixingMsg(index);
+                //查看是否这条信息的所有context都已收齐
+                Set<String> originalMsgContextIds = originalMsg.getContextMap().keySet();
+                Set<String> fixingMsgContextIds = fixingMsg.getContextMap().keySet();
+                if(originalMsgContextIds.containsAll(fixingMsgContextIds) && fixingMsgContextIds.containsAll(originalMsgContextIds)){
+                    //为每个app发送相应的信息
+                    for(AppConfig appConfig : Configuration.getListOfAppObj()){
+                        String appName = appConfig.getAppName();
+                        Set<String> sensorInfos = originalMsg.getSensorInfos(appName);
+                        if(sensorInfos == null)
+                            continue;
+                        String pubMsgStr = MessageHandler.buildPubMsgStr(fixingMsg, sensorInfos);
+                        SubConfig sensorPubConfig = null;
+                        for(SubConfig subConfig : appConfig.getSubConfigs()){
+                            if(subConfig.channel.equals("sensor")){
+                                sensorPubConfig = subConfig;
+                            }
+                        }
+                        assert sensorPubConfig != null;
+                        publish("sensor", sensorPubConfig.groupId, pubMsgStr);
+                    }
+                    //删除消息
+                    originalMsgSet.remove(index);
+                    iterator.remove();
+                }
+                else{
+                    break;
+                }
+            }
         }
     }
 
