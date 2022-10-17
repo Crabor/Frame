@@ -24,7 +24,7 @@ public class Subscribe implements Runnable {
     private static final Lock objsLock = new ReentrantLock();
     private static RedisClient client = null;
     private final StatefulRedisConnection<String, String> conn;
-    private final Log logger = LogFactory.getLog(Channel.class);
+    private final Log logger = LogFactory.getLog(Subscribe.class);
 
     private final String name;
     private final Channel channel;
@@ -111,7 +111,9 @@ public class Subscribe implements Runnable {
                     LockSupport.park();
                     asyncCommands.brpop(0, name).thenAccept(kv -> asyncCommands.publish(kv.getKey(), kv.getValue()));
                 } else {
-                    Thread.sleep(mode);
+                    if (mode != 0) {
+                        Thread.sleep(mode);
+                    }
                     // TODO: 等待10s可优化
                     KeyValue<String, String> kv = syncCommands.brpop(10, name);
                     if (kv != null) {
