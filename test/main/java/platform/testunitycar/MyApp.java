@@ -1,13 +1,13 @@
 package platform.testunitycar;
 
 import com.alibaba.fastjson.JSON;
-import platform.app.AbstractSyncApp;
+import platform.app.AbstractApp;
 import platform.service.inv.CancerObject;
 import platform.service.inv.struct.CheckInfo;
 import platform.service.inv.struct.CheckState;
 
-public class MySyncApp extends AbstractSyncApp {
-    public MySyncApp(){
+public class MyApp extends AbstractApp {
+    public MyApp(){
         ctxInteractor.registerSensor("left");
     }
 

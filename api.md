@@ -299,7 +299,7 @@ public class MySyncApp extends AbstractSyncApp {
   },
   "AppConfiguration": [
     {
-      "appName": "platform.platform.testunitycar.MySyncApp",
+      "appName": "platform.platform.testunitycar.MyApp",
       "subscribe": [
         {
           "channel": "sensor",

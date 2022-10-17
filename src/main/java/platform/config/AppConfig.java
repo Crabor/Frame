@@ -8,16 +8,10 @@ import java.util.List;
 
 public class AppConfig {
     private String appName;
-    private int sleepTime; //ms
     private List<SubConfig> subConfigs = new ArrayList<>();
 
     public AppConfig(JSONObject object) {
         this.appName = object.getString("appName");
-        try {
-            this.sleepTime = object.getInteger("sleepTime");
-        } catch (NullPointerException e) {
-            this.sleepTime = 0;
-        }
         JSONArray subs = object.getJSONArray("subscribe");
         for (int i = 0; i < subs.size(); i++) {
             JSONObject sub = subs.getJSONObject(i);
@@ -29,10 +23,6 @@ public class AppConfig {
         return appName;
     }
 
-    public int getSleepTime() {
-        return sleepTime;
-    }
-
     public List<SubConfig> getSubConfigs() {
         return subConfigs;
     }
@@ -41,7 +31,6 @@ public class AppConfig {
     public String toString() {
         return "AppConfig{" +
                 "appName='" + appName + '\'' +
-                ", sleepTime=" + sleepTime +
                 ", subConfigs=" + subConfigs +
                 '}';
     }

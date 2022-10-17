@@ -41,7 +41,7 @@
   },
   "AppConfiguration": [
     {
-      "appName": "platform.testunitycar.MySyncApp",
+      "appName": "platform.testunitycar.MyApp",
       "subscribe": [
         {
           "channel": "sensor",

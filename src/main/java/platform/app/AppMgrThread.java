@@ -39,7 +39,6 @@ public class AppMgrThread implements Runnable {
             try {
                 Object app = Class.forName(appConfig.getAppName()).newInstance();
                 apps.add((App) app);
-                ((App) app).setSleepTime(appConfig.getSleepTime());
                 for (SubConfig subConfig : appConfig.getSubConfigs()) {
                     ((AbstractSubscriber) app).subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
                 }

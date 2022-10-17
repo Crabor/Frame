@@ -66,7 +66,7 @@ if __name__ == '__main__':
 这里的app指能执行任务的循环体，可以简单的理解为一个while循环。用户需要自己继承我们的抽象app类（AbstractSyncApp）来实现自己的应用，继承模板如下：
 
 ```java
-public class MySyncApp extends AbstractSyncApp {
+public class MyApp extends AbstractApp {
     @Override
     public void iter(String channel, String msg) {
         // your task
@@ -74,11 +74,11 @@ public class MySyncApp extends AbstractSyncApp {
 }
 ```
 
-iter函数就相当于一个while循环。AbstractSyncApp类继承图如下：
+iter函数就相当于一个while循环。AbstractApp类继承图如下：
 
-![](img/Snipaste_2022-09-01_10-18-44.png)
+![](img/Snipaste_2022-10-17_18-02-09.png)
 
-AbstractSyncApp类继承AbstractSubscriber类，AbstractSubscriber是抽象订阅者的意思。平台内部各组件间是通过发布订阅机制来通信的，详情见[pubsub](#pubsub)章节。简单来说，就是MySyncApp订阅了某个channel后（在配置文件中指定），如sensor channel，一旦sensor channel发布了新的sensor数据后，就会触发MySyncApp的iter函数。iter此时的`channel == sensor, msg == your_sensor_data`。
+AbstractApp类继承AbstractSubscriber类，AbstractSubscriber是抽象订阅者的意思。平台内部各组件间是通过发布订阅机制来通信的，详情见[pubsub](#pubsub)章节。简单来说，就是MyApp订阅了某个channel后（在配置文件中指定），如sensor channel，一旦sensor channel发布了新的sensor数据后，就会触发MyApp的iter函数。iter此时的`channel == sensor, msg == your_sensor_data`。
 
 ### 3.编写配置文件
 
@@ -89,7 +89,7 @@ AbstractSyncApp类继承AbstractSubscriber类，AbstractSubscriber是抽象订�
   //......
   "AppConfiguration": [
     {
-      "appName": "platform.platform.testunitycar.MySyncApp",
+      "appName": "platform.platform.testunitycar.MyApp",
       "subscribe": [
         {
           "channel": "sensor",
@@ -338,7 +338,7 @@ Subscriber3: channel, hello
   //app配置
   "AppConfiguration": [
     {
-      "appName": "platform.platform.testunitycar.MySyncApp",//app名称
+      "appName": "platform.platform.testunitycar.MyApp",//app名称
       "subscribe": [
         {
           "channel": "sensor",
