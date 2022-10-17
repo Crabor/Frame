@@ -3,7 +3,7 @@ package platform.pubsub;
 import io.lettuce.core.api.StatefulRedisConnection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import platform.struct.GrpPrioPair;
+import platform.struct.GrpPrioMode;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.pubsub.RedisPubSubListener;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
@@ -17,7 +17,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public abstract class AbstractSubscriber implements RedisPubSubListener<String, String>, Subscriber {
     private static final List<AbstractSubscriber> objs = new ArrayList<>();
     private static final Lock objsLock = new ReentrantLock();
-    private final Map<Channel, GrpPrioPair> channels = new HashMap<>();
+    private final Map<Channel, Subscribe> subscribes = new HashMap<>();
     protected Publisher publisher;
     private static RedisClient client = null;
 
@@ -68,13 +68,13 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
     }
 
     @Nullable
-    public GrpPrioPair getGrpPrioPair(Channel channel) {
-        return channels.get(channel);
+    public GrpPrioMode getGrpPrioMode(Channel channel) {
+        return subscribes.get(channel).getGrpPrioMode();
     }
 
     @Nullable
-    public GrpPrioPair getGrpPrioPair(String channel) {
-        return getGrpPrioPair(Channel.get(channel));
+    public GrpPrioMode getGrpPrioMode(String channel) {
+        return getGrpPrioMode(Channel.get(channel));
     }
 
     protected void publish(Channel channel, int groupId, int priorityId, String message) {
@@ -103,8 +103,10 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
 
     private boolean addListenerFlag = false;
 
-    private void _subscribe(Channel channel, GrpPrioPair pair) {
-        channels.put(channel, pair);
+    private Subscribe _subscribe(Channel channel, GrpPrioMode gpm) {
+        Subscribe sub = Subscribe.get(channel, gpm);
+        sub.addSubscriber(this);
+        subscribes.put(channel, sub);
         if (!addListenerFlag) {
             addListenerFlag = true;
             pubsubConn.addListener(this);
@@ -114,32 +116,41 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
                 String.join(
                         "-",
                         channel.getName(),
-                        String.valueOf(pair.groupId),
-                        String.valueOf(pair.priorityId)));
+                        String.valueOf(gpm.groupId),
+                        String.valueOf(gpm.priorityId)));
+        return sub;
     }
 
-    public void subscribe(Channel channel, int groupId, int priorityId) {
-        _subscribe(channel, channel.addSubscriber(this, groupId, priorityId));
+    public Subscribe subscribe(Channel channel, int groupId, int priorityId, long mode) {
+        return _subscribe(channel, channel.addSubscribe(this, groupId, priorityId, mode));
     }
 
-    public void subscribe(String channel, int groupId, int priorityId) {
-        subscribe(Channel.get(channel), groupId, priorityId);
+    public Subscribe subscribe(String channel, int groupId, int priorityId, long mode) {
+        return subscribe(Channel.get(channel), groupId, priorityId, mode);
     }
 
-    public void subscribe(Channel channel, int groupId) {
-        _subscribe(channel, channel.addSubscriber(this, groupId));
+    public Subscribe subscribe(Channel channel, int groupId, int priorityId) {
+        return _subscribe(channel, channel.addSubscribe(this, groupId, priorityId));
     }
 
-    public void subscribe(String channel, int groupId) {
-        subscribe(Channel.get(channel), groupId);
+    public Subscribe subscribe(String channel, int groupId, int priorityId) {
+        return subscribe(Channel.get(channel), groupId, priorityId);
     }
 
-    public void subscribe(Channel channel) {
-        _subscribe(channel, channel.addSubscriber(this));
+    public Subscribe subscribe(Channel channel, int groupId) {
+        return _subscribe(channel, channel.addSubscribe(this, groupId));
     }
 
-    public void subscribe(String channel) {
-        subscribe(Channel.get(channel));
+    public Subscribe subscribe(String channel, int groupId) {
+        return subscribe(Channel.get(channel), groupId);
+    }
+
+    public Subscribe subscribe(Channel channel) {
+        return _subscribe(channel, channel.addSubscribe(this));
+    }
+
+    public Subscribe subscribe(String channel) {
+        return subscribe(Channel.get(channel));
     }
 
     @Override

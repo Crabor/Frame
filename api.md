@@ -38,7 +38,7 @@ public void subscribe(Channel channel, int groupId, int priorityId);
 
 //获取在某个频道的groupId以及priorityId。null则代表没订阅该频道
 @Nullable
-public GrpPrioPair getGrpPrioPair(Channel channel)
+public GrpPrioPair getGrpPrioMode(Channel channel)
 
 //当订阅的频道来新消息时触发，channel为频道名称，msg为具体消息
 void onMessage(String channel, String msg);

@@ -3,6 +3,9 @@ package platform.pubsub;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import platform.Platform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +18,7 @@ public class Publisher {
     private static final List<Publisher> objs = new ArrayList<>();
     private static final Lock objsLock = new ReentrantLock();
     private final StatefulRedisConnection<String, String> conn;
+    private final Log logger = LogFactory.getLog(Publisher.class);
 
     public static void Init(RedisClient client) {
         Publisher.client = client;
@@ -37,7 +41,7 @@ public class Publisher {
 
     public void publish(Channel channel, int groupId, int priorityId, String message) {
         RedisCommands<String, String> commands = conn.sync();
-        Map<Integer, List<AbstractSubscriber>> grp = channel.getSubscribers(groupId);
+        Map<Integer, Subscribe> grp = channel.getSubscribes(groupId);
         if (grp != null) {
             int maxPrio = Integer.MIN_VALUE;
             for (Integer prio : grp.keySet()) {
@@ -47,7 +51,7 @@ public class Publisher {
                 maxPrio = Math.max(maxPrio, prio);
             }
             if (maxPrio != Integer.MIN_VALUE) {
-                commands.publish(
+                commands.lpush(
                         String.join(
                                 "-",
                                 channel.getName(),
@@ -71,7 +75,7 @@ public class Publisher {
     }
 
     public void publish(Channel channel, String message) {
-        for (Integer grpId : channel.getSubscribers().keySet()) {
+        for (Integer grpId : channel.getSubscribes().keySet()) {
             publish(channel, grpId, message);
         }
     }

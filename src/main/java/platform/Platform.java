@@ -3,6 +3,7 @@ package platform;
 import platform.config.Configuration;
 import platform.app.AppMgrThread;
 import platform.pubsub.Channel;
+import platform.pubsub.Subscribe;
 import platform.resource.ResMgrThread;
 import platform.pubsub.Publisher;
 import platform.pubsub.AbstractSubscriber;
@@ -24,6 +25,7 @@ public class Platform {
     private static AppMgrThread appMgr;
     private static final Lock mgrStartFlagLock = new ReentrantLock();
     private static int mgrStartFlag = 0;
+    private static String runningId;
 
     public static void incrMgrStartFlag() {
         mgrStartFlagLock.lock();
@@ -62,6 +64,7 @@ public class Platform {
                         Configuration.getRedisConfig().getServerPort());
         Publisher.Init(client);
         AbstractSubscriber.Init(client);
+        Subscribe.Init(client);
 
         //init mgr
         resMgr = ResMgrThread.getInstance();
@@ -85,18 +88,11 @@ public class Platform {
             logger.info(channel);
         }
         logger.info("subscribers: " + AbstractSubscriber.getObjs());
-
-//        for (Channel c : Channel.getObjs()) {
-//            System.out.println(c);
-//        }
-//        System.out.println(AbstractSubscriber.getObjs());
-//        System.out.println(CancerServer.getCheckMap());
-//        System.out.println(CancerServer.getSegMap());
-//        System.out.println();
     }
 
     public static void Close() {
         Publisher.Close();
         AbstractSubscriber.Close();
+        Subscribe.Close();
     }
 }

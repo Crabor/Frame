@@ -10,9 +10,8 @@ import platform.service.ctx.CMID.builder.CheckerBuilder;
 import platform.service.ctx.Context.Context;
 import platform.service.ctx.Context.ContextManager;
 import platform.service.ctx.Context.Message;
-import platform.service.ctx.INFuse.Starter;
 import platform.service.ctx.WebConnector.RedisCtxCustom;
-import platform.struct.GrpPrioPair;
+import platform.struct.GrpPrioMode;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -93,7 +92,7 @@ public class CtxSubscriber extends AbstractSubscriber implements Runnable {
                 for (int i = 0; i < send.size(); i++) {
                     String msgNew = send.get(i).getMsg();
                     msgStatistics.addSend();
-                    GrpPrioPair p = getGrpPrioPair("sensor");
+                    GrpPrioMode p = getGrpPrioMode("sensor");
                     logger.debug("ctx send: " + msgNew);
                     publish("sensor", p.groupId, p.priorityId - 1, msgNew);
                 }
