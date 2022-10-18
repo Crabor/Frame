@@ -158,6 +158,7 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
             List<CheckInfo> checkInfoList = lineMap.get(checkInfo.lineNumber);
             checkInfoList.add(checkInfo);
         } else if (channel.equals("sensor")) {
+            logger.debug("Inv recv: " + msg);
             iterId++;
             Map<String, Double> map = new HashMap<>();
             JSONObject jsonObject = JSONObject.parseObject(msg);

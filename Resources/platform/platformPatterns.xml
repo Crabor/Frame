@@ -6,7 +6,7 @@
 		<id>pat_front</id>
 		<freshness>
 			<type>time</type>
-			<value>1000</value>
+			<value>200</value>
 		</freshness>
 		<dataSource>
 			<type>sensor</type>
@@ -20,7 +20,7 @@
 		<id>pat_back</id>
 		<freshness>
 			<type>time</type>
-			<value>1000</value>
+			<value>200</value>
 		</freshness>
 		<dataSource>
 			<type>sensor</type>
@@ -34,7 +34,7 @@
 		<id>pat_left</id>
 		<freshness>
 			<type>time</type>
-			<value>1000</value>
+			<value>200</value>
 		</freshness>
 		<dataSource>
 			<type>sensor</type>
@@ -48,7 +48,7 @@
 		<id>pat_right</id>
 		<freshness>
 			<type>time</type>
-			<value>1000</value>
+			<value>200</value>
 		</freshness>
 		<dataSource>
 			<type>sensor</type>

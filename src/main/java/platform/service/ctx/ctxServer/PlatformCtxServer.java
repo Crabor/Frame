@@ -1,12 +1,10 @@
 package platform.service.ctx.ctxServer;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import platform.config.AppConfig;
 import platform.config.Configuration;
 import platform.config.CtxServerConfig;
 import platform.config.SubConfig;
-import platform.service.ctx.ctxChecker.context.Context;
 import platform.service.ctx.message.Message;
 import platform.service.ctx.message.MessageHandler;
 import platform.service.ctx.ctxChecker.CheckerStarter;
@@ -50,7 +48,6 @@ public class PlatformCtxServer extends AbstractCtxServer {
     @Override
     public void onMessage(String channel, String msg) {
         logger.debug("platCtxServer recv: " + msg);
-        System.out.println("platCtxServer recv: " + msg);
 
         JSONObject msgJsonObj = JSONObject.parseObject(msg);
         msgJsonObj.put("index", String.valueOf(msgIndex.getAndIncrement()));
@@ -62,8 +59,12 @@ public class PlatformCtxServer extends AbstractCtxServer {
         }
 
         Message originalMsg = MessageHandler.jsonObject2Message(msgJsonObj);
-        addOriginalMsg(originalMsg);
 
+        if(originalMsg == null){
+            return;
+        }
+
+        addOriginalMsg(originalMsg);
         if(CtxServerConfig.getInstance().isServerOn()){
             chgGenerator.generateChanges(originalMsg.getContextMap());
         }
@@ -96,7 +97,7 @@ public class PlatformCtxServer extends AbstractCtxServer {
                         Set<String> sensorInfos = originalMsg.getSensorInfos(appName);
                         if(sensorInfos == null)
                             continue;
-                        String pubMsgStr = MessageHandler.buildPubMsgStr(fixingMsg, sensorInfos);
+                        String pubMsgStr = MessageHandler.buildPubMsgStrWithIndex(fixingMsg, sensorInfos);
                         SubConfig sensorPubConfig = null;
                         for(SubConfig subConfig : appConfig.getSubConfigs()){
                             if(subConfig.channel.equals("sensor")){

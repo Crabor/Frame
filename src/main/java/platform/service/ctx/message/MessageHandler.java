@@ -8,7 +8,6 @@ import platform.service.ctx.ctxServer.SensorStatistics;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class MessageHandler {
 
@@ -32,7 +31,13 @@ public class MessageHandler {
                 message.addAppSensorInfo(appName, sensorName);
             }
         }
-        return message;
+        // 如果message中包含的所有context 都是null，那么返回null
+        for(Context context : message.getContextMap().values()){
+            if(context != null){
+                return message;
+            }
+        }
+        return null;
     }
 
     private static Context buildContext(long index, String sensorName, String data){
@@ -72,7 +77,7 @@ public class MessageHandler {
         return retContext;
     }
 
-    public static String buildPubMsgStr(final Message fixingMsg, final Set<String> sensorInfos){
+    public static String buildPubMsgStrWithIndex(final Message fixingMsg, final Set<String> sensorInfos){
         JSONObject pubMsgJsonObj = new JSONObject();
         long index = fixingMsg.getIndex();
         pubMsgJsonObj.put("index", String.valueOf(index));
@@ -82,4 +87,15 @@ public class MessageHandler {
         }
         return pubMsgJsonObj.toJSONString();
     }
+
+    public static String buildPubMsgStrWithoutIndex(final Message fixingMsg, final Set<String> sensorInfos){
+        JSONObject pubMsgJsonObj = new JSONObject();
+        long index = fixingMsg.getIndex();
+        for(String sensorName : sensorInfos){
+            Context context = fixingMsg.getContextMap().get(sensorName + "_" + index);
+            pubMsgJsonObj.put(sensorName, context == null ? "" : context.toMsgString());
+        }
+        return pubMsgJsonObj.toJSONString();
+    }
+
 }

@@ -8,7 +8,6 @@ import platform.service.ctx.message.MessageHandler;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 public class AppCtxServer extends AbstractCtxServer{
@@ -37,12 +36,15 @@ public class AppCtxServer extends AbstractCtxServer{
     @Override
     public void onMessage(String channel, String msg) {
         logger.debug(ctxInteractor.getAppConfig().getAppName() + "-CtxServer recv: " + msg);
-        System.out.println(ctxInteractor.getAppConfig().getAppName() + "-CtxServer recv: " + msg);
 
         JSONObject msgJsonObj = JSONObject.parseObject(msg);
         Message originalMsg = MessageHandler.jsonObject2Message(msgJsonObj);
-        addOriginalMsg(originalMsg);
 
+        if(originalMsg == null){
+            return;
+        }
+
+        addOriginalMsg(originalMsg);
         if(ctxInteractor.isCtxServerOn()){
             chgGenerator.generateChanges(originalMsg.getContextMap());
         }
@@ -69,7 +71,7 @@ public class AppCtxServer extends AbstractCtxServer{
                 Set<String> fixingMsgContextIds = fixingMsg.getContextMap().keySet();
                 if(originalMsgContextIds.containsAll(fixingMsgContextIds) && fixingMsgContextIds.containsAll(originalMsgContextIds)){
                     //发送消息
-                    String pubMsgStr = MessageHandler.buildPubMsgStr(fixingMsg, originalMsg.getSensorInfos(ctxInteractor.getAppConfig().getAppName()));
+                    String pubMsgStr = MessageHandler.buildPubMsgStrWithoutIndex(fixingMsg, originalMsg.getSensorInfos(ctxInteractor.getAppConfig().getAppName()));
                     SubConfig sensorPubConfig = null;
                     for(SubConfig subConfig : ctxInteractor.getAppConfig().getSubConfigs()){
                         if(subConfig.channel.equals("sensor")){
