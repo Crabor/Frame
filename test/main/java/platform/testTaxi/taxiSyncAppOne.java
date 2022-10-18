@@ -1,8 +1,8 @@
 package platform.testTaxi;
 
-import platform.app.AbstractSyncApp;
+import platform.app.AbstractApp;
 
-public class taxiSyncAppOne extends AbstractSyncApp {
+public class taxiSyncAppOne extends AbstractApp {
 
     @Override
     protected void customizeCtxServer() {
