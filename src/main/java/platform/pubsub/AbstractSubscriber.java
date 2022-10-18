@@ -105,7 +105,7 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
 
     private Subscribe _subscribe(Channel channel, GrpPrioMode gpm) {
         Subscribe sub = Subscribe.get(channel, gpm);
-        sub.addSubscriber(this);
+        //sub.addSubscriber(this);
         subscribes.put(channel, sub);
         if (!addListenerFlag) {
             addListenerFlag = true;
