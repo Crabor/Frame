@@ -20,7 +20,6 @@ public class Configuration {
     private static ResourceConfig resourceConfig;
 
     private static RedisConfig redisConfig;
-    private static int SensorLength;
 
     public static List<AppConfig> getListOfAppObj() {
         return listOfAppObj;
@@ -53,7 +52,7 @@ public class Configuration {
             JSONObject resourceObj = (JSONObject) obj.get("ResourceConfiguration");
             JSONObject redisObj = (JSONObject) obj.get("RedisConfig");
             //System.out.println(ctxObj.toJSONString());
-            ctxServerConfig  = CtxServerConfig.getInstace(ctxObj);
+            ctxServerConfig  = CtxServerConfig.getInstance(ctxObj);
             for (int i = 0; i < appObj.size(); i++) {
                 JSONObject temp = (JSONObject) appObj.get(i);
                 listOfAppObj.add(new AppConfig(temp));
@@ -70,14 +69,9 @@ public class Configuration {
             e.printStackTrace();
         }
         List<SensorConfig> listOfSensorObj = resourceConfig.getListOfSensorObj();
-        SensorLength = listOfSensorObj.size();
         for (SensorConfig sensorConfig : listOfSensorObj) {
-            ctxServerConfig.addSensor(sensorConfig.getSensorName());
+            ctxServerConfig.addSensorConfig(sensorConfig);
         }
-        //System.out.println("SensorLength"+SensorLength);
     }
 
-    public static int getSensorLength() {
-        return SensorLength;
-    }
 }
