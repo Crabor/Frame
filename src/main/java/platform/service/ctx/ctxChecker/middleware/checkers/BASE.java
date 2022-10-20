@@ -20,7 +20,7 @@ public class BASE extends ConC{
     @Override
     public void ctxChangeCheckIMD(ContextChange contextChange) {
         for(Rule rule : ruleMap.values()){
-            if(rule.getRelatedPatterns().contains(contextChange.getPatternId())){
+            if(rule.getVarPatternMap().containsValue(contextChange.getPatternId())){
                 //apply changes
                 contextPool.ApplyChange(rule.getRule_id(), contextChange);
                 rule.UpdateAffectedWithOneChange(contextChange, this);

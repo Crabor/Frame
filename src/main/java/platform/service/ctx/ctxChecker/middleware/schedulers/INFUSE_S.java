@@ -39,7 +39,7 @@ public class INFUSE_S extends Scheduler{
 
     private void Batch_Form_DIS(ContextChange newChange){
         for(Rule rule : ruleMap.values()){
-            if(!rule.getRelatedPatterns().contains(newChange.getPatternId()))
+            if(!rule.getVarPatternMap().containsValue(newChange.getPatternId()))
                 continue;
 
             if(riskMatch(rule, newChange)){

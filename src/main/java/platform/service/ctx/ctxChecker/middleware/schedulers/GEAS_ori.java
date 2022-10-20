@@ -35,7 +35,7 @@ public class GEAS_ori extends Scheduler{
 
     private void Batch_Form(ContextChange newChange){
         for(Rule rule : ruleMap.values()){
-            if(!rule.getRelatedPatterns().contains(newChange.getPatternId()))
+            if(!rule.getVarPatternMap().containsValue(newChange.getPatternId()))
                 continue;
             if(S_Condition_Match(rule, newChange)){
                 List<ContextChange> newBatch = new ArrayList<>();

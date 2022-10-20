@@ -24,6 +24,7 @@ public class CtxFixer {
 
     public void filterInconsistencies(Map<String, Set<Link>> ruleId2LinkSet){
         for(String ruleId : ruleId2LinkSet.keySet()){
+            ctxServer.getServerStatistics().addLinks(ruleId, ruleId2LinkSet.get(ruleId));
             String variable = ctxServer.getResolverMap().get(ruleId).getVariable();
             for(Link link : ruleId2LinkSet.get(ruleId)){
                 for(Map.Entry<String, Context> va : link.getVaSet()){
@@ -52,6 +53,9 @@ public class CtxFixer {
             if(resolverType == ResolverType.fix){
                 fixingPairs = ctxServer.getResolverMap().get(ruleId).getFixingPairs();
             }
+
+            String variable = ctxServer.getResolverMap().get(ruleId).getVariable();
+            ctxServer.getServerStatistics().increaseProblematicCtxNum(ctxServer.getRuleMap().get(ruleId).getVarPatternMap().get(variable));
         }
         if(resolverType == ResolverType.drop){
             addFixedContext(contextId, null);

@@ -21,7 +21,7 @@ public class ECC extends Checker{
     public void ctxChangeCheckIMD(ContextChange contextChange) {
         //consistency checking
         for(Rule rule : this.ruleMap.values()){
-            if (rule.getRelatedPatterns().contains(contextChange.getPatternId())){
+            if (rule.getVarPatternMap().containsValue(contextChange.getPatternId())){
                 //apply change
                 contextPool.ApplyChange(rule.getRule_id(), contextChange);
                 //build CCT

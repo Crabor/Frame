@@ -5,6 +5,7 @@ import platform.config.SubConfig;
 import platform.service.ctx.ctxChecker.CheckerStarter;
 import platform.service.ctx.message.Message;
 import platform.service.ctx.message.MessageHandler;
+import platform.service.ctx.statistics.ServerStatistics;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,6 +19,7 @@ public class AppCtxServer extends AbstractCtxServer{
         this.patternMap = new HashMap<>();
         this.ruleMap = new HashMap<>();
         this.resolverMap = new HashMap<>();
+        this.serverStatistics = new ServerStatistics();
     }
 
     @Override
@@ -45,6 +47,7 @@ public class AppCtxServer extends AbstractCtxServer{
         }
 
         addOriginalMsg(originalMsg);
+        serverStatistics.increaseReceivedMsgNum();
         if(ctxInteractor.isCtxServerOn()){
             chgGenerator.generateChanges(originalMsg.getContextMap());
         }
@@ -70,6 +73,7 @@ public class AppCtxServer extends AbstractCtxServer{
                 Set<String> originalMsgContextIds = originalMsg.getContextMap().keySet();
                 Set<String> fixingMsgContextIds = fixingMsg.getContextMap().keySet();
                 if(originalMsgContextIds.containsAll(fixingMsgContextIds) && fixingMsgContextIds.containsAll(originalMsgContextIds)){
+                    serverStatistics.increaseCheckedAndResolvedMsgNum();
                     //发送消息
                     String pubMsgStr = MessageHandler.buildPubMsgStrWithoutIndex(fixingMsg, originalMsg.getSensorInfos(ctxInteractor.getAppConfig().getAppName()));
                     SubConfig sensorPubConfig = null;
@@ -80,6 +84,8 @@ public class AppCtxServer extends AbstractCtxServer{
                     }
                     assert sensorPubConfig != null;
                     publish("sensor", sensorPubConfig.groupId, sensorPubConfig.priorityId, pubMsgStr);
+                    serverStatistics.increaseSentMsgNum();
+
                     //删除消息
                     originalMsgSet.remove(index);
                     iterator.remove();

@@ -196,7 +196,7 @@ public class INFUSE_C extends Checker{
     @Override
     public void ctxChangeCheckIMD(ContextChange contextChange) {
         for(Rule rule : ruleMap.values()) {
-            if (rule.getRelatedPatterns().contains(contextChange.getPatternId())) {
+            if (rule.getVarPatternMap().containsValue(contextChange.getPatternId())) {
                 List<ContextChange> batch = new ArrayList<>();
                 batch.add(contextChange);
 

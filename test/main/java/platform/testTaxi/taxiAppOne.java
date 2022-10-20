@@ -2,7 +2,7 @@ package platform.testTaxi;
 
 import platform.app.AbstractApp;
 
-public class taxiSyncAppOne extends AbstractApp {
+public class taxiAppOne extends AbstractApp {
 
     @Override
     protected void customizeCtxServer() {

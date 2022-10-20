@@ -8,6 +8,7 @@ import platform.config.SubConfig;
 import platform.service.ctx.message.Message;
 import platform.service.ctx.message.MessageHandler;
 import platform.service.ctx.ctxChecker.CheckerStarter;
+import platform.service.ctx.statistics.ServerStatistics;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -29,6 +30,7 @@ public class PlatformCtxServer extends AbstractCtxServer {
         this.patternMap = new HashMap<>();
         this.ruleMap = new HashMap<>();
         this.resolverMap = new HashMap<>();
+        this.serverStatistics = new ServerStatistics();
         this.msgIndex = new AtomicLong();
     }
 
@@ -65,6 +67,8 @@ public class PlatformCtxServer extends AbstractCtxServer {
         }
 
         addOriginalMsg(originalMsg);
+        serverStatistics.increaseReceivedMsgNum();
+
         if(CtxServerConfig.getInstance().isServerOn()){
             chgGenerator.generateChanges(originalMsg.getContextMap());
         }
@@ -91,6 +95,7 @@ public class PlatformCtxServer extends AbstractCtxServer {
                 Set<String> originalMsgContextIds = originalMsg.getContextMap().keySet();
                 Set<String> fixingMsgContextIds = fixingMsg.getContextMap().keySet();
                 if(originalMsgContextIds.containsAll(fixingMsgContextIds) && fixingMsgContextIds.containsAll(originalMsgContextIds)){
+                    serverStatistics.increaseCheckedAndResolvedMsgNum();
                     //为每个app发送相应的信息
                     for(AppConfig appConfig : Configuration.getListOfAppObj()){
                         String appName = appConfig.getAppName();
@@ -107,6 +112,8 @@ public class PlatformCtxServer extends AbstractCtxServer {
                         assert sensorPubConfig != null;
                         publish("sensor", sensorPubConfig.groupId, pubMsgStr);
                     }
+                    serverStatistics.increaseSentMsgNum();
+
                     //删除消息
                     originalMsgSet.remove(index);
                     iterator.remove();

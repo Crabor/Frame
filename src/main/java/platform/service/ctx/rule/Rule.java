@@ -17,15 +17,15 @@ public class Rule {
     private RuntimeNode CCTRoot;
     //build or modify CCT
     private boolean CCTAlready;
-    // Related patterns
-    private final Set<String> relatedPatterns;
+    // Related var2Pattern
+    private final Map<String, String> varPatternMap;
 
     //for CPCC_NB
     //pat to maxUnderDepth
     private final Map<String, Integer> patToDepth;
     private final TreeMap<Integer, String> depthToPat;
 
-    //for DIS
+    //for INFUSE_S
     private boolean riskAlready;
     private final Map<String, Formula> patToFormula;
     private final Map<String, Set<RuntimeNode>> patToRuntimeNode;
@@ -47,7 +47,7 @@ public class Rule {
         this.rule_id = rule_id;
         this.CCTRoot = null;
         this.CCTAlready = false;
-        this.relatedPatterns = new HashSet<>();
+        this.varPatternMap = new HashMap<>();
         //GEAS
         this.incMinusSet = new HashSet<>();
         this.incPlusSet = new HashSet<>();
@@ -65,7 +65,7 @@ public class Rule {
     //functional methods
     public void Output(){
         System.out.println("rule id: " + this.rule_id);
-        System.out.println("relatedPattern: " + this.relatedPatterns);
+        System.out.println("varPatternMap: " + this.varPatternMap);
         System.out.println("incPlusSet: " + incPlusSet);
         System.out.println("incMinusSet: " + incMinusSet);
         this.formula.output(0);
@@ -282,8 +282,8 @@ public class Rule {
         return rule_id;
     }
 
-    public Set<String> getRelatedPatterns() {
-        return relatedPatterns;
+    public Map<String, String> getVarPatternMap() {
+        return varPatternMap;
     }
 
     public List<ContextChange> getBatch() {

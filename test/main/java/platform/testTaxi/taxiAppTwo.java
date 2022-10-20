@@ -2,7 +2,7 @@ package platform.testTaxi;
 
 import platform.app.AbstractApp;
 
-public class taxiSyncAppTwo extends AbstractApp {
+public class taxiAppTwo extends AbstractApp {
     @Override
     protected void customizeCtxServer() {
         ctxInteractor.registerSensor("taxis");

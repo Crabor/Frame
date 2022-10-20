@@ -3,7 +3,7 @@ package platform.service.ctx.message;
 import com.alibaba.fastjson.JSONObject;
 import platform.config.CtxServerConfig;
 import platform.service.ctx.ctxChecker.context.Context;
-import platform.service.ctx.ctxServer.SensorStatistics;
+import platform.service.ctx.statistics.SensorStatistics;
 
 import java.util.List;
 import java.util.Map;

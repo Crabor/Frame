@@ -37,47 +37,47 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
     @Override
     public void run() {
         //receive msg from car than publish to sensor channel
-//        try {
-//            InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream("Resources/taxiTest/testdata.txt"), StandardCharsets.UTF_8);
-//            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-//            String line = null;
-//            while((line = bufferedReader.readLine()) != null){
-//                Thread.sleep(5000);
-//                JSONObject jsonObject = new JSONObject();
-//
-//                String[] values = line.split(";");
-//                jsonObject.put("taxis", values[0]);
-//                jsonObject.put("front", values[1]);
-//                jsonObject.put("back", values[2]);
-//                jsonObject.put("left", values[3]);
-//                jsonObject.put("right", values[4]);
-//
-//                logger.debug("dd recv: " + jsonObject.toJSONString());
-//                publish("sensor", 0, jsonObject.toJSONString());
-//            }
-//            bufferedReader.close();
-//            inputStreamReader.close();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream("Resources/taxiTest/testdata.txt"), StandardCharsets.UTF_8);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String line = null;
+            while((line = bufferedReader.readLine()) != null){
+                Thread.sleep(5000);
+                JSONObject jsonObject = new JSONObject();
 
-        while (true) {
-            // wang hui yan
-            try {
-                byte[] data = new byte[1024];
-                DatagramPacket packet = new DatagramPacket(data, data.length);
-                socket.receive(packet);
-                String sensorData = new String(data, 0, packet.getLength());
-//                Thread.sleep(50);
-//                String sensorData = Util.randomJSONCarData();
-                logger.debug("dd recv: " + sensorData);
-                publish("sensor", 0, sensorData);
-            } catch (Exception e) {
-                e.printStackTrace();
+                String[] values = line.split(";");
+                jsonObject.put("taxis", values[0]);
+                jsonObject.put("front", values[1]);
+                jsonObject.put("back", values[2]);
+                jsonObject.put("left", values[3]);
+                jsonObject.put("right", values[4]);
+
+                logger.debug("dd recv: " + jsonObject.toJSONString());
+                publish("sensor", 0, jsonObject.toJSONString());
             }
+            bufferedReader.close();
+            inputStreamReader.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
+
+//        while (true) {
+//            // wang hui yan
+//            try {
+//                byte[] data = new byte[1024];
+//                DatagramPacket packet = new DatagramPacket(data, data.length);
+//                socket.receive(packet);
+//                String sensorData = new String(data, 0, packet.getLength());
+////                Thread.sleep(50);
+////                String sensorData = Util.randomJSONCarData();
+//                logger.debug("dd recv: " + sensorData);
+//                publish("sensor", 0, sensorData);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     public void start() {

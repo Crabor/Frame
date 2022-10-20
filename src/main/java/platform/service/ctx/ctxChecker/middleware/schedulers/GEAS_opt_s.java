@@ -33,7 +33,7 @@ public class GEAS_opt_s extends GEAS_ori{
 
     private void Batch_FormAndRefine_Serial(ContextChange newChange){
         for(Rule rule : ruleMap.values()){
-            if(!rule.getRelatedPatterns().contains(newChange.getPatternId()))
+            if(!rule.getVarPatternMap().containsValue(newChange.getPatternId()))
                 continue;
 
             if(S_Condition_Match(rule, newChange)){

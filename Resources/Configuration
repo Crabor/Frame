@@ -13,7 +13,7 @@
     ],
   },
   "InvServerConfiguration": {
-      "serverOn": true,
+      "serverOn": false,
       "groupThro": 10,
       "kMeansGroupSize": 1,
       "dosThro": 0.5,
@@ -32,11 +32,20 @@
   },
   "AppConfiguration": [
     {
-       "appName": "platform.testunitycar.MyApp",
+       "appName": "platform.testTaxi.taxiAppOne",
       "subscribe": [
         {
           "channel": "sensor",
           "groupId": 1,
+        },
+      ],
+    },
+    {
+      "appName": "platform.testTaxi.taxiAppTwo",
+      "subscribe": [
+        {
+          "channel": "sensor",
+          "groupId": 2,
         },
       ],
     },

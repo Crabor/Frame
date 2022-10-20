@@ -125,6 +125,12 @@ public class CheckerStarter implements Runnable{
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
+                if(chg.getChangeType() == ContextChange.ChangeType.ADDITION){
+                    ctxServer.getServerStatistics().increaseReceivedCtxNum(chg.getPatternId());
+                }
+                else if(chg.getChangeType() == ContextChange.ChangeType.DELETION){
+                    ctxServer.getServerStatistics().increaseCheckedCtxNum(chg.getPatternId());
+                }
             }
 
             //将生成的link丢给fixer

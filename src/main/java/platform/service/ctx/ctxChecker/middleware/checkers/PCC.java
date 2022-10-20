@@ -21,7 +21,7 @@ public class PCC extends Checker{
     public void ctxChangeCheckIMD(ContextChange contextChange) {
         //consistency checking
         for(Rule rule : ruleMap.values()){
-            if(rule.getRelatedPatterns().contains(contextChange.getPatternId())){
+            if(rule.getVarPatternMap().containsValue(contextChange.getPatternId())){
                 //apply changes
                 contextPool.ApplyChange(rule.getRule_id(), contextChange);
                 rule.UpdateAffectedWithOneChange(contextChange, this);
@@ -82,7 +82,7 @@ public class PCC extends Checker{
     public void ctxChangeCheckBatch(Rule rule, List<ContextChange> batch) {
         //rule.intoFile(batch);
         //clean
-        for(String pattern_id : rule.getRelatedPatterns()){
+        for(String pattern_id : rule.getVarPatternMap().values()){
             contextPool.GetAddSet(pattern_id).clear();
             contextPool.GetDelSet(pattern_id).clear();
             contextPool.GetUpdSet(pattern_id).clear();

@@ -1,11 +1,11 @@
 package platform.service.ctx.ctxServer;
 
 
-import platform.app.App;
 import platform.config.AppConfig;
 import platform.config.Configuration;
 import platform.config.SensorConfig;
 import platform.config.SubConfig;
+import platform.service.ctx.statistics.SensorStatistics;
 
 import java.util.HashMap;
 import java.util.List;

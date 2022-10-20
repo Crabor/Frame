@@ -19,6 +19,8 @@ import platform.service.ctx.rule.Rule;
 import platform.service.ctx.ctxChecker.constraint.formulas.*;
 import platform.service.ctx.ctxChecker.constraint.runtime.RuntimeNode;
 import platform.service.ctx.ctxChecker.context.ContextChange;
+import platform.service.ctx.statistics.SensorStatistics;
+import platform.service.ctx.statistics.ServerStatistics;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,6 +48,7 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
 
     protected CtxFixer ctxFixer;
 
+    protected ServerStatistics serverStatistics;
 
     public abstract void init();
 
@@ -170,7 +173,7 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
                 // formula
                 assert eLabelList.get(1).getName().equals("formula");
                 Element eFormula =  eLabelList.get(1).elements().get(0);
-                newRule.setFormula(resolveFormula(eFormula, newRule.getRelatedPatterns(), newRule.getPatToFormula(), newRule.getPatToRuntimeNode(), 0));
+                newRule.setFormula(resolveFormula(eFormula, newRule.getVarPatternMap(), newRule.getPatToFormula(), newRule.getPatToRuntimeNode(), 0));
                 setPatWithDepth(newRule.getFormula(), newRule.getPatToDepth(), newRule.getDepthToPat());
                 ruleMap.put(newRule.getRule_id(), newRule);
                 // resolver
@@ -181,15 +184,15 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
         }
     }
 
-    private Formula resolveFormula(Element eFormula, Set<String> relatedPatterns, Map<String, Formula> patToFormula,
+    private Formula resolveFormula(Element eFormula, Map<String, String> varPatternMap, Map<String, Formula> patToFormula,
                                    Map<String, Set<RuntimeNode>> patToRunTimeNode, int depth){
         Formula retformula = null;
         switch (eFormula.getName()){
             case "forall":{
                 FForall tempforall = new FForall(eFormula.attributeValue("var"), eFormula.attributeValue("in"));
                 // forall has only one kid
-                tempforall.setSubformula(resolveFormula(eFormula.elements().get(0), relatedPatterns, patToFormula, patToRunTimeNode, depth + 1));
-                relatedPatterns.add(eFormula.attributeValue("in"));
+                tempforall.setSubformula(resolveFormula(eFormula.elements().get(0), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
+                varPatternMap.put(eFormula.attributeValue("var"), eFormula.attributeValue("in"));
                 patToFormula.put(eFormula.attributeValue("in"), tempforall);
                 patToRunTimeNode.put(eFormula.attributeValue("in"), new HashSet<>());
                 retformula = tempforall;
@@ -198,8 +201,8 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
             case "exists":{
                 FExists tempexists = new FExists(eFormula.attributeValue("var"), eFormula.attributeValue("in"));
                 // exists has only one kid
-                tempexists.setSubformula(resolveFormula(eFormula.elements().get(0), relatedPatterns, patToFormula, patToRunTimeNode, depth + 1));
-                relatedPatterns.add(eFormula.attributeValue("in"));
+                tempexists.setSubformula(resolveFormula(eFormula.elements().get(0), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
+                varPatternMap.put(eFormula.attributeValue("var"), eFormula.attributeValue("in"));
                 patToFormula.put(eFormula.attributeValue("in"), tempexists);
                 patToRunTimeNode.put(eFormula.attributeValue("in"), new HashSet<>());
                 retformula = tempexists;
@@ -208,31 +211,31 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
             case "and":{
                 FAnd tempand = new FAnd();
                 // and has two kids
-                tempand.replaceSubformula(0, resolveFormula(eFormula.elements().get(0), relatedPatterns, patToFormula, patToRunTimeNode, depth + 1));
-                tempand.replaceSubformula(1, resolveFormula(eFormula.elements().get(1), relatedPatterns, patToFormula, patToRunTimeNode, depth + 1));
+                tempand.replaceSubformula(0, resolveFormula(eFormula.elements().get(0), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
+                tempand.replaceSubformula(1, resolveFormula(eFormula.elements().get(1), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
                 retformula = tempand;
                 break;
             }
             case "or" :{
                 FOr tempor = new FOr();
                 // or has two kids
-                tempor.replaceSubformula(0, resolveFormula(eFormula.elements().get(0), relatedPatterns, patToFormula, patToRunTimeNode, depth + 1));
-                tempor.replaceSubformula(1, resolveFormula(eFormula.elements().get(1), relatedPatterns, patToFormula, patToRunTimeNode, depth + 1));
+                tempor.replaceSubformula(0, resolveFormula(eFormula.elements().get(0), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
+                tempor.replaceSubformula(1, resolveFormula(eFormula.elements().get(1), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
                 retformula = tempor;
                 break;
             }
             case "implies" :{
                 FImplies tempimplies = new FImplies();
                 // implies has two kids
-                tempimplies.replaceSubformula(0, resolveFormula(eFormula.elements().get(0), relatedPatterns, patToFormula, patToRunTimeNode, depth + 1));
-                tempimplies.replaceSubformula(1, resolveFormula(eFormula.elements().get(1), relatedPatterns, patToFormula, patToRunTimeNode, depth + 1));
+                tempimplies.replaceSubformula(0, resolveFormula(eFormula.elements().get(0), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
+                tempimplies.replaceSubformula(1, resolveFormula(eFormula.elements().get(1), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
                 retformula = tempimplies;
                 break;
             }
             case "not" :{
                 FNot tempnot = new FNot();
                 // not has only one kid
-                tempnot.setSubformula(resolveFormula(eFormula.elements().get(0), relatedPatterns, patToFormula, patToRunTimeNode, depth + 1));
+                tempnot.setSubformula(resolveFormula(eFormula.elements().get(0), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
                 retformula = tempnot;
                 break;
             }
@@ -380,6 +383,10 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
     //fixer related
     public CtxFixer getCtxFixer() {
         return ctxFixer;
+    }
+
+    public ServerStatistics getServerStatistics() {
+        return serverStatistics;
     }
 
     //run
