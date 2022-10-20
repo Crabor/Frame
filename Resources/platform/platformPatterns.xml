@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+
+<patterns>
+
+	<pattern>
+		<id>pat_front</id>
+		<freshness>
+			<type>time</type>
+			<value>200</value>
+		</freshness>
+		<dataSource>
+			<type>sensor</type>
+			<sourceList>
+				<source>front</source>
+			</sourceList>
+		</dataSource>
+	</pattern>
+
+	<pattern>
+		<id>pat_back</id>
+		<freshness>
+			<type>time</type>
+			<value>200</value>
+		</freshness>
+		<dataSource>
+			<type>sensor</type>
+			<sourceList>
+				<source>back</source>
+			</sourceList>
+		</dataSource>
+	</pattern>
+
+	<pattern>
+		<id>pat_left</id>
+		<freshness>
+			<type>time</type>
+			<value>200</value>
+		</freshness>
+		<dataSource>
+			<type>sensor</type>
+			<sourceList>
+				<source>left</source>
+			</sourceList>
+		</dataSource>
+	</pattern>
+
+	<pattern>
+		<id>pat_right</id>
+		<freshness>
+			<type>time</type>
+			<value>200</value>
+		</freshness>
+		<dataSource>
+			<type>sensor</type>
+			<sourceList>
+				<source>right</source>
+			</sourceList>
+		</dataSource>
+	</pattern>
+
+</patterns>

@@ -3,168 +3,111 @@ package platform.config;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import java.util.LinkedList;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CtxServerConfig {
-    private static CtxServerConfig INSTANCE = null;
-    public static AtomicInteger context_index = new AtomicInteger();
-    private boolean serverOn;
-    public boolean isCtxFixOn;
-    public boolean isCtxCleanOn;
-    private String CtxFixer;
-    private String CtxCleaner;
-    private String CtxChecker;
-    private String CtxScheduler;
-    private int buffer_raw_max;
-    private int buffer_clean_max;
-    private int delay_allowed;
-    private LinkedList<String> sensorNameList;
+    private volatile static CtxServerConfig INSTANCE = null;
+    private final boolean serverOn;
+    private final String ctxValidator;
+    private final String ctxChecker;
+    private final String ctxScheduler;
+    private final String baseRuleFile;
+    private final String baseBfuncFile;
+    private final String basePatternFile;
+    private final String baseMfuncFile;
+    private final Map<String, SensorConfig> sensorConfigMap;
+    private final List<SubConfig> subConfigList;
 
-    private LinkedList<SubConfig> subConfigs = new LinkedList<>();
 
-    private static CMIDConfig CMID_CONFIG = null;
-    private static INFuseConfig inFuseConfig = null;
-
-    public static LinkedList<String> changeListForChecking = new LinkedList<>();
-
-    public static CtxServerConfig getInstace(){
+    public static CtxServerConfig getInstance(){
         return INSTANCE;
     }
-    public static CtxServerConfig getInstace(JSONObject object){
+    public static CtxServerConfig getInstance(JSONObject object){
         INSTANCE = new CtxServerConfig(object);
-        CMID_CONFIG = new CMIDConfig(INSTANCE.CtxChecker, INSTANCE.CtxScheduler, INSTANCE.CtxFixer,object.getString("dataFile"), object.getString("changeHandlerType"),
-                object.getString("logFilePath"), object.getString("ruleFilePath"),
-                object.getString("patternFilePath"));
-        inFuseConfig = new INFuseConfig(object.getString("dataFile"), object.getString("bfuncFilePath"), object.getString("logFilePath"),
-                object.getString("ruleFilePath"), object.getString("patternFilePath"), INSTANCE.CtxFixer, INSTANCE.CtxCleaner);
         return INSTANCE;
     }
-    public static CMIDConfig getCMIDConfig(){
-        return CMID_CONFIG;
-    }
-    public static INFuseConfig getInFuseConfig() {
-        return inFuseConfig;
-    }
-    public static LinkedList<String> getChangeListForChecking() {
-        return changeListForChecking;
-    }
-    public LinkedList<String> getSensorNameList() {
-        return sensorNameList;
-    }
 
-    CtxServerConfig(JSONObject object){
+
+    private CtxServerConfig(JSONObject object){
         serverOn = object.getBoolean("serverOn");
-        isCtxFixOn = object.getBoolean("isCtxFixOn");
-        isCtxCleanOn = object.getBoolean("isCtxCleanOn");
-        CtxFixer = object.getString("CtxFixer");
-        CtxCleaner = object.getString("CtxCleaner");
-        CtxChecker = CtxCleaner.split("\\+")[0];
-        CtxScheduler = CtxCleaner.split("\\+")[1];
-        buffer_raw_max = object.getIntValue("BUFFER_RAW_MAX");
-        buffer_clean_max = object.getIntValue("BUFFER_CLEAN_MAX");
-        sensorNameList = new LinkedList<>();
-        delay_allowed = object.getIntValue("delay_allowed");
+        ctxValidator = object.getString("CtxValidator");
+        ctxChecker = ctxValidator.split("\\+")[0];
+        ctxScheduler = ctxValidator.split("\\+")[1];
+        baseRuleFile = object.getString("baseRuleFile");
+        baseBfuncFile = object.getString("baseBfuncFile");
+        basePatternFile = object.getString("basePatternFile");
+        baseMfuncFile = object.getString("baseMfuncFile");
+        sensorConfigMap = new HashMap<>();
+        subConfigList = new ArrayList<>();
         JSONArray subs = object.getJSONArray("subscribe");
         for (int i = 0; i < subs.size(); i++) {
             JSONObject sub = subs.getJSONObject(i);
-            subConfigs.add(new SubConfig(sub));
+            subConfigList.add(new SubConfig(sub));
         }
     }
+
+
+    public void addSensorConfig(SensorConfig sensorConfig){
+        this.sensorConfigMap.put(sensorConfig.getSensorName(), sensorConfig);
+    }
+
 
     public boolean isServerOn() {
         return serverOn;
     }
-    public int getDelay_allowed() {
-        return delay_allowed;
-    }
 
-    public void addSensor(String sensorName){
-        sensorNameList.add(sensorName);
-    }
-    public boolean isCtxFixOn() {
-        return isCtxFixOn;
-    }
-
-    public void setCtxFixOn(boolean ctxFixOn) {
-        isCtxFixOn = ctxFixOn;
-    }
-
-    public boolean isCtxCleanOn() {
-        return isCtxCleanOn;
-    }
-
-    public void setCtxCleanOn(boolean ctxCleanOn) {
-        isCtxCleanOn = ctxCleanOn;
-    }
-
-    public String getCtxFixer() {
-        return CtxFixer;
-    }
-
-    public void setCtxFixer(String ctxFixer) {
-        CtxFixer = ctxFixer;
-    }
-
-    public String getCtxCleaner() {
-        return CtxCleaner;
-    }
-
-    public void setCtxCleaner(String ctxCleaner) {
-        CtxCleaner = ctxCleaner;
+    public String getCtxValidator() {
+        return ctxValidator;
     }
 
     public String getCtxChecker() {
-        return CtxChecker;
-    }
-
-    public void setCtxChecker(String ctxChecker) {
-        CtxChecker = ctxChecker;
+        return ctxChecker;
     }
 
     public String getCtxScheduler() {
-        return CtxScheduler;
+        return ctxScheduler;
     }
 
-    public void setCtxScheduler(String ctxScheduler) {
-        CtxScheduler = ctxScheduler;
+    public String getBaseRuleFile() {
+        return baseRuleFile;
     }
 
-    public int getBuffer_raw_max() {
-        return buffer_raw_max;
+    public String getBaseBfuncFile() {
+        return baseBfuncFile;
     }
 
-    public void setBuffer_raw_max(int buffer_max) {
-        this.buffer_raw_max = buffer_max;
+    public String getBasePatternFile() {
+        return basePatternFile;
     }
 
-    public int getBuffer_clean_max() {
-        return buffer_clean_max;
+    public String getBaseMfuncFile() {
+        return baseMfuncFile;
     }
 
-    public void setBuffer_clean_max(int buffer_clean_max) {
-        this.buffer_clean_max = buffer_clean_max;
+    public Map<String, SensorConfig> getSensorConfigMap() {
+        return sensorConfigMap;
     }
 
-    public LinkedList<SubConfig> getSubConfigs() {
-        return subConfigs;
+    public List<SubConfig> getSubConfigList() {
+        return subConfigList;
     }
 
     @Override
     public String toString() {
         return "CtxServerConfig{" +
                 "serverOn=" + serverOn +
-                ", isCtxFixOn=" + isCtxFixOn +
-                ", isCtxCleanOn=" + isCtxCleanOn +
-                ", CtxFixer='" + CtxFixer + '\'' +
-                ", CtxCleaner='" + CtxCleaner + '\'' +
-                ", CtxChecker='" + CtxChecker + '\'' +
-                ", CtxScheduler='" + CtxScheduler + '\'' +
-                ", buffer_raw_max=" + buffer_raw_max +
-                ", buffer_clean_max=" + buffer_clean_max +
-                ", delay_allowed=" + delay_allowed +
-                ", sensorNameList=" + sensorNameList +
-                ", subConfigs=" + subConfigs +
+                ", ctxValidator='" + ctxValidator + '\'' +
+                ", ctxChecker='" + ctxChecker + '\'' +
+                ", ctxScheduler='" + ctxScheduler + '\'' +
+                ", baseRuleFile='" + baseRuleFile + '\'' +
+                ", baseBfuncFile='" + baseBfuncFile + '\'' +
+                ", basePatternFile='" + basePatternFile + '\'' +
+                ", baseMfuncFile='" + baseMfuncFile + '\'' +
+                ", sensorConfigMap=" + sensorConfigMap +
+                ", subConfigs=" + subConfigList +
                 '}';
     }
 }
