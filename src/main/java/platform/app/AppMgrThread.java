@@ -5,6 +5,7 @@ import platform.pubsub.AbstractSubscriber;
 import platform.config.AppConfig;
 import platform.config.Configuration;
 import platform.config.SubConfig;
+import platform.service.SerMgrThread;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,13 +36,14 @@ public class AppMgrThread implements Runnable {
     @Override
     public void run() {
         //init app
-        for (AppConfig appConfig : Configuration.getListOfAppObj()) {
+        for (AppConfig appConfig : Configuration.getAppsConfig().values()) {
             try {
                 Object app = Class.forName(appConfig.getAppName()).newInstance();
                 apps.add((App) app);
-                for (SubConfig subConfig : appConfig.getSubConfigs()) {
-                    ((AbstractSubscriber) app).subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
-                }
+                appConfig.getSubConfigs().forEach(config -> {
+                    ((AbstractSubscriber) app).subscribe(config);
+                    SerMgrThread.getCancerServer().subscribe(config);
+                });
             } catch (InstantiationException |
                     IllegalAccessException |
                     ClassNotFoundException e) {

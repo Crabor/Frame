@@ -72,7 +72,7 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
                                 new ArrayList<>(iterMap.values()).subList(0, Configuration.getInvServerConfig().getGroupThro()),
                                 Configuration.getInvServerConfig().getKMeansGroupSize(),
                                 1E-10,
-                                Configuration.getResourceConfig().getListOfSensorObj().size());
+                                Configuration.getResourceConfig().getSensorsConfig().size());
                         kMeans.run();
                         DoS dos = new DoS(
                                 iterMap,

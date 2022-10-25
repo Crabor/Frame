@@ -2,9 +2,7 @@ package platform.config;
 
 import com.alibaba.fastjson.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class SensorConfig {
     private String SensorType;
@@ -14,6 +12,7 @@ public class SensorConfig {
     private int SensorFreq; // per second;
     private String IPAddress;
     private int port;
+    private Set<String> apps = new HashSet<>();
 
     public SensorConfig(JSONObject object){
         try {
@@ -55,6 +54,18 @@ public class SensorConfig {
 
     public int getPort() {
         return port;
+    }
+
+    public void addApp(String app) {
+        this.apps.add(app);
+    }
+
+    public void removeApp(String app) {
+        this.apps.remove(app);
+    }
+
+    public Set<String> getApps() {
+        return apps;
     }
 
     @Override

@@ -10,9 +10,9 @@ public class SerMgrThread implements Runnable{
     private static SerMgrThread instance;
     private static Thread t;
 
-    private PlatformCtxServer platformCtxServer;
+    private static PlatformCtxServer platformCtxServer;
 
-    private CancerServer cancerServer;
+    private static CancerServer cancerServer;
 
     // 构造方法私有化
     private SerMgrThread() {}
@@ -38,14 +38,14 @@ public class SerMgrThread implements Runnable{
         platformCtxServer = PlatformCtxServer.getInstance();
         platformCtxServer.init();
         for (SubConfig subConfig : Configuration.getCtxServerConfig().getSubConfigList()) {
-            platformCtxServer.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
+            platformCtxServer.subscribe(subConfig);
         }
         platformCtxServer.start();
 
         if (Configuration.getInvServerConfig().isServerOn()) {
             cancerServer = CancerServer.getInstance();
             for (SubConfig subConfig : Configuration.getInvServerConfig().getSubConfigs()) {
-                cancerServer.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
+                cancerServer.subscribe(subConfig);
             }
             cancerServer.start();
         }
@@ -53,11 +53,11 @@ public class SerMgrThread implements Runnable{
         Platform.incrMgrStartFlag();
     }
 
-    public PlatformCtxServer getPlatformCtxServer() {
+    public static PlatformCtxServer getPlatformCtxServer() {
         return platformCtxServer;
     }
 
-    public CancerServer getCancerServer() {
+    public static CancerServer getCancerServer() {
         return cancerServer;
     }
 
