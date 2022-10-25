@@ -21,10 +21,7 @@
       "invGenMode": "total",
       "invGenType": "numeric",
       "subscribe": [
-        {
-          "channel": "sensor",
-          "groupId": 1,
-        },
+        //无需配置订阅sensor频道，会自动订阅所有app订阅的sensor频道
         {
           "channel": "check",
         },
