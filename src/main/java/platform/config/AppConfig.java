@@ -22,7 +22,7 @@ public class AppConfig {
             JSONArray rss = object.getJSONArray("registerSensors");
             for (int i = 0; i < rss.size(); i++) {
                 String rs = rss.getString(i);
-                AbstractApp.registerSensor(appName, Set.of(rs));
+                registerSensor(rs);
             }
         } catch (Exception e) {
 
@@ -41,12 +41,34 @@ public class AppConfig {
         return sensors;
     }
 
-    public void addSensors(Set<String> sensors) {
+    private void addSensors(Set<String> sensors) {
         this.sensors.addAll(sensors);
     }
 
-    public void removeSensors(Set<String> sensors) {
+    private void removeSensors(Set<String> sensors) {
         this.sensors.removeAll(sensors);
+    }
+
+    public void registerSensor(String... sensors) {
+        try {
+            addSensors(Set.of(sensors));
+            for (String sensor : sensors) {
+                Configuration.getResourceConfig().getSensorsConfig().get(sensor).addApp(appName);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void cancelSensor(String... sensors) {
+        try {
+            removeSensors(Set.of(sensors));
+            for (String sensor : sensors) {
+                Configuration.getResourceConfig().getSensorsConfig().get(sensor).removeApp(appName);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
