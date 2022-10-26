@@ -26,6 +26,5 @@ output
 out
 
 #file
-/test/main/java/platform/testother/
 *.DS_Store
 !Resources/platform/platformBfunction.class

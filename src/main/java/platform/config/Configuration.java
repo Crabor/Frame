@@ -14,15 +14,14 @@ import org.apache.commons.logging.LogFactory;
 
 public class Configuration {
     private static final Log logger = LogFactory.getLog(Configuration.class);
-    private static List<AppConfig> listOfAppObj  = new ArrayList<>();
+    private static final Map<String, AppConfig> appsConfig  = new HashMap<>();
     private static CtxServerConfig ctxServerConfig;
     private static InvServerConfig invServerConfig;
     private static ResourceConfig resourceConfig;
-
     private static RedisConfig redisConfig;
 
-    public static List<AppConfig> getListOfAppObj() {
-        return listOfAppObj;
+    public static Map<String, AppConfig> getAppsConfig() {
+        return appsConfig;
     }
 
     public static CtxServerConfig getCtxServerConfig() {
@@ -55,23 +54,37 @@ public class Configuration {
             ctxServerConfig  = CtxServerConfig.getInstance(ctxObj);
             for (int i = 0; i < appObj.size(); i++) {
                 JSONObject temp = (JSONObject) appObj.get(i);
-                listOfAppObj.add(new AppConfig(temp));
+                appsConfig.put(temp.getString("appName"), new AppConfig(temp));
             }
             invServerConfig = new InvServerConfig(invObj);
             resourceConfig = new ResourceConfig(resourceObj);
             redisConfig = new RedisConfig(redisObj);
             logger.info(ctxServerConfig);
             logger.info(invServerConfig);
-            logger.info(listOfAppObj);
+            logger.info(appsConfig);
             logger.info(resourceConfig);
             logger.info(redisConfig);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        List<SensorConfig> listOfSensorObj = resourceConfig.getListOfSensorObj();
-        for (SensorConfig sensorConfig : listOfSensorObj) {
-            ctxServerConfig.addSensorConfig(sensorConfig);
-        }
+        resourceConfig.getSensorsConfig().forEach((sensorName, sensorConfig) -> ctxServerConfig.addSensorConfig(sensorConfig));
     }
 
+    public static Set<String> getAppsBy(String sensorName) {
+        return getResourceConfig().getSensorsConfig().get(sensorName).getApps();
+    }
+
+    public static Set<String> getSensorsBy(String appName) {
+        return appsConfig.get(appName).getSensors();
+    }
+
+    public static Set<String> getRegisteredSensors() {
+        Set<String> registeredSensors = new HashSet<>(Set.of());
+        getResourceConfig().getSensorsConfig().values().forEach(sensorConfig -> {
+            if (sensorConfig.isRegistered()) {
+                registeredSensors.add(sensorConfig.getSensorName());
+            }
+        });
+        return registeredSensors;
+    }
 }

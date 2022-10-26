@@ -2,6 +2,7 @@ package platform.testunitycar;
 
 import com.alibaba.fastjson.JSON;
 import platform.app.AbstractApp;
+import platform.config.Configuration;
 import platform.service.inv.CancerArray;
 import platform.service.inv.CancerObject;
 import platform.service.inv.struct.CheckInfo;
@@ -13,6 +14,7 @@ public class MyApp extends AbstractApp {
     @Override
     protected void customizeCtxServer() {
         ctxInteractor.registerSensor("left");
+        //config.registerSensor("left");
     }
 
     @Override

@@ -97,7 +97,7 @@ public class PlatformCtxServer extends AbstractCtxServer {
                 if(originalMsgContextIds.containsAll(fixingMsgContextIds) && fixingMsgContextIds.containsAll(originalMsgContextIds)){
                     serverStatistics.increaseCheckedAndResolvedMsgNum();
                     //为每个app发送相应的信息
-                    for(AppConfig appConfig : Configuration.getListOfAppObj()){
+                    for(AppConfig appConfig : Configuration.getAppsConfig().values()){
                         String appName = appConfig.getAppName();
                         Set<String> sensorInfos = originalMsg.getSensorInfos(appName);
                         if(sensorInfos == null)

@@ -18,6 +18,7 @@ public class Channel {
 
     public static final int DEFAULT_GRP_ID = 0;
     public static final int DEFAULT_PRIO_ID = 0;
+    public static final long DEFAULT_MODE = 0;
 
     public Channel(String name) {
         channelBaseName = name;
@@ -100,16 +101,16 @@ public class Channel {
     }
     
     public GrpPrioMode addSubscribe(AbstractSubscriber subscriber, int groupId, int priorityId) {
-        return addSubscribe(subscriber, groupId, priorityId, 0);
+        return addSubscribe(subscriber, groupId, priorityId, DEFAULT_MODE);
     }
 
     public GrpPrioMode addSubscribe(AbstractSubscriber subscriber, int groupId) {
-        return addSubscribe(subscriber, groupId, DEFAULT_PRIO_ID);
+        return addSubscribe(subscriber, groupId, DEFAULT_PRIO_ID, DEFAULT_MODE);
     }
 
     public GrpPrioMode addSubscribe(AbstractSubscriber subscriber) {
         int groupId = genNewGroupId();
-        return addSubscribe(subscriber, groupId, DEFAULT_PRIO_ID);
+        return addSubscribe(subscriber, groupId, DEFAULT_PRIO_ID, DEFAULT_MODE);
     }
 
     @Override

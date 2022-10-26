@@ -16,7 +16,7 @@ public class CtxInteractor {
     private final static Map<String, List<String>> supportedSensors = new HashMap<>();
 
     static {
-        for(SensorConfig sensorConfig : Configuration.getResourceConfig().getListOfSensorObj()){
+        for(SensorConfig sensorConfig : Configuration.getResourceConfig().getSensorsConfig().values()){
             supportedSensors.put(sensorConfig.getSensorName(), sensorConfig.getFieldNames());
         }
     }
@@ -32,7 +32,7 @@ public class CtxInteractor {
 
 
     public CtxInteractor(boolean ctxServerOn, String appName) {
-        for(AppConfig tmpConfig : Configuration.getListOfAppObj()){
+        for(AppConfig tmpConfig : Configuration.getAppsConfig().values()){
             if(tmpConfig.getAppName().equals(appName)){
                 this.appConfig = tmpConfig;
                 break;
