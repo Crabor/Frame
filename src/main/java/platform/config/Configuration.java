@@ -77,4 +77,14 @@ public class Configuration {
     public static Set<String> getSensorsBy(String appName) {
         return appsConfig.get(appName).getSensors();
     }
+
+    public static Set<String> getRegisteredSensors() {
+        Set<String> registeredSensors = new HashSet<>(Set.of());
+        getResourceConfig().getSensorsConfig().values().forEach(sensorConfig -> {
+            if (sensorConfig.isRegistered()) {
+                registeredSensors.add(sensorConfig.getSensorName());
+            }
+        });
+        return registeredSensors;
+    }
 }

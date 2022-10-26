@@ -13,6 +13,7 @@ public class SensorConfig {
     private String IPAddress;
     private int port;
     private Set<String> apps = new HashSet<>();
+    private boolean registered = false;
 
     public SensorConfig(JSONObject object){
         try {
@@ -58,14 +59,22 @@ public class SensorConfig {
 
     public void addApp(String app) {
         this.apps.add(app);
+        registered = true;
     }
 
     public void removeApp(String app) {
         this.apps.remove(app);
+        if (this.apps.isEmpty()) {
+            registered = false;
+        }
     }
 
     public Set<String> getApps() {
         return apps;
+    }
+
+    public boolean isRegistered() {
+        return registered;
     }
 
     @Override
