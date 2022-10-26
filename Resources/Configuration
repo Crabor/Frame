@@ -13,7 +13,7 @@
     ],
   },
   "InvServerConfiguration": {
-      "serverOn": false,
+      "serverOn": true,
       "groupThro": 10,
       "kMeansGroupSize": 1,
       "dosThro": 0.5,

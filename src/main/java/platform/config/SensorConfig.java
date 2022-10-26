@@ -3,6 +3,7 @@ package platform.config;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SensorConfig {
     private String SensorType;
@@ -12,7 +13,7 @@ public class SensorConfig {
     private int SensorFreq; // per second;
     private String IPAddress;
     private int port;
-    private Set<String> apps = new HashSet<>();
+    private final Set<String> apps = ConcurrentHashMap.newKeySet();
     private boolean registered = false;
 
     public SensorConfig(JSONObject object){

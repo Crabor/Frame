@@ -1,9 +1,9 @@
 package platform.service.ctx.message;
 
 import com.alibaba.fastjson.JSONObject;
+import platform.config.Configuration;
 import platform.config.CtxServerConfig;
 import platform.service.ctx.ctxChecker.context.Context;
-import platform.service.ctx.statistics.SensorStatistics;
 
 import java.util.List;
 import java.util.Map;
@@ -26,7 +26,7 @@ public class MessageHandler {
                 Context context = buildContext(index, sensorName, msgObj.getString(sensorName));
                 message.addContext(context);
             }
-            Set<String> appNameSet = SensorStatistics.getInstance().getAppNames(sensorName);
+            Set<String> appNameSet = Configuration.getAppsBy(sensorName);
             for(String appName : appNameSet){
                 message.addAppSensorInfo(appName, sensorName);
             }

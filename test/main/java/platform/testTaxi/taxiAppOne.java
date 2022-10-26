@@ -6,14 +6,14 @@ public class taxiAppOne extends AbstractApp {
 
     @Override
     protected void customizeCtxServer() {
-        ctxInteractor.registerSensor("taxis");
-        ctxInteractor.registerSensor("front");
-        ctxInteractor.registerSensor("back");
-        ctxInteractor.setCtxServerOn(true);
-        ctxInteractor.setRuleFile("Resources/taxiTest/appOne/taxiRules.xml");
-        ctxInteractor.setBfuncFile("Resources/taxiTest/appOne/taxiBfunction.class");
-        ctxInteractor.setPatternFile("Resources/taxiTest/appOne/taxiPatterns.xml");
-        ctxInteractor.setMfuncFile("Resources/taxiTest/appOne/taxiMfunction.class");
+        config.registerSensor("taxis");
+        config.registerSensor("front");
+        config.registerSensor("back");
+        config.setCtxServerOn(true);
+        config.setRuleFile("Resources/taxiTest/appOne/taxiRules.xml");
+        config.setBfuncFile("Resources/taxiTest/appOne/taxiBfunction.class");
+        config.setPatternFile("Resources/taxiTest/appOne/taxiPatterns.xml");
+        config.setMfuncFile("Resources/taxiTest/appOne/taxiMfunction.class");
     }
 
     @Override

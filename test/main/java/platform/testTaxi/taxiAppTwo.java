@@ -5,14 +5,14 @@ import platform.app.AbstractApp;
 public class taxiAppTwo extends AbstractApp {
     @Override
     protected void customizeCtxServer() {
-        ctxInteractor.registerSensor("taxis");
-        ctxInteractor.registerSensor("left");
-        ctxInteractor.registerSensor("right");
-        ctxInteractor.setCtxServerOn(true);
-        ctxInteractor.setRuleFile("Resources/taxiTest/appTwo/taxiRules.xml");
-        ctxInteractor.setBfuncFile("Resources/taxiTest/appTwo/taxiBfunction.class");
-        ctxInteractor.setPatternFile("Resources/taxiTest/appTwo/taxiPatterns.xml");
-        ctxInteractor.setMfuncFile("Resources/taxiTest/appTwo/taxiMfunction.class");
+        config.registerSensor("taxis");
+        config.registerSensor("left");
+        config.registerSensor("right");
+        config.setCtxServerOn(true);
+        config.setRuleFile("Resources/taxiTest/appTwo/taxiRules.xml");
+        config.setBfuncFile("Resources/taxiTest/appTwo/taxiBfunction.class");
+        config.setPatternFile("Resources/taxiTest/appTwo/taxiPatterns.xml");
+        config.setMfuncFile("Resources/taxiTest/appTwo/taxiMfunction.class");
     }
 
     @Override

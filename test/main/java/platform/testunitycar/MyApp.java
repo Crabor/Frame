@@ -13,8 +13,7 @@ public class MyApp extends AbstractApp {
 
     @Override
     protected void customizeCtxServer() {
-        ctxInteractor.registerSensor("left");
-        //config.registerSensor("left");
+        config.registerSensor("left");
     }
 
     @Override

@@ -1,6 +1,7 @@
 package platform.service.ctx.ctxServer;
 
 import com.alibaba.fastjson.JSONObject;
+import platform.config.AppConfig;
 import platform.config.SubConfig;
 import platform.service.ctx.ctxChecker.CheckerStarter;
 import platform.service.ctx.message.Message;
@@ -12,10 +13,10 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class AppCtxServer extends AbstractCtxServer{
-    private final CtxInteractor ctxInteractor;
+    private final AppConfig appConfig;
 
-    public AppCtxServer(CtxInteractor ctxInteractor) {
-        this.ctxInteractor = ctxInteractor;
+    public AppCtxServer(AppConfig appConfig) {
+        this.appConfig = appConfig;
         this.patternMap = new HashMap<>();
         this.ruleMap = new HashMap<>();
         this.resolverMap = new HashMap<>();
@@ -24,20 +25,20 @@ public class AppCtxServer extends AbstractCtxServer{
 
     @Override
     public void init() {
-        buildPatterns(ctxInteractor.getPatternFile(), ctxInteractor.getMfuncFile());
-        buildRules(ctxInteractor.getRuleFile());
+        buildPatterns(appConfig.getPatternFile(), appConfig.getMfuncFile());
+        buildRules(appConfig.getRuleFile());
         this.chgGenerator = new ChgGenerator(this);
         this.chgGenerator.start();
         this.ctxFixer = new CtxFixer(this);
         Thread checker =new Thread(new CheckerStarter(
-                this, ctxInteractor.getBfuncFile(), ctxInteractor.getCtxValidator())
+                this, appConfig.getBfuncFile(), appConfig.getCtxValidator())
         );
         checker.start();
     }
 
     @Override
     public void onMessage(String channel, String msg) {
-        logger.debug(ctxInteractor.getAppConfig().getAppName() + "-CtxServer recv: " + msg);
+        logger.debug(appConfig.getAppName() + "-CtxServer recv: " + msg);
 
         JSONObject msgJsonObj = JSONObject.parseObject(msg);
         Message originalMsg = MessageHandler.jsonObject2Message(msgJsonObj);
@@ -48,7 +49,7 @@ public class AppCtxServer extends AbstractCtxServer{
 
         addOriginalMsg(originalMsg);
         serverStatistics.increaseReceivedMsgNum();
-        if(ctxInteractor.isCtxServerOn()){
+        if(appConfig.isCtxServerOn()){
             chgGenerator.generateChanges(originalMsg.getContextMap());
         }
         else{
@@ -75,9 +76,9 @@ public class AppCtxServer extends AbstractCtxServer{
                 if(originalMsgContextIds.containsAll(fixingMsgContextIds) && fixingMsgContextIds.containsAll(originalMsgContextIds)){
                     serverStatistics.increaseCheckedAndResolvedMsgNum();
                     //发送消息
-                    String pubMsgStr = MessageHandler.buildPubMsgStrWithoutIndex(fixingMsg, originalMsg.getSensorInfos(ctxInteractor.getAppConfig().getAppName()));
+                    String pubMsgStr = MessageHandler.buildPubMsgStrWithoutIndex(fixingMsg, originalMsg.getSensorInfos(appConfig.getAppName()));
                     SubConfig sensorPubConfig = null;
-                    for(SubConfig subConfig : ctxInteractor.getAppConfig().getSubConfigs()){
+                    for(SubConfig subConfig : appConfig.getSubConfigs()){
                         if(subConfig.channel.equals("sensor")){
                             sensorPubConfig = subConfig;
                         }

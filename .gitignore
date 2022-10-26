@@ -27,4 +27,4 @@ out
 
 #file
 *.DS_Store
-!Resources/platform/platformBfunction.class
+!Resources/*.class

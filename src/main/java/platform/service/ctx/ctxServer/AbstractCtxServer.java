@@ -5,6 +5,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import platform.config.Configuration;
 import platform.pubsub.AbstractSubscriber;
 import platform.service.ctx.ctxChecker.context.Context;
 import platform.service.ctx.message.Message;
@@ -19,7 +20,6 @@ import platform.service.ctx.rule.Rule;
 import platform.service.ctx.ctxChecker.constraint.formulas.*;
 import platform.service.ctx.ctxChecker.constraint.runtime.RuntimeNode;
 import platform.service.ctx.ctxChecker.context.ContextChange;
-import platform.service.ctx.statistics.SensorStatistics;
 import platform.service.ctx.statistics.ServerStatistics;
 
 import java.io.File;
@@ -323,7 +323,7 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
 
     //message related
     protected void filterMessage(JSONObject msgJsonObj){
-        Set<String> registeredSensorSet = SensorStatistics.getInstance().getAllRegisteredSensorSet();
+        Set<String> registeredSensorSet = Configuration.getRegisteredSensors();
         Iterator<String> iterator = msgJsonObj.keySet().iterator();
         while(iterator.hasNext()){
             String msgSensor = iterator.next();
