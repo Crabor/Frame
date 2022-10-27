@@ -2,7 +2,7 @@ package platform.service;
 
 import platform.Platform;
 import platform.config.Configuration;
-import platform.service.ctx.CtxSubscriber;
+import platform.service.ctx.ctxServer.PlatformCtxServer;
 import platform.service.inv.CancerServer;
 import platform.config.SubConfig;
 
@@ -10,9 +10,9 @@ public class SerMgrThread implements Runnable{
     private static SerMgrThread instance;
     private static Thread t;
 
-    private CtxSubscriber ctxSubscriber;
+    private static PlatformCtxServer platformCtxServer;
 
-    private CancerServer cancerServer;
+    private static CancerServer cancerServer;
 
     // 构造方法私有化
     private SerMgrThread() {}
@@ -34,18 +34,18 @@ public class SerMgrThread implements Runnable{
     @Override
     public void run() {
         //init cxt & inv
-        if (Configuration.getCtxServerConfig().isServerOn()) {
-            ctxSubscriber = CtxSubscriber.getInstance();
-            for (SubConfig subConfig : Configuration.getCtxServerConfig().getSubConfigs()) {
-                ctxSubscriber.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
-            }
-            ctxSubscriber.start();
+        //serverOn==false也要允许应用程序自主注册sensor，此时server起到一个转发的作用
+        platformCtxServer = PlatformCtxServer.getInstance();
+        platformCtxServer.init();
+        for (SubConfig subConfig : Configuration.getCtxServerConfig().getSubConfigList()) {
+            platformCtxServer.subscribe(subConfig);
         }
+        platformCtxServer.start();
 
         if (Configuration.getInvServerConfig().isServerOn()) {
             cancerServer = CancerServer.getInstance();
             for (SubConfig subConfig : Configuration.getInvServerConfig().getSubConfigs()) {
-                cancerServer.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
+                cancerServer.subscribe(subConfig);
             }
             cancerServer.start();
         }
@@ -53,11 +53,11 @@ public class SerMgrThread implements Runnable{
         Platform.incrMgrStartFlag();
     }
 
-    public CtxSubscriber getCxtSubscriber() {
-        return ctxSubscriber;
+    public static PlatformCtxServer getPlatformCtxServer() {
+        return platformCtxServer;
     }
 
-    public CancerServer getCancerServer() {
+    public static CancerServer getCancerServer() {
         return cancerServer;
     }
 

@@ -72,7 +72,7 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
                                 new ArrayList<>(iterMap.values()).subList(0, Configuration.getInvServerConfig().getGroupThro()),
                                 Configuration.getInvServerConfig().getKMeansGroupSize(),
                                 1E-10,
-                                Configuration.getResourceConfig().getListOfSensorObj().size());
+                                Configuration.getResourceConfig().getSensorsConfig().size());
                         kMeans.run();
                         DoS dos = new DoS(
                                 iterMap,
@@ -158,6 +158,7 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
             List<CheckInfo> checkInfoList = lineMap.get(checkInfo.lineNumber);
             checkInfoList.add(checkInfo);
         } else if (channel.equals("sensor")) {
+            logger.debug("Inv recv: " + msg);
             iterId++;
             Map<String, Double> map = new HashMap<>();
             JSONObject jsonObject = JSONObject.parseObject(msg);

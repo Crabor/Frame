@@ -3,6 +3,7 @@ package platform.pubsub;
 import io.lettuce.core.api.StatefulRedisConnection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import platform.config.SubConfig;
 import platform.struct.GrpPrioMode;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.pubsub.RedisPubSubListener;
@@ -119,6 +120,10 @@ public abstract class AbstractSubscriber implements RedisPubSubListener<String, 
                         String.valueOf(gpm.groupId),
                         String.valueOf(gpm.priorityId)));
         return sub;
+    }
+
+    public Subscribe subscribe(SubConfig config) {
+        return subscribe(config.channel, config.groupId, config.priorityId, config.mode);
     }
 
     public Subscribe subscribe(Channel channel, int groupId, int priorityId, long mode) {

@@ -26,5 +26,5 @@ output
 out
 
 #file
-output3.txt
-/test/main/java/platform/testother/
+*.DS_Store
+!Resources/*.class

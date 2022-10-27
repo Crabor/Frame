@@ -1,24 +1,14 @@
 {
   "CtxServerConfiguration": {
     "serverOn": true,
-    "isCtxCleanOn": true,
-    "isCtxFixOn": true,
-    "CtxCleaner": "ECC+IMD",
-    "CtxFixer": "Drop",
-    "BUFFER_RAW_MAX": 2,
-    "BUFFER_CLEAN_MAX": 50,
-    "delay_allowed": 20000, //ms  <= 1000*20
-    "dataFile": "data28/wrongData3.txt",
-    "changeHandlerType": "static-change-based",
-    "logFilePath": "output3.txt",
-    "ruleFilePath": "Resources/rules.xml",
-    "patternFilePath": "Resources/patterns.xml",
-    "bfuncFilePath": "Resources/Bfunction.class",
-    "oracleFilePath": "oracle.txt",
+    "CtxValidator": "ECC+IMD",
+    "baseRuleFile": "Resources/platform/platformRules.xml",
+    "baseBfuncFile": "Resources/platform/platformBfunction.class",
+    "basePatternFile": "Resources/platform/platformPatterns.xml",
+    "baseMfuncFile": "",
     "subscribe": [
       {
         "channel": "sensor",
-        "priorityId": 1,
       },
     ],
   },
@@ -31,9 +21,7 @@
       "invGenMode": "total",
       "invGenType": "numeric",
       "subscribe": [
-        {
-          "channel": "sensor",
-        },
+        //无需配置订阅sensor频道，会自动订阅所有app订阅的sensor频道
         {
           "channel": "check",
         },
@@ -41,10 +29,20 @@
   },
   "AppConfiguration": [
     {
-      "appName": "platform.testunitycar.MyApp",
+       "appName": "platform.testTaxi.taxiAppOne",
       "subscribe": [
         {
           "channel": "sensor",
+          "groupId": 1,
+        },
+      ],
+    },
+    {
+      "appName": "platform.testTaxi.taxiAppTwo",
+      "subscribe": [
+        {
+          "channel": "sensor",
+          "groupId": 2,
         },
       ],
     },
@@ -82,15 +80,23 @@
     "SensorConfiguration": [
       {
         "SensorName": "front",
+        "fieldNames": "value",
       },
       {
         "SensorName": "back",
+        "fieldNames": "value",
       },
       {
         "SensorName": "left",
+        "fieldNames": "value",
       },
       {
         "SensorName": "right",
+        "fieldNames": "value",
+      },
+      {
+        "SensorName": "taxis",
+        "fieldNames": "timestamp,taxiId,longitude,latitude,speed,direction,status",
       }
     ],
     "ActorConfiguration": [
