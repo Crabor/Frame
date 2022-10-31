@@ -44,9 +44,6 @@ public class SerMgrThread implements Runnable{
 
         if (Configuration.getInvServerConfig().isServerOn()) {
             cancerServer = CancerServer.getInstance();
-            for (SubConfig subConfig : Configuration.getInvServerConfig().getSubConfigs()) {
-                cancerServer.subscribe(subConfig);
-            }
             cancerServer.start();
         }
 
