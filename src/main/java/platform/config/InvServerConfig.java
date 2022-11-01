@@ -49,10 +49,14 @@ public class InvServerConfig {
         if (igt.equals("numeric")) {
             invGenType = InvGenType.NUMERIC;
         }
-        JSONArray subs = object.getJSONArray("subscribe");
-        for (int i = 0; i < subs.size(); i++) {
-            JSONObject sub = subs.getJSONObject(i);
-            subConfigs.add(new SubConfig(sub));
+        try {
+            JSONArray subs = object.getJSONArray("subscribe");
+            for (int i = 0; i < subs.size(); i++) {
+                JSONObject sub = subs.getJSONObject(i);
+                subConfigs.add(new SubConfig(sub));
+            }
+        } catch (NullPointerException e) {
+
         }
     }
 

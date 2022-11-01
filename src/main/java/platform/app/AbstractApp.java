@@ -5,6 +5,9 @@ import platform.config.Configuration;
 import platform.pubsub.AbstractSubscriber;
 import platform.service.inv.CancerServer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class AbstractApp extends AbstractSubscriber implements App{
     protected AppConfig config;
     protected String appName;
@@ -23,7 +26,7 @@ public abstract class AbstractApp extends AbstractSubscriber implements App{
     @Override
     public void onMessage(String channel, String msg) {
         iterId++;
-        CancerServer.iterEntry(appName, iterId);
+        CancerServer.iterEntry(appName, iterId, msg);
         iter(channel, msg);
         CancerServer.iterExit(appName, iterId);
     }

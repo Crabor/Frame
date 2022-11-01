@@ -23,10 +23,11 @@ public class CancerObject {
     private final String name;
     private double value;
 
-    private final List<Integer> lines = new ArrayList<>();
+    //private final List<Integer> lines = new ArrayList<>();
 
     //静态变量，第一维为appName，第二维为name，第三维为cancerObject
     private static final Map<String, Map<String, CancerObject>> objs = new HashMap<>();
+
     //第一维为行号，第二维为组号，第三维为不变式
     private final Map<Integer, Map<Integer, InvAbstract>> invMap = new HashMap<>();
 
@@ -127,9 +128,9 @@ public class CancerObject {
         return objs;
     }
 
-    public List<Integer> getLines() {
-        return lines;
-    }
+//    public List<Integer> getLines() {
+//        return lines;
+//    }
 
     public Map<Integer, Map<Integer, InvAbstract>> getInvMap() {
         return invMap;
@@ -217,12 +218,9 @@ public class CancerObject {
 
     public CheckInfo check(int lineNumber, int group) {
         checkId++;
-        if (!invMap.containsKey(lineNumber)) {
-            invMap.put(lineNumber, new HashMap<>());
-        }
-        if (!lines.contains(lineNumber)) {
-            lines.add(lineNumber);
-        }
+//        if (!lines.contains(lineNumber)) {
+//            lines.add(lineNumber);
+//        }
         if (!CancerServer.getLineMap().containsKey(appName)) {
             CancerServer.getLineMap().put(appName, new HashMap<>());
         }
@@ -235,8 +233,8 @@ public class CancerObject {
         CheckState checkState = getCheckState(lineNumber, group);
         CheckInfo checkInfo = new CheckInfo(appName, iterId, lineNumber, checkId, new Date().getTime(), name, value,
                 checkState, checkState == CheckState.INV_VIOLATED ? invMap.get(lineNumber).get(group).getDiff(value) : 0);
-        // pub to check channel
-        publisher.publish("check", JSONObject.toJSONString(checkInfo));
+
+        CancerServer.recordCheckInfo(checkInfo);
         return checkInfo;
     }
 
@@ -258,31 +256,31 @@ public class CancerObject {
         return check(lineNumber);
     }
 
-    public static CheckInfo[] check(CancerObject... args) {
+    public static Map<String, CheckInfo> check(CancerObject... args) {
         int lineNumber = Thread.currentThread().getStackTrace()[2].getLineNumber();
-        CheckInfo[] checkInfos = new CheckInfo[args.length];
-        for (int i = 0; i < args.length; i++) {
-            checkInfos[i] = args[i].check(lineNumber);
+        Map<String, CheckInfo> checkInfos = new HashMap<>();
+        for (CancerObject arg : args) {
+            checkInfos.put(arg.getName(), arg.check(lineNumber));
         }
         return checkInfos;
     }
 
-    public static CheckInfo[] check(List<CancerObject> args) {
+    public static Map<String, CheckInfo> check(List<CancerObject> args) {
         int lineNumber = Thread.currentThread().getStackTrace()[2].getLineNumber();
-        CheckInfo[] checkInfos = new CheckInfo[args.size()];
-        for (int i = 0; i < args.size(); i++) {
-            checkInfos[i] = args.get(i).check(lineNumber);
+        Map<String, CheckInfo> checkInfos = new HashMap<>();
+        for (CancerObject arg : args) {
+            checkInfos.put(arg.getName(), arg.check(lineNumber));
         }
         return checkInfos;
     }
 
-    public static CheckInfo[] check(String... names) {
+    public static Map<String, CheckInfo> check(String... names) {
         int lineNumber = Thread.currentThread().getStackTrace()[2].getLineNumber();
-        CheckInfo[] checkInfos = new CheckInfo[names.length];
-        for (int i = 0; i < names.length; i++) {
+        Map<String, CheckInfo> checkInfos = new HashMap<>();
+        for (String name : names) {
             String appName = Thread.currentThread().getStackTrace()[2].getClassName();
-            CancerObject obj = get(appName, names[i]);
-            checkInfos[i] = obj.check(lineNumber);
+            CancerObject obj = get(appName, name);
+            checkInfos.put(obj.getName(), obj.check(lineNumber));
         }
         return checkInfos;
     }

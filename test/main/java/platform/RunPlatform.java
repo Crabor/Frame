@@ -1,8 +1,6 @@
-package platform.testunitycar;
+package platform;
 
-import platform.Platform;
-
-public class demo {
+public class RunPlatform {
     public static void main(String[] args) {
         Platform.Init();
         Platform.Start();

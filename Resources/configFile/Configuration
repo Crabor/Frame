@@ -20,12 +20,6 @@
       "groupTraceType": "csv",
       "invGenMode": "total",
       "invGenType": "numeric",
-      "subscribe": [
-        //无需配置订阅sensor频道，会自动订阅所有app订阅的sensor频道
-        {
-          "channel": "check",
-        },
-      ],
   },
   "AppConfiguration": [
     {

@@ -42,7 +42,6 @@ public class AppMgrThread implements Runnable {
                 apps.add((App) app);
                 appConfig.getSubConfigs().forEach(config -> {
                     ((AbstractSubscriber) app).subscribe(config);
-//                    SerMgrThread.getCancerServer().subscribe(config);
                 });
             } catch (InstantiationException |
                     IllegalAccessException |

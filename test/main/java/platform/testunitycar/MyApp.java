@@ -22,8 +22,7 @@ public class MyApp extends AbstractApp {
         Actor actor = new Actor(5,0,0);
 
         //method 1
-        CancerArray ca = CancerArray.fromJsonObjectString(msg);
-        CancerObject left = ca.get("left");
+        CancerObject left = CancerObject.fromJsonObjectString(msg);
         CheckInfo checkInfo = left.check();
         logger.debug("check:\n" + JSON.toJSONString(checkInfo, true));
         if (checkInfo.checkState == CheckState.INV_VIOLATED) {

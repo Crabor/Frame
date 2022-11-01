@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import platform.app.AppMgrThread;
 import platform.pubsub.AbstractSubscriber;
 import platform.config.Configuration;
+import platform.pubsub.Publisher;
 import platform.service.inv.algorithm.*;
 import platform.service.inv.struct.*;
 import platform.service.inv.struct.inv.InvAbstract;
@@ -17,10 +18,9 @@ import platform.util.Util;
 import java.io.File;
 import java.util.*;
 
-public class CancerServer extends AbstractSubscriber implements Runnable {
+public class CancerServer implements Runnable {
     private static CancerServer instance;
     private Thread t;
-    private int iterId = 0;
 
     //静态变量，第一维为appName，第二维为iterId，第三维为LineNumber，第四维为保存的checkInfo列表
     private static final Map<String, Map<Integer, Map<Integer, List<CheckInfo>>>> checkMap = new HashMap<>();
@@ -30,7 +30,8 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
     //静态变量，第一维为appName，第二维为lineNumber，第三维为cancerObject列表
     private static final Map<String, Map<Integer, List<CancerObject>>> lineMap = new HashMap<>();
     
-//    private static final Log logger = LogFactory.getLog(CancerServer.class);
+    private static final Log logger = LogFactory.getLog(CancerServer.class);
+    private static final Publisher publisher = new Publisher();
 
     // 构造方法私有化
     private CancerServer() {
@@ -72,7 +73,7 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
                                 new ArrayList<>(iterMap.values()).subList(0, Configuration.getInvServerConfig().getGroupThro()),
                                 Configuration.getInvServerConfig().getKMeansGroupSize(),
                                 1E-10,
-                                Configuration.getResourceConfig().getSensorsConfig().size());
+                                iterMap.get(1).eCxt.size());//TODO:动态注册/取消注册影响
                         kMeans.run();
                         DoS dos = new DoS(
                                 iterMap,
@@ -129,7 +130,6 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
                     }
                 });
             }
-
         }
     }
 
@@ -140,49 +140,21 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
         }
     }
 
-    @Override
-    public void onMessage(String channel, String msg) {
-        if (channel.equals("check")) {
-            CheckInfo checkInfo = JSONObject.parseObject(msg, CheckInfo.class);
-            if (!checkMap.containsKey(checkInfo.appName)) {
-                checkMap.put(checkInfo.appName, new HashMap<>());
-            }
-            Map<Integer, Map<Integer, List<CheckInfo>>> iterMap = checkMap.get(checkInfo.appName);
-            if (!iterMap.containsKey(checkInfo.iterId)) {
-                iterMap.put(checkInfo.iterId, new HashMap<>());
-            }
-            Map<Integer, List<CheckInfo>> lineMap = iterMap.get(checkInfo.iterId);
-            if (!lineMap.containsKey(checkInfo.lineNumber)) {
-                lineMap.put(checkInfo.lineNumber, new ArrayList<>());
-            }
-            List<CheckInfo> checkInfoList = lineMap.get(checkInfo.lineNumber);
-            checkInfoList.add(checkInfo);
-        } else if (channel.equals("sensor")) {
-            logger.debug("Inv recv: " + msg);
-            iterId++;
-            Map<String, Double> map = new HashMap<>();
-            JSONObject jsonObject = JSONObject.parseObject(msg);
-            for (String key : jsonObject.keySet()) {
-                map.put(key, jsonObject.getDouble(key));
-            }
-            AppMgrThread.getInstance().getApps().forEach(app -> {
-                String appName = ((AbstractSubscriber) app).getName();
-                if (!segMap.containsKey(appName)) {
-                    segMap.put(appName, new HashMap<>());
-                }
-                Map<Integer, SegInfo> iterMap = segMap.get(appName);
-                if (!iterMap.containsKey(iterId)) {
-                    iterMap.put(iterId, new SegInfo(iterId));
-                }
-                SegInfo segInfo = iterMap.get(iterId);
-                segInfo.eCxt = map;
-                if (!peCountMap.containsKey(appName)) {
-                    peCountMap.put(appName, new PECount());
-                }
-                PECount peCount = peCountMap.get(appName);
-                peCount.eCxtCount++;
-            });
+    public static void recordCheckInfo(CheckInfo checkInfo) {
+        if (!checkMap.containsKey(checkInfo.appName)) {
+            checkMap.put(checkInfo.appName, new HashMap<>());
         }
+        Map<Integer, Map<Integer, List<CheckInfo>>> iterMap = checkMap.get(checkInfo.appName);
+        if (!iterMap.containsKey(checkInfo.iterId)) {
+            iterMap.put(checkInfo.iterId, new HashMap<>());
+        }
+        Map<Integer, List<CheckInfo>> lineMap = iterMap.get(checkInfo.iterId);
+        if (!lineMap.containsKey(checkInfo.lineNumber)) {
+            lineMap.put(checkInfo.lineNumber, new ArrayList<>());
+        }
+        List<CheckInfo> checkInfoList = lineMap.get(checkInfo.lineNumber);
+        checkInfoList.add(checkInfo);
+        publisher.publish("check", JSONObject.toJSONString(checkInfo));
     }
 
     public static Map<String, Map<Integer, Map<Integer, List<CheckInfo>>>> getCheckMap() {
@@ -201,8 +173,29 @@ public class CancerServer extends AbstractSubscriber implements Runnable {
         return lineMap;
     }
 
-    public static void iterEntry(String appName, int iterId) {
+    public static void iterEntry(String appName, int iterId, String msg) {
         CancerObject.iterEntry(appName, iterId);
+
+        //record sensor info
+        Map<String, Double> map = new HashMap<>();
+        JSONObject jsonObject = JSONObject.parseObject(msg);
+        for (String key : jsonObject.keySet()) {
+            map.put(key, jsonObject.getDouble(key));
+        }
+        if (!segMap.containsKey(appName)) {
+            segMap.put(appName, new HashMap<>());
+        }
+        Map<Integer, SegInfo> iterMap = segMap.get(appName);
+        if (!iterMap.containsKey(iterId)) {
+            iterMap.put(iterId, new SegInfo(iterId));
+        }
+        SegInfo segInfo = iterMap.get(iterId);
+        segInfo.eCxt = map;
+        if (!peCountMap.containsKey(appName)) {
+            peCountMap.put(appName, new PECount());
+        }
+        PECount peCount = peCountMap.get(appName);
+        peCount.eCxtCount++;
     }
 
     public static void iterExit(String appName, int iterId) {

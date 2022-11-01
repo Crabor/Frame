@@ -1,0 +1,99 @@
+{
+  "CtxServerConfiguration": {
+    "serverOn": true,
+    "CtxValidator": "ECC+IMD",
+    "baseRuleFile": "Resources/platform/platformRules.xml",
+    "baseBfuncFile": "Resources/platform/platformBfunction.class",
+    "basePatternFile": "Resources/platform/platformPatterns.xml",
+    "baseMfuncFile": "",
+    "subscribe": [
+      {
+        "channel": "sensor",
+      },
+    ],
+  },
+  "InvServerConfiguration": {
+      "serverOn": true,
+      "groupThro": 10,
+      "kMeansGroupSize": 1,
+      "dosThro": 0.5,
+      "groupTraceType": "csv",
+      "invGenMode": "total",
+      "invGenType": "numeric",
+  },
+  "AppConfiguration": [
+    {
+       "appName": "platform.testunitycar.MyApp",
+      "subscribe": [
+        {
+          "channel": "sensor",
+          "groupId": 1,
+        },
+      ],
+    },
+  ],
+  "ResourceConfiguration": {
+    "deviceDriver": {
+      "serverPort": 8080,
+      "clientAddress": "127.0.0.1",
+      "clientPort": 8081,
+      "subscribe": [
+        {
+          "channel": "actor",
+        },
+        {
+          "channel": "check",
+        }
+      ],
+    },
+    "databaseDriver": {
+      "subscribe": [
+        {
+          "channel": "sensor",
+        },
+        {
+          "channel": "actor",
+        },
+        {
+          "channel": "check",
+        },
+        {
+          "channel": "ctxStat",
+        },
+      ],
+    },
+    "SensorConfiguration": [
+      {
+        "SensorName": "front",
+        "fieldNames": "value",
+      },
+      {
+        "SensorName": "back",
+        "fieldNames": "value",
+      },
+      {
+        "SensorName": "left",
+        "fieldNames": "value",
+      },
+      {
+        "SensorName": "right",
+        "fieldNames": "value",
+      },
+    ],
+    "ActorConfiguration": [
+      {
+        "ActorName": "x",
+      },
+      {
+        "ActorName": "y",
+      },
+      {
+        "ActorName": "z",
+      },
+    ],
+  },
+  "RedisConfig": {
+    "serverAddress": "127.0.0.1",
+    "serverPort": "6379",
+  }
+}
