@@ -73,7 +73,7 @@ public class CancerServer implements Runnable {
                                 new ArrayList<>(iterMap.values()).subList(0, Configuration.getInvServerConfig().getGroupThro()),
                                 Configuration.getInvServerConfig().getKMeansGroupSize(),
                                 1E-10,
-                                Configuration.getResourceConfig().getSensorsConfig().size());
+                                iterMap.get(1).eCxt.size());//TODO:动态注册/取消注册影响
                         kMeans.run();
                         DoS dos = new DoS(
                                 iterMap,
