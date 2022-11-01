@@ -89,7 +89,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
 
     @Override
     public void onMessage(String channel, String msg) {
-        //System.out.println("dd send: " + msg);
+        logger.debug("dd send: " + msg);
         //receive msg from actor channel than transmit to car
         try {
             JSONObject jo = new JSONObject();
