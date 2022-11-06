@@ -1,8 +1,6 @@
 package platform.config;
 
 import com.alibaba.fastjson.JSONObject;
-import platform.pubsub.Channel;
-import platform.pubsub.Subscribe;
 import platform.struct.GrpPrioMode;
 
 public class SubConfig {

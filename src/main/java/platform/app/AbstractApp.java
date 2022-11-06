@@ -2,11 +2,8 @@ package platform.app;
 
 import platform.config.AppConfig;
 import platform.config.Configuration;
-import platform.pubsub.AbstractSubscriber;
+import platform.comm.pubsub.AbstractSubscriber;
 import platform.service.inv.CancerServer;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class AbstractApp extends AbstractSubscriber implements App{
     protected AppConfig config;

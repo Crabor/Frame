@@ -1,16 +1,13 @@
 package platform.util;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import platform.struct.CmdRet;
 import reactor.util.function.Tuple3;
 import reactor.util.function.Tuples;
 
 import java.io.*;
-import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import  org.apache.commons.logging.Log;
-import  org.apache.commons.logging.LogFactory;
+import java.util.*;
 
 public class Util {
     public static String getSimpleName(String name) {
@@ -126,6 +123,32 @@ public class Util {
         }
     }
 
+    public static String formatCommand(String cmd, String args) {
+        return "{\"cmd\":\"" + cmd + "\",\"args\":\"" + args + "\"}";
+    }
+
+    public static CmdRet decodeCommandRet(String msg) {
+        return new CmdRet(msg);
+    }
+
+    public static String setToString(Set<String> set, String delimiter) {
+        String[] setArray = set.toArray(new String[0]);
+        StringBuilder ret = new StringBuilder(setArray[0]);
+        for (int i = 1 ; i < setArray.length; i++) {
+            ret.append(delimiter).append(setArray[i]);
+        }
+        return ret.toString();
+    }
+
+    public static String keysValuesToJsonString(String[] keys, String[] values) {
+        JSONObject jo = new JSONObject();
+        for (int i = 0; i < keys.length; i++) {
+            jo.put(keys[i], values[i]);
+        }
+        return jo.toJSONString();
+    }
+
     public static void main(String[] args) {
+
     }
 }

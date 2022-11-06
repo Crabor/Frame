@@ -214,7 +214,8 @@ protected void publish(Channel channel, int groupId, int priorityId, String mess
 
 ```java
 //Subscriber1
-import platform.pubsub.AbstractSubscriber;
+
+import platform.comm.pubsub.AbstractSubscriber;
 
 public class Subscriber1 extends AbstractSubscriber {
     @Override
@@ -355,7 +356,7 @@ Subscriber3: channel, hello
       "clientPort": 8081,//udp发送端口
       "subscribe": [
         {
-          "channel": "actor",
+          "channel": "actuator",
         },
         {
           "channel": "check",
@@ -369,7 +370,7 @@ Subscriber3: channel, hello
           "channel": "sensor",
         },
         {
-          "channel": "actor",
+          "channel": "actuator",
         },
         {
           "channel": "check",
@@ -397,13 +398,13 @@ Subscriber3: channel, hello
     //动作设施配置
     "ActorConfiguration": [
       {
-        "ActorName": "x",
+        "ActuatorName": "x",
       },
       {
-        "ActorName": "y",
+        "ActuatorName": "y",
       },
       {
-        "ActorName": "z",
+        "ActuatorName": "z",
       },
     ],
   },
@@ -420,3 +421,54 @@ Subscriber3: channel, hello
 ## invariant
 
 ## log system
+
+## resource manage
+
+平台和外部程序通信采用UDP明文协议。通信流程为平台发送明文命令给硬件驱动程序，硬件驱动程序接收命令后执行，然后返回返回值。明文协议格式为：
+
+```txt
+平台发送协议格式：
+{"cmd": "XXX", "args": "XXX"}
+
+平台接收协议格式（ret域需要硬件驱动按照协议自己编写）
+{"cmd": "XXX", "args": "XXX", "rets": "XXX"}
+```
+
+其中平台接收的协议格式中**cmd**、**args**项需与发送协议格式中的保持一致。
+
+### 明文协议
+
+| cmd            | args                                                               | rets                                 | description                                                          |
+|----------------|---------------------------------------------------------------------|-------------------------------------|----------------------------------------------------------------------|
+| sensor_on      | <sensor_name> [<sensor_name> ...]                                   | <true/false> [<true/false> ...]     | 启动sensor<br/>true :打开成功<br/>false :打开失败                              |
+| sensor_off     | <sensor_name> [<sensor_name> ...]                                   | <true/false> [<true/false> ...]     | 关闭sensor<br/>true :关闭成功<br/>false :关闭失败                              |
+| sensor_alive   | <sensor_name> [<sensor_name> ...]                                   | <true/false> [<true/false> ...]     | 判断sensor状态<br/>true :sensor处于打开状态<br/>false :sensor处于关闭状态            |
+| sensor_get     | <sensor_name> [<sensor_name> ...]                                   | <value_string> [<value_string> ...] | 获取sensor值<br/>value_string :sensor值<br/>value_string == "@#$%" :获取失败 |
+| actuator_on    | <actuator_name> [<actuator_name> ...]                               | <true/false> [<true/false> ...]     | 启动actuator<br/>true :启动成功<br/>false :启动失败                            |
+| actuator_off   | <actuator_name> [<actuator_name> ...]                               | <true/false> [<true/false> ...]     | 关闭actuator<br/>true :关闭成功<br/>false :关闭失败                            |
+| actuator_alive | <actuator_name> [<actuator_name> ...]                               | <true/false> [<true/false> ...]     | 判断actuator状态<br/>true :actuator处于打开状态<br/>false :actuator处于关闭状态      |
+| actuator_set   | <actuator_name> <value_string> [<actuator_name> <value_string> ...] | <true/false> [<true/false> ...]     | 设置actuator值<br/>true :设置actuator值成功<br/>false :设置actuator值失败         |
+| channel_msg    | {"channel": <channel_name>,<br/>"message": <message_string>}        | <true/false>                        | 发送频道消息<br/>true :发送频道消息成功<br/>false :发送频道消息错误                        |
+| sync           | <time_stamp>                                                        | <true/false>                        | 时钟同步<br/>true :同步成功<br/>false :同步失败                                  |
+| <custom_cmd>   | <custom_param>                                                      | <custom_ret>                        | 自定义命令                                                                |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

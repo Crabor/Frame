@@ -14,21 +14,28 @@ public class ResourceConfig {
 
     private Map<String, SensorConfig> sensorsConfig  = new HashMap<>();
 
-    private List<ActorConfig> listOfActorObj = new ArrayList<>();
+    private Map<String, ActuatorConfig> actuatorsConfig = new HashMap<>();
 
     public ResourceConfig(JSONObject object) {
         this.deviceDriverConfig = new DeviceDriverConfig(object.getJSONObject("deviceDriver"));
         this.databaseDriverConfig = new DatabaseDriverConfig(object.getJSONObject("databaseDriver"));
-        JSONArray sensorObj = (JSONArray) object.get("SensorConfiguration");
-        for(int i = 0; i < sensorObj.size(); i++) {
-            JSONObject temp = (JSONObject) sensorObj.get(i);
+        JSONObject sensorObj = (JSONObject) object.get("SensorConfiguration");
+        JSONArray sensors = sensorObj.getJSONArray("sensors");
+        JSONObject sensorFreq = sensorObj.getJSONObject("freq");
+        for (Object sensor : sensors) {
+            JSONObject temp = (JSONObject) sensor;
             sensorsConfig.put(temp.getString("SensorName"), new SensorConfig(temp));
         }
-        JSONArray actorObj = (JSONArray) object.get("ActorConfiguration");
-        for (int i = 0; i < actorObj.size(); i++) {
-            JSONObject temp = (JSONObject) actorObj.get(i);
-            listOfActorObj.add(new ActorConfig(temp));
+        SensorConfig.setAliveFreq(sensorFreq.getIntValue("aliveFreq"));
+        SensorConfig.setValueFreq(sensorFreq.getIntValue("valueFreq"));
+        JSONObject actuatorObj = (JSONObject) object.get("ActorConfiguration");
+        JSONArray actuators = actuatorObj.getJSONArray("actuators");
+        JSONObject actuatorFreq = actuatorObj.getJSONObject("freq");
+        for (Object actuator : actuators) {
+            JSONObject temp = (JSONObject) actuator;
+            actuatorsConfig.put(temp.getString("ActuatorName"), new ActuatorConfig(temp));
         }
+        ActuatorConfig.setAliveFreq(actuatorFreq.getIntValue("aliveFreq"));
     }
 
     public DeviceDriverConfig getDeviceDriverConfig() {
@@ -43,8 +50,8 @@ public class ResourceConfig {
         return sensorsConfig;
     }
 
-    public List<ActorConfig> getListOfActorObj() {
-        return listOfActorObj;
+    public Map<String, ActuatorConfig> getActuatorsConfig() {
+        return actuatorsConfig;
     }
 
     @Override
@@ -53,7 +60,7 @@ public class ResourceConfig {
                 "deviceDriverConfig=" + deviceDriverConfig + "\n" +
                 "databaseDriverConfig=" + databaseDriverConfig + "\n" +
                 "sensorsConfig=" + sensorsConfig + "\n" +
-                "listOfActorObj=" + listOfActorObj +
+                "actuatorsConfig=" + actuatorsConfig +
                 '}';
     }
 }

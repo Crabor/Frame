@@ -1,4 +1,4 @@
-package platform.pubsub;
+package platform.comm.pubsub;
 
 import io.lettuce.core.KeyValue;
 import io.lettuce.core.RedisClient;

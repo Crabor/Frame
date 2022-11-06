@@ -3,14 +3,11 @@ package platform.testother;
 import io.lettuce.core.RedisClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import platform.pubsub.AbstractSubscriber;
-import platform.pubsub.Channel;
-import platform.pubsub.Publisher;
-import platform.pubsub.Subscribe;
+import platform.comm.pubsub.AbstractSubscriber;
+import platform.comm.pubsub.Channel;
+import platform.comm.pubsub.Publisher;
+import platform.comm.pubsub.Subscribe;
 import platform.struct.GrpPrioMode;
-
-import java.util.Scanner;
-import java.util.concurrent.locks.LockSupport;
 
 public class testpubsub2 {
     static Log logger = LogFactory.getLog(testpubsub2.class);

@@ -2,7 +2,7 @@ package platform.testnative;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import platform.testunitycar.Actor;
+import platform.testunitycar.Actuator;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -34,12 +34,12 @@ public class NativeApp {
             }
 
             //根据sensor数据来做出actor指令
-            Actor actor = new Actor(2, constLeft - jo.getDouble("left"), 0);
+            Actuator actuator = new Actuator(2, constLeft - jo.getDouble("left"), 0);
 
             //发送actor指令
             JSONObject send = new JSONObject();
-            send.put("channel", "actor");
-            send.put("message", JSON.toJSONString(actor));
+            send.put("channel", "actuator");
+            send.put("message", JSON.toJSONString(actuator));
             byte[] sendData = send.toJSONString().getBytes();
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, clientAddress, clientPort);
             socket.send(sendPacket);

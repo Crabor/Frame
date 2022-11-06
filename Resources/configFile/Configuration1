@@ -34,12 +34,9 @@
   ],
   "ResourceConfiguration": {
     "deviceDriver": {
-      "serverPort": 8080,
-      "clientAddress": "127.0.0.1",
-      "clientPort": 8081,
       "subscribe": [
         {
-          "channel": "actor",
+          "channel": "actuator",
         },
         {
           "channel": "check",
@@ -52,7 +49,7 @@
           "channel": "sensor",
         },
         {
-          "channel": "actor",
+          "channel": "actuator",
         },
         {
           "channel": "check",
@@ -62,38 +59,54 @@
         },
       ],
     },
-    "SensorConfiguration": [
-      {
-        "SensorName": "front",
-        "fieldNames": "value",
+    "SensorConfiguration": {
+      "sensors" : [
+        {
+          "SensorName": "front",
+          "fieldNames": "value",
+        },
+        {
+          "SensorName": "back",
+          "fieldNames": "value",
+        },
+        {
+          "SensorName": "left",
+          "fieldNames": "value",
+        },
+        {
+          "SensorName": "right",
+          "fieldNames": "value",
+        },
+      ],
+      "freq": {
+        "aliveFreq": 1,
+        "valueFreq": 200,
+      }
+    },
+    "ActorConfiguration": {
+      "actuators": [
+        {
+          "ActuatorName": "xSpeed",
+        },
+        {
+          "ActuatorName": "ySpeed",
+        },
+        {
+          "ActuatorName": "zSpeed",
+        },
+      ],
+      "freq": {
+        "aliveFreq": 1,
       },
-      {
-        "SensorName": "back",
-        "fieldNames": "value",
-      },
-      {
-        "SensorName": "left",
-        "fieldNames": "value",
-      },
-      {
-        "SensorName": "right",
-        "fieldNames": "value",
-      },
-    ],
-    "ActorConfiguration": [
-      {
-        "ActorName": "x",
-      },
-      {
-        "ActorName": "y",
-      },
-      {
-        "ActorName": "z",
-      },
-    ],
+    },
   },
   "RedisConfig": {
     "serverAddress": "127.0.0.1",
     "serverPort": "6379",
-  }
+  },
+  "UDPConfig": {
+    "serverPort": 8080,
+    "clientAddress": "127.0.0.1",
+    "clientPort": 8081,
+  },
 }

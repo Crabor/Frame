@@ -1,11 +1,11 @@
 package platform.testunitycar;
 
-public class Actor {
+public class Actuator {
     double xSpeed;
     double ySpeed;
     double zSpeed;
 
-    public Actor(double xSpeed, double ySpeed, double zSpeed) {
+    public Actuator(double xSpeed, double ySpeed, double zSpeed) {
         this.xSpeed = xSpeed;
         this.ySpeed = ySpeed;
         this.zSpeed = zSpeed;
@@ -37,10 +37,6 @@ public class Actor {
 
     @Override
     public String toString() {
-        return "Actor{" +
-                "xSpeed=" + xSpeed +
-                ", ySpeed=" + ySpeed +
-                ", zSpeed=" + zSpeed +
-                '}';
+        return "xSpeed " + xSpeed + " ySpeed " + ySpeed + " zSpeed " + zSpeed;
     }
 }

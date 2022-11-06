@@ -1,4 +1,4 @@
-package platform.pubsub;
+package platform.comm.pubsub;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -1,11 +1,10 @@
-package platform.pubsub;
+package platform.comm.pubsub;
 
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import platform.Platform;
 
 import java.util.ArrayList;
 import java.util.List;
