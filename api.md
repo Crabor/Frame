@@ -235,7 +235,7 @@ public class MySyncApp extends AbstractSyncApp {
     public void iter(String channel, String msg) {
         //此处msg为该app监听的所有sensor的JsonString
         logger.debug("app recv: " + msg);
-        Actuator actuator = new Actuator(5, 0, 0);
+        Actuator actor = new Actuator(5, 0, 0);
 
         //method 1: 将msg转为CancerArray
 //        CancerArray ca = CancerArray.fromJsonObjectString(msg);
@@ -245,11 +245,11 @@ public class MySyncApp extends AbstractSyncApp {
         CheckInfo checkInfo = left.check();
         logger.debug("check:\n" + JSON.toJSONString(checkInfo, true));
         if (checkInfo.checkState == CheckState.INV_VIOLATED) {
-            actuator.setYSpeed(-checkInfo.diff);
+            actor.setYSpeed(-checkInfo.diff);
         }
 
-        publish("actuator", JSON.toJSONString(actuator));
-        logger.debug("actuator: " + JSON.toJSONString(actuator));
+        publish("actor", JSON.toJSONString(actor));
+        logger.debug("actor: " + JSON.toJSONString(actor));
     }
 }
 ```
@@ -314,7 +314,7 @@ public class MySyncApp extends AbstractSyncApp {
       "clientPort": 8081,
       "subscribe": [
         {
-          "channel": "actuator",
+          "channel": "actor",
         },
         {
           "channel": "check",
@@ -327,7 +327,7 @@ public class MySyncApp extends AbstractSyncApp {
           "channel": "sensor",
         },
         {
-          "channel": "actuator",
+          "channel": "actor",
         },
         {
           "channel": "check",

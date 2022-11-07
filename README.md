@@ -356,7 +356,7 @@ Subscriber3: channel, hello
       "clientPort": 8081,//udp发送端口
       "subscribe": [
         {
-          "channel": "actuator",
+          "channel": "actor",
         },
         {
           "channel": "check",
@@ -370,7 +370,7 @@ Subscriber3: channel, hello
           "channel": "sensor",
         },
         {
-          "channel": "actuator",
+          "channel": "actor",
         },
         {
           "channel": "check",

@@ -11,7 +11,5 @@ public class test {
         s.add("1");
         s.add("2");
         s.add("3");
-
-        System.out.println(Util.setToString(s, " "));
     }
 }

@@ -5,9 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class CmdRet {
     public String cmd;
     public String[] args;

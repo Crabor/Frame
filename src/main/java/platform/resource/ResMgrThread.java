@@ -1,11 +1,14 @@
 package platform.resource;
 
 import platform.Platform;
+import platform.comm.socket.Cmd;
 import platform.comm.socket.UDP;
 import platform.config.*;
 import platform.resource.driver.DeviceDriver;
 import platform.resource.driver.DBDriver;
 import platform.util.Util;
+
+import java.util.Set;
 
 public class ResMgrThread implements Runnable {
     private static ResMgrThread instance;
@@ -55,8 +58,8 @@ public class ResMgrThread implements Runnable {
         dd.start();
         dbd.start();
         //TODO
-        String sensorNames = Util.setToString(Configuration.getResourceConfig().getSensorsConfig().keySet(), " ");
-        String actuatorNames = Util.setToString(Configuration.getResourceConfig().getActuatorsConfig().keySet(), " ");
+        Set<String> sensorNames = Configuration.getResourceConfig().getSensorsConfig().keySet();
+        Set<String> actuatorNames = Configuration.getResourceConfig().getActuatorsConfig().keySet();
         new Thread(() -> {
             while (true) {
                 try {
@@ -64,7 +67,7 @@ public class ResMgrThread implements Runnable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                UDP.send(Util.formatCommand("sensor_alive", sensorNames));
+                Cmd.send("sensor_alive", sensorNames);
             }
         }).start();
 
@@ -75,7 +78,7 @@ public class ResMgrThread implements Runnable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                UDP.send(Util.formatCommand("sensor_get", sensorNames));
+                Cmd.send("sensor_get", sensorNames);
             }
         }).start();
 
@@ -86,7 +89,7 @@ public class ResMgrThread implements Runnable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                UDP.send(Util.formatCommand("actuator_alive", actuatorNames));
+                Cmd.send("actuator_alive", actuatorNames);
             }
         }).start();
 
@@ -98,7 +101,7 @@ public class ResMgrThread implements Runnable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                UDP.send(Util.formatCommand("sync", String.valueOf(System.currentTimeMillis())));
+                Cmd.send("sync", String.valueOf(System.currentTimeMillis()));
             }
         }).start();
 

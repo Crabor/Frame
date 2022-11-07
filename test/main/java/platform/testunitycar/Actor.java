@@ -1,11 +1,11 @@
 package platform.testunitycar;
 
-public class Actuator {
+public class Actor {
     double xSpeed;
     double ySpeed;
     double zSpeed;
 
-    public Actuator(double xSpeed, double ySpeed, double zSpeed) {
+    public Actor(double xSpeed, double ySpeed, double zSpeed) {
         this.xSpeed = xSpeed;
         this.ySpeed = ySpeed;
         this.zSpeed = zSpeed;

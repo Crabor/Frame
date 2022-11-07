@@ -1,16 +1,12 @@
 package platform.resource.driver;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import platform.comm.socket.Cmd;
 import platform.comm.socket.UDP;
 import platform.config.Configuration;
 import platform.comm.pubsub.AbstractSubscriber;
 import platform.struct.CmdRet;
 import platform.util.Util;
-
-import java.io.*;
-import java.net.*;
-import java.util.Map;
 
 import static java.lang.Thread.sleep;
 
@@ -61,7 +57,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
 ////                String sensorData = Util.randomJSONCarData();
 //                logger.debug("dd recv: " + sensorData);
 //                publish("sensor", 0, sensorData);
-                CmdRet cmdRet = Util.decodeCommandRet(UDP.recv());
+                CmdRet cmdRet = Cmd.recv();
                 switch (cmdRet.cmd) {
                     case "actuator_on":
                     case "actuator_off":
@@ -122,9 +118,6 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
         JSONObject jo = new JSONObject();
         jo.put("channel", channel);
         jo.put("message", msg);
-        JSONObject cmd = new JSONObject();
-        cmd.put("cmd", "channel_message");
-        cmd.put("args", jo.toJSONString());
-        UDP.send(cmd.toJSONString());
+        Cmd.send("channel_message", jo.toJSONString());
     }
 }

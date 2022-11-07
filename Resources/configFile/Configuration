@@ -48,7 +48,7 @@
       "clientPort": 8081,
       "subscribe": [
         {
-          "channel": "actuator",
+          "channel": "actor",
         },
         {
           "channel": "check",
@@ -61,7 +61,7 @@
           "channel": "sensor",
         },
         {
-          "channel": "actuator",
+          "channel": "actor",
         },
         {
           "channel": "check",

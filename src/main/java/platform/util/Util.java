@@ -1,6 +1,5 @@
 package platform.util;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import platform.struct.CmdRet;
 import reactor.util.function.Tuple3;
@@ -124,15 +123,18 @@ public class Util {
     }
 
     public static String formatCommand(String cmd, String args) {
-        return "{\"cmd\":\"" + cmd + "\",\"args\":\"" + args + "\"}";
+        JSONObject jo = new JSONObject();
+        jo.put("cmd", cmd);
+        jo.put("args", args);
+        return jo.toJSONString();
     }
 
     public static CmdRet decodeCommandRet(String msg) {
         return new CmdRet(msg);
     }
 
-    public static String setToString(Set<String> set, String delimiter) {
-        String[] setArray = set.toArray(new String[0]);
+    public static String collectionToString(Collection<String> collection, String delimiter) {
+        String[] setArray = collection.toArray(new String[0]);
         StringBuilder ret = new StringBuilder(setArray[0]);
         for (int i = 1 ; i < setArray.length; i++) {
             ret.append(delimiter).append(setArray[i]);
