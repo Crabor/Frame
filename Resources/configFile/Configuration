@@ -95,13 +95,13 @@
     ],
     "ActorConfiguration": [
       {
-        "ActorName": "x",
+        "ActuatorName": "x",
       },
       {
-        "ActorName": "y",
+        "ActuatorName": "y",
       },
       {
-        "ActorName": "z",
+        "ActuatorName": "z",
       },
     ],
   },

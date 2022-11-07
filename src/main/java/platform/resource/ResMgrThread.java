@@ -1,12 +1,14 @@
 package platform.resource;
 
 import platform.Platform;
+import platform.comm.socket.Cmd;
+import platform.comm.socket.UDP;
+import platform.config.*;
 import platform.resource.driver.DeviceDriver;
 import platform.resource.driver.DBDriver;
-import platform.config.DatabaseDriverConfig;
-import platform.config.DeviceDriverConfig;
-import platform.config.SubConfig;
-import platform.config.Configuration;
+import platform.util.Util;
+
+import java.util.Set;
 
 public class ResMgrThread implements Runnable {
     private static ResMgrThread instance;
@@ -39,7 +41,7 @@ public class ResMgrThread implements Runnable {
     public void run() {
         //init resource
         DeviceDriverConfig ddc = Configuration.getResourceConfig().getDeviceDriverConfig();
-        dd = new DeviceDriver(ddc.serverPort, ddc.clientAddress, ddc.clientPort);
+        dd = new DeviceDriver();
         for (SubConfig subConfig : ddc.getSubConfigs()) {
             dd.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
         }
@@ -55,6 +57,55 @@ public class ResMgrThread implements Runnable {
         Platform.lockUntilMgrStartFlagEqual(3);
         dd.start();
         dbd.start();
+        //TODO
+        Set<String> sensorNames = Configuration.getResourceConfig().getSensorsConfig().keySet();
+        Set<String> actuatorNames = Configuration.getResourceConfig().getActuatorsConfig().keySet();
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(1000/ SensorConfig.getAliveFreq());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Cmd.send("sensor_alive", sensorNames);
+            }
+        }).start();
+
+        new Thread(()->{
+            while (true) {
+                try {
+                    Thread.sleep(1000/ SensorConfig.getValueFreq());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Cmd.send("sensor_get", sensorNames);
+            }
+        }).start();
+
+        new Thread(()->{
+            while (true) {
+                try {
+                    Thread.sleep(1000/ ActuatorConfig.getAliveFreq());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Cmd.send("actuator_alive", actuatorNames);
+            }
+        }).start();
+
+        //zhangshuhui
+        new Thread(()->{
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Cmd.send("sync", String.valueOf(System.currentTimeMillis()));
+            }
+        }).start();
+
+        while (true);
     }
 
     public DBDriver getDBDriver() {
@@ -71,6 +122,4 @@ public class ResMgrThread implements Runnable {
             t.start();
         }
     }
-
-
 }

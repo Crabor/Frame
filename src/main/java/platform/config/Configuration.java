@@ -19,6 +19,7 @@ public class Configuration {
     private static InvServerConfig invServerConfig;
     private static ResourceConfig resourceConfig;
     private static RedisConfig redisConfig;
+    private static UDPConfig udpConfig;
 
     public static Map<String, AppConfig> getAppsConfig() {
         return appsConfig;
@@ -40,6 +41,10 @@ public class Configuration {
         return redisConfig;
     }
 
+    public static UDPConfig getUdpConfig() {
+        return udpConfig;
+    }
+
     public static void analyzer(String configuration){
         File file = new File(configuration);
         try {
@@ -50,6 +55,7 @@ public class Configuration {
             JSONObject invObj = (JSONObject) obj.get("InvServerConfiguration");
             JSONObject resourceObj = (JSONObject) obj.get("ResourceConfiguration");
             JSONObject redisObj = (JSONObject) obj.get("RedisConfig");
+            JSONObject udpObj = (JSONObject) obj.get("UDPConfig");
             //System.out.println(ctxObj.toJSONString());
             ctxServerConfig  = CtxServerConfig.getInstance(ctxObj);
             for (int i = 0; i < appObj.size(); i++) {
@@ -59,11 +65,13 @@ public class Configuration {
             invServerConfig = new InvServerConfig(invObj);
             resourceConfig = new ResourceConfig(resourceObj);
             redisConfig = new RedisConfig(redisObj);
+            udpConfig = new UDPConfig(udpObj);
             logger.info(ctxServerConfig);
             logger.info(invServerConfig);
             logger.info(appsConfig);
             logger.info(resourceConfig);
             logger.info(redisConfig);
+            logger.info(udpConfig);
         } catch (IOException e) {
             e.printStackTrace();
         }

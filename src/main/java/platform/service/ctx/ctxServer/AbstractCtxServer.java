@@ -6,7 +6,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import platform.config.Configuration;
-import platform.pubsub.AbstractSubscriber;
+import platform.comm.pubsub.AbstractSubscriber;
 import platform.service.ctx.ctxChecker.context.Context;
 import platform.service.ctx.message.Message;
 import platform.service.ctx.pattern.matcher.FunctionMatcher;

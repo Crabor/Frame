@@ -2,8 +2,7 @@ package platform.testunitycar;
 
 import com.alibaba.fastjson.JSON;
 import platform.app.AbstractApp;
-import platform.config.Configuration;
-import platform.service.inv.CancerArray;
+import platform.comm.socket.Cmd;
 import platform.service.inv.CancerObject;
 import platform.service.inv.struct.CheckInfo;
 import platform.service.inv.struct.CheckState;
@@ -29,7 +28,7 @@ public class MyApp extends AbstractApp {
             actor.setYSpeed(-checkInfo.diff);
         }
 
-        publish("actor", JSON.toJSONString(actor));
-        logger.debug("actor: " + JSON.toJSONString(actor));
+        Cmd.send("actuator_set", actor.toString());
+        logger.debug("actor: " + actor);
     }
 }

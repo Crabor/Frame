@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import platform.config.Configuration;
-import platform.pubsub.Publisher;
+import platform.comm.pubsub.Publisher;
 import platform.service.inv.struct.CheckInfo;
 import platform.service.inv.struct.CheckState;
 import platform.service.inv.struct.InvState;
@@ -12,7 +12,6 @@ import platform.service.inv.struct.inv.InvAbstract;
 import platform.service.inv.struct.trace.Trace;
 import platform.struct.InvGenMode;
 import platform.util.Util;
-import reactor.util.annotation.Nullable;
 
 import java.util.*;
 

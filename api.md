@@ -235,7 +235,7 @@ public class MySyncApp extends AbstractSyncApp {
     public void iter(String channel, String msg) {
         //此处msg为该app监听的所有sensor的JsonString
         logger.debug("app recv: " + msg);
-        Actor actor = new Actor(5, 0, 0);
+        Actuator actor = new Actuator(5, 0, 0);
 
         //method 1: 将msg转为CancerArray
 //        CancerArray ca = CancerArray.fromJsonObjectString(msg);
@@ -353,13 +353,13 @@ public class MySyncApp extends AbstractSyncApp {
     ],
     "ActorConfiguration": [
       {
-        "ActorName": "x",
+        "ActuatorName": "x",
       },
       {
-        "ActorName": "y",
+        "ActuatorName": "y",
       },
       {
-        "ActorName": "z",
+        "ActuatorName": "z",
       },
     ],
   },

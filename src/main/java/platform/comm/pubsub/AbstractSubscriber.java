@@ -1,4 +1,4 @@
-package platform.pubsub;
+package platform.comm.pubsub;
 
 import io.lettuce.core.api.StatefulRedisConnection;
 import org.apache.commons.logging.Log;

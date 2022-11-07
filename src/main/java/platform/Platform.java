@@ -1,12 +1,13 @@
 package platform;
 
+import platform.comm.socket.UDP;
 import platform.config.Configuration;
 import platform.app.AppMgrThread;
-import platform.pubsub.Channel;
-import platform.pubsub.Subscribe;
+import platform.comm.pubsub.Channel;
+import platform.comm.pubsub.Subscribe;
 import platform.resource.ResMgrThread;
-import platform.pubsub.Publisher;
-import platform.pubsub.AbstractSubscriber;
+import platform.comm.pubsub.Publisher;
+import platform.comm.pubsub.AbstractSubscriber;
 import io.lettuce.core.RedisClient;
 import platform.util.Util;
 import platform.service.SerMgrThread;
@@ -65,6 +66,9 @@ public class Platform {
         Publisher.Init(client);
         AbstractSubscriber.Init(client);
         Subscribe.Init(client);
+
+        //init udp
+        UDP.Init(Configuration.getUdpConfig());
 
         //init mgr
         resMgr = ResMgrThread.getInstance();

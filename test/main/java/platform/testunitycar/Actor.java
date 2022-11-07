@@ -37,10 +37,6 @@ public class Actor {
 
     @Override
     public String toString() {
-        return "Actor{" +
-                "xSpeed=" + xSpeed +
-                ", ySpeed=" + ySpeed +
-                ", zSpeed=" + zSpeed +
-                '}';
+        return "xSpeed " + xSpeed + " ySpeed " + ySpeed + " zSpeed " + zSpeed;
     }
 }

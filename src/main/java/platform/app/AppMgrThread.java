@@ -1,11 +1,9 @@
 package platform.app;
 
 import platform.Platform;
-import platform.pubsub.AbstractSubscriber;
+import platform.comm.pubsub.AbstractSubscriber;
 import platform.config.AppConfig;
 import platform.config.Configuration;
-import platform.config.SubConfig;
-import platform.service.SerMgrThread;
 
 import java.util.ArrayList;
 import java.util.List;

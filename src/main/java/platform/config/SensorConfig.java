@@ -7,10 +7,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SensorConfig {
     private String SensorType;
-    private String SensorName;
-    private List<String> fieldNames;
-    private boolean isValid;
-    private int SensorFreq; // per second;
+    private final String SensorName;
+    private final List<String> fieldNames;
+    private boolean isAlive = false;
+    private static int aliveFreq; //定时ping
+    private static int valueFreq; //定时获取value
     private String IPAddress;
     private int port;
     private final Set<String> apps = ConcurrentHashMap.newKeySet();
@@ -24,7 +25,7 @@ public class SensorConfig {
         }
         SensorName = object.getString("SensorName");
         fieldNames = Arrays.asList(object.getString("fieldNames").split(","));
-//        isValid = object.getBoolean("isValid");
+//        isAlive = object.getBoolean("isAlive");
 //        SensorFreq = object.getIntValue("SensorFreq");
 //        IPAddress = object.getString("IPAddress");
 //        port = object.getIntValue("Port");
@@ -42,12 +43,28 @@ public class SensorConfig {
         return fieldNames;
     }
 
-    public boolean isValid() {
-        return isValid;
+    public boolean isAlive() {
+        return isAlive;
     }
 
-    public int getSensorFreq() {
-        return SensorFreq;
+    public void setAlive(boolean isAlive) {
+        this.isAlive = isAlive;
+    }
+
+    public static int getAliveFreq() {
+        return aliveFreq;
+    }
+
+    public static void setAliveFreq(int freq) {
+        aliveFreq = freq;
+    }
+
+    public static int getValueFreq() {
+        return valueFreq;
+    }
+
+    public static void setValueFreq(int freq) {
+        valueFreq = freq;
     }
 
     public String getIPAddress() {
@@ -84,10 +101,8 @@ public class SensorConfig {
                 "SensorType='" + SensorType + '\'' +
                 ", SensorName='" + SensorName + '\'' +
                 ", fieldNames=" + fieldNames +
-                ", isValid=" + isValid +
-                ", SensorFreq=" + SensorFreq +
-                ", IPAddress='" + IPAddress + '\'' +
-                ", port=" + port +
+                ", apps=" + apps +
+                ", registered=" + registered +
                 '}';
     }
 }

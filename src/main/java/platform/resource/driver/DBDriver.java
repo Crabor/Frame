@@ -1,11 +1,7 @@
 package platform.resource.driver;
 
-import io.lettuce.core.KeyValue;
 import io.lettuce.core.api.sync.RedisCommands;
-import platform.pubsub.AbstractSubscriber;
-
-import java.net.DatagramSocket;
-import java.net.InetAddress;
+import platform.comm.pubsub.AbstractSubscriber;
 
 public class DBDriver extends AbstractSubscriber implements Runnable {
     private Thread t;
