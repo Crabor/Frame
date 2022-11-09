@@ -142,6 +142,17 @@ public class Util {
         return ret.toString();
     }
 
+    public static String keysValuesToJsonStringExcept(String[] keys, String[] values, String except) {
+        JSONObject jo = new JSONObject();
+        for (int i = 0; i < keys.length; i++) {
+            if (values[i].equals(except)) {
+                continue;
+            }
+            jo.put(keys[i], values[i]);
+        }
+        return jo.toJSONString();
+    }
+
     public static String keysValuesToJsonString(String[] keys, String[] values) {
         JSONObject jo = new JSONObject();
         for (int i = 0; i < keys.length; i++) {

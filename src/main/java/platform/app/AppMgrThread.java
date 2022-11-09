@@ -38,6 +38,7 @@ public class AppMgrThread implements Runnable {
             try {
                 Object app = Class.forName(appConfig.getAppName()).newInstance();
                 apps.add((App) app);
+                ((AbstractApp) app).start();
                 appConfig.getSubConfigs().forEach(config -> {
                     ((AbstractSubscriber) app).subscribe(config);
                 });

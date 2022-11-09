@@ -5,7 +5,8 @@ import platform.config.Configuration;
 import platform.comm.pubsub.AbstractSubscriber;
 import platform.service.inv.CancerServer;
 
-public abstract class AbstractApp extends AbstractSubscriber implements App{
+public abstract class AbstractApp extends AbstractSubscriber implements App, Runnable {
+    Thread t;
     protected AppConfig config;
     protected String appName;
     protected int iterId;
@@ -26,6 +27,16 @@ public abstract class AbstractApp extends AbstractSubscriber implements App{
         CancerServer.iterEntry(appName, iterId, msg);
         iter(channel, msg);
         CancerServer.iterExit(appName, iterId);
+    }
+
+    @Override
+    public void run() {}
+
+    public void start() {
+        if (t == null) {
+            t = new Thread(this, getClass().getName());
+            t.start();
+        }
     }
 
     protected abstract void customizeCtxServer();
