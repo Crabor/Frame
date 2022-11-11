@@ -95,4 +95,14 @@ public class Configuration {
         });
         return registeredSensors;
     }
+
+    public static boolean isSensorExists(String sensorName) {
+        return Configuration.getResourceConfig().getSensorsConfig().containsKey(sensorName);
+    }
+
+    public static void addSensorConfig(String sensorName, String sensorType, String fieldNames) {
+        SensorConfig config = new SensorConfig(sensorName, sensorType, fieldNames);
+        Configuration.getResourceConfig().getSensorsConfig().put(sensorName, config);
+        ctxServerConfig.addSensorConfig(config);
+    }
 }
