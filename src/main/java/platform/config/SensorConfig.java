@@ -1,14 +1,15 @@
 package platform.config;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SensorConfig {
     private String SensorType;
-    private final String SensorName;
-    private final List<String> fieldNames;
+    private String SensorName;
+    private List<String> fieldNames;
     private boolean isAlive = false;
     private static int aliveFreq; //定时ping
     private static int valueFreq; //定时获取value
@@ -24,11 +25,21 @@ public class SensorConfig {
             SensorType = "String";
         }
         SensorName = object.getString("SensorName");
-        fieldNames = Arrays.asList(object.getString("fieldNames").split(","));
+        try {
+            fieldNames = Arrays.asList(object.getString("fieldNames").split(","));
+        } catch (NullPointerException e) {
+
+        }
 //        isAlive = object.getBoolean("isAlive");
 //        SensorFreq = object.getIntValue("SensorFreq");
 //        IPAddress = object.getString("IPAddress");
 //        port = object.getIntValue("Port");
+    }
+
+    public SensorConfig(String sensorName, String sensorType, String fieldNames) {
+        SensorName = sensorName;
+        SensorType = sensorType;
+        this.fieldNames = Arrays.asList(fieldNames.split(","));
     }
 
     public String getSensorType() {
