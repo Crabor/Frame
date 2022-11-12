@@ -6,7 +6,7 @@
         <id>pat_001</id>
         <freshness>
             <type>time</type>
-            <value>20000</value>
+            <value>200</value>
         </freshness>
         <dataSource>
             <type>sensor</type>
@@ -27,7 +27,7 @@
         <id>pat_002</id>
         <freshness>
             <type>time</type> <!--可选项有time(ms)和number(#)-->
-            <value>30000</value> <!--2000ms-->
+            <value>300</value> <!--2000ms-->
         </freshness>
         <dataSource>
             <type>sensor</type>

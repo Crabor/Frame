@@ -1,25 +1,25 @@
 package platform.service.ctx.ctxServer;
 
-import platform.config.CtxServerConfig;
 import platform.service.ctx.ctxChecker.constraint.runtime.Link;
 import platform.service.ctx.ctxChecker.context.Context;
+import platform.service.ctx.message.Message;
 import platform.service.ctx.message.MessageHandler;
-import platform.service.ctx.rule.resolver.Resolver;
 import platform.service.ctx.rule.resolver.ResolverType;
 
 import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CtxFixer {
     private final AbstractCtxServer ctxServer;
     private final HashMap<String, Set<String>> ctxId2IncRuleIdSet;
-
-    private final LinkedBlockingQueue<Map.Entry<String, Context>> fixedContextQue;
+    private final Map<Long, Message> fixingMsgMap;
+    private final Map<Long, Message> sendingMsgMap;
 
     public CtxFixer(AbstractCtxServer ctxServer) {
         this.ctxServer = ctxServer;
         this.ctxId2IncRuleIdSet = new HashMap<>();
-        this.fixedContextQue = new LinkedBlockingQueue<>();
+        this.fixingMsgMap = new TreeMap<>(Long::compareTo);
+        this.sendingMsgMap = new ConcurrentHashMap<>();
     }
 
     public void filterInconsistencies(Map<String, Set<Link>> ruleId2LinkSet){
@@ -67,10 +67,31 @@ public class CtxFixer {
     }
 
     public void addFixedContext(String contextId, Context context){
-        fixedContextQue.add(new AbstractMap.SimpleEntry<>(contextId, context));
+        long msgIndex =  Long.parseLong(contextId.substring(contextId.lastIndexOf("_") + 1));
+        Message fixingMsg = getOrPutDefaultFixingMsg(msgIndex);
+        fixingMsg.addContext(contextId, context);
+        if(completenessChecking(fixingMsg)){
+            ctxServer.serverStatistics.increaseCheckedAndResolvedMsgNum();
+            sendingMsgMap.put(msgIndex, fixingMsg);
+            fixingMsgMap.remove(msgIndex);
+        }
     }
 
-    public LinkedBlockingQueue<Map.Entry<String, Context>> getFixedContextQue() {
-        return fixedContextQue;
+    private Message getOrPutDefaultFixingMsg(long index){
+        Message message = this.fixingMsgMap.getOrDefault(index, new Message(index));
+        this.fixingMsgMap.put(index, message);
+        return message;
+    }
+
+    private boolean completenessChecking(Message fixingMsg){
+        Message originalMsg = ctxServer.getOriginalMsg(fixingMsg.getIndex());
+        //查看是否这条信息的所有context都已收齐
+        Set<String> originalMsgContextIds = originalMsg.getContextMap().keySet();
+        Set<String> fixingMsgContextIds = fixingMsg.getContextMap().keySet();
+        return originalMsgContextIds.containsAll(fixingMsgContextIds) && fixingMsgContextIds.containsAll(originalMsgContextIds);
+    }
+
+    public Map<Long, Message> getSendingMsgMap() {
+        return sendingMsgMap;
     }
 }

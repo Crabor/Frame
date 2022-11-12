@@ -39,6 +39,7 @@ public class AppCtxServer extends AbstractCtxServer{
     @Override
     public void onMessage(String channel, String msg) {
         logger.debug(appConfig.getAppName() + "-CtxServer recv: " + msg);
+        System.out.printf("%s-CtxServer recv %s %n",appConfig.getAppName(), msg);
 
         JSONObject msgJsonObj = JSONObject.parseObject(msg);
         Message originalMsg = MessageHandler.jsonObject2Message(msgJsonObj);
@@ -60,42 +61,27 @@ public class AppCtxServer extends AbstractCtxServer{
     }
 
     @Override
-    protected void publishAndClean(long indexLimit) {
-        Iterator<Long> iterator = fixingMsgSet.keySet().iterator();
-        while(iterator.hasNext()){
-            long index = iterator.next();
-            if(index > indexLimit){
-                break;
-            }
-            else{
-                Message originalMsg = getOriginalMsg(index);
-                Message fixingMsg = getOrPutDefaultFixingMsg(index);
-                //查看是否这条信息所有context都已收齐
-                Set<String> originalMsgContextIds = originalMsg.getContextMap().keySet();
-                Set<String> fixingMsgContextIds = fixingMsg.getContextMap().keySet();
-                if(originalMsgContextIds.containsAll(fixingMsgContextIds) && fixingMsgContextIds.containsAll(originalMsgContextIds)){
-                    serverStatistics.increaseCheckedAndResolvedMsgNum();
-                    //发送消息
-                    String pubMsgStr = MessageHandler.buildPubMsgStrWithoutIndex(fixingMsg, originalMsg.getSensorInfos(appConfig.getAppName()));
-                    SubConfig sensorPubConfig = null;
-                    for(SubConfig subConfig : appConfig.getSubConfigs()){
-                        if(subConfig.channel.equals("sensor")){
-                            sensorPubConfig = subConfig;
-                        }
-                    }
-                    assert sensorPubConfig != null;
-                    publish("sensor", sensorPubConfig.groupId, sensorPubConfig.priorityId, pubMsgStr);
-                    serverStatistics.increaseSentMsgNum();
-
-                    //删除消息
-                    originalMsgSet.remove(index);
-                    iterator.remove();
-                }
-                else{
-                    break;
+    public void run() {
+        while(true){
+            if(!ctxFixer.getSendingMsgMap().containsKey(toSendIndex))
+                continue;
+            Message sendingMsg = ctxFixer.getSendingMsgMap().get(toSendIndex);
+            Message originalMsg = getOriginalMsg(sendingMsg.getIndex());
+            //发送消息
+            String pubMsgStr = MessageHandler.buildPubMsgStrWithoutIndex(sendingMsg, originalMsg.getSensorInfos(appConfig.getAppName()));
+            SubConfig sensorPubConfig = null;
+            for(SubConfig subConfig : appConfig.getSubConfigs()){
+                if(subConfig.channel.equals("sensor")){
+                    sensorPubConfig = subConfig;
                 }
             }
+            assert sensorPubConfig != null;
+            System.out.printf("%s-CtxServer publish %s to {sensor, %d, %d} %n", appConfig.getAppName(), pubMsgStr, sensorPubConfig.groupId, sensorPubConfig.priorityId);
+            publish("sensor", sensorPubConfig.groupId, sensorPubConfig.priorityId, pubMsgStr);
+            serverStatistics.increaseSentMsgNum();
+            ctxFixer.getSendingMsgMap().remove(toSendIndex);
+            originalMsgMap.remove(toSendIndex);
+            toSendIndex++;
         }
     }
-
 }

@@ -1,0 +1,125 @@
+{
+  "CtxServerConfiguration": {
+    "serverOn": true,
+    "CtxValidator": "ECC+IMD",
+    "baseRuleFile": "Resources/platform/platformRules.xml",
+    "baseBfuncFile": "Resources/platform/platformBfunction.class",
+    "basePatternFile": "Resources/platform/platformPatterns.xml",
+    "baseMfuncFile": "",
+    "subscribe": [
+      {
+        "channel": "sensor",
+      },
+    ],
+  },
+  "InvServerConfiguration": {
+      "serverOn": false,
+      "groupThro": 10,
+      "kMeansGroupSize": 1,
+      "dosThro": 0.5,
+      "groupTraceType": "csv",
+      "invGenMode": "total",
+      "invGenType": "numeric",
+  },
+  "AppConfiguration": [
+   {
+      "appName": "platform.testTaxi.taxiAppOne",
+      "subscribe": [
+        {
+          "channel": "sensor",
+          "groupId": 1,
+        },
+      ],
+    },
+    {
+      "appName": "platform.testTaxi.taxiAppTwo",
+      "subscribe": [
+        {
+          "channel": "sensor",
+          "groupId": 2,
+        },
+      ],
+    },
+  ],
+  "ResourceConfiguration": {
+    "deviceDriver": {
+      "subscribe": [
+        {
+          "channel": "actuator",
+        },
+        {
+          "channel": "check",
+        }
+      ],
+    },
+    "databaseDriver": {
+      "subscribe": [
+        {
+          "channel": "sensor",
+        },
+        {
+          "channel": "actuator",
+        },
+        {
+          "channel": "check",
+        },
+        {
+          "channel": "ctxStat",
+        },
+      ],
+    },
+    "SensorConfiguration": {
+      "sensors" : [
+        {
+          "SensorName": "taxis",
+          "fieldNames": "timestamp,taxiId,longitude,latitude,speed,direction,status",
+        },
+         {
+            "SensorName": "front",
+            "fieldNames": "value",
+        },
+      {
+        "SensorName": "back",
+        "fieldNames": "value",
+      },
+      {
+        "SensorName": "left",
+        "fieldNames": "value",
+      },
+      {
+        "SensorName": "right",
+        "fieldNames": "value",
+      },
+      ],
+      "freq": {
+        "aliveFreq": 1,
+        "valueFreq": 1000,
+      }
+    },
+    "ActorConfiguration": {
+      "actuators": [
+        {
+          "ActuatorName": "xSpeed",
+        },
+        {
+          "ActuatorName": "ySpeed",
+        },
+        {
+          "ActuatorName": "zSpeed",
+        },
+      ],
+      "freq": {
+        "aliveFreq": 1,
+      },
+    },
+  },
+  "RedisConfig": {
+    "serverAddress": "127.0.0.1",
+    "serverPort": "6379",
+  },
+  "UDPConfig": {
+    "serverPort": 8080,
+    "clientAddress": "127.0.0.1",
+    "clientPort": 8081,
+  },
+}
