@@ -9,8 +9,6 @@ import platform.service.ctx.message.MessageHandler;
 import platform.service.ctx.statistics.ServerStatistics;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 
 public class AppCtxServer extends AbstractCtxServer{
     private final AppConfig appConfig;
@@ -39,7 +37,7 @@ public class AppCtxServer extends AbstractCtxServer{
     @Override
     public void onMessage(String channel, String msg) {
         logger.debug(appConfig.getAppName() + "-CtxServer recv: " + msg);
-        System.out.printf("%s-CtxServer recv %s %n",appConfig.getAppName(), msg);
+        //System.out.printf("%s-CtxServer recv %s %n",appConfig.getAppName(), msg);
 
         JSONObject msgJsonObj = JSONObject.parseObject(msg);
         Message originalMsg = MessageHandler.jsonObject2Message(msgJsonObj);
@@ -68,17 +66,21 @@ public class AppCtxServer extends AbstractCtxServer{
             Message sendingMsg = ctxFixer.getSendingMsgMap().get(toSendIndex);
             Message originalMsg = getOriginalMsg(sendingMsg.getIndex());
             //发送消息
-            String pubMsgStr = MessageHandler.buildPubMsgStrWithoutIndex(sendingMsg, originalMsg.getSensorInfos(appConfig.getAppName()));
-            SubConfig sensorPubConfig = null;
-            for(SubConfig subConfig : appConfig.getSubConfigs()){
-                if(subConfig.channel.equals("sensor")){
-                    sensorPubConfig = subConfig;
+            JSONObject pubJSONObj = MessageHandler.buildPubJSONObjWithoutIndex(sendingMsg, originalMsg.getSensorInfos(appConfig.getAppName()));
+            //only pub non-null context Msg
+            if(!pubJSONObj.containsValue("")){
+                SubConfig sensorPubConfig = null;
+                for(SubConfig subConfig : appConfig.getSubConfigs()){
+                    if(subConfig.channel.equals("sensor")){
+                        sensorPubConfig = subConfig;
+                    }
                 }
+                assert sensorPubConfig != null;
+                //System.out.printf("%s-CtxServer publish %s to {sensor, %d, %d} %n", appConfig.getAppName(), pubMsgStr, sensorPubConfig.groupId, sensorPubConfig.priorityId);
+                publish("sensor", sensorPubConfig.groupId, sensorPubConfig.priorityId, pubJSONObj.toJSONString());
+                serverStatistics.increaseSentMsgNum();
             }
-            assert sensorPubConfig != null;
-            System.out.printf("%s-CtxServer publish %s to {sensor, %d, %d} %n", appConfig.getAppName(), pubMsgStr, sensorPubConfig.groupId, sensorPubConfig.priorityId);
-            publish("sensor", sensorPubConfig.groupId, sensorPubConfig.priorityId, pubMsgStr);
-            serverStatistics.increaseSentMsgNum();
+
             ctxFixer.getSendingMsgMap().remove(toSendIndex);
             originalMsgMap.remove(toSendIndex);
             toSendIndex++;

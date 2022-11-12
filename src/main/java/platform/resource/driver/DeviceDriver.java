@@ -98,7 +98,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                         String msg = Util.keysValuesToJsonStringExcept(cmdRet.args, cmdRet.rets, "@#$%");
                         publish("sensor", 0, msg);
                         logger.debug("dd recv: " + msg);
-                        System.out.printf("dd publish %s to {sensor, 0} %n", msg);
+                        //System.out.printf("dd publish %s to {sensor, 0} %n", msg);
                         break;
                 }
             } catch (Exception e) {

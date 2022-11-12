@@ -50,7 +50,7 @@ public class PlatformCtxServer extends AbstractCtxServer {
     @Override
     public void onMessage(String channel, String msg) {
         logger.debug("platCtxServer recv: " + msg);
-        System.out.printf("platCtxServer recv %s %n", msg);
+        //System.out.printf("platCtxServer recv %s %n", msg);
 
         JSONObject msgJsonObj = JSONObject.parseObject(msg);
         msgJsonObj.put("index", String.valueOf(msgIndex.getAndIncrement()));
@@ -91,7 +91,7 @@ public class PlatformCtxServer extends AbstractCtxServer {
                 Set<String> sensorInfos = originalMsg.getSensorInfos(appName);
                 if(sensorInfos == null)
                     continue;
-                String pubMsgStr = MessageHandler.buildPubMsgStrWithIndex(sendingMsg, sensorInfos);
+                JSONObject pubJSONObj = MessageHandler.buildPubJSONObjWithIndex(sendingMsg, sensorInfos);
                 SubConfig sensorPubConfig = null;
                 for(SubConfig subConfig : appConfig.getSubConfigs()){
                     if(subConfig.channel.equals("sensor")){
@@ -99,8 +99,8 @@ public class PlatformCtxServer extends AbstractCtxServer {
                     }
                 }
                 assert sensorPubConfig != null;
-                System.out.printf("platCtxServer publish %s to {sensor, %d} %n", pubMsgStr, sensorPubConfig.groupId);
-                publish("sensor", sensorPubConfig.groupId, pubMsgStr);
+                //System.out.printf("platCtxServer publish %s to {sensor, %d} %n", pubMsgStr, sensorPubConfig.groupId);
+                publish("sensor", sensorPubConfig.groupId, pubJSONObj.toJSONString());
             }
             serverStatistics.increaseSentMsgNum();
             ctxFixer.getSendingMsgMap().remove(toSendIndex);
