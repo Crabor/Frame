@@ -28,4 +28,4 @@ out
 
 #file
 *.DS_Store
-dump.rdb
+*.rdb
