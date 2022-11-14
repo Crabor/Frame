@@ -77,7 +77,7 @@ public class MessageHandler {
         return retContext;
     }
 
-    public static String buildPubMsgStrWithIndex(final Message fixingMsg, final Set<String> sensorInfos){
+    public static JSONObject buildPubJSONObjWithIndex(final Message fixingMsg, final Set<String> sensorInfos){
         JSONObject pubMsgJsonObj = new JSONObject();
         long index = fixingMsg.getIndex();
         pubMsgJsonObj.put("index", String.valueOf(index));
@@ -85,17 +85,17 @@ public class MessageHandler {
             Context context = fixingMsg.getContextMap().get(sensorName + "_" + index);
             pubMsgJsonObj.put(sensorName, context == null ? "" : context.toMsgString());
         }
-        return pubMsgJsonObj.toJSONString();
+        return pubMsgJsonObj;
     }
 
-    public static String buildPubMsgStrWithoutIndex(final Message fixingMsg, final Set<String> sensorInfos){
+    public static JSONObject buildPubJSONObjWithoutIndex(final Message fixingMsg, final Set<String> sensorInfos){
         JSONObject pubMsgJsonObj = new JSONObject();
         long index = fixingMsg.getIndex();
         for(String sensorName : sensorInfos){
             Context context = fixingMsg.getContextMap().get(sensorName + "_" + index);
             pubMsgJsonObj.put(sensorName, context == null ? "" : context.toMsgString());
         }
-        return pubMsgJsonObj.toJSONString();
+        return pubMsgJsonObj;
     }
 
 }

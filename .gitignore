@@ -1,5 +1,6 @@
 # Compiled class file
-*.class
+/**/*.class
+!/Resources/**/*.class
 
 # Log file
 *.log
@@ -27,4 +28,4 @@ out
 
 #file
 *.DS_Store
-!Resources/*.class
+*.rdb

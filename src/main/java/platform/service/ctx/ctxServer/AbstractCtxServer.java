@@ -40,8 +40,9 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
     protected HashMap<String, Pattern> patternMap;
     protected HashMap<String, Rule> ruleMap;
     protected HashMap<String, Resolver> resolverMap;
-    protected final Map<Long, Message> originalMsgSet = new ConcurrentHashMap<>();
-    protected final Map<Long, Message> fixingMsgSet = new TreeMap<>(Long::compareTo);
+    protected final Map<Long, Message> originalMsgMap = new ConcurrentHashMap<>();
+
+    protected long toSendIndex = 0L;
 
     protected ChgGenerator chgGenerator;
     protected final LinkedBlockingQueue<ContextChange> changeBuffer = new LinkedBlockingQueue<>();
@@ -336,28 +337,12 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
     }
 
     protected void addOriginalMsg(Message message){
-        this.originalMsgSet.put(message.getIndex(), message);
+        this.originalMsgMap.put(message.getIndex(), message);
     }
 
     protected Message getOriginalMsg(long index){
-        return this.originalMsgSet.get(index);
+        return this.originalMsgMap.get(index);
     }
-
-    protected Message getOrPutDefaultFixingMsg(long index){
-        Message message = this.fixingMsgSet.getOrDefault(index, new Message(index));
-        this.fixingMsgSet.put(index, message);
-        return message;
-    }
-
-    protected void removeOriginalMsg(long index){
-        this.originalMsgSet.remove(index);
-    }
-
-    protected void removeFixingMsg(long index){
-        this.fixingMsgSet.remove(index);
-    }
-
-    protected abstract void publishAndClean(long indexLimit);
 
     //chgGenerator related
     public void changeBufferProducer(List<ContextChange> changeList){
@@ -387,22 +372,6 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
 
     public ServerStatistics getServerStatistics() {
         return serverStatistics;
-    }
-
-    //run
-    @Override
-    public void run() {
-        while(true){
-            try {
-                Map.Entry<String, Context> fixedContext = ctxFixer.getFixedContextQue().take();
-                long index = Long.parseLong(fixedContext.getKey().substring(fixedContext.getKey().lastIndexOf("_") + 1));
-                Message fixingMsg = getOrPutDefaultFixingMsg(index);
-                fixingMsg.addContext(fixedContext.getKey(), fixedContext.getValue());
-                publishAndClean(index);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     public void start() {
