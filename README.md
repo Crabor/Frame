@@ -449,7 +449,6 @@ Subscriber3: channel, hello
 | actuator_alive | <actuator_name> [<actuator_name> ...]                               | <true/false> [<true/false> ...]     | 判断actuator状态<br/>true :actuator处于打开状态<br/>false :actuator处于关闭状态      |
 | actuator_set   | <actuator_name> <value_string> [<actuator_name> <value_string> ...] | <true/false> [<true/false> ...]     | 设置actuator值<br/>true :设置actuator值成功<br/>false :设置actuator值失败         |
 | channel_msg    | {"channel": <channel_name>,<br/>"message": <message_string>}        | <true/false>                        | 发送频道消息<br/>true :发送频道消息成功<br/>false :发送频道消息错误                        |
-| sync           | <time_stamp>                                                        | <true/false>                        | 时钟同步<br/>true :同步成功<br/>false :同步失败                                  |
 | <custom_cmd>   | <custom_param>                                                      | <custom_ret>                        | 自定义命令                                                                |
 
 
