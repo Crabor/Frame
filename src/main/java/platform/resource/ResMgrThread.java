@@ -86,7 +86,7 @@ public class ResMgrThread implements Runnable {
                     }
                 });
                 if (!aliveSensorNames.isEmpty()) {
-                    Cmd.send("sensor_get", sensorNames);
+                    Cmd.send("sensor_get", aliveSensorNames);
                 }
             }
         }).start();
