@@ -8,6 +8,7 @@ import platform.resource.driver.DeviceDriver;
 import platform.resource.driver.DBDriver;
 import platform.util.Util;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class ResMgrThread implements Runnable {
@@ -78,7 +79,15 @@ public class ResMgrThread implements Runnable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                Cmd.send("sensor_get", sensorNames);
+                Set<String> aliveSensorNames = new HashSet<>();
+                Configuration.getResourceConfig().getSensorsConfig().forEach((name, config) -> {
+                    if (config.isAlive()) {
+                        aliveSensorNames.add(name);
+                    }
+                });
+                if (!aliveSensorNames.isEmpty()) {
+                    Cmd.send("sensor_get", sensorNames);
+                }
             }
         }).start();
 
@@ -90,18 +99,6 @@ public class ResMgrThread implements Runnable {
                     e.printStackTrace();
                 }
                 Cmd.send("actuator_alive", actuatorNames);
-            }
-        }).start();
-
-        //zhangshuhui
-        new Thread(()->{
-            while (true) {
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Cmd.send("sync", String.valueOf(System.currentTimeMillis()));
             }
         }).start();
 

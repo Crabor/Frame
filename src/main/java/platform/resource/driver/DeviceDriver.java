@@ -73,7 +73,6 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                         break;
                     case "actuator_set":
                     case "channel_message":
-                    case "sync":
                         for (int i = 0; i < cmdRet.rets.length; i++) {
                             if (!Boolean.parseBoolean(cmdRet.rets[i])) {
                                 logger.warn(cmdRet.cmd + " " + cmdRet.args[i] + " failed!");
