@@ -1,19 +1,20 @@
 package platform.resource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import platform.Platform;
-import platform.comm.socket.Cmd;
-import platform.comm.socket.UDP;
+import platform.comm.socket.PlatformUDP;
+import platform.struct.Cmd;
 import platform.config.*;
 import platform.resource.driver.DeviceDriver;
 import platform.resource.driver.DBDriver;
-import platform.util.Util;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.locks.LockSupport;
 
 public class ResMgrThread implements Runnable {
     private static ResMgrThread instance;
     private static Thread t;
+    private final Log logger = LogFactory.getLog(ResMgrThread.class);
 
     private DBDriver dbd;
     
@@ -59,48 +60,70 @@ public class ResMgrThread implements Runnable {
         dd.start();
         dbd.start();
         //TODO
-        Set<String> sensorNames = Configuration.getResourceConfig().getSensorsConfig().keySet();
-        Set<String> actuatorNames = Configuration.getResourceConfig().getActuatorsConfig().keySet();
-        new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(1000/ SensorConfig.getAliveFreq());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Cmd.send("sensor_alive", sensorNames);
-            }
-        }).start();
-
-        new Thread(()->{
-            while (true) {
-                try {
-                    Thread.sleep(1000/ SensorConfig.getValueFreq());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Set<String> aliveSensorNames = new HashSet<>();
-                Configuration.getResourceConfig().getSensorsConfig().forEach((name, config) -> {
-                    if (config.isAlive()) {
-                        aliveSensorNames.add(name);
+        Configuration.getResourceConfig().getSensorsConfig().forEach((name, config) -> {
+            //alive thread
+            new Thread(() -> {
+                while (true) {
+                    try {
+                        Thread.sleep(1000 / config.getAliveFreq());
+                        Cmd sensor_alive = new Cmd("sensor_alive", name);
+                        PlatformUDP.send(sensor_alive);
+//                        logger.debug(sensor_alive);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                });
-                if (!aliveSensorNames.isEmpty()) {
-                    Cmd.send("sensor_get", aliveSensorNames);
                 }
-            }
-        }).start();
+            }).start();
 
-        new Thread(()->{
-            while (true) {
-                try {
-                    Thread.sleep(1000/ ActuatorConfig.getAliveFreq());
-                } catch (Exception e) {
-                    e.printStackTrace();
+            //get value thread
+            Thread valueThread = new Thread(() -> {
+                while (true) {
+                    try {
+                        Thread.sleep(1000 / config.getValueFreq());
+                        if (config.isAlive()) {
+                            Cmd sensor_get = new Cmd("sensor_get", config.getSensorName());
+                            PlatformUDP.send(sensor_get);
+//                            logger.debug(sensor_get);
+                        }
+                    } catch (ArithmeticException e) {
+                        //说明valueFreq == 0，即不是定时获取sensor value，而是由用户主动调用或者驱动程序主动push上来
+                        LockSupport.park();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-                Cmd.send("actuator_alive", actuatorNames);
-            }
-        }).start();
+            });
+            config.setValueThread(valueThread);
+            valueThread.start();
+        });
+
+        Configuration.getResourceConfig().getActuatorsConfig().forEach((name, config) -> {
+            //alive thread
+            new Thread(() -> {
+                while (true) {
+                    try {
+                        Thread.sleep(1000 / config.getAliveFreq());
+                        Cmd actuator_alive = new Cmd("actuator_alive", name);
+                        PlatformUDP.send(actuator_alive);
+//                        logger.debug(actuator_alive);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        });
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+//        Configuration.getResourceConfig().getSensorsConfig().forEach((name, config) -> {
+//            config.setValueFreq(1);
+//        });
+//        Configuration.getResourceConfig().getActuatorsConfig().forEach((name, config) -> {
+//            config.setAliveFreq(2);
+//        });
 
         while (true);
     }

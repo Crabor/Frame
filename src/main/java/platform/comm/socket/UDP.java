@@ -7,60 +7,57 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UDP {
-    private static DatagramSocket socket;
-    private static int serverPort;
-    private static InetAddress clientAddress;
-    private static int clientPort;
-
-    public static void Init(UDPConfig config) {
-        serverPort = config.getServerPort();
-        clientPort = config.getClientPort();
+    private static final Map<Integer, DatagramSocket> sockets = new HashMap<>();
+    static {
         try {
-            clientAddress = InetAddress.getByName(config.getClientAddress());
-            socket = new DatagramSocket(serverPort);
-        } catch (Exception e) {
-            e.printStackTrace();
+            sockets.put(0, new DatagramSocket());
+        } catch (SocketException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public static void send(String msg) {
+    public static void send(String clientAddress, int clientPort, String msg) {
         try {
             byte[] data = msg.getBytes();
-            DatagramPacket packet = new DatagramPacket(data, data.length, clientAddress, clientPort);
-            socket.send(packet);
+            DatagramPacket packet = new DatagramPacket(data, data.length, InetAddress.getByName(clientAddress), clientPort);
+            sockets.get(0).send(packet);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static String recv() {
+    public static void send(InetAddress clientAddress, int clientPort, String msg) {
+        try {
+            byte[] data = msg.getBytes();
+            DatagramPacket packet = new DatagramPacket(data, data.length, clientAddress, clientPort);
+            sockets.get(0).send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String recv(int port) {
         byte[] data = new byte[0];
         DatagramPacket packet = null;
         try {
             data = new byte[1024];
             packet = new DatagramPacket(data, data.length);
+            DatagramSocket socket = sockets.computeIfAbsent(port, k -> {
+                try {
+                    return new DatagramSocket(port);
+                } catch (SocketException e) {
+                    throw new RuntimeException(e);
+                }
+            });
             socket.receive(packet);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return new String(data, 0, packet.getLength());
-    }
-
-    public DatagramSocket getSocket() {
-        return socket;
-    }
-
-    public int getServerPort() {
-        return serverPort;
-    }
-
-    public InetAddress getClientAddress() {
-        return clientAddress;
-    }
-
-    public int getClientPort() {
-        return clientPort;
     }
 }

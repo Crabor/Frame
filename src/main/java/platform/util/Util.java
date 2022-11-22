@@ -141,8 +141,16 @@ public class Util {
         }
         return ret.toString();
     }
+    
+    public static String stringArrayToString(String[] strings, String delimiter) {
+        StringBuilder ret = new StringBuilder(strings[0]);
+        for (int i = 1 ; i < strings.length; i++) {
+            ret.append(delimiter).append(strings[i]);
+        }
+        return ret.toString();
+    }
 
-    public static String keysValuesToJsonStringExcept(String[] keys, String[] values, String except) {
+    public static String formatToJsonStringExcept(String[] keys, String[] values, String except) {
         JSONObject jo = new JSONObject();
         for (int i = 0; i < keys.length; i++) {
             if (values[i].equals(except)) {
@@ -150,6 +158,12 @@ public class Util {
             }
             jo.put(keys[i], values[i]);
         }
+        return jo.toJSONString();
+    }
+    
+    public static String formatToJsonString(String key, String value) {
+        JSONObject jo = new JSONObject(1);
+        jo.put(key, value);
         return jo.toJSONString();
     }
 

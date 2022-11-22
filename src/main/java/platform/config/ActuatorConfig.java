@@ -5,17 +5,22 @@ import com.alibaba.fastjson.JSONObject;
 public class ActuatorConfig {
     private final String ActuatorName;
     private boolean isAlive = false;
-    private static int aliveFreq;
+    private int aliveFreq;
 
     public ActuatorConfig(JSONObject object) {
-        this.ActuatorName = object.getString("ActuatorName");
+        ActuatorName = object.getString("ActuatorName");
+        try {
+            aliveFreq = object.getInteger("aliveFreq");
+        } catch (NullPointerException e) {
+            aliveFreq = 1;
+        }
     }
 
-    public static int getAliveFreq() {
+    public int getAliveFreq() {
         return aliveFreq;
     }
 
-    public static void setAliveFreq(int freq) {
+    public void setAliveFreq(int freq) {
         aliveFreq = freq;
     }
 
@@ -27,6 +32,7 @@ public class ActuatorConfig {
     public String toString() {
         return "ActuatorConfig{" +
                 "ActuatorName='" + ActuatorName + '\'' +
+                ", aliveFreq=" + aliveFreq +
                 '}';
     }
 

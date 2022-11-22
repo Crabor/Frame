@@ -57,7 +57,7 @@ public class Platform {
         dir.mkdirs();
 
         //read config file
-        Configuration.analyzer("Resources/configFile/taxiConfiguration");
+        Configuration.analyzer("Resources/configFile/Configuration1");
 
         //init database
         RedisClient client = RedisClient.create(
@@ -66,9 +66,6 @@ public class Platform {
         Publisher.Init(client);
         AbstractSubscriber.Init(client);
         Subscribe.Init(client);
-
-        //init udp
-        UDP.Init(Configuration.getUdpConfig());
 
         //init mgr
         resMgr = ResMgrThread.getInstance();

@@ -1,24 +1,22 @@
 package platform.config;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UDPConfig {
     private final int serverPort;
-    private final String clientAddress;
     private final int clientPort;
 
     public UDPConfig(JSONObject object){
-        this.serverPort = object.getInteger("serverPort");
-        this.clientAddress = object.getString("clientAddress");
-        this.clientPort = object.getInteger("clientPort");
+        this.serverPort = object.getIntValue("serverPort");
+        this.clientPort = object.getIntValue("clientPort");
     }
 
     public int getServerPort() {
         return serverPort;
-    }
-
-    public String getClientAddress() {
-        return clientAddress;
     }
 
     public int getClientPort() {
@@ -29,7 +27,6 @@ public class UDPConfig {
     public String toString() {
         return "UDPConfig{" +
                 "serverPort=" + serverPort +
-                ", clientAddress='" + clientAddress + '\'' +
                 ", clientPort=" + clientPort +
                 '}';
     }

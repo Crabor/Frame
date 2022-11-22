@@ -1,8 +1,8 @@
 package platform.resource.driver;
 
 import com.alibaba.fastjson.JSONObject;
-import platform.comm.socket.Cmd;
-import platform.comm.socket.UDP;
+import platform.comm.socket.PlatformUDP;
+import platform.struct.Cmd;
 import platform.config.Configuration;
 import platform.comm.pubsub.AbstractSubscriber;
 import platform.struct.CmdRet;
@@ -52,52 +52,44 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
         while (true) {
             // wang hui yan
             try {
-//                String sensorData = new String(data, 0, packet.getLength());
-////                Thread.sleep(50);
-////                String sensorData = Util.randomJSONCarData();
-//                logger.debug("dd recv: " + sensorData);
-//                publish("sensor", 0, sensorData);
-                CmdRet cmdRet = Cmd.recv();
+                CmdRet cmdRet = PlatformUDP.recv();
+                logger.debug("dd recv: " + cmdRet);
                 switch (cmdRet.cmd) {
                     case "actuator_on":
                     case "actuator_off":
                     case "sensor_on":
                     case "sensor_off":
-                        for (int i = 0; i < cmdRet.rets.length; i++) {
-                            if (Boolean.parseBoolean(cmdRet.rets[i])) {
-                                logger.info(cmdRet.cmd + " " + cmdRet.args[i] + " succeed!");
-                            } else {
-                                logger.warn(cmdRet.cmd + " " + cmdRet.args[i] + " failed!");
-                            }
+                        if (Boolean.parseBoolean(cmdRet.ret)) {
+                            logger.info(cmdRet.getCmdMsg() + " succeed!");
+                        } else {
+                            logger.warn(cmdRet.getCmdMsg() + " failed!");
                         }
                         break;
                     case "actuator_set":
                     case "channel_message":
-                        for (int i = 0; i < cmdRet.rets.length; i++) {
-                            if (!Boolean.parseBoolean(cmdRet.rets[i])) {
-                                logger.warn(cmdRet.cmd + " " + cmdRet.args[i] + " failed!");
-                            }
+                        if (!Boolean.parseBoolean(cmdRet.ret)) {
+                            logger.warn(cmdRet.getCmdMsg() + " failed!");
                         }
                         break;
                     case "actuator_alive":
-                        for (int i = 0; i < cmdRet.rets.length; i++) {
-                            Configuration.getResourceConfig().getActuatorsConfig().
-                                    get(cmdRet.args[i]).
-                                    setAlive(Boolean.parseBoolean(cmdRet.rets[i]));
-                        }
+                        Configuration.getResourceConfig().getActuatorsConfig().
+                                get(cmdRet.args[0]).
+                                setAlive(Boolean.parseBoolean(cmdRet.ret));
                         break;
                     case "sensor_alive":
-                        for (int i = 0; i < cmdRet.rets.length; i++) {
-                            Configuration.getResourceConfig().getSensorsConfig().
-                                    get(cmdRet.args[i]).
-                                    setAlive(Boolean.parseBoolean(cmdRet.rets[i]));
-                        }
+//                        logger.info(cmdRet);
+//                        logger.info(cmdRet.args[0]);
+//                        logger.info(Boolean.parseBoolean(cmdRet.ret));
+                        Configuration.getResourceConfig().getSensorsConfig().
+                                get(cmdRet.args[0]).
+                                setAlive(Boolean.parseBoolean(cmdRet.ret));
                         break;
                     case "sensor_get":
-                        String msg = Util.keysValuesToJsonStringExcept(cmdRet.args, cmdRet.rets, "@#$%");
-                        publish("sensor", 0, msg);
-                        logger.debug("dd recv: " + msg);
-                        //System.out.printf("dd publish %s to {sensor, 0} %n", msg);
+//                        logger.debug("dd recv: " + cmdRet);
+                        if (!cmdRet.ret.equals("@#$%")) {
+                            String msg = Util.formatToJsonString(cmdRet.args[0], cmdRet.ret);
+                            publish("sensor", 0, msg);
+                        }
                         break;
                 }
             } catch (Exception e) {
@@ -115,11 +107,13 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
 
     @Override
     public void onMessage(String channel, String msg) {
-        logger.debug("dd send: " + msg);
+        logger.debug("dd send channel_message: " + msg);
         //receive msg from actuator channel than transmit to car
-        JSONObject jo = new JSONObject();
+        JSONObject jo = new JSONObject(2);
         jo.put("channel", channel);
         jo.put("message", msg);
-        Cmd.send("channel_message", jo.toJSONString());
+        Cmd channel_message = new Cmd("channel_message", jo.toJSONString());
+        PlatformUDP.send(channel_message);
+//        logger.info(channel_message);
     }
 }
