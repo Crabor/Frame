@@ -2,7 +2,8 @@ package platform.testunitycar;
 
 import com.alibaba.fastjson.JSON;
 import platform.app.AbstractApp;
-import platform.comm.socket.Cmd;
+import platform.comm.socket.PlatformUDP;
+import platform.struct.Cmd;
 import platform.service.inv.CancerObject;
 import platform.service.inv.struct.CheckInfo;
 import platform.service.inv.struct.CheckState;
@@ -18,17 +19,19 @@ public class MyApp extends AbstractApp {
     @Override
     public void iter(String channel, String msg) {
         logger.debug("app recv: " + msg);
-        Actor actor = new Actor(5,0,0);
 
         //method 1
-        CancerObject left = CancerObject.fromJsonObjectString(msg);
-        CheckInfo checkInfo = left.check();
-        logger.debug("check:\n" + JSON.toJSONString(checkInfo, true));
-        if (checkInfo.checkState == CheckState.INV_VIOLATED) {
-            actor.setYSpeed(-checkInfo.diff);
-        }
+//        CancerObject left = CancerObject.fromJsonObjectString(msg);
+//        CheckInfo checkInfo = left.check();
+//        logger.debug("check:\n" + JSON.toJSONString(checkInfo, true));
+//        if (checkInfo.checkState == CheckState.INV_VIOLATED) {
+//            Cmd ySpeed = new Cmd("actuator_set", "ySpeed", String.valueOf(-checkInfo.diff));
+//            logger.debug(ySpeed);
+//            PlatformUDP.send(ySpeed);
+//        }
 
-        Cmd.send("actuator_set", actor.toString());
-        logger.debug("actor: " + actor);
+        Cmd xSpeed = new Cmd("actuator_set", "xSpeed", "5");
+        PlatformUDP.send(xSpeed);
+        logger.debug(xSpeed);
     }
 }

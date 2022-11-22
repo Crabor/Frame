@@ -24,6 +24,7 @@ public abstract class AbstractApp extends AbstractSubscriber implements App, Run
     @Override
     public void onMessage(String channel, String msg) {
         iterId++;
+        logger.debug("abstractApp recv: " + msg);
         boolean invSeverOn = Configuration.getInvServerConfig().isServerOn();
         if (invSeverOn) CancerServer.iterEntry(appName, iterId, msg);
         iter(channel, msg);

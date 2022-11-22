@@ -438,18 +438,18 @@ Subscriber3: channel, hello
 
 ### 明文协议
 
-| cmd            | args                                                               | rets                                 | description                                                          |
-|----------------|---------------------------------------------------------------------|-------------------------------------|----------------------------------------------------------------------|
-| sensor_on      | <sensor_name> [<sensor_name> ...]                                   | <true/false> [<true/false> ...]     | 启动sensor<br/>true :打开成功<br/>false :打开失败                              |
-| sensor_off     | <sensor_name> [<sensor_name> ...]                                   | <true/false> [<true/false> ...]     | 关闭sensor<br/>true :关闭成功<br/>false :关闭失败                              |
-| sensor_alive   | <sensor_name> [<sensor_name> ...]                                   | <true/false> [<true/false> ...]     | 判断sensor状态<br/>true :sensor处于打开状态<br/>false :sensor处于关闭状态            |
-| sensor_get     | <sensor_name> [<sensor_name> ...]                                   | <value_string> [<value_string> ...] | 获取sensor值<br/>value_string :sensor值<br/>value_string == "@#$%" :获取失败 |
-| actuator_on    | <actuator_name> [<actuator_name> ...]                               | <true/false> [<true/false> ...]     | 启动actuator<br/>true :启动成功<br/>false :启动失败                            |
-| actuator_off   | <actuator_name> [<actuator_name> ...]                               | <true/false> [<true/false> ...]     | 关闭actuator<br/>true :关闭成功<br/>false :关闭失败                            |
-| actuator_alive | <actuator_name> [<actuator_name> ...]                               | <true/false> [<true/false> ...]     | 判断actuator状态<br/>true :actuator处于打开状态<br/>false :actuator处于关闭状态      |
-| actuator_set   | <actuator_name> <value_string> [<actuator_name> <value_string> ...] | <true/false> [<true/false> ...]     | 设置actuator值<br/>true :设置actuator值成功<br/>false :设置actuator值失败         |
-| channel_msg    | {"channel": <channel_name>,<br/>"message": <message_string>}        | <true/false>                        | 发送频道消息<br/>true :发送频道消息成功<br/>false :发送频道消息错误                        |
-| <custom_cmd>   | <custom_param>                                                      | <custom_ret>                        | 自定义命令                                                                |
+| cmd            | args                                                       | ret            | description                                                          |
+|----------------|------------------------------------------------------------|----------------|----------------------------------------------------------------------|
+| sensor_on      | <sensor_name>                                              | <true/false>   | 启动sensor<br/>true :打开成功<br/>false :打开失败                              |
+| sensor_off     | <sensor_name>                                              | <true/false>   | 关闭sensor<br/>true :关闭成功<br/>false :关闭失败                              |
+| sensor_alive   | <sensor_name>                                              | <true/false>   | 判断sensor状态<br/>true :sensor处于打开状态<br/>false :sensor处于关闭状态            |
+| sensor_get     | <sensor_name>                                              | <value_string> | 获取sensor值<br/>value_string :sensor值<br/>value_string == "@#$%" :获取失败 |
+| actuator_on    | <actuator_name>                                            | <true/false>   | 启动actuator<br/>true :启动成功<br/>false :启动失败                            |
+| actuator_off   | <actuator_name>                                            | <true/false>   | 关闭actuator<br/>true :关闭成功<br/>false :关闭失败                            |
+| actuator_alive | <actuator_name>                                            | <true/false>   | 判断actuator状态<br/>true :actuator处于打开状态<br/>false :actuator处于关闭状态      |
+| actuator_set   | <actuator_name> <value_string>                             | <true/false>   | 设置actuator值<br/>true :设置actuator值成功<br/>false :设置actuator值失败         |
+| channel_msg    | {"channel":<channel_name>,<br/>"message":<message_string>} | <true/false>   | 发送频道消息<br/>true :发送频道消息成功<br/>false :发送频道消息错误                        |
+| <custom_cmd>   | <custom_param>                                             | <custom_ret>   | 自定义命令                                                                |
 
 
 

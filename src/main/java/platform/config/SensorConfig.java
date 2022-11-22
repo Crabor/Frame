@@ -5,35 +5,43 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.LockSupport;
 
 public class SensorConfig {
     private String SensorType;
     private String SensorName;
     private List<String> fieldNames;
     private boolean isAlive = false;
-    private static int aliveFreq; //定时ping
-    private static int valueFreq; //定时获取value
+    private int aliveFreq; //定时ping
+    private int valueFreq; //定时获取value
+    private Thread valueThread;
     private String IPAddress;
     private int port;
     private final Set<String> apps = ConcurrentHashMap.newKeySet();
     private boolean registered = false;
 
     public SensorConfig(JSONObject object){
+        SensorName = object.getString("SensorName");
         try {
             SensorType = object.getString("SensorType");
         } catch (NullPointerException e) {
             SensorType = "String";
         }
-        SensorName = object.getString("SensorName");
         try {
             fieldNames = Arrays.asList(object.getString("fieldNames").split(","));
         } catch (NullPointerException e) {
 
         }
-//        isAlive = object.getBoolean("isAlive");
-//        SensorFreq = object.getIntValue("SensorFreq");
-//        IPAddress = object.getString("IPAddress");
-//        port = object.getIntValue("Port");
+        try {
+            aliveFreq = object.getInteger("aliveFreq");
+        } catch (NullPointerException e) {
+            aliveFreq = 1;
+        }
+        try {
+            valueFreq = object.getInteger("valueFreq");
+        } catch (NullPointerException e) {
+            valueFreq = 0;
+        }
     }
 
     public SensorConfig(String sensorName, String sensorType, String fieldNames) {
@@ -62,20 +70,23 @@ public class SensorConfig {
         this.isAlive = isAlive;
     }
 
-    public static int getAliveFreq() {
+    public int getAliveFreq() {
         return aliveFreq;
     }
 
-    public static void setAliveFreq(int freq) {
+    public void setAliveFreq(int freq) {
         aliveFreq = freq;
     }
 
-    public static int getValueFreq() {
+    public int getValueFreq() {
         return valueFreq;
     }
 
-    public static void setValueFreq(int freq) {
+    public void setValueFreq(int freq) {
         valueFreq = freq;
+        if (freq > 0 && valueThread != null) {
+            LockSupport.unpark(valueThread);
+        }
     }
 
     public String getIPAddress() {
@@ -84,6 +95,10 @@ public class SensorConfig {
 
     public int getPort() {
         return port;
+    }
+
+    public void setValueThread(Thread valueThread) {
+        this.valueThread = valueThread;
     }
 
     public void addApp(String app) {
@@ -112,8 +127,8 @@ public class SensorConfig {
                 "SensorType='" + SensorType + '\'' +
                 ", SensorName='" + SensorName + '\'' +
                 ", fieldNames=" + fieldNames +
-                ", apps=" + apps +
-                ", registered=" + registered +
+                ", aliveFreq=" + aliveFreq +
+                ", valueFreq=" + valueFreq +
                 '}';
     }
 }
