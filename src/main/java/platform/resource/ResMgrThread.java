@@ -113,11 +113,11 @@ public class ResMgrThread implements Runnable {
             }).start();
         });
 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            Thread.sleep(5000);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
 //        Configuration.getResourceConfig().getSensorsConfig().forEach((name, config) -> {
 //            config.setValueFreq(1);
 //        });
