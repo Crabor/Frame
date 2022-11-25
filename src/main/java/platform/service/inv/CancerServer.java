@@ -222,4 +222,9 @@ public class CancerServer implements Runnable {
         PECount peCount = peCountMap.get(appName);
         peCount.pCxtCount++;
     }
+
+    public static Object call(String appName, String cmd) {
+        //TODO
+        return null;
+    }
 }

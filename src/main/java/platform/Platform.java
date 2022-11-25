@@ -9,6 +9,8 @@ import platform.resource.ResMgrThread;
 import platform.comm.pubsub.Publisher;
 import platform.comm.pubsub.AbstractSubscriber;
 import io.lettuce.core.RedisClient;
+import platform.service.inv.CancerServer;
+import platform.struct.ServiceType;
 import platform.util.Util;
 import platform.service.SerMgrThread;
 
@@ -95,5 +97,23 @@ public class Platform {
         Publisher.Close();
         AbstractSubscriber.Close();
         Subscribe.Close();
+    }
+
+    public static Object call(String appName, ServiceType type, String cmd) {
+        Object ret = null;
+        switch (type) {
+            case CTX:
+                //TODO
+                break;
+            case INV:
+                ret = CancerServer.call(appName, cmd);
+                break;
+        }
+        return ret;
+    }
+
+    public static Object call(ServiceType type, String cmd) {
+        String appName = Thread.currentThread().getStackTrace()[2].getClassName();
+        return call(appName, type, cmd);
     }
 }

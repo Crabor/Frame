@@ -108,4 +108,9 @@ public class PlatformCtxServer extends AbstractCtxServer {
             toSendIndex++;
         }
     }
+
+    public static Object call(String appName, String cmd) {
+        //TODO
+        return null;
+    }
 }
