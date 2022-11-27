@@ -94,4 +94,11 @@ public class CtxFixer {
     public Map<Long, Message> getSendingMsgMap() {
         return sendingMsgMap;
     }
+
+    public void reset(){
+        this.ctxId2IncRuleIdSet.clear();
+        this.fixingMsgMap.clear();
+        this.sendingMsgMap.clear();
+    }
+
 }

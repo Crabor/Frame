@@ -143,7 +143,7 @@ public class ChgGenerator implements Runnable {
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                break;
             }
             generateChanges(null);
         }
@@ -154,5 +154,19 @@ public class ChgGenerator implements Runnable {
             t = new Thread(this, getClass().getName());
             t.start();
         }
+    }
+
+    public void reset(){
+        t.interrupt();
+        while(t.isInterrupted());
+        generateChanges(null); // To ensure the last generateChanges invocation is done
+        activateContextsTimeQue.clear();
+        activateContextsNumberMap.clear();
+    }
+
+
+    public void restart(){
+        t = new Thread(this, getClass().getName());
+        t.start();
     }
 }

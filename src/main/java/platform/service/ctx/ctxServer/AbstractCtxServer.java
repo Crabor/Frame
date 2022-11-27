@@ -7,6 +7,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import platform.config.Configuration;
 import platform.comm.pubsub.AbstractSubscriber;
+import platform.service.ctx.ctxChecker.CheckerStarter;
 import platform.service.ctx.ctxChecker.context.Context;
 import platform.service.ctx.message.Message;
 import platform.service.ctx.pattern.matcher.FunctionMatcher;
@@ -33,6 +34,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 public abstract class AbstractCtxServer extends AbstractSubscriber implements Runnable{
@@ -42,9 +44,13 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
     protected HashMap<String, Resolver> resolverMap;
     protected final Map<Long, Message> originalMsgMap = new ConcurrentHashMap<>();
 
-    protected long toSendIndex = 0L;
+    protected AtomicLong toSendIndex = new AtomicLong(0L);
+    protected Set<Long> skippedSendIndex = ConcurrentHashMap.newKeySet();
 
     protected ChgGenerator chgGenerator;
+
+    protected CheckerStarter checker;
+
     protected final LinkedBlockingQueue<ContextChange> changeBuffer = new LinkedBlockingQueue<>();
 
     protected CtxFixer ctxFixer;
@@ -356,7 +362,7 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
             change = changeBuffer.take();
             changeList.add(change);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            return null;
         }
         while(!changeBuffer.isEmpty()){
             change = changeBuffer.poll();
@@ -374,10 +380,19 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
         return serverStatistics;
     }
 
+    public void setServerStatistics(ServerStatistics serverStatistics) {
+        this.serverStatistics = serverStatistics;
+    }
+
     public void start() {
         if (t == null) {
             t = new Thread(this, getClass().getName());
             t.start();
         }
+    }
+
+    public void restart() {
+        t = new Thread(this, getClass().getName());
+        t.start();
     }
 }

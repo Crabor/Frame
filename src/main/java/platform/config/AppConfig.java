@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import platform.app.AbstractApp;
 import platform.service.ctx.ctxServer.AppCtxServer;
+import platform.service.ctx.statistics.ServerStatistics;
 
 import java.util.*;
 
@@ -143,6 +144,10 @@ public class AppConfig {
             this.ctxServer.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId + 1);
         }
         this.ctxServer.start();
+    }
+
+    public void resetCtxServer(){
+        this.ctxServer.reset();
     }
 
     @Override

@@ -9,6 +9,7 @@ import platform.resource.ResMgrThread;
 import platform.comm.pubsub.Publisher;
 import platform.comm.pubsub.AbstractSubscriber;
 import io.lettuce.core.RedisClient;
+import platform.service.ctx.ctxServer.PlatformCtxServer;
 import platform.service.inv.CancerServer;
 import platform.struct.ServiceType;
 import platform.util.Util;
@@ -103,7 +104,7 @@ public class Platform {
         Object ret = null;
         switch (type) {
             case CTX:
-                //TODO
+                ret = PlatformCtxServer.call(appName, cmd);
                 break;
             case INV:
                 ret = CancerServer.call(appName, cmd);
