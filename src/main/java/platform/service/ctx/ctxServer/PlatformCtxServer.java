@@ -85,7 +85,7 @@ public class PlatformCtxServer extends AbstractCtxServer {
     public void run() {
         while(true){
             while(skippedSendIndex.contains(toSendIndex.get())){
-                skippedSendIndex.remove(toSendIndex.get());
+                skippedSendIndex.remove(toSendIndex.get()); // avoid OOM
                 toSendIndex.getAndIncrement();
             }
             if(!ctxFixer.getSendingMsgMap().containsKey(toSendIndex.get()))

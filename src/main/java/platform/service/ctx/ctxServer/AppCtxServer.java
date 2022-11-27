@@ -80,35 +80,37 @@ public class AppCtxServer extends AbstractCtxServer{
             logger.debug(appConfig.getAppName() + "-CtxServer ignores: " + msg);
             return;
         }
-        resetLock.unlock();
 
-        //判断是否是reset之前的消息
-        if(msgIndex < validMsgIndexLimit) {
-            skippedSendIndex.add(msgIndex);
-            logger.debug(appConfig.getAppName() + "-CtxServer ignores: " + msg);
-            return;
-        }
-
-        logger.debug(appConfig.getAppName() + "-CtxServer recv: " + msg);
-        //System.out.printf("%s-CtxServer recv %s %n",appConfig.getAppName(), msg);
-
-
-        Message originalMsg = MessageHandler.jsonObject2Message(msgJsonObj);
-
-        if(originalMsg == null){
-            skippedSendIndex.add(msgIndex);
-            return;
-        }
-
-        addOriginalMsg(originalMsg);
-        serverStatistics.increaseReceivedMsgNum();
-        if(appConfig.isCtxServerOn()){
-            chgGenerator.generateChanges(originalMsg.getContextMap());
-        }
-        else{
-            for(String contextId : originalMsg.getContextMap().keySet()){
-                ctxFixer.addFixedContext(contextId, MessageHandler.cloneContext(originalMsg.getContextMap().get(contextId)));
+        try{
+            //判断是否是reset之前的消息
+            if(msgIndex < validMsgIndexLimit) {
+                skippedSendIndex.add(msgIndex);
+                logger.debug(appConfig.getAppName() + "-CtxServer ignores: " + msg);
+                return;
             }
+
+            logger.debug(appConfig.getAppName() + "-CtxServer recv: " + msg);
+            //System.out.printf("%s-CtxServer recv %s %n",appConfig.getAppName(), msg);
+
+            Message originalMsg = MessageHandler.jsonObject2Message(msgJsonObj);
+
+            if(originalMsg == null){
+                skippedSendIndex.add(msgIndex);
+                return;
+            }
+
+            addOriginalMsg(originalMsg);
+            serverStatistics.increaseReceivedMsgNum();
+            if(appConfig.isCtxServerOn()){
+                chgGenerator.generateChanges(originalMsg.getContextMap());
+            }
+            else{
+                for(String contextId : originalMsg.getContextMap().keySet()){
+                    ctxFixer.addFixedContext(contextId, MessageHandler.cloneContext(originalMsg.getContextMap().get(contextId)));
+                }
+            }
+        } finally {
+            resetLock.unlock();
         }
     }
 
@@ -119,7 +121,7 @@ public class AppCtxServer extends AbstractCtxServer{
                 return;
             }
             while(skippedSendIndex.contains(toSendIndex.get())){
-                skippedSendIndex.remove(toSendIndex.get());
+                skippedSendIndex.remove(toSendIndex.get()); // avoid OOM
                 toSendIndex.getAndIncrement();
             }
             if(!ctxFixer.getSendingMsgMap().containsKey(toSendIndex.get()))
