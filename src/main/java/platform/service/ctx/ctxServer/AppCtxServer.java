@@ -37,9 +37,7 @@ public class AppCtxServer extends AbstractCtxServer{
             this.chgGenerator.reset();
             // 停止checker
             this.checker.reset();
-            // 重新构建Pattern和Rules
-            this.patternMap.clear();
-            buildPatterns(appConfig.getPatternFile(), appConfig.getMfuncFile());
+            // 重新构建Rules
             this.ruleMap.clear();
             this.resolverMap.clear();
             buildRules(appConfig.getRuleFile());

@@ -162,6 +162,7 @@ public class ChgGenerator implements Runnable {
         generateChanges(null); // To ensure the last generateChanges invocation is done
         activateContextsTimeQue.clear();
         activateContextsNumberMap.clear();
+        initActivateContextsNumberMap(server.getPatternMap());
     }
 
 
