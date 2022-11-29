@@ -115,9 +115,12 @@ public class Subscribe implements Runnable {
                         Thread.sleep(mode);
                     }
                     // TODO: 等待10s可优化
-                    KeyValue<String, String> kv = syncCommands.brpop(10, name);
+                    long timeOut = 10;
+                    KeyValue<String, String> kv = syncCommands.brpop(timeOut, name);
                     if (kv != null) {
                         syncCommands.publish(name, kv.getValue());
+                    } else {
+                        logger.warn("FIFO pipeline \"" + name + "\" waited for " + timeOut + " seconds without any data");
                     }
                 }
             } catch (InterruptedException e) {
