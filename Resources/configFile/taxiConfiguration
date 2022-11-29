@@ -68,58 +68,38 @@
         },
       ],
     },
-    "SensorConfiguration": {
-      "sensors" : [
-        {
-          "SensorName": "taxis",
-          "fieldNames": "timestamp,taxiId,longitude,latitude,speed,direction,status",
-        },
-         {
-            "SensorName": "front",
-            "fieldNames": "value",
-        },
+    "SensorConfiguration": [
       {
-        "SensorName": "back",
-        "fieldNames": "value",
+        "SensorName": "taxis",
+        "fieldNames": "timestamp,taxiId,longitude,latitude,speed,direction,status",
+        "valueFreq": 1,
       },
-      {
-        "SensorName": "left",
-        "fieldNames": "value",
-      },
-      {
-        "SensorName": "right",
-        "fieldNames": "value",
-      },
-      ],
-      "freq": {
-        "aliveFreq": 1,
-        "valueFreq": 1000,
-      }
-    },
-    "ActorConfiguration": {
-      "actuators": [
-        {
-          "ActuatorName": "xSpeed",
-        },
-        {
-          "ActuatorName": "ySpeed",
-        },
-        {
-          "ActuatorName": "zSpeed",
-        },
-      ],
-      "freq": {
-        "aliveFreq": 1,
-      },
-    },
+    ],
+    "ActorConfiguration": [
+          {
+            "ActuatorName": "xSpeed",
+          },
+          {
+            "ActuatorName": "ySpeed",
+          },
+          {
+            "ActuatorName": "zSpeed",
+          },
+    ],
   },
   "RedisConfig": {
     "serverAddress": "127.0.0.1",
     "serverPort": "6379",
   },
   "UDPConfig": {
-    "serverPort": 8080,
-    "clientAddress": "127.0.0.1",
-    "clientPort": 8081,
-  },
+      "serverPort": 8080,
+      "clientPort": [
+        {
+          "port": 8081,
+        },
+        {
+          "port": 8082,
+        },
+      ]
+    },
 }

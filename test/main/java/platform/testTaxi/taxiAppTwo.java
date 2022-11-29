@@ -6,8 +6,6 @@ public class taxiAppTwo extends AbstractApp {
     @Override
     protected void customizeCtxServer() {
         config.registerSensor("taxis");
-        config.registerSensor("left");
-        config.registerSensor("right");
         config.setCtxServerOn(true);
         config.setRuleFile("Resources/taxiTest/appTwo/taxiRules.xml");
         config.setBfuncFile("Resources/taxiTest/appTwo/taxiBfunction.class");
@@ -17,6 +15,7 @@ public class taxiAppTwo extends AbstractApp {
 
     @Override
     public void iter(String channel, String msg) {
+        logger.debug(appName + " recv " + msg);
         System.out.println(appName + " recv " + msg);
     }
 }

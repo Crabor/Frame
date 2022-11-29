@@ -1,6 +1,7 @@
 package platform.service.ctx.ctxServer;
 
 import com.alibaba.fastjson.JSONObject;
+import platform.app.App;
 import platform.config.AppConfig;
 import platform.config.Configuration;
 import platform.config.CtxServerConfig;
@@ -12,6 +13,7 @@ import platform.service.ctx.statistics.ServerStatistics;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class PlatformCtxServer extends AbstractCtxServer {
 
@@ -41,22 +43,21 @@ public class PlatformCtxServer extends AbstractCtxServer {
         this.chgGenerator = new ChgGenerator(PlatformCtxServer.getInstance());
         this.chgGenerator.start();
         this.ctxFixer = new CtxFixer(PlatformCtxServer.getInstance());
-        Thread baseChecker = new Thread(new CheckerStarter(
-                PlatformCtxServer.getInstance(), CtxServerConfig.getInstance().getBaseBfuncFile(), CtxServerConfig.getInstance().getCtxValidator())
-        );
-        baseChecker.start();
+        this.checker = new CheckerStarter(PlatformCtxServer.getInstance(), CtxServerConfig.getInstance().getBaseBfuncFile(), CtxServerConfig.getInstance().getCtxValidator());
+        this.checker.start();
     }
 
     @Override
     public void onMessage(String channel, String msg) {
         logger.debug("platCtxServer recv: " + msg);
-        //System.out.printf("platCtxServer recv %s %n", msg);
+        //System.out.println("platCtxServer recv: " + msg);
 
         JSONObject msgJsonObj = JSONObject.parseObject(msg);
         msgJsonObj.put("index", String.valueOf(msgIndex.getAndIncrement()));
         filterMessage(msgJsonObj);
 
         if (msgJsonObj.keySet().size() == 1) {
+            skippedSendIndex.add(msgIndex.get());
             assert msgJsonObj.containsKey("index");
             return;
         }
@@ -64,6 +65,7 @@ public class PlatformCtxServer extends AbstractCtxServer {
         Message originalMsg = MessageHandler.jsonObject2Message(msgJsonObj);
 
         if (originalMsg == null) {
+            skippedSendIndex.add(msgIndex.get());
             return;
         }
 
@@ -82,9 +84,13 @@ public class PlatformCtxServer extends AbstractCtxServer {
     @Override
     public void run() {
         while(true){
-            if(!ctxFixer.getSendingMsgMap().containsKey(toSendIndex))
+            while(skippedSendIndex.contains(toSendIndex.get())){
+                skippedSendIndex.remove(toSendIndex.get()); // avoid OOM
+                toSendIndex.getAndIncrement();
+            }
+            if(!ctxFixer.getSendingMsgMap().containsKey(toSendIndex.get()))
                 continue;
-            Message sendingMsg = ctxFixer.getSendingMsgMap().get(toSendIndex);
+            Message sendingMsg = ctxFixer.getSendingMsgMap().get(toSendIndex.get());
             Message originalMsg = getOriginalMsg(sendingMsg.getIndex());
             for(AppConfig appConfig : Configuration.getAppsConfig().values()){
                 String appName = appConfig.getAppName();
@@ -99,18 +105,30 @@ public class PlatformCtxServer extends AbstractCtxServer {
                     }
                 }
                 assert sensorPubConfig != null;
-                //System.out.printf("platCtxServer publish %s to {sensor, %d} %n", pubMsgStr, sensorPubConfig.groupId);
+                logger.debug("PlatformCtxServer pub " + pubJSONObj.toJSONString() + " to " + appName + "-CtxServer");
                 publish("sensor", sensorPubConfig.groupId, pubJSONObj.toJSONString());
             }
             serverStatistics.increaseSentMsgNum();
-            ctxFixer.getSendingMsgMap().remove(toSendIndex);
-            originalMsgMap.remove(toSendIndex);
-            toSendIndex++;
+            ctxFixer.getSendingMsgMap().remove(toSendIndex.get());
+            originalMsgMap.remove(toSendIndex.get());
+            toSendIndex.getAndIncrement();
         }
     }
 
     public static Object call(String appName, String cmd) {
-        //TODO
-        return null;
+        if(cmd.equalsIgnoreCase("reset")){
+            logger.debug("CtxServer for " + appName + " resetting");
+            Configuration.getAppsConfig().get(appName).resetCtxServer();
+            logger.debug("CtxServer for " + appName + " restarted");
+            return "CtxServer restarted";
+        }
+        else{
+            //TODO
+            return null;
+        }
+    }
+
+    public AtomicLong getMsgIndex() {
+        return msgIndex;
     }
 }

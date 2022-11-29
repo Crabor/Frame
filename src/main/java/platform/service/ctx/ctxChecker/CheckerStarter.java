@@ -19,8 +19,8 @@ import java.util.*;
 
 
 public class CheckerStarter implements Runnable{
-
-    private static final Log logger = LogFactory.getLog(CheckerStarter.class);
+    private Log logger = LogFactory.getLog(this.getClass());
+    private Thread t;
 
     private AbstractCtxServer ctxServer;
     private ContextPool contextPool;
@@ -113,13 +113,18 @@ public class CheckerStarter implements Runnable{
 
     @Override
     public void run() {
-        logger.info("begin to check contexts");
         while (true) {
+            if(Thread.interrupted()){
+                return;
+            }
             List<ContextChange> changeList = ctxServer.changeBufferConsumer();
-            //System.out.println(changeList);
+            if(changeList == null){
+                return; // changeBufferConsumer is interrupted.
+            }
             while(!changeList.isEmpty()){
                 ContextChange chg = changeList.get(0);
                 changeList.remove(0);
+                //logger.debug(Thread.currentThread().getId() + " " + chg);
                 try {
                     this.scheduler.doSchedule(chg);
                 } catch (Exception e) {
@@ -150,5 +155,18 @@ public class CheckerStarter implements Runnable{
             }
         }
     }
+
+    public void start(){
+        if (t == null) {
+            t = new Thread(this, getClass().getName());
+            t.start();
+        }
+    }
+
+    public void reset(){
+        t.interrupt();
+        while(t.isInterrupted());
+    }
+
 
 }
