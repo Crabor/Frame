@@ -2,6 +2,7 @@ package platform.testTaxi;
 
 import platform.Platform;
 import platform.app.AbstractApp;
+import platform.struct.CmdType;
 import platform.struct.ServiceType;
 
 public class taxiAppOne extends AbstractApp {
@@ -21,7 +22,7 @@ public class taxiAppOne extends AbstractApp {
         logger.debug(appName + " recv " + msg);
         System.out.println(appName + " recv " + msg);
         if(msg.contains("2011-04-08-04:00:00:000")){
-            Platform.call(ServiceType.CTX, "reset");
+            Platform.call(ServiceType.CTX, CmdType.RESET);
         }
     }
 }
