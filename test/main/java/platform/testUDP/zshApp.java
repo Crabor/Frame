@@ -1,11 +1,12 @@
 package platform.testUDP;
 
+import platform.Platform;
 import platform.app.AbstractApp;
 import platform.comm.socket.UDP;
-import platform.struct.Cmd;
-import platform.struct.CmdRet;
-
-import java.net.InetAddress;
+import platform.comm.socket.Cmd;
+import platform.comm.socket.CmdRet;
+import platform.struct.CmdType;
+import platform.struct.ServiceType;
 
 public class zshApp extends AbstractApp {
     @Override
@@ -56,6 +57,5 @@ public class zshApp extends AbstractApp {
         }).start();
 
         //your app
-
     }
 }

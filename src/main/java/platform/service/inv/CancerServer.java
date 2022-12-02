@@ -9,7 +9,7 @@ import platform.service.inv.algorithm.*;
 import platform.service.inv.struct.*;
 import platform.service.inv.struct.inv.InvAbstract;
 import platform.service.inv.struct.trace.Trace;
-import platform.struct.InvGenMode;
+import platform.struct.CmdType;
 import platform.util.Util;
 
 import java.io.File;
@@ -223,7 +223,7 @@ public class CancerServer implements Runnable {
         peCount.pCxtCount++;
     }
 
-    public static Object call(String appName, String cmd) {
+    public static Object call(String appName, CmdType cmd, Object[] args) {
         //TODO
         return null;
     }

@@ -1,12 +1,6 @@
 package platform.comm.socket;
 
 import platform.config.Configuration;
-import platform.struct.Cmd;
-import platform.struct.CmdRet;
-import platform.util.Util;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 public class PlatformUDP {
     public static void send(Cmd cmd) {

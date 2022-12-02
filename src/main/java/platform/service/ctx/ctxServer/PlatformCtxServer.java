@@ -10,6 +10,7 @@ import platform.service.ctx.message.Message;
 import platform.service.ctx.message.MessageHandler;
 import platform.service.ctx.ctxChecker.CheckerStarter;
 import platform.service.ctx.statistics.ServerStatistics;
+import platform.struct.CmdType;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -115,8 +116,8 @@ public class PlatformCtxServer extends AbstractCtxServer {
         }
     }
 
-    public static Object call(String appName, String cmd) {
-        if(cmd.equalsIgnoreCase("reset")){
+    public static Object call(String appName, CmdType cmd, Object[] args) {
+        if(cmd == CmdType.RESET){
             logger.debug("CtxServer for " + appName + " resetting");
             Configuration.getAppsConfig().get(appName).resetCtxServer();
             logger.debug("CtxServer for " + appName + " restarted");

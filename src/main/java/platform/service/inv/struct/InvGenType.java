@@ -1,4 +1,4 @@
-package platform.struct;
+package platform.service.inv.struct;
 
 public enum InvGenType {
     NUMERIC,

@@ -40,6 +40,6 @@ public class DBDriver extends AbstractSubscriber implements Runnable {
 //            e.printStackTrace();
 //        }
         RedisCommands<String, String> sync = commonConn.sync();
-        sync.rpush(channel, msg);
+        sync.rpush("db" + channel, msg);
     }
 }

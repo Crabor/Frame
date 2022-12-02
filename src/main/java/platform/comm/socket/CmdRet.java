@@ -1,16 +1,11 @@
-package platform.struct;
+package platform.comm.socket;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import platform.util.Util;
-
-import java.util.Arrays;
 
 public class CmdRet {
-    private final JSONObject msgObj;
-    private final String msg;
+    private JSONObject msgObj = null;
+    private String msg = null;
     public String cmd;
     public String[] args;
     public String ret;
@@ -19,11 +14,12 @@ public class CmdRet {
     public CmdRet(Cmd cmd, String ret) {
         this.cmd = cmd.cmd;
         this.args = cmd.args;
-        msgObj = new JSONObject(3);
-        msgObj.put("cmd", cmd.cmd);
-        msgObj.put("args", Util.stringArrayToString(cmd.args, " "));
-        msgObj.put("ret", ret);
-        msg = msgObj.toJSONString();
+        this.ret = ret;
+//        msgObj = new JSONObject(3);
+//        msgObj.put("cmd", cmd.cmd);
+//        msgObj.put("args", Util.stringArrayToString(cmd.args, " "));
+//        msgObj.put("ret", ret);
+//        msg = msgObj.toJSONString();
     }
 
     public CmdRet(String json) {
@@ -37,17 +33,24 @@ public class CmdRet {
 
     public String getCmdMsg() {
         JSONObject jo = new JSONObject(2);
-        jo.put("cmd", msgObj.getString("cmd"));
-        jo.put("args", msgObj.getString("args"));
+        jo.put("cmd", cmd);
+        jo.put("args", String.join(" ", args));
         return jo.toJSONString();
     }
 
     public String toJSONString() {
+        if (msg == null) {
+            msgObj = new JSONObject(3);
+            msgObj.put("cmd", cmd);
+            msgObj.put("args", String.join(" ", args));
+            msgObj.put("ret", ret);
+            msg = msgObj.toJSONString();
+        }
         return msg;
     }
 
     @Override
     public String toString() {
-        return msg;
+        return toJSONString();
     }
 }

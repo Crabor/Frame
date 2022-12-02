@@ -8,7 +8,7 @@ import io.lettuce.core.api.sync.RedisCommands;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import platform.config.SubConfig;
-import platform.struct.GrpPrioMode;
+import platform.service.inv.struct.GrpPrioMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;

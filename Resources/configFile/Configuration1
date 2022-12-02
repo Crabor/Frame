@@ -23,7 +23,7 @@
   },
   "AppConfiguration": [
     {
-       "appName": "platform.testUDP.zshApp",
+      "appName": "platform.testUDP.zshApp",
       "subscribe": [
         {
           "channel": "sensor",

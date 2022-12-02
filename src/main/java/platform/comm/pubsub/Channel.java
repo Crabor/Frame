@@ -2,7 +2,7 @@ package platform.comm.pubsub;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import platform.struct.GrpPrioMode;
+import platform.service.inv.struct.GrpPrioMode;
 import reactor.util.annotation.Nullable;
 
 import java.util.*;
