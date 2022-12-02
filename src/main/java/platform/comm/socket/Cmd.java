@@ -1,4 +1,4 @@
-package platform.struct;
+package platform.comm.socket;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -9,18 +9,14 @@ import java.util.Arrays;
 import java.util.Collection;
 
 public class Cmd {
-    private final JSONObject msgObj;
-    private final String msg;
+    private JSONObject msgObj = null;
+    private String msg = null;
     public String cmd;
     public String[] args;
 
     public Cmd(String cmd, String... args) {
         this.cmd = cmd;
         this.args = args;
-        msgObj = new JSONObject(2);
-        msgObj.put("cmd", cmd);
-        msgObj.put("args", Util.stringArrayToString(args, " "));
-        msg = msgObj.toJSONString();
     }
 
     public Cmd(String json) {
@@ -31,11 +27,17 @@ public class Cmd {
     }
 
     public String toJSONString() {
+        if (msg == null) {
+            msgObj = new JSONObject(2);
+            msgObj.put("cmd", cmd);
+            msgObj.put("args", String.join(" ", args));
+            msg = msgObj.toJSONString();
+        }
         return msg;
     }
 
     @Override
     public String toString() {
-        return msg;
+        return toJSONString();
     }
 }

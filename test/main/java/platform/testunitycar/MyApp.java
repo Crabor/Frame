@@ -1,12 +1,6 @@
 package platform.testunitycar;
 
-import com.alibaba.fastjson.JSON;
 import platform.app.AbstractApp;
-import platform.comm.socket.PlatformUDP;
-import platform.struct.Cmd;
-import platform.service.inv.CancerObject;
-import platform.service.inv.struct.CheckInfo;
-import platform.service.inv.struct.CheckState;
 
 
 public class MyApp extends AbstractApp {
@@ -14,6 +8,9 @@ public class MyApp extends AbstractApp {
     @Override
     protected void customizeCtxServer() {
         config.registerSensor("left");
+        config.registerSensor("right");
+        config.registerSensor("front");
+        config.registerSensor("back");
     }
 
     @Override
@@ -30,8 +27,8 @@ public class MyApp extends AbstractApp {
 //            PlatformUDP.send(ySpeed);
 //        }
 
-        Cmd xSpeed = new Cmd("actuator_set", "xSpeed", "5");
-        PlatformUDP.send(xSpeed);
-        logger.debug(xSpeed);
+//        Cmd xSpeed = new Cmd("actuator_set", "xSpeed", "5");
+//        PlatformUDP.send(xSpeed);
+//        logger.debug(xSpeed);
     }
 }

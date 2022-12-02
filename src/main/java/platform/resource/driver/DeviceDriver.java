@@ -2,10 +2,10 @@ package platform.resource.driver;
 
 import com.alibaba.fastjson.JSONObject;
 import platform.comm.socket.PlatformUDP;
-import platform.struct.Cmd;
+import platform.comm.socket.Cmd;
 import platform.config.Configuration;
 import platform.comm.pubsub.AbstractSubscriber;
-import platform.struct.CmdRet;
+import platform.comm.socket.CmdRet;
 import platform.util.Util;
 
 import static java.lang.Thread.sleep;

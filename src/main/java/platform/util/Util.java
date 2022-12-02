@@ -1,7 +1,7 @@
 package platform.util;
 
 import com.alibaba.fastjson.JSONObject;
-import platform.struct.CmdRet;
+import platform.comm.socket.CmdRet;
 import reactor.util.function.Tuple3;
 import reactor.util.function.Tuples;
 
@@ -174,6 +174,32 @@ public class Util {
         }
         return jo.toJSONString();
     }
+
+//    public static CmdType parseString(String cmdTypeString) {
+//        CmdType ret = null;
+//        if (cmdTypeString.equalsIgnoreCase("SOCKET_SENSOR_ON")) {
+//            ret = CmdType.SOCKET_SENSOR_ON;
+//        } else if (cmdTypeString.equalsIgnoreCase("SOCKET_SENSOR_OFF")) {
+//            ret = CmdType.SOCKET_SENSOR_OFF;
+//        } else if (cmdTypeString.equalsIgnoreCase("SOCKET_SENSOR_ALIVE")) {
+//            ret = CmdType.SOCKET_SENSOR_ALIVE;
+//        } else if (cmdTypeString.equalsIgnoreCase("SOCKET_SENSOR_GET")) {
+//            ret = CmdType.SOCKET_SENSOR_GET;
+//        } else if (cmdTypeString.equalsIgnoreCase("SOCKET_ACTUATOR_ON")) {
+//            ret = CmdType.SOCKET_ACTUATOR_ON;
+//        } else if (cmdTypeString.equalsIgnoreCase("SOCKET_ACTUATOR_OFF")) {
+//            ret = CmdType.SOCKET_ACTUATOR_OFF;
+//        } else if (cmdTypeString.equalsIgnoreCase("SOCKET_ACTUATOR_ALIVE")) {
+//            ret = CmdType.SOCKET_ACTUATOR_ALIVE;
+//        } else if (cmdTypeString.equalsIgnoreCase("SOCKET_ACTUATOR_SET")) {
+//            ret = CmdType.SOCKET_ACTUATOR_SET;
+//        } else if (cmdTypeString.equalsIgnoreCase("SOCKET_CHANNEL_MSG")) {
+//            ret = CmdType.SOCKET_CHANNEL_MSG;
+//        } else if (cmdTypeString.equalsIgnoreCase("CTX_RESET")) {
+//            ret = CmdType.CTX_RESET;
+//        }
+//        return ret;
+//    }
 
     public static void main(String[] args) {
 

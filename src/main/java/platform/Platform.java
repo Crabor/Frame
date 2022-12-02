@@ -11,6 +11,7 @@ import platform.comm.pubsub.AbstractSubscriber;
 import io.lettuce.core.RedisClient;
 import platform.service.ctx.ctxServer.PlatformCtxServer;
 import platform.service.inv.CancerServer;
+import platform.struct.CmdType;
 import platform.struct.ServiceType;
 import platform.util.Util;
 import platform.service.SerMgrThread;
@@ -100,21 +101,21 @@ public class Platform {
         Subscribe.Close();
     }
 
-    public static Object call(String appName, ServiceType type, String cmd) {
+    public static Object call(String appName, ServiceType type, CmdType cmd, Object[] args) {
         Object ret = null;
         switch (type) {
             case CTX:
-                ret = PlatformCtxServer.call(appName, cmd);
+                ret = PlatformCtxServer.call(appName, cmd, args);
                 break;
             case INV:
-                ret = CancerServer.call(appName, cmd);
+                ret = CancerServer.call(appName, cmd, args);
                 break;
         }
         return ret;
     }
 
-    public static Object call(ServiceType type, String cmd) {
+    public static Object call(ServiceType type, CmdType cmd, Object... args) {
         String appName = Thread.currentThread().getStackTrace()[2].getClassName();
-        return call(appName, type, cmd);
+        return call(appName, type, cmd, args);
     }
 }

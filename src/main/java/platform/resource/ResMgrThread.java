@@ -4,7 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import platform.Platform;
 import platform.comm.socket.PlatformUDP;
-import platform.struct.Cmd;
+import platform.comm.socket.Cmd;
 import platform.config.*;
 import platform.resource.driver.DeviceDriver;
 import platform.resource.driver.DBDriver;

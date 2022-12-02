@@ -2,11 +2,12 @@ package platform.config;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import platform.service.inv.struct.InvGenMode;
+import platform.service.inv.struct.InvGenType;
 import platform.service.inv.struct.trace.Trace;
 import platform.service.inv.struct.trace.TraceCSV;
 import platform.service.inv.struct.trace.TraceDIG;
 import platform.service.inv.struct.trace.TraceDaikon;
-import platform.struct.*;
 
 import java.util.ArrayList;
 import java.util.List;
