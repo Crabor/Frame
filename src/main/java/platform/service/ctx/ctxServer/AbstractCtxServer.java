@@ -33,6 +33,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -42,10 +44,9 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
     protected HashMap<String, Pattern> patternMap;
     protected HashMap<String, Rule> ruleMap;
     protected HashMap<String, Resolver> resolverMap;
-    protected final Map<Long, Message> originalMsgMap = new ConcurrentHashMap<>();
+    protected final ConcurrentHashMap<Long, Message> originalMsgMap = new ConcurrentHashMap<>();
 
-    protected AtomicLong toSendIndex = new AtomicLong(0L);
-    protected Set<Long> skippedSendIndex = ConcurrentHashMap.newKeySet();
+    protected final ConcurrentLinkedQueue<Long> sendIndexQue = new ConcurrentLinkedQueue<>();
 
     protected ChgGenerator chgGenerator;
 
@@ -348,6 +349,10 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
 
     protected Message getOriginalMsg(long index){
         return this.originalMsgMap.get(index);
+    }
+
+    protected void addSendIndex(long index){
+        this.sendIndexQue.add(index);
     }
 
     //chgGenerator related

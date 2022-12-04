@@ -12,8 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CtxFixer {
     private final AbstractCtxServer ctxServer;
     private final HashMap<String, Set<String>> ctxId2IncRuleIdSet;
-    private final Map<Long, Message> fixingMsgMap;
-    private final Map<Long, Message> sendingMsgMap;
+    private final TreeMap<Long, Message> fixingMsgMap;
+    private final ConcurrentHashMap<Long, Message> sendingMsgMap;
 
     public CtxFixer(AbstractCtxServer ctxServer) {
         this.ctxServer = ctxServer;
@@ -91,7 +91,7 @@ public class CtxFixer {
         return originalMsgContextIds.containsAll(fixingMsgContextIds) && fixingMsgContextIds.containsAll(originalMsgContextIds);
     }
 
-    public Map<Long, Message> getSendingMsgMap() {
+    public ConcurrentHashMap<Long, Message> getSendingMsgMap() {
         return sendingMsgMap;
     }
 

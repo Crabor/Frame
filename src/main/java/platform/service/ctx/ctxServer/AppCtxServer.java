@@ -43,12 +43,12 @@ public class AppCtxServer extends AbstractCtxServer{
             buildRules(appConfig.getRuleFile());
             // 清除旧数据
             this.originalMsgMap.clear();
+            this.sendIndexQue.clear();
             this.changeBuffer.clear();
             this.ctxFixer.reset();
 
             // reset后从validMsgIndexLimit开始接收
             this.validMsgIndexLimit = PlatformCtxServer.getInstance().getMsgIndex().get() + 1L;
-            toSendIndex.set(this.validMsgIndexLimit);
             // 重启服务
             this.restart();
             this.chgGenerator.restart();
@@ -76,7 +76,6 @@ public class AppCtxServer extends AbstractCtxServer{
         long msgIndex = Long.parseLong(msgJsonObj.getString("index"));
         //如果无法获取到锁，说明正在reset
         if(!resetLock.tryLock()){
-            skippedSendIndex.add(msgIndex);
             logger.debug(appConfig.getAppName() + "-CtxServer ignores: " + msg);
             return;
         }
@@ -84,7 +83,6 @@ public class AppCtxServer extends AbstractCtxServer{
         try{
             //判断是否是reset之前的消息
             if(msgIndex < validMsgIndexLimit) {
-                skippedSendIndex.add(msgIndex);
                 logger.debug(appConfig.getAppName() + "-CtxServer ignores: " + msg);
                 return;
             }
@@ -95,11 +93,11 @@ public class AppCtxServer extends AbstractCtxServer{
             Message originalMsg = MessageHandler.jsonObject2Message(msgJsonObj);
 
             if(originalMsg == null){
-                skippedSendIndex.add(msgIndex);
                 return;
             }
 
             addOriginalMsg(originalMsg);
+            addSendIndex(originalMsg.getIndex());
             serverStatistics.increaseReceivedMsgNum();
             if(appConfig.isCtxServerOn()){
                 chgGenerator.generateChanges(originalMsg.getContextMap());
@@ -120,14 +118,13 @@ public class AppCtxServer extends AbstractCtxServer{
             if(Thread.interrupted()){
                 return;
             }
-            while(skippedSendIndex.contains(toSendIndex.get())){
-                skippedSendIndex.remove(toSendIndex.get()); // avoid OOM
-                toSendIndex.getAndIncrement();
-            }
-            if(!ctxFixer.getSendingMsgMap().containsKey(toSendIndex.get()))
+            if(sendIndexQue.isEmpty())
                 continue;
-            Message sendingMsg = ctxFixer.getSendingMsgMap().get(toSendIndex.get());
-            Message originalMsg = getOriginalMsg(sendingMsg.getIndex());
+            long sendIndex = sendIndexQue.peek();
+            if(!ctxFixer.getSendingMsgMap().containsKey(sendIndex))
+                continue;
+            Message sendingMsg = ctxFixer.getSendingMsgMap().get(sendIndex);
+            Message originalMsg = getOriginalMsg(sendIndex);
             //发送消息
             JSONObject pubJSONObj = MessageHandler.buildPubJSONObjWithoutIndex(sendingMsg, originalMsg.getSensorInfos(appConfig.getAppName()));
             //only pub non-null context Msg
@@ -144,10 +141,13 @@ public class AppCtxServer extends AbstractCtxServer{
                 publish("sensor", sensorPubConfig.groupId, sensorPubConfig.priorityId, pubJSONObj.toJSONString());
                 serverStatistics.increaseSentMsgNum();
             }
+            else{
+                logger.debug(appConfig.getAppName() + "-CtxServer drop incomplete msg " + pubJSONObj.toJSONString());
+            }
 
-            ctxFixer.getSendingMsgMap().remove(toSendIndex.get());
-            originalMsgMap.remove(toSendIndex.get());
-            toSendIndex.getAndIncrement();
+            ctxFixer.getSendingMsgMap().remove(sendIndex);
+            originalMsgMap.remove(sendIndex);
+            sendIndexQue.poll();
         }
     }
 }

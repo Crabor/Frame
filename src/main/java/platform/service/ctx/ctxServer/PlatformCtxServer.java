@@ -58,7 +58,6 @@ public class PlatformCtxServer extends AbstractCtxServer {
         filterMessage(msgJsonObj);
 
         if (msgJsonObj.keySet().size() == 1) {
-            skippedSendIndex.add(msgIndex.get());
             assert msgJsonObj.containsKey("index");
             return;
         }
@@ -66,11 +65,11 @@ public class PlatformCtxServer extends AbstractCtxServer {
         Message originalMsg = MessageHandler.jsonObject2Message(msgJsonObj);
 
         if (originalMsg == null) {
-            skippedSendIndex.add(msgIndex.get());
             return;
         }
 
         addOriginalMsg(originalMsg);
+        addSendIndex(originalMsg.getIndex());
         serverStatistics.increaseReceivedMsgNum();
 
         if (CtxServerConfig.getInstance().isServerOn()) {
@@ -85,14 +84,13 @@ public class PlatformCtxServer extends AbstractCtxServer {
     @Override
     public void run() {
         while(true){
-            while(skippedSendIndex.contains(toSendIndex.get())){
-                skippedSendIndex.remove(toSendIndex.get()); // avoid OOM
-                toSendIndex.getAndIncrement();
-            }
-            if(!ctxFixer.getSendingMsgMap().containsKey(toSendIndex.get()))
+            if(sendIndexQue.isEmpty())
                 continue;
-            Message sendingMsg = ctxFixer.getSendingMsgMap().get(toSendIndex.get());
-            Message originalMsg = getOriginalMsg(sendingMsg.getIndex());
+            long sendIndex = sendIndexQue.peek();
+            if(!ctxFixer.getSendingMsgMap().containsKey(sendIndex))
+                continue;
+            Message sendingMsg = ctxFixer.getSendingMsgMap().get(sendIndex);
+            Message originalMsg = getOriginalMsg(sendIndex);
             for(AppConfig appConfig : Configuration.getAppsConfig().values()){
                 String appName = appConfig.getAppName();
                 Set<String> sensorInfos = originalMsg.getSensorInfos(appName);
@@ -110,9 +108,10 @@ public class PlatformCtxServer extends AbstractCtxServer {
                 publish("sensor", sensorPubConfig.groupId, pubJSONObj.toJSONString());
             }
             serverStatistics.increaseSentMsgNum();
-            ctxFixer.getSendingMsgMap().remove(toSendIndex.get());
-            originalMsgMap.remove(toSendIndex.get());
-            toSendIndex.getAndIncrement();
+
+            ctxFixer.getSendingMsgMap().remove(sendIndex);
+            originalMsgMap.remove(sendIndex);
+            sendIndexQue.poll();
         }
     }
 

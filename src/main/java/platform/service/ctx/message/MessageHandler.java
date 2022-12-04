@@ -77,22 +77,22 @@ public class MessageHandler {
         return retContext;
     }
 
-    public static JSONObject buildPubJSONObjWithIndex(final Message fixingMsg, final Set<String> sensorInfos){
+    public static JSONObject buildPubJSONObjWithIndex(final Message sendingMsg, final Set<String> sensorInfos){
         JSONObject pubMsgJsonObj = new JSONObject();
-        long index = fixingMsg.getIndex();
+        long index = sendingMsg.getIndex();
         pubMsgJsonObj.put("index", String.valueOf(index));
         for(String sensorName : sensorInfos){
-            Context context = fixingMsg.getContextMap().get(sensorName + "_" + index);
+            Context context = sendingMsg.getContextMap().get(sensorName + "_" + index);
             pubMsgJsonObj.put(sensorName, context == null ? "" : context.toMsgString());
         }
         return pubMsgJsonObj;
     }
 
-    public static JSONObject buildPubJSONObjWithoutIndex(final Message fixingMsg, final Set<String> sensorInfos){
+    public static JSONObject buildPubJSONObjWithoutIndex(final Message sendingMsg, final Set<String> sensorInfos){
         JSONObject pubMsgJsonObj = new JSONObject();
-        long index = fixingMsg.getIndex();
+        long index = sendingMsg.getIndex();
         for(String sensorName : sensorInfos){
-            Context context = fixingMsg.getContextMap().get(sensorName + "_" + index);
+            Context context = sendingMsg.getContextMap().get(sensorName + "_" + index);
             pubMsgJsonObj.put(sensorName, context == null ? "" : context.toMsgString());
         }
         return pubMsgJsonObj;
