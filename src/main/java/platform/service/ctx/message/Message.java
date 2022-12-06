@@ -9,9 +9,9 @@ import java.util.Set;
 
 public class Message {
     private final long index;
-    private final Map<String, Context> contextMap;
+    private final HashMap<String, Context> contextMap;
 
-    private final Map<String, Set<String>> appSensorInfos;
+    private final HashMap<String, HashSet<String>> appSensorInfos;
 
     public Message(long index) {
         this.index = index;
@@ -33,15 +33,15 @@ public class Message {
         appSensorInfos.get(appName).add(sensorName);
     }
 
-    public Set<String> getSensorInfos(String appName){
+    public HashSet<String> getSensorInfos(String appName){
         return appSensorInfos.get(appName);
     }
 
-    public Map<String, Set<String>> getAppSensorInfos() {
+    public HashMap<String, HashSet<String>> getAppSensorInfos() {
         return appSensorInfos;
     }
 
-    public Map<String, Context> getContextMap() {
+    public HashMap<String, Context> getContextMap() {
         return contextMap;
     }
 
