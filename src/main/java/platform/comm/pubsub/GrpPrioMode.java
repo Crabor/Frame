@@ -1,4 +1,4 @@
-package platform.service.inv.struct;
+package platform.comm.pubsub;
 
 public class GrpPrioMode {
     public int groupId;

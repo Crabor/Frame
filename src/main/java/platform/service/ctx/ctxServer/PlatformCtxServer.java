@@ -115,7 +115,7 @@ public class PlatformCtxServer extends AbstractCtxServer {
         }
     }
 
-    public static Object call(String appName, CmdType cmd, Object[] args) {
+    public static Object call(String appName, CmdType cmd, Object... args) {
         if(cmd == CmdType.RESET){
             logger.debug("CtxServer for " + appName + " resetting");
             Configuration.getAppsConfig().get(appName).resetCtxServer();

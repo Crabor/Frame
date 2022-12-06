@@ -8,7 +8,6 @@ import io.lettuce.core.api.sync.RedisCommands;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import platform.config.SubConfig;
-import platform.service.inv.struct.GrpPrioMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,30 +102,30 @@ public class Subscribe implements Runnable {
 
     @Override
     public void run() {
-        RedisAsyncCommands<String, String> asyncCommands = conn.async();
-        RedisCommands<String, String> syncCommands = conn.sync();
-        while (true) {
-            try {
-                if (mode == -1) {
-                    LockSupport.park();
-                    asyncCommands.brpop(0, name).thenAccept(kv -> asyncCommands.publish(kv.getKey(), kv.getValue()));
-                } else {
-                    if (mode != 0) {
-                        Thread.sleep(mode);
-                    }
-                    // TODO: 等待10s可优化
-                    long timeOut = 10;
-                    KeyValue<String, String> kv = syncCommands.brpop(timeOut, name);
-                    if (kv != null) {
-                        syncCommands.publish(name, kv.getValue());
-                    } else {
-                        logger.warn("FIFO pipeline \"" + name + "\" waited for " + timeOut + " seconds without any data");
-                    }
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+//        RedisAsyncCommands<String, String> asyncCommands = conn.async();
+//        RedisCommands<String, String> syncCommands = conn.sync();
+//        while (true) {
+//            try {
+//                if (mode == -1) {
+//                    LockSupport.park();
+//                    asyncCommands.brpop(0, name).thenAccept(kv -> asyncCommands.publish(kv.getKey(), kv.getValue()));
+//                } else {
+//                    if (mode != 0) {
+//                        Thread.sleep(mode);
+//                    }
+//                    // TODO: 等待10s可优化
+//                    long timeOut = 10;
+//                    KeyValue<String, String> kv = syncCommands.brpop(timeOut, name);
+//                    if (kv != null) {
+//                        syncCommands.publish(name, kv.getValue());
+//                    } else {
+//                        logger.warn("FIFO pipeline \"" + name + "\" waited for " + timeOut + " seconds without any data");
+//                    }
+//                }
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     public Thread getThread() {

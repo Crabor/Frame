@@ -50,7 +50,14 @@ public class Publisher {
                 maxPrio = Math.max(maxPrio, prio);
             }
             if (maxPrio != Integer.MIN_VALUE) {
-                commands.lpush(
+//                commands.lpush(
+//                        String.join(
+//                                "-",
+//                                channel.getName(),
+//                                String.valueOf(groupId),
+//                                String.valueOf(maxPrio)),
+//                        message);
+                commands.publish(
                         String.join(
                                 "-",
                                 channel.getName(),

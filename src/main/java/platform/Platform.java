@@ -101,7 +101,7 @@ public class Platform {
         Subscribe.Close();
     }
 
-    public static Object call(String appName, ServiceType type, CmdType cmd, Object[] args) {
+    public static Object call(String appName, ServiceType type, CmdType cmd, Object... args) {
         Object ret = null;
         switch (type) {
             case CTX:

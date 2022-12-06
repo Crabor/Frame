@@ -223,7 +223,7 @@ public class CancerServer implements Runnable {
         peCount.pCxtCount++;
     }
 
-    public static Object call(String appName, CmdType cmd, Object[] args) {
+    public static Object call(String appName, CmdType cmd, Object... args) {
         //TODO
         return null;
     }
