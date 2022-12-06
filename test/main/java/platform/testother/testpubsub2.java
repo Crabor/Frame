@@ -7,7 +7,7 @@ import platform.comm.pubsub.AbstractSubscriber;
 import platform.comm.pubsub.Channel;
 import platform.comm.pubsub.Publisher;
 import platform.comm.pubsub.Subscribe;
-import platform.service.inv.struct.GrpPrioMode;
+import platform.comm.pubsub.GrpPrioMode;
 
 public class testpubsub2 {
     static Log logger = LogFactory.getLog(testpubsub2.class);

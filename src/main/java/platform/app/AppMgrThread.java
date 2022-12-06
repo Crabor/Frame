@@ -4,6 +4,8 @@ import platform.Platform;
 import platform.comm.pubsub.AbstractSubscriber;
 import platform.config.AppConfig;
 import platform.config.Configuration;
+import platform.struct.CmdType;
+import platform.struct.ServiceType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +40,12 @@ public class AppMgrThread implements Runnable {
             try {
                 Object app = Class.forName(appConfig.getAppName()).newInstance();
                 apps.add((App) app);
-                ((AbstractApp) app).start();
                 appConfig.getSubConfigs().forEach(config -> {
                     ((AbstractSubscriber) app).subscribe(config);
                 });
+                Platform.call(appConfig.getAppName(), ServiceType.CTX, CmdType.START);
+                Platform.call(appConfig.getAppName(), ServiceType.INV, CmdType.START);
+                ((AbstractApp) app).start();
             } catch (InstantiationException |
                     IllegalAccessException |
                     ClassNotFoundException e) {

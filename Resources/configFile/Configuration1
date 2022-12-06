@@ -23,7 +23,7 @@
   },
   "AppConfiguration": [
     {
-      "appName": "platform.testUDP.zshApp",
+      "appName": "platform.testunitycar.MyApp",
       "subscribe": [
         {
           "channel": "sensor",
@@ -62,19 +62,27 @@
     "SensorConfiguration": [
       {
         "SensorName": "front",
+        "SensorType": "Double",
         "fieldNames": "value",
+        "valueFreq": 1,
       },
       {
         "SensorName": "back",
+        "SensorType": "Double",
         "fieldNames": "value",
+        "valueFreq": 1,
       },
       {
         "SensorName": "left",
+        "SensorType": "Double",
         "fieldNames": "value",
+        "valueFreq": 1,
       },
       {
         "SensorName": "right",
+        "SensorType": "Double",
         "fieldNames": "value",
+        "valueFreq": 1,
       },
     ],
     "ActorConfiguration": [

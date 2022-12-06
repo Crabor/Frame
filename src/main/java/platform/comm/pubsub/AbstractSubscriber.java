@@ -4,7 +4,6 @@ import io.lettuce.core.api.StatefulRedisConnection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import platform.config.SubConfig;
-import platform.service.inv.struct.GrpPrioMode;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.pubsub.RedisPubSubListener;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
