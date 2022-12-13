@@ -1,6 +1,5 @@
 package platform;
 
-import platform.comm.socket.UDP;
 import platform.config.Configuration;
 import platform.app.AppMgrThread;
 import platform.comm.pubsub.Channel;
@@ -101,7 +100,7 @@ public class Platform {
         Subscribe.Close();
     }
 
-    public static Object call(String appName, ServiceType type, CmdType cmd, Object... args) {
+    public static Object sysCall(String appName, ServiceType type, CmdType cmd, Object... args) {
         Object ret = null;
         switch (type) {
             case CTX:
@@ -116,6 +115,6 @@ public class Platform {
 
     public static Object call(ServiceType type, CmdType cmd, Object... args) {
         String appName = Thread.currentThread().getStackTrace()[2].getClassName();
-        return call(appName, type, cmd, args);
+        return sysCall(appName, type, cmd, args);
     }
 }

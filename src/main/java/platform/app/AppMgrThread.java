@@ -43,8 +43,8 @@ public class AppMgrThread implements Runnable {
                 appConfig.getSubConfigs().forEach(config -> {
                     ((AbstractSubscriber) app).subscribe(config);
                 });
-                Platform.call(appConfig.getAppName(), ServiceType.CTX, CmdType.START);
-                Platform.call(appConfig.getAppName(), ServiceType.INV, CmdType.START);
+                Platform.sysCall(appConfig.getAppName(), ServiceType.CTX, CmdType.START);
+                Platform.sysCall(appConfig.getAppName(), ServiceType.INV, CmdType.START);
                 ((AbstractApp) app).start();
             } catch (InstantiationException |
                     IllegalAccessException |
