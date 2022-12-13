@@ -125,7 +125,7 @@ public class ResMgrThread implements Runnable {
 //            config.setAliveFreq(2);
 //        });
 
-        while (true);
+//        while (true);
     }
 
     public DBDriver getDBDriver() {
