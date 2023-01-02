@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 
+
 <rules>
 
     <rule>
@@ -15,18 +16,10 @@
             </forall>
         </formula>
         <resovler>
-            <type>fix</type> <!-- drop / fix -->
-            <variable>v1</variable>
-            <fixingPairList> <!-- 可选项 -->
-                <fixingPair>
-                    <field>taxiId</field>
-                    <value>B154Z1</value>
-                </fixingPair>
-                <fixingPair>
-                    <field>status</field>
-                    <value>0</value>
-                </fixingPair>
-            </fixingPairList>
+            <strategy>drop-latest</strategy> <!--drop-latest, drop-all, customized-->
+            <group>0,1</group> <!-- some integers split by comma -->
+            <priority>0</priority> <!-- an int value, the less, the more prior -->
+            <!--customized tag: <functionName> </functionName> -->
         </resovler>
     </rule>
 

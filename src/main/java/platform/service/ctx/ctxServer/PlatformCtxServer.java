@@ -7,6 +7,7 @@ import platform.config.AppConfig;
 import platform.config.Configuration;
 import platform.config.CtxServerConfig;
 import platform.config.SubConfig;
+import platform.service.ctx.ctxChecker.context.ContextChange;
 import platform.service.ctx.message.Message;
 import platform.service.ctx.message.MessageHandler;
 import platform.service.ctx.ctxChecker.CheckerStarter;
@@ -40,12 +41,10 @@ public class PlatformCtxServer extends AbstractCtxServer {
     @Override
     public void init() {
         buildPatterns(CtxServerConfig.getInstance().getBasePatternFile(), CtxServerConfig.getInstance().getBaseMfuncFile());
-        buildRules(CtxServerConfig.getInstance().getBaseRuleFile());
+        buildRules(CtxServerConfig.getInstance().getBaseRuleFile(), null); //only drop-latest for built-in rules
         this.chgGenerator = new ChgGenerator(PlatformCtxServer.getInstance());
-        this.chgGenerator.start();
-        this.ctxFixer = new CtxFixer(PlatformCtxServer.getInstance());
         this.checker = new CheckerStarter(PlatformCtxServer.getInstance(), CtxServerConfig.getInstance().getBaseBfuncFile(), CtxServerConfig.getInstance().getCtxValidator());
-        this.checker.start();
+        this.ctxFixer = new CtxFixer(PlatformCtxServer.getInstance());
     }
 
     @Override
@@ -75,7 +74,8 @@ public class PlatformCtxServer extends AbstractCtxServer {
         serverStatistics.increaseReceivedMsgNum();
 
         if (CtxServerConfig.getInstance().isServerOn()) {
-            chgGenerator.generateChanges(originalMsg.getContextMap());
+            List<Map.Entry<List<ContextChange>, ChgListType>> changesList = chgGenerator.generateChanges(originalMsg.getContextMap());
+            checker.check(changesList);
         } else {
             for (String contextId : originalMsg.getContextMap().keySet()) {
                 ctxFixer.addFixedContext(contextId, MessageHandler.cloneContext(originalMsg.getContextMap().get(contextId)));

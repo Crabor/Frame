@@ -1,3 +1,3 @@
 package platform.service.ctx.rule.resolver;
 
-public enum ResolverType { drop,fix }
+public enum ResolverType {INTIME, DELAY}

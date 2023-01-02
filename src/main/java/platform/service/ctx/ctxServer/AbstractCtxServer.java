@@ -14,8 +14,7 @@ import platform.service.ctx.pattern.matcher.PrimaryKeyMatcher;
 import platform.service.ctx.pattern.Pattern;
 import platform.service.ctx.pattern.types.DataSourceType;
 import platform.service.ctx.pattern.types.FreshnessType;
-import platform.service.ctx.rule.resolver.Resolver;
-import platform.service.ctx.rule.resolver.ResolverType;
+import platform.service.ctx.rule.resolver.*;
 import platform.service.ctx.rule.Rule;
 import platform.service.ctx.ctxChecker.constraint.formulas.*;
 import platform.service.ctx.ctxChecker.constraint.runtime.RuntimeNode;
@@ -31,16 +30,17 @@ import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
+
 
 
 public abstract class AbstractCtxServer extends AbstractSubscriber implements Runnable{
     protected Thread t;
     protected HashMap<String, Pattern> patternMap;
     protected HashMap<String, Rule> ruleMap;
-    protected HashMap<String, Resolver> resolverMap;
+    protected HashMap<String, AbstractResolver> resolverMap;
+    protected ResolverType resolverType = ResolverType.INTIME;
+
     protected final ConcurrentHashMap<Long, Message> originalMsgMap = new ConcurrentHashMap<>();
 
     protected final ConcurrentLinkedQueue<Long> sendIndexQue = new ConcurrentLinkedQueue<>();
@@ -48,8 +48,6 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
     protected ChgGenerator chgGenerator;
 
     protected CheckerStarter checker;
-
-    protected final LinkedBlockingQueue<ContextChange> changeBuffer = new LinkedBlockingQueue<>();
 
     protected CtxFixer ctxFixer;
 
@@ -159,11 +157,12 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
     }
 
     //rule related
-    public void buildRules(String ruleFile){
+    public void buildRules(String ruleFile, String rfuncFile){
         if(ruleFile == null || ruleFile.equals("")){
             return;
         }
 
+        Object rfuncInstance = loadRfuncFile(rfuncFile);
         try {
             SAXReader saxReader = new SAXReader();
             Document document = null;
@@ -178,25 +177,42 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
                 // formula
                 assert eLabelList.get(1).getName().equals("formula");
                 Element eFormula =  eLabelList.get(1).elements().get(0);
-                newRule.setFormula(resolveFormula(eFormula, newRule.getVarPatternMap(), newRule.getPatToFormula(), newRule.getPatToRuntimeNode(), 0));
+                newRule.setFormula(buildFormula(eFormula, newRule.getVarPatternMap(), newRule.getPatToFormula(), newRule.getPatToRuntimeNode(), 0));
                 setPatWithDepth(newRule.getFormula(), newRule.getPatToDepth(), newRule.getDepthToPat());
                 ruleMap.put(newRule.getRule_id(), newRule);
                 // resolver
-                resolverMap.put(newRule.getRule_id(), buildResolver(eLabelList.get(2).elements()));
+                resolverMap.put(newRule.getRule_id(), buildResolver(eLabelList.get(2).elements(), rfuncInstance));
             }
         } catch (DocumentException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private Formula resolveFormula(Element eFormula, Map<String, String> varPatternMap, Map<String, Formula> patToFormula,
-                                   Map<String, Set<RuntimeNode>> patToRunTimeNode, int depth){
+    private Object loadRfuncFile(String rfuncFile){
+        if(rfuncFile == null || rfuncFile.equals("")){
+            return null;
+        }
+        Object rfuncInstance;
+        Path rfuncPath = Paths.get(rfuncFile).toAbsolutePath();
+        try (URLClassLoader classLoader = new URLClassLoader(new URL[]{rfuncPath.getParent().toFile().toURI().toURL()})) {
+            Class<?> clazz = classLoader.loadClass(rfuncPath.getFileName().toString().split("\\.")[0]);
+            Constructor<?> constructor = clazz.getConstructor();
+            rfuncInstance = constructor.newInstance();
+        } catch (IOException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
+                 InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return rfuncInstance;
+    }
+
+    private Formula buildFormula(Element eFormula, Map<String, String> varPatternMap, Map<String, Formula> patToFormula,
+                                 Map<String, Set<RuntimeNode>> patToRunTimeNode, int depth){
         Formula retformula = null;
         switch (eFormula.getName()){
             case "forall":{
                 FForall tempforall = new FForall(eFormula.attributeValue("var"), eFormula.attributeValue("in"));
                 // forall has only one kid
-                tempforall.setSubformula(resolveFormula(eFormula.elements().get(0), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
+                tempforall.setSubformula(buildFormula(eFormula.elements().get(0), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
                 varPatternMap.put(eFormula.attributeValue("var"), eFormula.attributeValue("in"));
                 patToFormula.put(eFormula.attributeValue("in"), tempforall);
                 patToRunTimeNode.put(eFormula.attributeValue("in"), new HashSet<>());
@@ -206,7 +222,7 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
             case "exists":{
                 FExists tempexists = new FExists(eFormula.attributeValue("var"), eFormula.attributeValue("in"));
                 // exists has only one kid
-                tempexists.setSubformula(resolveFormula(eFormula.elements().get(0), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
+                tempexists.setSubformula(buildFormula(eFormula.elements().get(0), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
                 varPatternMap.put(eFormula.attributeValue("var"), eFormula.attributeValue("in"));
                 patToFormula.put(eFormula.attributeValue("in"), tempexists);
                 patToRunTimeNode.put(eFormula.attributeValue("in"), new HashSet<>());
@@ -216,31 +232,31 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
             case "and":{
                 FAnd tempand = new FAnd();
                 // and has two kids
-                tempand.replaceSubformula(0, resolveFormula(eFormula.elements().get(0), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
-                tempand.replaceSubformula(1, resolveFormula(eFormula.elements().get(1), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
+                tempand.replaceSubformula(0, buildFormula(eFormula.elements().get(0), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
+                tempand.replaceSubformula(1, buildFormula(eFormula.elements().get(1), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
                 retformula = tempand;
                 break;
             }
             case "or" :{
                 FOr tempor = new FOr();
                 // or has two kids
-                tempor.replaceSubformula(0, resolveFormula(eFormula.elements().get(0), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
-                tempor.replaceSubformula(1, resolveFormula(eFormula.elements().get(1), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
+                tempor.replaceSubformula(0, buildFormula(eFormula.elements().get(0), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
+                tempor.replaceSubformula(1, buildFormula(eFormula.elements().get(1), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
                 retformula = tempor;
                 break;
             }
             case "implies" :{
                 FImplies tempimplies = new FImplies();
                 // implies has two kids
-                tempimplies.replaceSubformula(0, resolveFormula(eFormula.elements().get(0), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
-                tempimplies.replaceSubformula(1, resolveFormula(eFormula.elements().get(1), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
+                tempimplies.replaceSubformula(0, buildFormula(eFormula.elements().get(0), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
+                tempimplies.replaceSubformula(1, buildFormula(eFormula.elements().get(1), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
                 retformula = tempimplies;
                 break;
             }
             case "not" :{
                 FNot tempnot = new FNot();
                 // not has only one kid
-                tempnot.setSubformula(resolveFormula(eFormula.elements().get(0), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
+                tempnot.setSubformula(buildFormula(eFormula.elements().get(0), varPatternMap, patToFormula, patToRunTimeNode, depth + 1));
                 retformula = tempnot;
                 break;
             }
@@ -296,34 +312,55 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
         }
     }
 
-    private Resolver buildResolver(List<Element> resolverElements){
-        Resolver resolver = new Resolver();
-        //type
-        assert resolverElements.get(0).getName().equals("type");
-        resolver.setResolverType(ResolverType.valueOf(resolverElements.get(0).getText()));
-        //variable
-        assert resolverElements.get(1).getName().equals("variable");
-        resolver.setVariable(resolverElements.get(1).getText());
-        //fixingPairList
-        if(resolverElements.size() == 3){
-            assert resolverElements.get(2).getName().equals("fixingPairList");
-            List<Element> fixingPairElements = resolverElements.get(2).elements();
-            for(Element fixingPairElement : fixingPairElements){
-                assert fixingPairElement.getName().equals("fixingPair");
-                assert fixingPairElement.elements().get(0).getName().equals("field");
-                assert fixingPairElement.elements().get(1).getName().equals("value");
-                resolver.addFixingPair(fixingPairElement.elements().get(0).getText(), fixingPairElement.elements().get(1).getText());
-            }
+    private AbstractResolver buildResolver(List<Element> resolverElements, Object rfuncInstance){
+        //strategy
+        assert resolverElements.get(0).getName().equals("strategy");
+        if(resolverElements.get(0).getText().equals("drop-latest")){
+            DropLatestResolver dropLatestResolver = new DropLatestResolver();
+            //group
+            assert resolverElements.get(1).getName().equals("group");
+            dropLatestResolver.addGroup(resolverElements.get(1).getText());
+            //priority
+            assert resolverElements.get(2).getName().equals("priority");
+            dropLatestResolver.setPriority(Integer.parseInt(resolverElements.get(2).getText()));
+            return dropLatestResolver;
         }
-        return resolver;
+        else if(resolverElements.get(0).getText().equals("drop-all")){
+            DropAllResolver dropAllResolver = new DropAllResolver();
+            //group
+            assert resolverElements.get(1).getName().equals("group");
+            dropAllResolver.addGroup(resolverElements.get(1).getText());
+            //priority
+            assert resolverElements.get(2).getName().equals("priority");
+            dropAllResolver.setPriority(Integer.parseInt(resolverElements.get(2).getText()));
+            return dropAllResolver;
+        }
+        else{
+            assert resolverElements.get(0).getText().equals("customized");
+            CustomizedResolver customizedResolver = new CustomizedResolver(rfuncInstance);
+            //group
+            assert resolverElements.get(1).getName().equals("group");
+            customizedResolver.addGroup(resolverElements.get(1).getText());
+            //priority
+            assert resolverElements.get(2).getName().equals("priority");
+            customizedResolver.setPriority(Integer.parseInt(resolverElements.get(2).getText()));
+            //functionName
+            assert resolverElements.get(3).getName().equals("functionName");
+            customizedResolver.setFuncName(resolverElements.get(3).getText());
+            return customizedResolver;
+        }
     }
 
     public HashMap<String, Rule> getRuleMap() {
         return ruleMap;
     }
 
-    public HashMap<String, Resolver> getResolverMap() {
+    public HashMap<String, AbstractResolver> getResolverMap() {
         return resolverMap;
+    }
+
+    public ResolverType getResolverType() {
+        return resolverType;
     }
 
     //message related
@@ -352,26 +389,6 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
         this.sendIndexQue.add(index);
     }
 
-    //chgGenerator related
-    public void changeBufferProducer(List<ContextChange> changeList){
-        changeBuffer.addAll(changeList);
-    }
-
-    public List<ContextChange> changeBufferConsumer(){
-        List<ContextChange> changeList = new ArrayList<>();
-        ContextChange change = null;
-        try {
-            change = changeBuffer.take();
-            changeList.add(change);
-        } catch (InterruptedException e) {
-            return null;
-        }
-        while(!changeBuffer.isEmpty()){
-            change = changeBuffer.poll();
-            changeList.add(change);
-        }
-        return changeList;
-    }
 
     //fixer related
     public CtxFixer getCtxFixer() {

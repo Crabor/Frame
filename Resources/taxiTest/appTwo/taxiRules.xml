@@ -15,63 +15,10 @@
             </forall>
         </formula>
         <resovler>
-            <type>fix</type> <!-- drop / fix -->
-            <variable>v1</variable>
-            <fixingPairList>
-                <fixingPair>
-                    <field>taxiId</field>
-                    <value>B22222</value>
-                </fixingPair>
-                <fixingPair>
-                    <field>status</field>
-                    <value>2</value>
-                </fixingPair>
-            </fixingPairList>
-        </resovler>
-    </rule>
-
-    <rule>
-        <id>rule_left</id>
-        <formula>
-            <forall var = "v1" in = "pat_front">
-                <bfunction name = "isValid">
-                    <param pos = "1" var = "v1" field = "type" />
-                </bfunction>
-            </forall>
-        </formula>
-        <resovler>
-            <type>drop</type> <!-- drop / fix -->
-            <variable>v1</variable>
-        </resovler>
-    </rule>
-
-    <rule>
-        <id>rule_left</id>
-        <formula>
-            <forall var = "v1" in = "pat_left">
-                <bfunction name = "isValid">
-                    <param pos = "1" var = "v1" field = "type" />
-                </bfunction>
-            </forall>
-        </formula>
-        <resovler>
-            <type>drop</type> <!-- drop / fix -->
-            <variable>v1</variable>
-        </resovler>
-    </rule>
-
-    <rule>
-        <id>rule_right</id>
-        <formula>
-            <forall var = "v1" in = "pat_right">
-                <bfunction name = "isValid">
-                    <param pos = "1" var = "v1" field = "type" />
-                </bfunction>
-            </forall>
-        </formula>
-        <resovler>
-            <type>drop</type> <!-- drop / fix -->
-            <variable>v1</variable>
+            <strategy>drop-latest</strategy> <!--drop-latest, drop-all, customized-->
+            <group>0</group> <!-- some integers split by comma -->
+            <priority>0</priority> <!-- an int value, the less, the more prior -->
+            <!--customized tag: <functionName> </functionName> -->
         </resovler>
     </rule>
 

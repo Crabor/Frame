@@ -5,8 +5,8 @@
     <pattern>
         <id>pat_001</id>
         <freshness>
-            <type>time</type>
-            <value>5000</value>
+            <type>number</type>
+            <value>2</value>
         </freshness>
         <dataSource>
             <type>sensor</type>
@@ -26,8 +26,8 @@
     <pattern>
         <id>pat_002</id>
         <freshness>
-            <type>time</type> <!--可选项有time(ms)和number(#)-->
-            <value>5000</value> <!--2000ms-->
+            <type>number</type> <!--可选项有time(ms)和number(#)-->
+            <value>2</value> <!--2000ms-->
         </freshness>
         <dataSource>
             <type>sensor</type>
@@ -42,34 +42,6 @@
                 <argument>0</argument>
             </extraArgumentList>
         </matcher>
-    </pattern>
-
-    <pattern>
-        <id>pat_front</id>
-        <freshness>
-            <type>time</type>
-            <value>1000</value>
-        </freshness>
-        <dataSource>
-            <type>sensor</type>
-            <sourceList>
-                <source>front</source>
-            </sourceList>
-        </dataSource>
-    </pattern>
-
-    <pattern>
-        <id>pat_back</id>
-        <freshness>
-            <type>time</type>
-            <value>1000</value>
-        </freshness>
-        <dataSource>
-            <type>sensor</type>
-            <sourceList>
-                <source>back</source>
-            </sourceList>
-        </dataSource>
     </pattern>
 
 </patterns>

@@ -4,12 +4,15 @@ import com.alibaba.fastjson.JSONObject;
 import platform.config.AppConfig;
 import platform.config.SubConfig;
 import platform.service.ctx.ctxChecker.CheckerStarter;
+import platform.service.ctx.ctxChecker.context.ContextChange;
 import platform.service.ctx.ctxChecker.middleware.checkers.Checker;
 import platform.service.ctx.message.Message;
 import platform.service.ctx.message.MessageHandler;
 import platform.service.ctx.statistics.ServerStatistics;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class AppCtxServer extends AbstractCtxServer{
@@ -33,27 +36,21 @@ public class AppCtxServer extends AbstractCtxServer{
         //停止接收数据
         resetLock.lock();
         try {
-            // 停止chgGenerator
-            this.chgGenerator.reset();
-            // 停止checker
-            this.checker.reset();
             // 重新构建Rules
             this.ruleMap.clear();
             this.resolverMap.clear();
-            buildRules(appConfig.getRuleFile());
+            buildRules(appConfig.getRuleFile(), null);
             // 清除旧数据
             this.originalMsgMap.clear();
             this.sendIndexQue.clear();
-            this.changeBuffer.clear();
+            this.chgGenerator.reset();
             this.ctxFixer.reset();
 
             // reset后从validMsgIndexLimit开始接收
             this.validMsgIndexLimit = PlatformCtxServer.getInstance().getMsgIndex().get() + 1L;
             // 重启服务
             this.restart();
-            this.chgGenerator.restart();
             this.checker = new CheckerStarter(this, appConfig.getBfuncFile(), appConfig.getCtxValidator().toString());
-            this.checker.start();
         } finally {
             resetLock.unlock();
         }
@@ -62,12 +59,10 @@ public class AppCtxServer extends AbstractCtxServer{
     @Override
     public void init() {
         buildPatterns(appConfig.getPatternFile(), appConfig.getMfuncFile());
-        buildRules(appConfig.getRuleFile());
+        buildRules(appConfig.getRuleFile(), null); //currently only-use drop-latest
         this.chgGenerator = new ChgGenerator(this);
-        this.chgGenerator.start();
-        this.ctxFixer = new CtxFixer(this);
         this.checker = new CheckerStarter(this, appConfig.getBfuncFile(), appConfig.getCtxValidator().toString());
-        this.checker.start();
+        this.ctxFixer = new CtxFixer(this);
     }
 
     @Override
@@ -100,7 +95,8 @@ public class AppCtxServer extends AbstractCtxServer{
             addSendIndex(originalMsg.getIndex());
             serverStatistics.increaseReceivedMsgNum();
             if(appConfig.isCtxServerOn()){
-                chgGenerator.generateChanges(originalMsg.getContextMap());
+                List<Map.Entry<List<ContextChange>, ChgListType>> changesList = chgGenerator.generateChanges(originalMsg.getContextMap());
+                checker.check(changesList);
             }
             else{
                 for(String contextId : originalMsg.getContextMap().keySet()){

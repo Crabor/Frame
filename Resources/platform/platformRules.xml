@@ -12,8 +12,10 @@
 			</forall>
 		</formula>
 		<resovler>
-			<type>drop</type> <!-- drop / fix -->
-			<variable>v1</variable>
+			<strategy>drop-latest</strategy> <!--drop-latest, drop-all, customized-->
+			<group>0</group> <!-- some integers split by comma -->
+			<priority>0</priority> <!-- an int value, the less, the more prior -->
+			<!--customized tag: <functionName> </functionName> -->
 		</resovler>
 	</rule>
 
@@ -27,8 +29,10 @@
 			</forall>
 		</formula>
 		<resovler>
-			<type>drop</type> <!-- drop / fix -->
-			<variable>v1</variable>
+			<strategy>drop-latest</strategy> <!--drop-latest, drop-all, customized-->
+			<group>1</group> <!-- some integers split by comma -->
+			<priority>0</priority> <!-- an int value, the less, the more prior -->
+			<!--customized tag: <functionName> </functionName> -->
 		</resovler>
 	</rule>
 
@@ -42,8 +46,10 @@
 			</forall>
 		</formula>
 		<resovler>
-			<type>drop</type> <!-- drop / fix -->
-			<variable>v1</variable>
+			<strategy>drop-latest</strategy> <!--drop-latest, drop-all, customized-->
+			<group>2</group> <!-- some integers split by comma -->
+			<priority>0</priority> <!-- an int value, the less, the more prior -->
+			<!--customized tag: <functionName> </functionName> -->
 		</resovler>
 	</rule>
 
@@ -57,8 +63,10 @@
 			</forall>
 		</formula>
 		<resovler>
-			<type>drop</type> <!-- drop / fix -->
-			<variable>v1</variable>
+			<strategy>drop-latest</strategy> <!--drop-latest, drop-all, customized-->
+			<group>3</group> <!-- some integers split by comma -->
+			<priority>0</priority> <!-- an int value, the less, the more prior -->
+			<!--customized tag: <functionName> </functionName> -->
 		</resovler>
 	</rule>
 

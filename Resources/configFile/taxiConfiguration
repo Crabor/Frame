@@ -1,10 +1,10 @@
 {
   "CtxServerConfiguration": {
-    "serverOn": true,
+    "serverOn": false,
     "CtxValidator": "ECC+IMD",
-    "baseRuleFile": "Resources/platform/platformRules.xml",
-    "baseBfuncFile": "Resources/platform/platformBfunction.class",
-    "basePatternFile": "Resources/platform/platformPatterns.xml",
+    "baseRuleFile": "",
+    "baseBfuncFile": "",
+    "basePatternFile": "",
     "baseMfuncFile": "",
     "subscribe": [
       {
@@ -28,15 +28,6 @@
         {
           "channel": "sensor",
           "groupId": 1,
-        },
-      ],
-    },
-    {
-      "appName": "platform.testTaxi.taxiAppTwo",
-      "subscribe": [
-        {
-          "channel": "sensor",
-          "groupId": 2,
         },
       ],
     },
