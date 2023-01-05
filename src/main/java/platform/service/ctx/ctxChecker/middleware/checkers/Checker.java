@@ -36,8 +36,10 @@ public abstract class Checker {
                 new AbstractMap.SimpleEntry<>(truth, linkSet)
         );
 
-        this.tempRuleLinksMap.computeIfAbsent(rule_id, k -> new HashSet<>(linkSet));
-        Objects.requireNonNull(this.tempRuleLinksMap.computeIfPresent(rule_id, (k, v) -> v)).addAll(linkSet);
+        if(!linkSet.isEmpty()){
+            this.tempRuleLinksMap.computeIfAbsent(rule_id, k -> new HashSet<>(linkSet));
+            Objects.requireNonNull(this.tempRuleLinksMap.computeIfPresent(rule_id, (k, v) -> v)).addAll(linkSet);
+        }
     }
 
     public void checkInit(){

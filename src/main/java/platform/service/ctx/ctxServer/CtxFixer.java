@@ -69,6 +69,9 @@ public class CtxFixer {
 
     // in time resolve
     public List<ContextChange> resolveInconsistenciesInTime(Map<String, Set<Link>> ruleId2LinkSet){
+        if(ruleId2LinkSet.isEmpty()){
+            return new ArrayList<>();
+        }
         //每次检测只检测由一个context引起的changeList，故只需统计优先级最高的resolver
         String topRuleId = null;
         AbstractResolver topResolver = null;
