@@ -3,7 +3,7 @@ package platform.app;
 import platform.config.AppConfig;
 import platform.config.Configuration;
 import platform.comm.pubsub.AbstractSubscriber;
-import platform.service.inv.CancerServer;
+import platform.service.inv.CheckServer;
 
 public abstract class AbstractApp extends AbstractSubscriber implements App, Runnable {
     Thread t;
@@ -26,9 +26,9 @@ public abstract class AbstractApp extends AbstractSubscriber implements App, Run
         iterId++;
         logger.debug("abstractApp recv: " + msg);
         boolean invSeverOn = Configuration.getInvServerConfig().isServerOn();
-        if (invSeverOn) CancerServer.iterEntry(appName, iterId, msg);
+        if (invSeverOn) CheckServer.iterEntry(appName, iterId, msg);
         iter(channel, msg);
-        if (invSeverOn) CancerServer.iterExit(appName, iterId);
+        if (invSeverOn) CheckServer.iterExit(appName, iterId);
     }
 
     @Override

@@ -9,7 +9,7 @@ import platform.comm.pubsub.Publisher;
 import platform.comm.pubsub.AbstractSubscriber;
 import io.lettuce.core.RedisClient;
 import platform.service.ctx.ctxServer.PlatformCtxServer;
-import platform.service.inv.CancerServer;
+import platform.service.inv.CheckServer;
 import platform.struct.CmdType;
 import platform.struct.ServiceType;
 import platform.util.Util;
@@ -107,7 +107,7 @@ public class Platform {
                 ret = PlatformCtxServer.call(appName, cmd, args);
                 break;
             case INV:
-                ret = CancerServer.call(appName, cmd, args);
+                ret = CheckServer.call(appName, cmd, args);
                 break;
         }
         return ret;

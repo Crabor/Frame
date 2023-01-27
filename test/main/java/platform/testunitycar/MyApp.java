@@ -18,7 +18,7 @@ public class MyApp extends AbstractApp {
         logger.debug("app recv: " + msg);
 
         //method 1
-//        CancerObject left = CancerObject.fromJsonObjectString(msg);
+//        CheckObject left = CheckObject.fromJsonObjectString(msg);
 //        CheckInfo checkInfo = left.check();
 //        logger.debug("check:\n" + JSON.toJSONString(checkInfo, true));
 //        if (checkInfo.checkState == CheckState.INV_VIOLATED) {

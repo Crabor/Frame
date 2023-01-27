@@ -15,7 +15,7 @@ import platform.util.Util;
 
 import java.util.*;
 
-public class CancerObject {
+public class CheckObject {
     private int iterId;
     private int checkId;
     private final String appName;
@@ -25,16 +25,16 @@ public class CancerObject {
     //private final List<Integer> lines = new ArrayList<>();
 
     //静态变量，第一维为appName，第二维为name，第三维为cancerObject
-    private static final Map<String, Map<String, CancerObject>> objs = new HashMap<>();
+    private static final Map<String, Map<String, CheckObject>> objs = new HashMap<>();
 
     //第一维为行号，第二维为组号，第三维为不变式
     private final Map<Integer, Map<Integer, InvAbstract>> invMap = new HashMap<>();
 
-    private static final Log logger = LogFactory.getLog(CancerObject.class);
+    private static final Log logger = LogFactory.getLog(CheckObject.class);
 
     private Publisher publisher = new Publisher();
 
-    private CancerObject(String appName, String name, double value) {
+    private CheckObject(String appName, String name, double value) {
         if (contains(appName, name)) {
             throw new IllegalArgumentException(name + " has already exists!\n");
         }
@@ -46,15 +46,15 @@ public class CancerObject {
         put(appName, this);
     }
 
-    private CancerObject(String appName, String name) {
+    private CheckObject(String appName, String name) {
         this(appName, name, 0);
     }
 
-    private CancerObject(String appName, double value) {
+    private CheckObject(String appName, double value) {
         this(appName, String.valueOf(Thread.currentThread().getStackTrace()[2].getLineNumber()), value);
     }
 
-    private CancerObject(String appName) {
+    private CheckObject(String appName) {
         this(appName, String.valueOf(Thread.currentThread().getStackTrace()[2].getLineNumber()));
     }
 
@@ -91,39 +91,39 @@ public class CancerObject {
         return contains(appName, name);
     }
 
-    private static void put(String appName, CancerObject cancerObject) {
+    private static void put(String appName, CheckObject checkObject) {
         if (!objs.containsKey(appName)) {
             objs.put(appName, new HashMap<>());
         }
-        objs.get(appName).put(cancerObject.name, cancerObject);
+        objs.get(appName).put(checkObject.name, checkObject);
     }
 
-    public static CancerObject get(String appName, String name) {
+    public static CheckObject get(String appName, String name) {
         if (!objs.containsKey(appName)) {
             objs.put(appName, new HashMap<>());
         }
-        Map<String, CancerObject> appObjs = objs.get(appName);
+        Map<String, CheckObject> appObjs = objs.get(appName);
         if (!appObjs.containsKey(name)) {
-            appObjs.put(name, new CancerObject(appName, name));
+            appObjs.put(name, new CheckObject(appName, name));
         }
         return appObjs.get(name);
     }
 
-    public static CancerObject get(String name) {
+    public static CheckObject get(String name) {
         String appName = Thread.currentThread().getStackTrace()[2].getClassName();
         return get(appName, name);
     }
 
-    public static CancerObject fromJsonObjectString(String jsonObjectString) {
+    public static CheckObject fromJsonObjectString(String jsonObjectString) {
         JSONObject obj = JSONObject.parseObject(jsonObjectString);
         String appName = Thread.currentThread().getStackTrace()[2].getClassName();
         String key = obj.keySet().stream().findFirst().get();
-        CancerObject cobj = get(appName, key);
+        CheckObject cobj = get(appName, key);
         cobj.setValue(obj.getDoubleValue(key));
         return cobj;
     }
 
-    public static Map<String, Map<String, CancerObject>> getAllObjs() {
+    public static Map<String, Map<String, CheckObject>> getAllObjs() {
         return objs;
     }
 
@@ -207,7 +207,7 @@ public class CancerObject {
             InvAbstract invNew = invs.get(group + 1);
             //output trace
             Trace traceOutput =  Configuration.getInvServerConfig().getGroupTraceType();
-            traceOutput.printTrace(appName, lineNumber, group + 1, CancerServer.getSegMap().get(appName), invNew.getTrace());
+            traceOutput.printTrace(appName, lineNumber, group + 1, CheckServer.getSegMap().get(appName), invNew.getTrace());
             logger.info("grp" + (group + 1) + "=" + invNew.getTrace());
             //gen new inv
             invNew.genInv();
@@ -220,20 +220,20 @@ public class CancerObject {
 //        if (!lines.contains(lineNumber)) {
 //            lines.add(lineNumber);
 //        }
-        if (!CancerServer.getLineMap().containsKey(appName)) {
-            CancerServer.getLineMap().put(appName, new HashMap<>());
+        if (!CheckServer.getLineMap().containsKey(appName)) {
+            CheckServer.getLineMap().put(appName, new HashMap<>());
         }
-        if (!CancerServer.getLineMap().get(appName).containsKey(lineNumber)) {
-            CancerServer.getLineMap().get(appName).put(lineNumber, new ArrayList<>());
+        if (!CheckServer.getLineMap().get(appName).containsKey(lineNumber)) {
+            CheckServer.getLineMap().get(appName).put(lineNumber, new ArrayList<>());
         }
-        if (!CancerServer.getLineMap().get(appName).get(lineNumber).contains(this)) {
-            CancerServer.getLineMap().get(appName).get(lineNumber).add(this);
+        if (!CheckServer.getLineMap().get(appName).get(lineNumber).contains(this)) {
+            CheckServer.getLineMap().get(appName).get(lineNumber).add(this);
         }
         CheckState checkState = getCheckState(lineNumber, group);
         CheckInfo checkInfo = new CheckInfo(appName, iterId, lineNumber, checkId, new Date().getTime(), name, value,
                 checkState, checkState == CheckState.INV_VIOLATED ? invMap.get(lineNumber).get(group).getDiff(value) : 0);
 
-        CancerServer.recordCheckInfo(checkInfo);
+        CheckServer.recordCheckInfo(checkInfo);
         return checkInfo;
     }
 
@@ -255,19 +255,19 @@ public class CancerObject {
         return check(lineNumber);
     }
 
-    public static Map<String, CheckInfo> check(CancerObject... args) {
+    public static Map<String, CheckInfo> check(CheckObject... args) {
         int lineNumber = Thread.currentThread().getStackTrace()[2].getLineNumber();
         Map<String, CheckInfo> checkInfos = new HashMap<>();
-        for (CancerObject arg : args) {
+        for (CheckObject arg : args) {
             checkInfos.put(arg.getName(), arg.check(lineNumber));
         }
         return checkInfos;
     }
 
-    public static Map<String, CheckInfo> check(List<CancerObject> args) {
+    public static Map<String, CheckInfo> check(List<CheckObject> args) {
         int lineNumber = Thread.currentThread().getStackTrace()[2].getLineNumber();
         Map<String, CheckInfo> checkInfos = new HashMap<>();
-        for (CancerObject arg : args) {
+        for (CheckObject arg : args) {
             checkInfos.put(arg.getName(), arg.check(lineNumber));
         }
         return checkInfos;
@@ -278,7 +278,7 @@ public class CancerObject {
         Map<String, CheckInfo> checkInfos = new HashMap<>();
         for (String name : names) {
             String appName = Thread.currentThread().getStackTrace()[2].getClassName();
-            CancerObject obj = get(appName, name);
+            CheckObject obj = get(appName, name);
             checkInfos.put(obj.getName(), obj.check(lineNumber));
         }
         return checkInfos;

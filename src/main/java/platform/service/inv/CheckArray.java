@@ -7,30 +7,30 @@ import reactor.util.annotation.Nullable;
 
 import java.util.*;
 
-public class CancerArray implements List<CancerObject> {
-    private List<CancerObject> list;
+public class CheckArray implements List<CheckObject> {
+    private List<CheckObject> list;
 
-    public CancerArray() {
+    public CheckArray() {
         list = new ArrayList<>();
     }
 
-    public CancerArray(List<CancerObject> list) {
+    public CheckArray(List<CheckObject> list) {
         this.list = list;
     }
 
-    public void add(int index, CancerObject element) {
+    public void add(int index, CheckObject element) {
         list.add(index, element);
     }
 
-    public boolean add(CancerObject o) {
+    public boolean add(CheckObject o) {
         return list.add(o);
     }
 
-    public boolean addAll(Collection<? extends CancerObject> c) {
+    public boolean addAll(Collection<? extends CheckObject> c) {
         return list.addAll(c);
     }
 
-    public boolean addAll(int index, Collection<? extends CancerObject> c) {
+    public boolean addAll(int index, Collection<? extends CheckObject> c) {
         return list.addAll(index, c);
     }
 
@@ -46,13 +46,13 @@ public class CancerArray implements List<CancerObject> {
         return list.containsAll(c);
     }
 
-    public CancerObject get(int index) {
+    public CheckObject get(int index) {
         return list.get(index);
     }
 
     @Nullable
-    public CancerObject get(String name) {
-        for (CancerObject co : list) {
+    public CheckObject get(String name) {
+        for (CheckObject co : list) {
             if (co.getName().equals(name)) {
                 return co;
             }
@@ -68,7 +68,7 @@ public class CancerArray implements List<CancerObject> {
         return list.isEmpty();
     }
 
-    public Iterator<CancerObject> iterator() {
+    public Iterator<CheckObject> iterator() {
         return list.iterator();
     }
 
@@ -76,15 +76,15 @@ public class CancerArray implements List<CancerObject> {
         return list.lastIndexOf(o);
     }
 
-    public ListIterator<CancerObject> listIterator() {
+    public ListIterator<CheckObject> listIterator() {
         return list.listIterator();
     }
 
-    public ListIterator<CancerObject> listIterator(int index) {
+    public ListIterator<CheckObject> listIterator(int index) {
         return list.listIterator(index);
     }
 
-    public CancerObject remove(int index) {
+    public CheckObject remove(int index) {
         return list.remove(index);
     }
 
@@ -100,7 +100,7 @@ public class CancerArray implements List<CancerObject> {
         return list.retainAll(c);
     }
 
-    public CancerObject set(int index, CancerObject element) {
+    public CheckObject set(int index, CheckObject element) {
         return list.set(index, element);
     }
 
@@ -108,7 +108,7 @@ public class CancerArray implements List<CancerObject> {
         return list.size();
     }
 
-    public List<CancerObject> subList(int fromIndex, int toIndex) {
+    public List<CheckObject> subList(int fromIndex, int toIndex) {
         return list.subList(fromIndex, toIndex);
     }
 
@@ -120,27 +120,27 @@ public class CancerArray implements List<CancerObject> {
         return list.toArray(a);
     }
 
-    public static CancerArray fromJsonObjectString(String jsonObjectString) {
+    public static CheckArray fromJsonObjectString(String jsonObjectString) {
         String appName = Thread.currentThread().getStackTrace()[2].getClassName();
         JSONObject jo = JSONObject.parseObject(jsonObjectString);
-        CancerArray ca = new CancerArray();
+        CheckArray ca = new CheckArray();
         for (String key : jo.keySet()) {
-            CancerObject co = CancerObject.get(appName, key);
+            CheckObject co = CheckObject.get(appName, key);
             co.setValue(jo.getDouble(key));
             ca.add(co);
         }
         return ca;
     }
 
-    public static CancerArray[] fromJsonArrayString(String jsonArrayString) {
+    public static CheckArray[] fromJsonArrayString(String jsonArrayString) {
         String appName = Thread.currentThread().getStackTrace()[2].getClassName();
         JSONArray ja = JSONArray.parseArray(jsonArrayString);
-        CancerArray[] cas = new CancerArray[ja.size()];
+        CheckArray[] cas = new CheckArray[ja.size()];
         for (int i = 0; i < ja.size(); i++) {
             JSONObject jo = ja.getJSONObject(i);
-            CancerArray ca = new CancerArray();
+            CheckArray ca = new CheckArray();
             for (String key : jo.keySet()) {
-                CancerObject co = CancerObject.get(appName, key);
+                CheckObject co = CheckObject.get(appName, key);
                 co.setValue(jo.getDouble(key));
                 ca.add(co);
             }

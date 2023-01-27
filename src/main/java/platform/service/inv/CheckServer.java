@@ -15,8 +15,8 @@ import platform.util.Util;
 import java.io.File;
 import java.util.*;
 
-public class CancerServer implements Runnable {
-    private static CancerServer instance;
+public class CheckServer implements Runnable {
+    private static CheckServer instance;
     private Thread t;
 
     //静态变量，第一维为appName，第二维为iterId，第三维为LineNumber，第四维为保存的checkInfo列表
@@ -25,24 +25,24 @@ public class CancerServer implements Runnable {
     private static final Map<String, Map<Integer, SegInfo>> segMap = new HashMap<>();
     private static final Map<String, PECount> peCountMap = new HashMap<>();
     //静态变量，第一维为appName，第二维为lineNumber，第三维为cancerObject列表
-    private static final Map<String, Map<Integer, List<CancerObject>>> lineMap = new HashMap<>();
+    private static final Map<String, Map<Integer, List<CheckObject>>> lineMap = new HashMap<>();
     
-    private static final Log logger = LogFactory.getLog(CancerServer.class);
+    private static final Log logger = LogFactory.getLog(CheckServer.class);
     private static final Publisher publisher = new Publisher();
 
     // 构造方法私有化
-    private CancerServer() {
+    private CheckServer() {
         File dir = new File("output/inv/");
         Util.deleteDir(dir);
         dir.mkdirs();
     }
 
     // 静态方法返回该实例
-    public static CancerServer getInstance() {
+    public static CheckServer getInstance() {
         if (instance == null) {
-            synchronized (CancerServer.class) {
+            synchronized (CheckServer.class) {
                 if (instance == null) {
-                    instance = new CancerServer();
+                    instance = new CheckServer();
                 }
             }
         }
@@ -99,17 +99,17 @@ public class CancerServer implements Runnable {
                                 // trace output
                                 traceOutput.printTrace(appName, lineNumber, grp, segMap.get(appName), iters);
                                 // inv meta info
-                                lineMap.get(appName).get(lineNumber).forEach(cancerObject -> {
-                                    if (!cancerObject.getInvMap().containsKey(lineNumber)) {
-                                        cancerObject.getInvMap().put(lineNumber, new HashMap<>());
+                                lineMap.get(appName).get(lineNumber).forEach(checkObject -> {
+                                    if (!checkObject.getInvMap().containsKey(lineNumber)) {
+                                        checkObject.getInvMap().put(lineNumber, new HashMap<>());
                                     }
-                                    if (!cancerObject.getInvMap().get(lineNumber).containsKey(grp)) {
+                                    if (!checkObject.getInvMap().get(lineNumber).containsKey(grp)) {
                                         String invClassName = "platform.service.inv.struct.inv.Inv" +
                                                 Util.makeFirstCharUpperCase(Configuration.getInvServerConfig().getInvGenType().toString().toLowerCase());
                                         try {
                                             InvAbstract inv = (InvAbstract) Class.forName(invClassName).newInstance();
-                                            inv.setMetaData(appName, lineNumber, grp, cancerObject.getName(), lineTrace);
-                                            cancerObject.getInvMap().get(lineNumber).put(grp, inv);
+                                            inv.setMetaData(appName, lineNumber, grp, checkObject.getName(), lineTrace);
+                                            checkObject.getInvMap().get(lineNumber).put(grp, inv);
                                         } catch (InstantiationException |
                                                  IllegalAccessException |
                                                  ClassNotFoundException e) {
@@ -117,7 +117,7 @@ public class CancerServer implements Runnable {
                                         }
                                     }
                                     //inv gen
-                                    InvAbstract inv = cancerObject.getInvMap().get(lineNumber).get(grp);
+                                    InvAbstract inv = checkObject.getInvMap().get(lineNumber).get(grp);
                                     inv.setState(InvState.INV_GENERATING);
                                     inv.genInv();
                                     inv.setState(InvState.INV_GENERATED);
@@ -166,12 +166,12 @@ public class CancerServer implements Runnable {
         return peCountMap;
     }
 
-    public static Map<String, Map<Integer, List<CancerObject>>> getLineMap() {
+    public static Map<String, Map<Integer, List<CheckObject>>> getLineMap() {
         return lineMap;
     }
 
     public static void iterEntry(String appName, int iterId, String msg) {
-        CancerObject.iterEntry(appName, iterId);
+        CheckObject.iterEntry(appName, iterId);
 
         //record sensor info
         Map<String, Double> map = new HashMap<>();

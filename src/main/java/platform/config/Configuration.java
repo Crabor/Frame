@@ -4,13 +4,15 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class Configuration {
     private static final Log logger = LogFactory.getLog(Configuration.class);
@@ -20,6 +22,7 @@ public class Configuration {
     private static ResourceConfig resourceConfig;
     private static RedisConfig redisConfig;
     private static UDPConfig udpConfig;
+    private static TCPConfig tcpConfig;
 
     public static Map<String, AppConfig> getAppsConfig() {
         return appsConfig;
@@ -45,6 +48,10 @@ public class Configuration {
         return udpConfig;
     }
 
+    public static TCPConfig getTcpConfig() {
+        return tcpConfig;
+    }
+
     public static void analyzer(String configuration){
         File file = new File(configuration);
         try {
@@ -56,6 +63,7 @@ public class Configuration {
             JSONObject resourceObj = (JSONObject) obj.get("ResourceConfiguration");
             JSONObject redisObj = (JSONObject) obj.get("RedisConfig");
             JSONObject udpObj = (JSONObject) obj.get("UDPConfig");
+            JSONObject tcpObj = (JSONObject) obj.get("TCPConfig");
             //System.out.println(ctxObj.toJSONString());
             ctxServerConfig  = CtxServerConfig.getInstance(ctxObj);
             for (int i = 0; i < appObj.size(); i++) {
@@ -66,12 +74,14 @@ public class Configuration {
             resourceConfig = new ResourceConfig(resourceObj);
             redisConfig = new RedisConfig(redisObj);
             udpConfig = new UDPConfig(udpObj);
+            tcpConfig = new TCPConfig(tcpObj);
             logger.info(ctxServerConfig);
             logger.info(invServerConfig);
             logger.info(appsConfig);
             logger.info(resourceConfig);
             logger.info(redisConfig);
             logger.info(udpConfig);
+            logger.info(tcpConfig);
         } catch (IOException e) {
             e.printStackTrace();
         }

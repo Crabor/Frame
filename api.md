@@ -238,8 +238,8 @@ public class MySyncApp extends AbstractSyncApp {
         Actuator actor = new Actuator(5, 0, 0);
 
         //method 1: 将msg转为CancerArray
-//        CancerArray ca = CancerArray.fromJsonObjectString(msg);
-//        CancerObject left = ca.get("left");
+//        CheckArray ca = CheckArray.fromJsonObjectString(msg);
+//        CheckObject left = ca.get("left");
         //method 2: 通过ctxInteractor直接获取需要的单个sensor,并转为CancerObject
         CancerObject left = CancerObject.fromJsonObjectString(ctxInteractor.getSensor("left"));//{"left": 10}
         CheckInfo checkInfo = left.check();

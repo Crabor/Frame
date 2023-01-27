@@ -3,7 +3,7 @@ package platform.service;
 import platform.Platform;
 import platform.config.Configuration;
 import platform.service.ctx.ctxServer.PlatformCtxServer;
-import platform.service.inv.CancerServer;
+import platform.service.inv.CheckServer;
 import platform.config.SubConfig;
 
 public class SerMgrThread implements Runnable{
@@ -12,7 +12,7 @@ public class SerMgrThread implements Runnable{
 
     private static PlatformCtxServer platformCtxServer;
 
-    private static CancerServer cancerServer;
+    private static CheckServer checkServer;
 
     // 构造方法私有化
     private SerMgrThread() {}
@@ -43,8 +43,8 @@ public class SerMgrThread implements Runnable{
         platformCtxServer.start();
 
         if (Configuration.getInvServerConfig().isServerOn()) {
-            cancerServer = CancerServer.getInstance();
-            cancerServer.start();
+            checkServer = CheckServer.getInstance();
+            checkServer.start();
         }
 
         Platform.incrMgrStartFlag();
@@ -54,8 +54,8 @@ public class SerMgrThread implements Runnable{
         return platformCtxServer;
     }
 
-    public static CancerServer getCancerServer() {
-        return cancerServer;
+    public static CheckServer getCancerServer() {
+        return checkServer;
     }
 
     public void start() {

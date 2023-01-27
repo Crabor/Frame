@@ -112,4 +112,7 @@
       },
     ]
   },
+  "TCPConfig": {
+    "serverPort": 8888,
+  },
 }
