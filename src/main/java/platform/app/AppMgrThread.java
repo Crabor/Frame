@@ -11,7 +11,7 @@ import java.util.*;
 public class AppMgrThread implements Runnable {
     private static AppMgrThread instance;
     private static Thread t;
-    private final List<App> apps = new ArrayList<>();
+//    private final List<App> apps = new ArrayList<>();
     private static final Map<String, Set<Integer>> sensorDataChannelUDPPort = new HashMap<>();
 
     // 构造方法私有化
@@ -74,9 +74,9 @@ public class AppMgrThread implements Runnable {
         }
     }
 
-    public List<App> getApps() {
-        return apps;
-    }
+//    public List<App> getApps() {
+//        return apps;
+//    }
 
     public static int getNewSensorDataChannelUDPPort(Socket socket) {
         String clientHost = socket.getInetAddress().getHostAddress();

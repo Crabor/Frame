@@ -1,20 +1,20 @@
 package platform.testunitycar;
 
-import platform.app.AbstractApp;
 
+import app.AbstractApp;
 
 public class MyApp extends AbstractApp {
 
     @Override
-    protected void customizeCtxServer() {
-        config.registerSensor("left");
-        config.registerSensor("right");
-        config.registerSensor("front");
-        config.registerSensor("back");
+    public void setting() {
+//        config.registerSensor("left");
+//        config.registerSensor("right");
+//        config.registerSensor("front");
+//        config.registerSensor("back");
     }
 
     @Override
-    public void iter(String channel, String msg) {
+    public void getMsg(String channel, String msg) {
         logger.debug("app recv: " + msg);
 
         //method 1

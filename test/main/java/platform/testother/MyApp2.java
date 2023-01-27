@@ -1,19 +1,16 @@
 package platform.testother;
 
-import platform.app.AbstractApp;
-import platform.config.Configuration;
-import platform.resource.ResMgrThread;
-import platform.util.Util;
+import app.AbstractApp;
 
 public class MyApp2 extends AbstractApp {
     @Override
-    protected void customizeCtxServer() {
+    public void setting() {
 //        config.registerSensor(sensor);
 //        ......
     }
 
     @Override
-    public void iter(String channel, String msg) {
+    public void getMsg(String channel, String msg) {
 //        if (sensor) {
 //            //sensor to ctx
 //

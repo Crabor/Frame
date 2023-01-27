@@ -4,6 +4,8 @@ import app.struct.ActuatorInfo;
 import app.struct.SensorInfo;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import platform.comm.socket.UDP;
 import platform.struct.CmdType;
 import platform.struct.ServiceType;
@@ -16,8 +18,11 @@ public abstract class AbstractApp implements App {
     private Socket socket;
     private DataOutputStream outToServer;
     private BufferedReader inFromServer;
+    protected Log logger = LogFactory.getLog(getClass());
+    protected String appName;
 
     public AbstractApp() {
+        appName = getClass().getName();
         setting();
     }
 

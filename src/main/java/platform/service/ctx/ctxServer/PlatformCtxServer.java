@@ -1,7 +1,6 @@
 package platform.service.ctx.ctxServer;
 
 import com.alibaba.fastjson.JSONObject;
-import platform.app.App;
 import platform.config.AppConfig;
 import platform.config.Configuration;
 import platform.config.CtxServerConfig;
@@ -14,7 +13,6 @@ import platform.struct.CmdType;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class PlatformCtxServer extends AbstractCtxServer {
 
