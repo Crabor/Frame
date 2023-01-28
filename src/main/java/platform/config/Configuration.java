@@ -58,7 +58,7 @@ public class Configuration {
             String str = FileUtils.readFileToString(file,"UTF-8");
             JSONObject obj = JSON.parseObject(str);
             JSONObject ctxObj = (JSONObject) obj.get("CtxServerConfiguration");
-            JSONArray appObj = (JSONArray) obj.get("AppConfiguration");
+//            JSONArray appObj = (JSONArray) obj.get("AppConfiguration");
             JSONObject invObj = (JSONObject) obj.get("InvServerConfiguration");
             JSONObject resourceObj = (JSONObject) obj.get("ResourceConfiguration");
             JSONObject redisObj = (JSONObject) obj.get("RedisConfig");
@@ -66,10 +66,10 @@ public class Configuration {
             JSONObject tcpObj = (JSONObject) obj.get("TCPConfig");
             //System.out.println(ctxObj.toJSONString());
             ctxServerConfig  = CtxServerConfig.getInstance(ctxObj);
-            for (int i = 0; i < appObj.size(); i++) {
-                JSONObject temp = (JSONObject) appObj.get(i);
-                appsConfig.put(temp.getString("appName"), new AppConfig(temp));
-            }
+//            for (int i = 0; i < appObj.size(); i++) {
+//                JSONObject temp = (JSONObject) appObj.get(i);
+//                appsConfig.put(temp.getString("appName"), new AppConfig(temp));
+//            }
             invServerConfig = new InvServerConfig(invObj);
             resourceConfig = new ResourceConfig(resourceObj);
             redisConfig = new RedisConfig(redisObj);
@@ -77,7 +77,7 @@ public class Configuration {
             tcpConfig = new TCPConfig(tcpObj);
             logger.info(ctxServerConfig);
             logger.info(invServerConfig);
-            logger.info(appsConfig);
+//            logger.info(appsConfig);
             logger.info(resourceConfig);
             logger.info(redisConfig);
             logger.info(udpConfig);

@@ -6,7 +6,11 @@ import reactor.util.function.Tuple3;
 import reactor.util.function.Tuples;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Util {
     public static String getSimpleName(String name) {
@@ -200,6 +204,16 @@ public class Util {
 //        }
 //        return ret;
 //    }
+    public static String readFileContent(String fileName) {
+        Path path = Paths.get(fileName);
+        String content = null;
+        try {
+            content = Files.lines(path).collect(Collectors.joining("\n"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return content;
+    }
 
     public static void main(String[] args) {
 

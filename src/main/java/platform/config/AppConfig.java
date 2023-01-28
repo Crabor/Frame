@@ -38,6 +38,10 @@ public class AppConfig {
         }
     }
 
+    public AppConfig(String appName) {
+        this.appName = appName;
+    }
+
     public String getAppName() {
         return appName;
     }
