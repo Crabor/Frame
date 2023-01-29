@@ -223,7 +223,7 @@ public class CheckServer implements Runnable {
         peCount.pCxtCount++;
     }
 
-    public static Object call(String appName, CmdType cmd, Object... args) {
+    public static String call(String appName, CmdType cmd, String... args) {
         //TODO
         return null;
     }

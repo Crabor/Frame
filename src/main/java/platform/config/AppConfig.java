@@ -5,11 +5,13 @@ import com.alibaba.fastjson.JSONObject;
 import platform.service.ctx.ctxServer.AppCtxServer;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AppConfig {
     private String appName;
     private List<SubConfig> subConfigs = new ArrayList<>();
-    private Set<String> sensors = new HashSet<>();
+    private Set<SensorConfig> sensors = ConcurrentHashMap.newKeySet();
+    private Set<ActuatorConfig> actuators = ConcurrentHashMap.newKeySet();
 
     //ctxService related
     private AppCtxServer ctxServer;
@@ -20,23 +22,23 @@ public class AppConfig {
     private String mfuncFile;
     private String ctxValidator = "ECC+IMD";
 
-    public AppConfig(JSONObject object) {
-        this.appName = object.getString("appName");
-        JSONArray subs = object.getJSONArray("subscribe");
-        for (int i = 0; i < subs.size(); i++) {
-            JSONObject sub = subs.getJSONObject(i);
-            subConfigs.add(new SubConfig(sub));
-        }
-        try {
-            JSONArray rss = object.getJSONArray("registerSensors");
-            for (int i = 0; i < rss.size(); i++) {
-                String rs = rss.getString(i);
-                registerSensor(rs);
-            }
-        } catch (Exception e) {
-
-        }
-    }
+//    public AppConfig(JSONObject object) {
+//        this.appName = object.getString("appName");
+//        JSONArray subs = object.getJSONArray("subscribe");
+//        for (int i = 0; i < subs.size(); i++) {
+//            JSONObject sub = subs.getJSONObject(i);
+//            subConfigs.add(new SubConfig(sub));
+//        }
+//        try {
+//            JSONArray rss = object.getJSONArray("registerSensors");
+//            for (int i = 0; i < rss.size(); i++) {
+//                String rs = rss.getString(i);
+//                registerSensor(rs);
+//            }
+//        } catch (Exception e) {
+//
+//        }
+//    }
 
     public AppConfig(String appName) {
         this.appName = appName;
@@ -50,23 +52,24 @@ public class AppConfig {
         return subConfigs;
     }
 
-    public Set<String> getSensors() {
+    public Set<SensorConfig> getSensors() {
         return sensors;
     }
 
-    private void addSensors(Set<String> sensors) {
-        this.sensors.addAll(sensors);
+    public void addSensor(SensorConfig sensor) {
+        this.sensors.add(sensor);
     }
 
-    private void removeSensors(Set<String> sensors) {
-        this.sensors.removeAll(sensors);
+    public void removeSensor(SensorConfig sensor) {
+        this.sensors.remove(sensor);
     }
 
     public void registerSensor(String... sensors) {
         try {
-            addSensors(Set.of(sensors));
             for (String sensor : sensors) {
-                Configuration.getResourceConfig().getSensorsConfig().get(sensor).addApp(appName);
+                SensorConfig config = Configuration.getResourceConfig().getSensorsConfig().get(sensor);
+                addSensor(config);
+                config.addApp(this);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -75,9 +78,46 @@ public class AppConfig {
 
     public void cancelSensor(String... sensors) {
         try {
-            removeSensors(Set.of(sensors));
             for (String sensor : sensors) {
-                Configuration.getResourceConfig().getSensorsConfig().get(sensor).removeApp(appName);
+                SensorConfig config = Configuration.getResourceConfig().getSensorsConfig().get(sensor);
+                removeSensor(config);
+                config.removeApp(this);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Set<ActuatorConfig> getActuators() {
+        return actuators;
+    }
+
+    public void addActuator(ActuatorConfig actuator) {
+        this.actuators.add(actuator);
+    }
+
+    public void removeActuator(ActuatorConfig actuator) {
+        this.actuators.remove(actuator);
+    }
+
+    public void registerActuator(String... actuators) {
+        try {
+            for (String actuator : actuators) {
+                ActuatorConfig config = Configuration.getResourceConfig().getActuatorsConfig().get(actuator);
+                addActuator(config);
+                config.addApp(this);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void cancelActuator(String... actuators) {
+        try {
+            for (String actuator : actuators) {
+                ActuatorConfig config = Configuration.getResourceConfig().getActuatorsConfig().get(actuator);
+                removeActuator(config);
+                config.removeApp(this);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -142,6 +182,7 @@ public class AppConfig {
         this.ctxServer = new AppCtxServer(this);
         this.ctxServer.init();
         //subscribe
+        // TODO:ctxServer转发给AppDriver
         for(SubConfig subConfig : this.getSubConfigs()){
             this.ctxServer.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId + 1);
         }
@@ -156,8 +197,15 @@ public class AppConfig {
     public String toString() {
         return "AppConfig{" +
                 "appName='" + appName + '\'' +
-                ", subConfigs=" + subConfigs +
                 ", sensors=" + sensors +
+                ", actuators=" + actuators +
+                ", ctxServer=" + ctxServer +
+                ", ctxServerOn=" + ctxServerOn +
+                ", ruleFile='" + ruleFile + '\'' +
+                ", bfuncFile='" + bfuncFile + '\'' +
+                ", patternFile='" + patternFile + '\'' +
+                ", mfuncFile='" + mfuncFile + '\'' +
+                ", ctxValidator='" + ctxValidator + '\'' +
                 '}';
     }
 }

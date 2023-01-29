@@ -383,28 +383,28 @@ Subscriber3: channel, hello
     //传感器配置，ctx服务、inv服务会读取该项
     "SensorConfiguration": [
       {
-        "SensorName": "front",
+        "sensorName": "front",
       },
       {
-        "SensorName": "back",
+        "sensorName": "back",
       },
       {
-        "SensorName": "left",
+        "sensorName": "left",
       },
       {
-        "SensorName": "right",
+        "sensorName": "right",
       }
     ],
     //动作设施配置
     "ActorConfiguration": [
       {
-        "ActuatorName": "x",
+        "actuatorName": "x",
       },
       {
-        "ActuatorName": "y",
+        "actuatorName": "y",
       },
       {
-        "ActuatorName": "z",
+        "actuatorName": "z",
       },
     ],
   },
@@ -472,11 +472,11 @@ app与平台通信为网络套接字，分为控制通信通道与数据通信�
 | ActuatorMgr | public boolean setActuator(String actuatorName, String action);               | {"api":"set_actuator","app_name":"xxxx","actuator_name":"xxxx","action":"xxxx"}                            | {"state":true/false}                                                      |
 | AbstractApp | public boolean isServerOn(ServiceType type);                                  | {"api":"is_server_on","app_name":"xxxx","service_type":"xxxx"}                                             | {"state":true/false}                                                      |
 | AbstractApp | public String call(ServiceType serviceType, CmdType cmdType, String... args); | {"api":"call","app_name":"xxxx","service_type":"xxxx","cmd_type":"xxxx","args":[{"arg":"xxxx"},{...},...]} | {"ret":"xxxx"}                                                            |
-| ctx         | public boolean setRuleFile(String ruleFile);                                  | {"api":"set_rule_file","app_name":"xxxx","rule_file_content":"xxxx"}                                       | {"state":true/false}                                                      |
-| ctx         | public boolean setPatternFile(String patternFile);                            | {"api":"set_pattern_file","app_name":"xxxx","pattern_file_content":"xxxx"}                                 | {"state":true/false}                                                      |
-| ctx         | public boolean setBfuncFile(String bfuncFile);                                | {"api":"set_bfunc_file","app_name":"xxxx","bfunc_file_content":"xxxx"}                                     | {"state":true/false}                                                      |
-| ctx         | public boolean setMfuncFile(String mfuncFile);                                | {"api":"set_mfunc_file","app_name":"xxxx","mfunc_file_content":"xxxx"}                                     | {"state":true/false}                                                      |
-| ctx         | public boolean setRfuncFile(String rfuncFile);                                | {"api":"set_rfunc_file","app_name":"xxxx","rfunc_file_content":"xxxx"}                                     | {"state":true/false}                                                      |
+| ctx         | public boolean setRuleFile(String ruleFile);                                  | {"api":"set_rule_file","app_name":"xxxx","file_name":"xxxx","content":"xxxx"}                              | {"state":true/false}                                                      |
+| ctx         | public boolean setPatternFile(String patternFile);                            | {"api":"set_pattern_file","app_name":"xxxx","file_name":"xxxx","content":"xxxx"}                           | {"state":true/false}                                                      |
+| ctx         | public boolean setBfuncFile(String bfuncFile);                                | {"api":"set_bfunc_file","app_name":"xxxx","file_name":"xxxx","content":"xxxx"}                             | {"state":true/false}                                                      |
+| ctx         | public boolean setMfuncFile(String mfuncFile);                                | {"api":"set_mfunc_file","app_name":"xxxx","file_name":"xxxx","content":"xxxx"}                             | {"state":true/false}                                                      |
+| ctx         | public boolean setRfuncFile(String rfuncFile);                                | {"api":"set_rfunc_file","app_name":"xxxx","file_name":"xxxx","content":"xxxx"}                             | {"state":true/false}                                                      |
 | ctx         | public boolean setCtxValidator(String ctxValidator);                          | {"api":"set_ctx_validator","app_name":"xxxx","ctx_validator":"xxxx"}                                       | {"state":true/false}                                                      |
 | inv(有比较多问题) |                                                                               |                                                                                                            |                                                                           |
 |             |                                                                               |                                                                                                            |                                                                           |

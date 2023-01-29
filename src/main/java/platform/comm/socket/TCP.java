@@ -18,11 +18,10 @@ public class TCP {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
             try {
                 socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ee) {
+                ee.printStackTrace();
             }
         }
     }
@@ -32,11 +31,10 @@ public class TCP {
             out.writeBytes(str + '\n');
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
             try {
                 socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ee) {
+                ee.printStackTrace();
             }
         }
     }
@@ -48,11 +46,10 @@ public class TCP {
             ret = in.readLine();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
             try {
                 socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ee) {
+                ee.printStackTrace();
             }
         }
 

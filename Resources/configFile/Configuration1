@@ -61,39 +61,42 @@
     },
     "SensorConfiguration": [
       {
-        "SensorName": "front",
-        "SensorType": "Double",
+        "sensorName": "front",
+        "sensorType": "Double",
         "fieldNames": "value",
         "valueFreq": 1,
       },
       {
-        "SensorName": "back",
-        "SensorType": "Double",
+        "sensorName": "back",
+        "sensorType": "Double",
         "fieldNames": "value",
         "valueFreq": 1,
       },
       {
-        "SensorName": "left",
-        "SensorType": "Double",
+        "sensorName": "left",
+        "sensorType": "Double",
         "fieldNames": "value",
         "valueFreq": 1,
       },
       {
-        "SensorName": "right",
-        "SensorType": "Double",
+        "sensorName": "right",
+        "sensorType": "Double",
         "fieldNames": "value",
         "valueFreq": 1,
       },
     ],
     "ActorConfiguration": [
       {
-        "ActuatorName": "xSpeed",
+        "actuatorName": "xSpeed",
+        "actuatorType": "Double",
       },
       {
-        "ActuatorName": "ySpeed",
+        "actuatorName": "ySpeed",
+        "actuatorType": "Double",
       },
       {
-        "ActuatorName": "zSpeed",
+        "actuatorName": "zSpeed",
+        "actuatorType": "Double",
       },
     ],
   },

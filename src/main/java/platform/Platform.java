@@ -100,8 +100,8 @@ public class Platform {
         Subscribe.Close();
     }
 
-    public static Object sysCall(String appName, ServiceType type, CmdType cmd, Object... args) {
-        Object ret = null;
+    public static String call(String appName, ServiceType type, CmdType cmd, String... args) {
+        String ret = null;
         switch (type) {
             case CTX:
                 ret = PlatformCtxServer.call(appName, cmd, args);
@@ -111,10 +111,5 @@ public class Platform {
                 break;
         }
         return ret;
-    }
-
-    public static Object call(ServiceType type, CmdType cmd, Object... args) {
-        String appName = Thread.currentThread().getStackTrace()[2].getClassName();
-        return sysCall(appName, type, cmd, args);
     }
 }

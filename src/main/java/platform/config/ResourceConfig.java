@@ -20,12 +20,12 @@ public class ResourceConfig {
         JSONArray sensorObj = (JSONArray) object.get("SensorConfiguration");
         for (Object sensor : sensorObj) {
             JSONObject temp = (JSONObject) sensor;
-            sensorsConfig.put(temp.getString("SensorName"), new SensorConfig(temp));
+            sensorsConfig.put(temp.getString("sensorName"), new SensorConfig(temp));
         }
         JSONArray actuatorObj = (JSONArray) object.get("ActorConfiguration");
         for (Object actuator : actuatorObj) {
             JSONObject temp = (JSONObject) actuator;
-            actuatorsConfig.put(temp.getString("ActuatorName"), new ActuatorConfig(temp));
+            actuatorsConfig.put(temp.getString("actuatorName"), new ActuatorConfig(temp));
         }
     }
 

@@ -339,27 +339,27 @@ public class MySyncApp extends AbstractSyncApp {
     },
     "SensorConfiguration": [
       {
-        "SensorName": "front",
+        "sensorName": "front",
       },
       {
-        "SensorName": "back",
+        "sensorName": "back",
       },
       {
-        "SensorName": "left",
+        "sensorName": "left",
       },
       {
-        "SensorName": "right",
+        "sensorName": "right",
       }
     ],
     "ActorConfiguration": [
       {
-        "ActuatorName": "x",
+        "actuatorName": "x",
       },
       {
-        "ActuatorName": "y",
+        "actuatorName": "y",
       },
       {
-        "ActuatorName": "z",
+        "actuatorName": "z",
       },
     ],
   },

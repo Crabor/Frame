@@ -1,7 +1,6 @@
 package platform.config;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
@@ -88,18 +87,26 @@ public class Configuration {
         resourceConfig.getSensorsConfig().forEach((sensorName, sensorConfig) -> ctxServerConfig.addSensorConfig(sensorConfig));
     }
 
-    public static Set<String> getAppsBy(String sensorName) {
+    public static Set<AppConfig> getAppsBySensorName(String sensorName) {
         return getResourceConfig().getSensorsConfig().get(sensorName).getApps();
     }
 
-    public static Set<String> getSensorsBy(String appName) {
+    public static Set<AppConfig> getAppsByActuatorName(String actuatorName) {
+        return getResourceConfig().getActuatorsConfig().get(actuatorName).getApps();
+    }
+
+    public static Set<SensorConfig> getSensorsByAppName(String appName) {
         return appsConfig.get(appName).getSensors();
+    }
+
+    public static Set<ActuatorConfig> getActuatorsByAppName(String appName) {
+        return appsConfig.get(appName).getActuators();
     }
 
     public static Set<String> getRegisteredSensors() {
         Set<String> registeredSensors = new HashSet<>(Set.of());
         getResourceConfig().getSensorsConfig().values().forEach(sensorConfig -> {
-            if (sensorConfig.isRegistered()) {
+            if (!sensorConfig.getApps().isEmpty()) {
                 registeredSensors.add(sensorConfig.getSensorName());
             }
         });

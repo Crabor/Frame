@@ -8,8 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.LockSupport;
 
 public class SensorConfig {
-    private String SensorType;
-    private String SensorName;
+    private String sensorType;
+    private String sensorName;
     private List<String> fieldNames;
     private boolean isAlive = false;
     private int aliveFreq; //定时ping
@@ -17,15 +17,14 @@ public class SensorConfig {
     private Thread valueThread;
     private String IPAddress;
     private int port;
-    private final Set<String> apps = ConcurrentHashMap.newKeySet();
-    private boolean registered = false;
+    private final Set<AppConfig> apps = ConcurrentHashMap.newKeySet();
 
     public SensorConfig(JSONObject object){
-        SensorName = object.getString("SensorName");
+        sensorName = object.getString("sensorName");
         try {
-            SensorType = object.getString("SensorType");
+            sensorType = object.getString("sensorType");
         } catch (NullPointerException e) {
-            SensorType = "String";
+            sensorType = "String";
         }
         try {
             fieldNames = Arrays.asList(object.getString("fieldNames").split(","));
@@ -45,17 +44,17 @@ public class SensorConfig {
     }
 
     public SensorConfig(String sensorName, String sensorType, String fieldNames) {
-        SensorName = sensorName;
-        SensorType = sensorType;
+        this.sensorName = sensorName;
+        this.sensorType = sensorType;
         this.fieldNames = Arrays.asList(fieldNames.split(","));
     }
 
     public String getSensorType() {
-        return SensorType;
+        return sensorType;
     }
 
     public String getSensorName() {
-        return SensorName;
+        return sensorName;
     }
 
     public List<String> getFieldNames() {
@@ -101,31 +100,23 @@ public class SensorConfig {
         this.valueThread = valueThread;
     }
 
-    public void addApp(String app) {
+    public void addApp(AppConfig app) {
         this.apps.add(app);
-        registered = true;
     }
 
-    public void removeApp(String app) {
+    public void removeApp(AppConfig app) {
         this.apps.remove(app);
-        if (this.apps.isEmpty()) {
-            registered = false;
-        }
     }
 
-    public Set<String> getApps() {
+    public Set<AppConfig> getApps() {
         return apps;
-    }
-
-    public boolean isRegistered() {
-        return registered;
     }
 
     @Override
     public String toString() {
         return "SensorConfig{" +
-                "SensorType='" + SensorType + '\'' +
-                ", SensorName='" + SensorName + '\'' +
+                "sensorType='" + sensorType + '\'' +
+                ", sensorName='" + sensorName + '\'' +
                 ", fieldNames=" + fieldNames +
                 ", aliveFreq=" + aliveFreq +
                 ", valueFreq=" + valueFreq +

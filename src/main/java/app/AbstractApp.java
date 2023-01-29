@@ -35,6 +35,29 @@ public abstract class AbstractApp implements App {
     //API:
 
     //app:
+    UDPThread udpThread = null;
+    public class UDPThread extends Thread {
+        private volatile boolean shouldStop = false;
+        private final int udpPort;
+
+        public UDPThread(int port) {
+            this.udpPort = port;
+        }
+
+        public void run() {
+            while (!shouldStop) {
+                JSONObject sensorJson = JSON.parseObject(UDP.recv(udpPort));
+                String channel = sensorJson.getString("channel");
+                String msg = sensorJson.getString("msg");
+                getMsg(channel, msg);
+            }
+        }
+
+        public void stopThread() {
+            shouldStop = true;
+        }
+    }
+
     public boolean registerApp(String ip, int port) {
         JSONObject jo = new JSONObject(4);
         jo.put("api", "register_app");
@@ -47,14 +70,8 @@ public abstract class AbstractApp implements App {
             JSONObject retJson = JSON.parseObject(tcp.recv());
             state = retJson.getBooleanValue("state");
             int udpPort = retJson.getIntValue("udp_port");
-            new Thread(() -> {
-                while (true) {
-                    JSONObject sensorJson = JSON.parseObject(UDP.recv(udpPort));
-                    String channel = sensorJson.getString("channel");
-                    String msg = sensorJson.getString("msg");
-                    getMsg(channel, msg);
-                }
-            }).start();
+            udpThread = new UDPThread(udpPort);
+            udpThread.start();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -69,6 +86,9 @@ public abstract class AbstractApp implements App {
         jo.put("app_name", appName);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
+        if (udpThread != null) {
+            udpThread.stopThread();
+        }
         return retJson.getBoolean("state");
     }
 
@@ -224,7 +244,8 @@ public abstract class AbstractApp implements App {
         JSONObject jo = new JSONObject(3);
         jo.put("api", "set_rule_file");
         jo.put("app_name", appName);
-        jo.put("rule_file_content", content);
+        jo.put("file_name", Util.getSimpleFileName(ruleFile));
+        jo.put("content", content);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
         return retJson.getBoolean("state");
@@ -236,7 +257,8 @@ public abstract class AbstractApp implements App {
         JSONObject jo = new JSONObject(3);
         jo.put("api", "set_pattern_file");
         jo.put("app_name", appName);
-        jo.put("pattern_file_content", content);
+        jo.put("file_name", Util.getSimpleFileName(patternFile));
+        jo.put("content", content);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
         return retJson.getBoolean("state");
@@ -248,7 +270,8 @@ public abstract class AbstractApp implements App {
         JSONObject jo = new JSONObject(3);
         jo.put("api", "set_bfunc_file");
         jo.put("app_name", appName);
-        jo.put("bfunc_file_content", content);
+        jo.put("file_name", Util.getSimpleFileName(bfuncFile));
+        jo.put("content", content);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
         return retJson.getBoolean("state");
@@ -260,7 +283,8 @@ public abstract class AbstractApp implements App {
         JSONObject jo = new JSONObject(3);
         jo.put("api", "set_mfunc_file");
         jo.put("app_name", appName);
-        jo.put("mfunc_file_content", content);
+        jo.put("file_name", Util.getSimpleFileName(mfuncFile));
+        jo.put("content", content);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
         return retJson.getBoolean("state");
@@ -272,7 +296,8 @@ public abstract class AbstractApp implements App {
         JSONObject jo = new JSONObject(3);
         jo.put("api", "set_rfunc_file");
         jo.put("app_name", appName);
-        jo.put("rfunc_file_content", content);
+        jo.put("file_name", Util.getSimpleFileName(rfuncFile));
+        jo.put("content", content);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
         return retJson.getBoolean("state");
