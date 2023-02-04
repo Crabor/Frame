@@ -4,13 +4,13 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import platform.config.Configuration;
-import platform.comm.pubsub.Publisher;
+import platform.communication.pubsub.Publisher;
 import platform.service.inv.algorithm.*;
 import platform.service.inv.struct.*;
 import platform.service.inv.struct.inv.InvAbstract;
 import platform.service.inv.struct.trace.Trace;
-import platform.struct.CmdType;
-import platform.util.Util;
+import common.struct.CmdType;
+import common.util.Util;
 
 import java.io.File;
 import java.util.*;

@@ -1,4 +1,4 @@
-package platform.comm.socket;
+package common.socket;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -30,7 +30,7 @@ public class TCP {
         try {
             out.writeBytes(str + '\n');
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             try {
                 socket.close();
             } catch (IOException ee) {
@@ -45,7 +45,7 @@ public class TCP {
         try {
             ret = in.readLine();
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             try {
                 socket.close();
             } catch (IOException ee) {

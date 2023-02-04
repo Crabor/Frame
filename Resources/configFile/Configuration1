@@ -21,17 +21,6 @@
       "invGenMode": "total",
       "invGenType": "numeric",
   },
-  "AppConfiguration": [
-    {
-      "appName": "platform.testunitycar.MyApp",
-      "subscribe": [
-        {
-          "channel": "sensor",
-          "groupId": 1,
-        },
-      ],
-    },
-  ],
   "ResourceConfiguration": {
     "deviceDriver": {
       "subscribe": [

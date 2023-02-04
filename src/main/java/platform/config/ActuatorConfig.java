@@ -2,6 +2,7 @@ package platform.config;
 
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,7 +35,7 @@ public class ActuatorConfig {
         aliveFreq = freq;
     }
 
-    public String getActorName() {
+    public String getActuatorName() {
         return actuatorName;
     }
 
@@ -52,6 +53,14 @@ public class ActuatorConfig {
 
     public Set<AppConfig> getApps() {
         return apps;
+    }
+
+    public Set<String> getAppsName() {
+        Set<String> ret = new HashSet<>();
+        apps.forEach(config -> {
+            ret.add(config.getAppName());
+        });
+        return ret;
     }
 
     public void setAlive(boolean isAlive) {

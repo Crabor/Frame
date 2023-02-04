@@ -27,4 +27,12 @@ public class SensorInfo {
             this.type = ValueType.DOUBLE;
         }
     }
+
+    @Override
+    public String toString() {
+        return "SensorInfo{" +
+                "state=" + state +
+                ", type=" + type +
+                '}';
+    }
 }

@@ -1,9 +1,9 @@
-package platform.util;
+package common.util;
 
 import com.alibaba.fastjson.JSONObject;
-import platform.comm.socket.CmdRet;
-import platform.struct.CmdType;
-import platform.struct.ServiceType;
+import platform.communication.socket.CmdRet;
+import common.struct.CmdType;
+import common.struct.ServiceType;
 import reactor.util.function.Tuple3;
 import reactor.util.function.Tuples;
 
@@ -16,6 +16,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
+// 工具类
 public class Util {
     public static String getSimpleName(String name) {
         return name.substring(name.lastIndexOf(".") + 1);

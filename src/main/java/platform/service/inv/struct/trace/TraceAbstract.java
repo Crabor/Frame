@@ -2,7 +2,7 @@ package platform.service.inv.struct.trace;
 
 import platform.service.inv.struct.CheckInfo;
 import platform.service.inv.struct.SegInfo;
-import platform.util.Util;
+import common.util.Util;
 
 import java.io.*;
 import java.util.ArrayList;

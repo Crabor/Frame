@@ -1,9 +1,8 @@
 package platform.testTaxi;
 
 import app.AbstractApp;
-import platform.Platform;
-import platform.struct.CmdType;
-import platform.struct.ServiceType;
+import common.struct.CmdType;
+import common.struct.ServiceType;
 
 public class taxiAppOne extends AbstractApp {
 

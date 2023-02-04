@@ -2,25 +2,23 @@ package app;
 
 import app.struct.ActuatorInfo;
 import app.struct.SensorInfo;
+import app.struct.State;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import platform.comm.socket.TCP;
-import platform.comm.socket.UDP;
-import platform.struct.CmdType;
-import platform.struct.ServiceType;
-import platform.util.Util;
+import common.socket.TCP;
+import common.socket.UDP;
+import common.struct.CmdType;
+import common.struct.ServiceType;
+import common.util.Util;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public abstract class AbstractApp implements App {
     private TCP tcp;
@@ -29,7 +27,6 @@ public abstract class AbstractApp implements App {
 
     public AbstractApp() {
         appName = getClass().getName();
-        setting();
     }
 
     //API:
@@ -47,14 +44,17 @@ public abstract class AbstractApp implements App {
         public void run() {
             while (!shouldStop) {
                 JSONObject sensorJson = JSON.parseObject(UDP.recv(udpPort));
-                String channel = sensorJson.getString("channel");
-                String msg = sensorJson.getString("msg");
-                getMsg(channel, msg);
+                if (sensorJson != null) {
+                    String channel = sensorJson.getString("channel");
+                    String msg = sensorJson.getString("msg");
+                    getMsg(channel, msg);
+                }
             }
         }
 
         public void stopThread() {
             shouldStop = true;
+            UDP.close(udpPort);
         }
     }
 
@@ -74,9 +74,9 @@ public abstract class AbstractApp implements App {
             udpThread.start();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
             tcp.close();
         }
+        logger.info(String.format("[%s]: registerApp(%s, %d) -> %s", appName, ip, port, state));
         return state;
     }
 
@@ -89,7 +89,10 @@ public abstract class AbstractApp implements App {
         if (udpThread != null) {
             udpThread.stopThread();
         }
-        return retJson.getBoolean("state");
+        tcp.close();
+        Boolean state = retJson.getBoolean("state");
+        logger.info(String.format("[%s]: cancelApp() -> %s", appName, state));
+        return state;
     }
 
     //sensor:
@@ -100,7 +103,9 @@ public abstract class AbstractApp implements App {
         jo.put("sensor_name", sensorName);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
-        return retJson.getBoolean("state");
+        Boolean state = retJson.getBoolean("state");
+        logger.info(String.format("[%s]: registerSensor(%s) -> %s", appName, sensorName, state));
+        return state;
     }
 
     public boolean cancelSensor(String sensorName) {
@@ -110,7 +115,9 @@ public abstract class AbstractApp implements App {
         jo.put("sensor_name", sensorName);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
-        return retJson.getBoolean("state");
+        Boolean state = retJson.getBoolean("state");
+        logger.info(String.format("[%s]: cancelSensor(%s) -> %s", appName, sensorName, state));
+        return state;
     }
 
     public Map<String, SensorInfo> getRegisteredSensors() {
@@ -125,12 +132,13 @@ public abstract class AbstractApp implements App {
             JSONObject joo = (JSONObject) obj;
             ret.put(joo.getString("sensor_name"), new SensorInfo(joo));
         });
+        logger.info(String.format("[%s]: getRegisteredSensors() -> %s", appName, ret));
         return ret;
     }
 
     public Map<String, SensorInfo> getSupportedSensors() {
         JSONObject jo = new JSONObject(2);
-        jo.put("api", "get_registered_sensors");
+        jo.put("api", "get_supported_sensors");
         jo.put("app_name", appName);
         tcp.send(jo.toJSONString());
         JSONArray retJson = JSON.parseArray(tcp.recv());
@@ -140,6 +148,7 @@ public abstract class AbstractApp implements App {
             JSONObject joo = (JSONObject) obj;
             ret.put(joo.getString("sensor_name"), new SensorInfo(joo));
         });
+        logger.info(String.format("[%s]: getSupportedSensors() -> %s", appName, ret));
         return ret;
     }
 
@@ -151,7 +160,9 @@ public abstract class AbstractApp implements App {
         jo.put("sensor_name", actuatorName);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
-        return retJson.getBoolean("state");
+        Boolean state = retJson.getBoolean("state");
+        logger.info(String.format("[%s]: registerActuator(%s) -> %s", appName, actuatorName, state));
+        return state;
     }
 
     public boolean cancelActuator(String actuatorName) {
@@ -161,7 +172,9 @@ public abstract class AbstractApp implements App {
         jo.put("sensor_name", actuatorName);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
-        return retJson.getBoolean("state");
+        Boolean state = retJson.getBoolean("state");
+        logger.info(String.format("[%s]: cancelActuator(%s) -> %s", appName, actuatorName, state));
+        return state;
     }
 
     public Map<String, ActuatorInfo> getSupportedActuators() {
@@ -176,6 +189,7 @@ public abstract class AbstractApp implements App {
             JSONObject joo = (JSONObject) obj;
             ret.put(joo.getString("actuator_name"), new ActuatorInfo(joo));
         });
+        logger.info(String.format("[%s]: getSupportedActuators() -> %s", appName, ret));
         return ret;
     }
 
@@ -191,6 +205,7 @@ public abstract class AbstractApp implements App {
             JSONObject joo = (JSONObject) obj;
             ret.put(joo.getString("actuator_name"), new ActuatorInfo(joo));
         });
+        logger.info(String.format("[%s]: getRegisteredActuators() -> %s", appName, ret));
         return ret;
     }
 
@@ -202,7 +217,9 @@ public abstract class AbstractApp implements App {
         jo.put("action", action);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
-        return retJson.getBoolean("state");
+        Boolean state = retJson.getBoolean("state");
+        logger.info(String.format("[%s]: setActuator(%s, %s) -> %s", appName, actuatorName, action, state));
+        return state;
     }
 
     //service:
@@ -213,7 +230,9 @@ public abstract class AbstractApp implements App {
         jo.put("service_type", type.toString());
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
-        return retJson.getBoolean("state");
+        Boolean state = retJson.getBoolean("state");
+        logger.info(String.format("[%s]: isServerOn(%s) -> %s", appName, type, state));
+        return state;
     }
 
     //TODO: 由于改成进程间通信（网络套接字）而不是进程内部函数调用，所以参数返回值不能为Object
@@ -232,7 +251,10 @@ public abstract class AbstractApp implements App {
         jo.put("args", ja);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
-        return retJson.getString("ret");
+
+        String ret = retJson.getString("state");
+        logger.info(String.format("[%s]: call(%s, %s, %s) -> %s", appName, serviceType, cmdType, Arrays.toString(args), ret));
+        return ret;
     }
 
     //ctx:
@@ -248,7 +270,9 @@ public abstract class AbstractApp implements App {
         jo.put("content", content);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
-        return retJson.getBoolean("state");
+        Boolean state = retJson.getBoolean("state");
+        logger.info(String.format("[%s]: setRuleFile(%s) -> %s", appName, ruleFile, state));
+        return state;
     }
 
     public boolean setPatternFile(String patternFile) {
@@ -261,7 +285,9 @@ public abstract class AbstractApp implements App {
         jo.put("content", content);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
-        return retJson.getBoolean("state");
+        Boolean state = retJson.getBoolean("state");
+        logger.info(String.format("[%s]: setPatternFile(%s) -> %s", appName, patternFile, state));
+        return state;
     }
 
     public boolean setBfuncFile(String bfuncFile) {
@@ -274,7 +300,9 @@ public abstract class AbstractApp implements App {
         jo.put("content", content);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
-        return retJson.getBoolean("state");
+        Boolean state = retJson.getBoolean("state");
+        logger.info(String.format("[%s]: setBfuncFile(%s) -> %s", appName, bfuncFile, state));
+        return state;
     }
 
     public boolean setMfuncFile(String mfuncFile) {
@@ -287,7 +315,9 @@ public abstract class AbstractApp implements App {
         jo.put("content", content);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
-        return retJson.getBoolean("state");
+        Boolean state = retJson.getBoolean("state");
+        logger.info(String.format("[%s]: setMfuncFile(%s) -> %s", appName, mfuncFile, state));
+        return state;
     }
 
     public boolean setRfuncFile(String rfuncFile) {
@@ -300,7 +330,9 @@ public abstract class AbstractApp implements App {
         jo.put("content", content);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
-        return retJson.getBoolean("state");
+        Boolean state = retJson.getBoolean("state");
+        logger.info(String.format("[%s]: setRfuncFile(%s) -> %s", appName, rfuncFile, state));
+        return state;
     }
 
     public boolean setCtxValidator(String ctxValidator) {
@@ -310,7 +342,9 @@ public abstract class AbstractApp implements App {
         jo.put("ctx_validator", ctxValidator);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
-        return retJson.getBoolean("state");
+        Boolean state = retJson.getBoolean("state");
+        logger.info(String.format("[%s]: setCtxValidator(%s) -> %s", appName, ctxValidator, state));
+        return state;
     }
 
     //inv:

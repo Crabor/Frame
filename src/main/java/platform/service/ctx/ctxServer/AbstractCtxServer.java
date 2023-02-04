@@ -6,9 +6,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import platform.config.Configuration;
-import platform.comm.pubsub.AbstractSubscriber;
+import platform.communication.pubsub.AbstractSubscriber;
 import platform.service.ctx.ctxChecker.CheckerStarter;
-import platform.service.ctx.ctxChecker.context.Context;
 import platform.service.ctx.message.Message;
 import platform.service.ctx.pattern.matcher.FunctionMatcher;
 import platform.service.ctx.pattern.matcher.PrimaryKeyMatcher;
@@ -33,10 +32,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicLong;
 
 
 public abstract class AbstractCtxServer extends AbstractSubscriber implements Runnable{

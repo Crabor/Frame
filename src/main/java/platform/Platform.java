@@ -2,17 +2,16 @@ package platform;
 
 import platform.config.Configuration;
 import platform.app.AppMgrThread;
-import platform.comm.pubsub.Channel;
-import platform.comm.pubsub.Subscribe;
+import platform.communication.pubsub.Channel;
 import platform.resource.ResMgrThread;
-import platform.comm.pubsub.Publisher;
-import platform.comm.pubsub.AbstractSubscriber;
+import platform.communication.pubsub.Publisher;
+import platform.communication.pubsub.AbstractSubscriber;
 import io.lettuce.core.RedisClient;
 import platform.service.ctx.ctxServer.PlatformCtxServer;
 import platform.service.inv.CheckServer;
-import platform.struct.CmdType;
-import platform.struct.ServiceType;
-import platform.util.Util;
+import common.struct.CmdType;
+import common.struct.ServiceType;
+import common.util.Util;
 import platform.service.SerMgrThread;
 
 import java.io.File;
@@ -68,7 +67,6 @@ public class Platform {
                         Configuration.getRedisConfig().getServerPort());
         Publisher.Init(client);
         AbstractSubscriber.Init(client);
-        Subscribe.Init(client);
 
         //init mgr
         resMgr = ResMgrThread.getInstance();
@@ -97,7 +95,6 @@ public class Platform {
     public static void Close() {
         Publisher.Close();
         AbstractSubscriber.Close();
-        Subscribe.Close();
     }
 
     public static String call(String appName, ServiceType type, CmdType cmd, String... args) {

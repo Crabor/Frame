@@ -1,9 +1,9 @@
 package platform.testUDP;
 
 import app.AbstractApp;
-import platform.comm.socket.UDP;
-import platform.comm.socket.Cmd;
-import platform.comm.socket.CmdRet;
+import common.socket.UDP;
+import platform.communication.socket.Cmd;
+import platform.communication.socket.CmdRet;
 
 public class zshApp extends AbstractApp {
     @Override

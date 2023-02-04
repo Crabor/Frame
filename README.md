@@ -215,7 +215,7 @@ protected void publish(Channel channel, int groupId, int priorityId, String mess
 ```java
 //Subscriber1
 
-import platform.comm.pubsub.AbstractSubscriber;
+import platform.common.pubsub.AbstractSubscriber;
 
 public class Subscriber1 extends AbstractSubscriber {
     @Override

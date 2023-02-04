@@ -1,7 +1,7 @@
 package platform.resource.driver;
 
 import io.lettuce.core.api.sync.RedisCommands;
-import platform.comm.pubsub.AbstractSubscriber;
+import platform.communication.pubsub.AbstractSubscriber;
 
 public class DBDriver extends AbstractSubscriber implements Runnable {
     private Thread t;

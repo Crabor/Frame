@@ -9,7 +9,7 @@ import platform.service.ctx.message.Message;
 import platform.service.ctx.message.MessageHandler;
 import platform.service.ctx.ctxChecker.CheckerStarter;
 import platform.service.ctx.statistics.ServerStatistics;
-import platform.struct.CmdType;
+import common.struct.CmdType;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;

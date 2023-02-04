@@ -3,11 +3,10 @@ package platform.testother;
 import io.lettuce.core.RedisClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import platform.comm.pubsub.AbstractSubscriber;
-import platform.comm.pubsub.Channel;
-import platform.comm.pubsub.Publisher;
-import platform.comm.pubsub.Subscribe;
-import platform.comm.pubsub.GrpPrioMode;
+import platform.communication.pubsub.AbstractSubscriber;
+import platform.communication.pubsub.Channel;
+import platform.communication.pubsub.Publisher;
+import platform.communication.pubsub.GrpPrioPair;
 
 public class testpubsub2 {
     static Log logger = LogFactory.getLog(testpubsub2.class);
@@ -17,7 +16,6 @@ public class testpubsub2 {
         RedisClient client = RedisClient.create("redis://localhost:6379");
         Publisher.Init(client);
         AbstractSubscriber.Init(client);
-        Subscribe.Init(client);
 
         Channel c = new Channel("channel");
         AbstractSubscriber s1 = new AbstractSubscriber() {
@@ -33,7 +31,7 @@ public class testpubsub2 {
             @Override
             public void onMessage(String channel, String msg) {
                 System.out.println("s2 recv " + msg);
-                GrpPrioMode gpm = getGrpPrioMode(channel);
+                GrpPrioPair gpm = getGrpPrioPair(channel);
                 publish(c, gpm.groupId, gpm.priorityId - 1, msg + msg);
             }
         };

@@ -112,6 +112,14 @@ public class SensorConfig {
         return apps;
     }
 
+    public Set<String> getAppsName() {
+        Set<String> ret = new HashSet<>();
+        apps.forEach(config -> {
+            ret.add(config.getAppName());
+        });
+        return ret;
+    }
+
     @Override
     public String toString() {
         return "SensorConfig{" +

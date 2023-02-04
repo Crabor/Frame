@@ -1,7 +1,5 @@
 package platform.config;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import platform.service.ctx.ctxServer.AppCtxServer;
 
 import java.util.*;
@@ -56,6 +54,14 @@ public class AppConfig {
         return sensors;
     }
 
+    public Set<String> getSensorsName() {
+        Set<String> ret = new HashSet<>();
+        sensors.forEach(config -> {
+            ret.add(config.getSensorName());
+        });
+        return ret;
+    }
+
     public void addSensor(SensorConfig sensor) {
         this.sensors.add(sensor);
     }
@@ -90,6 +96,14 @@ public class AppConfig {
 
     public Set<ActuatorConfig> getActuators() {
         return actuators;
+    }
+
+    public Set<String> getActuatorsName() {
+        Set<String> ret = new HashSet<>();
+        actuators.forEach(config -> {
+            ret.add(config.getActuatorName());
+        });
+        return ret;
     }
 
     public void addActuator(ActuatorConfig actuator) {

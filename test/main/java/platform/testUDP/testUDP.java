@@ -1,6 +1,6 @@
 package platform.testUDP;
 
-import platform.comm.socket.UDP;
+import common.socket.UDP;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
