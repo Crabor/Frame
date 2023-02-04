@@ -215,7 +215,7 @@ protected void publish(Channel channel, int groupId, int priorityId, String mess
 ```java
 //Subscriber1
 
-import platform.comm.pubsub.AbstractSubscriber;
+import platform.common.pubsub.AbstractSubscriber;
 
 public class Subscriber1 extends AbstractSubscriber {
     @Override
@@ -383,28 +383,28 @@ Subscriber3: channel, hello
     //传感器配置，ctx服务、inv服务会读取该项
     "SensorConfiguration": [
       {
-        "SensorName": "front",
+        "sensorName": "front",
       },
       {
-        "SensorName": "back",
+        "sensorName": "back",
       },
       {
-        "SensorName": "left",
+        "sensorName": "left",
       },
       {
-        "SensorName": "right",
+        "sensorName": "right",
       }
     ],
     //动作设施配置
     "ActorConfiguration": [
       {
-        "ActuatorName": "x",
+        "actuatorName": "x",
       },
       {
-        "ActuatorName": "y",
+        "actuatorName": "y",
       },
       {
-        "ActuatorName": "z",
+        "actuatorName": "z",
       },
     ],
   },
@@ -450,6 +450,37 @@ Subscriber3: channel, hello
 | actuator_set   | <actuator_name> <value_string>                             | <true/false>   | 设置actuator值<br/>true :设置actuator值成功<br/>false :设置actuator值失败         |
 | channel_msg    | {"channel":<channel_name>,<br/>"message":<message_string>} | <true/false>   | 发送频道消息<br/>true :发送频道消息成功<br/>false :发送频道消息错误                        |
 | <custom_cmd>   | <custom_param>                                             | <custom_ret>   | 自定义命令                                                                |
+
+## app
+
+app与平台通信为网络套接字，分为控制通信通道与数据通信通道。其中控制通信通道采用TCP通信协议，采用客户端一问服务器一答的形式，所有编程API都是采用该形式。而数据通信通道采用的是平台向应用的UDP单向通信，用以平台不断向应用传输最新的sensor数据。
+
+### app与平台通信明文协议
+
+| 类名          | 编程API                                                                         | 转换为要发送的网络字符串                                                                                               | 平台返回的网络字符串                                                                |
+|-------------|-------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
+| AppMgr      | public boolean registerApp(String ip, int port);                              | {"api":"register_app","app_name":"xxxx"}                                                                   | {"state":true/false,"udp_port":xxxx}                                      |
+| AppMgr      | public boolean cancelApp();                                                   | {"api":"cancel_app","app_name":"xxxx"}                                                                     | {"state":true/false}                                                      |
+| SensorMgr   | public Map<String, SensorInfo> getSupportedSensors();                         | {"api":"get_supported_sensors","app_name":"xxxx"}                                                          | [{"sensor_name":"xxxx","state":"on/off","value_type":"xxxx"},{...},...]   |
+| SensorMgr   | public Map<String, SensorInfo> getRegisteredSensors();                        | {"api":"get_registered_sensors","app_name":"xxxx"}                                                         | [{"sensor_name":"xxxx","state":"on/off","value_type":"xxxx"},{...},...]   |
+| SensorMgr   | public boolean registerSensor(String sensorName);                             | {"api":"register_sensor","app_name":"xxxx","sensor_name":"xxxx"}                                           | {"state":true/false}                                                      |
+| SensorMgr   | public boolean cancelSensor(String sensorName);                               | {"api":"cancel_sensor","app_name":"xxxx","sensor_name":"xxxx"}                                             | {"state":true/false}                                                      |
+| ActuatorMgr | public Map<String, ActuatorInfo> getSupportedActuators();                     | {"api":"get_supported_actuators","app_name":"xxxx"}                                                        | [{"actuator_name":"xxxx","state":"on/off","value_type":"xxxx"},{...},...] |
+| ActuatorMgr | public Map<String, ActuatorInfo> getRegisteredActuators();                    | {"api":"get_registered_actuators","app_name":"xxxx"}                                                       | [{"actuator_name":"xxxx","state":"on/off","value_type":"xxxx"},{...},...] |
+| ActuatorMgr | public boolean registerActuator(String actuatorName);                         | {"api":"register_actuator","app_name":"xxxx","actuator_name":"xxxx"}                                       | {"state":true/false}                                                      |
+| ActuatorMgr | public boolean cancelActuator(String actuatorName);                           | {"api":"cancel_actuator","app_name":"xxxx","actuator_name":"xxxx"}                                         | {"state":true/false}                                                      |
+| ActuatorMgr | public boolean setActuator(String actuatorName, String action);               | {"api":"set_actuator","app_name":"xxxx","actuator_name":"xxxx","action":"xxxx"}                            | {"state":true/false}                                                      |
+| AbstractApp | public boolean isServerOn(ServiceType type);                                  | {"api":"is_server_on","app_name":"xxxx","service_type":"xxxx"}                                             | {"state":true/false}                                                      |
+| AbstractApp | public String call(ServiceType serviceType, CmdType cmdType, String... args); | {"api":"call","app_name":"xxxx","service_type":"xxxx","cmd_type":"xxxx","args":[{"arg":"xxxx"},{...},...]} | {"ret":"xxxx"}                                                            |
+| ctx         | public boolean setRuleFile(String ruleFile);                                  | {"api":"set_rule_file","app_name":"xxxx","file_name":"xxxx","content":"xxxx"}                              | {"state":true/false}                                                      |
+| ctx         | public boolean setPatternFile(String patternFile);                            | {"api":"set_pattern_file","app_name":"xxxx","file_name":"xxxx","content":"xxxx"}                           | {"state":true/false}                                                      |
+| ctx         | public boolean setBfuncFile(String bfuncFile);                                | {"api":"set_bfunc_file","app_name":"xxxx","file_name":"xxxx","content":"xxxx"}                             | {"state":true/false}                                                      |
+| ctx         | public boolean setMfuncFile(String mfuncFile);                                | {"api":"set_mfunc_file","app_name":"xxxx","file_name":"xxxx","content":"xxxx"}                             | {"state":true/false}                                                      |
+| ctx         | public boolean setRfuncFile(String rfuncFile);                                | {"api":"set_rfunc_file","app_name":"xxxx","file_name":"xxxx","content":"xxxx"}                             | {"state":true/false}                                                      |
+| ctx         | public boolean setCtxValidator(String ctxValidator);                          | {"api":"set_ctx_validator","app_name":"xxxx","ctx_validator":"xxxx"}                                       | {"state":true/false}                                                      |
+| inv(有比较多问题) |                                                                               |                                                                                                            |                                                                           |
+|             |                                                                               |                                                                                                            |                                                                           |
+|             |                                                                               |                                                                                                            |                                                                           |
 
 
 

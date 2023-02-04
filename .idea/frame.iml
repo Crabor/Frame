@@ -12,5 +12,6 @@
     <orderEntry type="library" name="commons-pool2-2.10.0" level="project" />
     <orderEntry type="library" name="opencsv" level="project" />
     <orderEntry type="library" name="commons-beanutils-1.9.4" level="project" />
+    <orderEntry type="library" name="apache.logging.log4j.core" level="project" />
   </component>
 </module>

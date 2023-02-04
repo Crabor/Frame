@@ -1,16 +1,29 @@
-package platform.util;
+package common.util;
 
 import com.alibaba.fastjson.JSONObject;
-import platform.comm.socket.CmdRet;
+import platform.communication.socket.CmdRet;
+import common.struct.CmdType;
+import common.struct.ServiceType;
 import reactor.util.function.Tuple3;
 import reactor.util.function.Tuples;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.stream.Collectors;
 
+// 工具类
 public class Util {
     public static String getSimpleName(String name) {
         return name.substring(name.lastIndexOf(".") + 1);
+    }
+
+    public static String getSimpleFileName(String name) {
+        return name.substring(name.lastIndexOf("/") + 1);
     }
 
     public static String randomJSONCarData(){
@@ -200,6 +213,53 @@ public class Util {
 //        }
 //        return ret;
 //    }
+    private static final String REPLACE_LINE_FEED = "//huanhang";
+
+    public static String readFileContent(String fileName) {
+        Path path = Paths.get(fileName);
+        String content = null;
+        try {
+            content = Files.lines(path).collect(Collectors.joining(REPLACE_LINE_FEED));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return content;
+    }
+
+    public static void writeFileContent(String path, String content) {
+        Path filePath = Path.of(path);
+        String realContent = content.replace(REPLACE_LINE_FEED, "\n");
+        try {
+            Files.writeString(filePath, realContent,
+                    StandardCharsets.UTF_8,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static ServiceType parseServiceType(String type) {
+        ServiceType ret = null;
+        if (type.equalsIgnoreCase("ctx")) {
+            ret = ServiceType.CTX;
+        } else if (type.equalsIgnoreCase("inv")) {
+            ret = ServiceType.INV;
+        }
+        return ret;
+    }
+
+    public static CmdType parseCmdType(String type) {
+        CmdType ret = null;
+        if (type.equalsIgnoreCase("start")) {
+            ret = CmdType.START;
+        } else if (type.equalsIgnoreCase("stop")) {
+            ret = CmdType.STOP;
+        } else if (type.equalsIgnoreCase("reset")) {
+            ret = CmdType.RESET;
+        }
+        return ret;
+    }
 
     public static void main(String[] args) {
 

@@ -1,21 +1,18 @@
 package platform.testUDP;
 
-import platform.Platform;
-import platform.app.AbstractApp;
-import platform.comm.socket.UDP;
-import platform.comm.socket.Cmd;
-import platform.comm.socket.CmdRet;
-import platform.struct.CmdType;
-import platform.struct.ServiceType;
+import app.AbstractApp;
+import common.socket.UDP;
+import platform.communication.socket.Cmd;
+import platform.communication.socket.CmdRet;
 
 public class zshApp extends AbstractApp {
     @Override
-    protected void customizeCtxServer() {
-        config.registerSensor("left");
+    public void setting() {
+//        config.registerSensor("left");
     }
 
     @Override
-    public void iter(String channel, String msg) {
+    public void getMsg(String channel, String msg) {
         logger.debug("app recv: " + msg);
         //如果为sensor1
 
@@ -28,8 +25,7 @@ public class zshApp extends AbstractApp {
 
     }
 
-    @Override
-    public void run() {
+    public static void main(String[] args) {
         //driver
         new Thread(() -> {
             while (true) {

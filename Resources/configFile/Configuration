@@ -73,35 +73,35 @@
     },
     "SensorConfiguration": [
       {
-        "SensorName": "front",
+        "sensorName": "front",
         "fieldNames": "value",
       },
       {
-        "SensorName": "back",
+        "sensorName": "back",
         "fieldNames": "value",
       },
       {
-        "SensorName": "left",
+        "sensorName": "left",
         "fieldNames": "value",
       },
       {
-        "SensorName": "right",
+        "sensorName": "right",
         "fieldNames": "value",
       },
       {
-        "SensorName": "taxis",
+        "sensorName": "taxis",
         "fieldNames": "timestamp,taxiId,longitude,latitude,speed,direction,status",
       }
     ],
     "ActorConfiguration": [
       {
-        "ActuatorName": "x",
+        "actuatorName": "x",
       },
       {
-        "ActuatorName": "y",
+        "actuatorName": "y",
       },
       {
-        "ActuatorName": "z",
+        "actuatorName": "z",
       },
     ],
   },

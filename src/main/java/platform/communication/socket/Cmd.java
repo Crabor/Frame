@@ -1,12 +1,7 @@
-package platform.comm.socket;
+package platform.communication.socket;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import platform.config.Configuration;
-import platform.util.Util;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 public class Cmd {
     private JSONObject msgObj = null;

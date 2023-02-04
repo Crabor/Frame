@@ -70,20 +70,20 @@
     },
     "SensorConfiguration": [
       {
-        "SensorName": "taxis",
+        "sensorName": "taxis",
         "fieldNames": "timestamp,taxiId,longitude,latitude,speed,direction,status",
         "valueFreq": 1,
       },
     ],
     "ActorConfiguration": [
           {
-            "ActuatorName": "xSpeed",
+            "actuatorName": "xSpeed",
           },
           {
-            "ActuatorName": "ySpeed",
+            "actuatorName": "ySpeed",
           },
           {
-            "ActuatorName": "zSpeed",
+            "actuatorName": "zSpeed",
           },
     ],
   },

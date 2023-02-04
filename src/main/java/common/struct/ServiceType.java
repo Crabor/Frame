@@ -1,4 +1,4 @@
-package platform.struct;
+package common.struct;
 
 public enum ServiceType {
     CTX,

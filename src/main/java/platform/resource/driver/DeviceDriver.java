@@ -1,12 +1,12 @@
 package platform.resource.driver;
 
 import com.alibaba.fastjson.JSONObject;
-import platform.comm.socket.PlatformUDP;
-import platform.comm.socket.Cmd;
+import platform.communication.socket.PlatformUDP;
+import platform.communication.socket.Cmd;
 import platform.config.Configuration;
-import platform.comm.pubsub.AbstractSubscriber;
-import platform.comm.socket.CmdRet;
-import platform.util.Util;
+import platform.communication.pubsub.AbstractSubscriber;
+import platform.communication.socket.CmdRet;
+import common.util.Util;
 
 import static java.lang.Thread.sleep;
 
@@ -87,8 +87,9 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                     case "sensor_get":
 //                        logger.debug("dd recv: " + cmdRet);
                         if (!cmdRet.ret.equals("@#$%")) {
+                            //TODO:时都需要再组装成json的信息？
                             String msg = Util.formatToJsonString(cmdRet.args[0], cmdRet.ret);
-                            publish("sensor", 0, msg);
+                            publish(cmdRet.args[0], msg);
                         }
                         break;
                 }

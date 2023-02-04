@@ -1,5 +1,6 @@
-package platform.comm.socket;
+package platform.communication.socket;
 
+import common.socket.UDP;
 import platform.config.Configuration;
 
 public class PlatformUDP {

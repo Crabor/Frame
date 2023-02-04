@@ -1,6 +1,7 @@
 package platform.service.ctx.message;
 
 import com.alibaba.fastjson.JSONObject;
+import platform.config.AppConfig;
 import platform.config.Configuration;
 import platform.config.CtxServerConfig;
 import platform.service.ctx.ctxChecker.context.Context;
@@ -26,9 +27,9 @@ public class MessageHandler {
                 Context context = buildContext(index, sensorName, msgObj.getString(sensorName));
                 message.addContext(context);
             }
-            Set<String> appNameSet = Configuration.getAppsBy(sensorName);
-            for(String appName : appNameSet){
-                message.addAppSensorInfo(appName, sensorName);
+            Set<AppConfig> appSet = Configuration.getAppsBySensorName(sensorName);
+            for(AppConfig app : appSet){
+                message.addAppSensorInfo(app.getAppName(), sensorName);
             }
         }
         // 如果message中包含的所有context 都是null，那么返回null

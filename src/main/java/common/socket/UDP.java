@@ -1,13 +1,7 @@
-package platform.comm.socket;
-
-import com.alibaba.fastjson.JSONObject;
-import platform.config.UDPConfig;
+package common.socket;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +13,12 @@ public class UDP {
         } catch (SocketException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void close(int port) {
+        DatagramSocket socket = sockets.get(port);
+        sockets.remove(port);
+        socket.close();
     }
 
     public static void send(String clientAddress, int clientPort, String msg) {
@@ -56,7 +56,8 @@ public class UDP {
             });
             socket.receive(packet);
         } catch (IOException e) {
-            e.printStackTrace();
+            //TODO
+            return null;
         }
         return new String(data, 0, packet.getLength());
     }

@@ -1,4 +1,4 @@
-package platform.comm.pubsub;
+package platform.communication.pubsub;
 
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -17,7 +18,6 @@ public class Publisher {
     private static final List<Publisher> objs = new ArrayList<>();
     private static final Lock objsLock = new ReentrantLock();
     private final StatefulRedisConnection<String, String> conn;
-    private final Log logger = LogFactory.getLog(Publisher.class);
 
     public static void Init(RedisClient client) {
         Publisher.client = client;
@@ -40,7 +40,7 @@ public class Publisher {
 
     public void publish(Channel channel, int groupId, int priorityId, String message) {
         RedisCommands<String, String> commands = conn.sync();
-        Map<Integer, Subscribe> grp = channel.getSubscribes(groupId);
+        Map<Integer, Set<AbstractSubscriber>> grp = channel.getSubscribers(groupId);
         if (grp != null) {
             int maxPrio = Integer.MIN_VALUE;
             for (Integer prio : grp.keySet()) {
@@ -50,13 +50,6 @@ public class Publisher {
                 maxPrio = Math.max(maxPrio, prio);
             }
             if (maxPrio != Integer.MIN_VALUE) {
-//                commands.lpush(
-//                        String.join(
-//                                "-",
-//                                channel.getName(),
-//                                String.valueOf(groupId),
-//                                String.valueOf(maxPrio)),
-//                        message);
                 commands.publish(
                         String.join(
                                 "-",
@@ -81,7 +74,7 @@ public class Publisher {
     }
 
     public void publish(Channel channel, String message) {
-        for (Integer grpId : channel.getSubscribes().keySet()) {
+        for (Integer grpId : channel.getSubscribers().keySet()) {
             publish(channel, grpId, message);
         }
     }

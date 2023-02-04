@@ -1,7 +1,6 @@
 package platform.service.ctx.ctxServer;
 
 import com.alibaba.fastjson.JSONObject;
-import platform.app.App;
 import platform.config.AppConfig;
 import platform.config.Configuration;
 import platform.config.CtxServerConfig;
@@ -10,11 +9,10 @@ import platform.service.ctx.message.Message;
 import platform.service.ctx.message.MessageHandler;
 import platform.service.ctx.ctxChecker.CheckerStarter;
 import platform.service.ctx.statistics.ServerStatistics;
-import platform.struct.CmdType;
+import common.struct.CmdType;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class PlatformCtxServer extends AbstractCtxServer {
 
@@ -115,7 +113,7 @@ public class PlatformCtxServer extends AbstractCtxServer {
         }
     }
 
-    public static Object call(String appName, CmdType cmd, Object... args) {
+    public static String call(String appName, CmdType cmd, String... args) {
         if(cmd == CmdType.RESET){
             logger.debug("CtxServer for " + appName + " resetting");
             Configuration.getAppsConfig().get(appName).resetCtxServer();
