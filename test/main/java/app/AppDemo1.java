@@ -47,7 +47,7 @@ public class AppDemo1 extends AbstractApp {
             app.cancelSensor("front");
             Thread.sleep(2000);
             app.getRegisteredSensors();
-            Thread.sleep(2000);
+            Thread.sleep(10000);
             app.cancelApp();
         } catch (Exception e) {
             e.printStackTrace();

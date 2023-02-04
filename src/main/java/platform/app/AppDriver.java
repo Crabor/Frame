@@ -46,6 +46,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
         while ((msgFromClient = tcp.recv()) != null) {
             // TODO:
             JSONObject jo = JSON.parseObject(msgFromClient);
+            logger.info(jo.toJSONString());
             String api = jo.getString("api");
             String appName = jo.getString("app_name");
 
@@ -79,20 +80,20 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
                 retJson.put("state", true);
                 tcp.send(retJson.toJSONString());
                 tcp.close();
-
-                logger.info("\n" + appName + " exit!");
-                logger.info("sensors:");
-                Configuration.getResourceConfig().getSensorsConfig().forEach((s, config) -> {
-                    logger.info(s + " -> " + config.getAppsName());
-                });
-                logger.info("actuators:");
-                Configuration.getResourceConfig().getActuatorsConfig().forEach((s, config) -> {
-                    logger.info(s + " -> " + config.getAppsName());
-                });
-                logger.info("apps:");
-                Configuration.getAppsConfig().forEach((s, config) -> {
-                    logger.info(s + " -> sensors:" + config.getSensorsName() + ", actuators:" + config.getActuatorsName());
-                });
+//
+//                logger.info("\n" + appName + " exit!");
+//                logger.info("sensors:");
+//                Configuration.getResourceConfig().getSensorsConfig().forEach((s, config) -> {
+//                    logger.info(s + " -> " + config.getAppsName());
+//                });
+//                logger.info("actuators:");
+//                Configuration.getResourceConfig().getActuatorsConfig().forEach((s, config) -> {
+//                    logger.info(s + " -> " + config.getAppsName());
+//                });
+//                logger.info("apps:");
+//                Configuration.getAppsConfig().forEach((s, config) -> {
+//                    logger.info(s + " -> sensors:" + config.getSensorsName() + ", actuators:" + config.getActuatorsName());
+//                });
             } else if (api.equalsIgnoreCase("get_supported_sensors")) {
                 JSONArray retJsonArray = new JSONArray();
                 Configuration.getResourceConfig().getSensorsConfig().forEach((sensorName, config) -> {

@@ -41,7 +41,7 @@ public class AppDemo2 extends AbstractApp {
             if (supportedSensors.containsKey("left")) {
                 app.registerSensor("left");
             }
-            Thread.sleep(20000);
+            Thread.sleep(10000);
             app.cancelApp();
         } catch (Exception e) {
             e.printStackTrace();
