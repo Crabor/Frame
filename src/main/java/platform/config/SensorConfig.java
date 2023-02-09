@@ -2,6 +2,7 @@ package platform.config;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.ObjectUtils;
+import platform.resource.ResMgrThread;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,7 +15,7 @@ public class SensorConfig {
     private boolean isAlive = false;
     private int aliveFreq; //定时ping
     private int valueFreq; //定时获取value
-    private Thread valueThread;
+    private ResMgrThread.ValueThread valueThread;
     private String IPAddress;
     private int port;
     private final Set<AppConfig> apps = ConcurrentHashMap.newKeySet();
@@ -96,8 +97,16 @@ public class SensorConfig {
         return port;
     }
 
-    public void setValueThread(Thread valueThread) {
+    public void setValueThread(ResMgrThread.ValueThread valueThread) {
         this.valueThread = valueThread;
+    }
+
+    public void startValueThread() {
+        valueThread.start();
+    }
+
+    public void stopValueThread() {
+        valueThread.stopThread();
     }
 
     public void addApp(AppConfig app) {
@@ -127,7 +136,7 @@ public class SensorConfig {
                 ", sensorName='" + sensorName + '\'' +
                 ", fieldNames=" + fieldNames +
                 ", aliveFreq=" + aliveFreq +
-                ", valueFreq=" + valueFreq +
+//                ", valueFreq=" + valueFreq +
                 '}';
     }
 }

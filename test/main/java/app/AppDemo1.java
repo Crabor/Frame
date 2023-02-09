@@ -22,17 +22,17 @@ public class AppDemo1 extends AbstractApp {
     }
 
     @Override
-    public void getMsg(String channel, String msg) {
+    public void getMsg(String sensorName, String value) {
         // 因为注册了front传感器，所以每当front有新的数据时便会触发getMsg，
         // 其中channel是sensor名字，msg是sensor数据
-        logger.info(String.format("[%s]: getMsg(channel, msg) -> %s, %s", appName, channel, msg));
+        logger.info(String.format("[%s]: getMsg(channel, msg) -> %s, %s", appName, sensorName, value));
         //用户代码
     }
 
     public static void main(String[] args) {
         try {
             AppDemo1 app = new AppDemo1();
-            app.registerApp("127.0.0.1", 8888);
+            app.connect("127.0.0.1", 8888);
             Map<String, SensorInfo> supportedSensors = app.getSupportedSensors();
             if (supportedSensors.containsKey("front")) {
                 app.registerSensor("front");
@@ -48,7 +48,7 @@ public class AppDemo1 extends AbstractApp {
             Thread.sleep(2000);
             app.getRegisteredSensors();
             Thread.sleep(10000);
-            app.cancelApp();
+            app.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
         }

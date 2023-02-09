@@ -13,7 +13,7 @@ public class AppMgrThread implements Runnable {
     private static Thread t;
 //    private final List<App> apps = new ArrayList<>();
     //第一维为ip，第二维为该ip已被占用的端口
-    private static final Map<String, Set<Integer>> portMap = new HashMap<>();
+//    private static final Map<String, Set<Integer>> portMap = new HashMap<>();
     private static final Set<Integer> grpIdSet = new HashSet<>();
 
     // 构造方法私有化
@@ -80,29 +80,29 @@ public class AppMgrThread implements Runnable {
 //        return apps;
 //    }
 
-    public static int getNewPort(Socket socket) {
-        String clientHost = socket.getInetAddress().getHostAddress();
-        int clientPort = socket.getPort();
-        if (!portMap.containsKey(clientHost)) {
-            portMap.put(clientHost, new HashSet<>());
-        }
-        Set<Integer> clientPorts = portMap.get(clientHost);
-        clientPorts.add(clientPort);
-        int i = 1;
-        while (clientPorts.contains(clientPort + i)) {
-            i++;
-        }
-        clientPorts.add(clientPort + i);
-        return clientPort + i;
-    }
+//    public static int getNewPort(Socket socket) {
+//        String clientHost = socket.getInetAddress().getHostAddress();
+//        int clientPort = socket.getPort();
+//        if (!portMap.containsKey(clientHost)) {
+//            portMap.put(clientHost, new HashSet<>());
+//        }
+//        Set<Integer> clientPorts = portMap.get(clientHost);
+//        clientPorts.add(clientPort);
+//        int i = 1;
+//        while (clientPorts.contains(clientPort + i)) {
+//            i++;
+//        }
+//        clientPorts.add(clientPort + i);
+//        return clientPort + i;
+//    }
 
-    public static void removePort(Socket socket, int udpPort) {
-        String clientHost = socket.getInetAddress().getHostAddress();
-        int clientPort = socket.getPort();
-        Set<Integer> s = portMap.get(clientHost);
-        s.remove(clientPort);
-        s.remove(udpPort);
-    }
+//    public static void removePort(Socket socket, int udpPort) {
+//        String clientHost = socket.getInetAddress().getHostAddress();
+//        int clientPort = socket.getPort();
+//        Set<Integer> s = portMap.get(clientHost);
+//        s.remove(clientPort);
+//        s.remove(udpPort);
+//    }
 
     public static int getNewGrpId() {
         int ret = (int) (System.currentTimeMillis() % 65536);
