@@ -48,6 +48,8 @@ public class PlatformCtxServer extends AbstractCtxServer {
 
     @Override
     public void onMessage(String channel, String msg) {
+        //sensorName = front-back
+        //value = 10-30
         logger.debug("platCtxServer recv: " + msg);
         //System.out.println("platCtxServer recv: " + msg);
 

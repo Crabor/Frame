@@ -36,26 +36,31 @@ public class AppDemo1 extends AbstractApp {
         try {
             AppDemo1 app = new AppDemo1();
             app.connect("127.0.0.1", 8888);
-            Map<String, ActuatorInfo> supportedActuators = app.getSupportedActuators();
-            if (supportedActuators.containsKey("xSpeed")) {
-                app.registerActuator("xSpeed");
+//            app.setRuleFile("Resources/taxiTest/appOne/taxiRules.xml");
+//            app.setBfuncFile("Resources/taxiTest/appOne/taxiBfunction.class");
+//            app.setPatternFile("Resources/taxiTest/appOne/taxiPatterns.xml");
+//            app.setMfuncFile("Resources/taxiTest/appOne/taxiMfunction.class");
+//            Map<String, ActuatorInfo> supportedActuators = app.getSupportedActuators();
+//            if (supportedActuators.containsKey("xSpeed")) {
+//                app.registerActuator("xSpeed");
+//            }
+//            app.getRegisteredActuators();
+//            if (supportedActuators.containsKey("ySpeed")) {
+//                app.registerActuator("ySpeed");
+//            }
+//            app.getRegisteredActuators();
+//            app.getRegisteredActuatorStatus();
+//            app.setActuator("xSpeed", "5");
+//            app.cancelActuator("xSpeed");
+//            app.setActuator("xSpeed", "6");
+//            app.getRegisteredActuators();
+//            app.cancelAllActuators();
+//            app.getRegisteredActuators();
+            Map<String, SensorInfo> supportedSensors = app.getSupportedSensors();
+            if (supportedSensors.containsKey("front")) {
+                app.registerSensor("front", SensorModeType.PASSIVE);
             }
-            app.getRegisteredActuators();
-            if (supportedActuators.containsKey("ySpeed")) {
-                app.registerActuator("ySpeed");
-            }
-            app.getRegisteredActuators();
-            app.getRegisteredActuatorStatus();
-            app.setActuator("xSpeed", "5");
-            app.cancelActuator("xSpeed");
-            app.setActuator("xSpeed", "6");
-            app.getRegisteredActuators();
-            app.cancelAllActuators();
-            app.getRegisteredActuators();
-//            Map<String, SensorInfo> supportedSensors = app.getSupportedSensors();
-//            app.registerSensor("front", SensorModeType.ACTIVE);
-//            app.registerSensor("front", SensorModeType.PASSIVE);
-//            app.getMsgThread(CmdType.START);
+            app.getMsgThread(CmdType.START);
 //            Thread.sleep(2000);
 //            app.registerSensor("back", SensorModeType.PASSIVE);
 //            Thread.sleep(2000);

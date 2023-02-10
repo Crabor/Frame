@@ -476,7 +476,8 @@ public abstract class AbstractApp implements App {
     }
 
     public boolean setBfuncFile(String bfuncFile) {
-        String content = Util.readFileContent(bfuncFile);
+        String javaFile = bfuncFile.replace(".class", ".java");
+        String content = Util.readFileContent(javaFile);
 
         JSONObject jo = new JSONObject(3);
         jo.put("api", "set_bfunc_file");
@@ -491,7 +492,8 @@ public abstract class AbstractApp implements App {
     }
 
     public boolean setMfuncFile(String mfuncFile) {
-        String content = Util.readFileContent(mfuncFile);
+        String javaFile = mfuncFile.replace(".class", ".java");
+        String content = Util.readFileContent(javaFile);
 
         JSONObject jo = new JSONObject(3);
         jo.put("api", "set_mfunc_file");

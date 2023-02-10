@@ -59,7 +59,7 @@ public class Platform {
         dir.mkdirs();
 
         //read config file
-        Configuration.analyzer("Resources/configFile/Configuration1");
+        Configuration.analyzer("Resources/configFile/ConfigurationNew");
 
         //init database
         RedisClient client = RedisClient.create(

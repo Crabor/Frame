@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.sun.tools.javac.Main;
+
 public class AppDriver extends AbstractSubscriber implements Runnable {
     private TCP tcp;
 //    private String clientIP;
@@ -41,8 +43,8 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
         //TODO:
 //        UDP.send(clientIP, clientUDPPort, jo.toJSONString());
 //        logger.info(String.format("appDriver onmessage: %s, %s", channel, msg));
-        JSONObject jo = JSON.parseObject(msg);
-        values.put(channel, jo.getString(channel));
+//        JSONObject jo = JSON.parseObject(msg);
+        values.put(channel, msg);
 //        logger.info("onMessage: " + values);
     }
 
@@ -70,6 +72,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
 //                retJson.put("udp_port", clientUDPPort);
                 //TODO: 还有一些初始化工作
                 appConfig = new AppConfig(appName);
+                appConfig.setGrpId(grpId);
                 Configuration.getAppsConfig().put(appName, appConfig);
                 tcp.send(retJson.toJSONString());
             } else if (api.equalsIgnoreCase("disconnect")) {
@@ -332,44 +335,70 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
                 retJson.put("ret", ret);
                 tcp.send(retJson.toJSONString());
             } else if (api.equalsIgnoreCase("set_rule_file")) {
-                String path = CTX_FILE_PATH + "/" + appName + "/" + jo.getString("file_name");
-                String content = jo.getString("content");
-                Util.writeFileContent(path, content);
-                appConfig.setRuleFile(path);
                 JSONObject retJson = new JSONObject(1);
-                retJson.put("state", true);
+                String content = jo.getString("content");
+                String dir = CTX_FILE_PATH + "/" + appName;
+                Util.writeFileContent(dir, jo.getString("file_name"), content);
+                if (appConfig != null) {
+                    appConfig.setRuleFile(dir + "/" + jo.getString("file_name"));
+                    retJson.put("state", true);
+                } else {
+                    retJson.put("state", false);
+                }
                 tcp.send(retJson.toJSONString());
             } else if (api.equalsIgnoreCase("set_pattern_file")) {
-                String path = CTX_FILE_PATH + "/" + appName + "/" + jo.getString("file_name");
-                String content = jo.getString("content");
-                Util.writeFileContent(path, content);
-                appConfig.setPatternFile(path);
                 JSONObject retJson = new JSONObject(1);
-                retJson.put("state", true);
+                String content = jo.getString("content");
+                String dir = CTX_FILE_PATH + "/" + appName;
+                Util.writeFileContent(dir, jo.getString("file_name"), content);
+                if (appConfig != null) {
+                    appConfig.setPatternFile(dir + "/" + jo.getString("file_name"));
+                    retJson.put("state", true);
+                } else {
+                    retJson.put("state", false);
+                }
                 tcp.send(retJson.toJSONString());
             } else if (api.equalsIgnoreCase("set_bfunc_file")) {
-                String path = CTX_FILE_PATH + "/" + appName + "/" + jo.getString("file_name");
-                String content = jo.getString("content");
-                Util.writeFileContent(path, content);
-                appConfig.setBfuncFile(path);
                 JSONObject retJson = new JSONObject(1);
-                retJson.put("state", true);
+                String content = jo.getString("content");
+                String dir = CTX_FILE_PATH + "/" + appName;
+                String fileName = jo.getString("file_name");
+                String javaFile = fileName.replace(".class", ".java");
+                Util.writeFileContent(dir, javaFile, content);
+                String[] args = new String[] {dir + "/" + javaFile};
+                if(Main.compile(args) == 0 && appConfig != null) {
+                    appConfig.setBfuncFile(dir + "/" + fileName);
+                    retJson.put("state", true);
+                } else {
+                    retJson.put("state", false);
+                }
                 tcp.send(retJson.toJSONString());
             } else if (api.equalsIgnoreCase("set_mfunc_file")) {
-                String path = CTX_FILE_PATH + "/" + appName + "/" + jo.getString("file_name");
-                String content = jo.getString("content");
-                Util.writeFileContent(path, content);
-                appConfig.setMfuncFile(path);
                 JSONObject retJson = new JSONObject(1);
-                retJson.put("state", true);
+                String content = jo.getString("content");
+                String dir = CTX_FILE_PATH + "/" + appName;
+                String fileName = jo.getString("file_name");
+                String javaFile = fileName.replace(".class", ".java");
+                Util.writeFileContent(dir, javaFile, content);
+                String[] args = new String[] {dir + "/" + javaFile};
+                if(Main.compile(args) == 0 && appConfig != null) {
+                    appConfig.setMfuncFile(dir + "/" + fileName);
+                    retJson.put("state", true);
+                } else {
+                    retJson.put("state", false);
+                }
                 tcp.send(retJson.toJSONString());
             } else if (api.equalsIgnoreCase("set_rfunc_file")) {
                 //TODO:ctx还未实现该功能
             } else if (api.equalsIgnoreCase("set_ctx_validator")) {
-                String ctxValidator = jo.getString("ctx_validator");
-                appConfig.setCtxValidator(ctxValidator);
                 JSONObject retJson = new JSONObject(1);
-                retJson.put("state", true);
+                String ctxValidator = jo.getString("ctx_validator");
+                if (appConfig != null) {
+                    appConfig.setCtxValidator(ctxValidator);
+                    retJson.put("state", true);
+                } else {
+                    retJson.put("state", false);
+                }
                 tcp.send(retJson.toJSONString());
             }
         }

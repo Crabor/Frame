@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class AppConfig {
     private String appName;
+    private int grpId;
     private List<SubConfig> subConfigs = new ArrayList<>();
     private Set<SensorConfig> sensors = ConcurrentHashMap.newKeySet();
     private Set<ActuatorConfig> actuators = ConcurrentHashMap.newKeySet();
@@ -40,6 +41,14 @@ public class AppConfig {
 
     public AppConfig(String appName) {
         this.appName = appName;
+    }
+
+    public int getGrpId() {
+        return grpId;
+    }
+
+    public void setGrpId(int grpId) {
+        this.grpId = grpId;
     }
 
     public String getAppName() {
