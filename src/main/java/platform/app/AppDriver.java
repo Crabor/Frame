@@ -19,6 +19,7 @@ import platform.config.SensorConfig;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AppDriver extends AbstractSubscriber implements Runnable {
@@ -26,7 +27,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
 //    private String clientIP;
 //    private int clientUDPPort;
     private int grpId;
-    private final ConcurrentHashMap<String, String> values = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, String> values = new ConcurrentHashMap<>();
 
     public AppDriver(Socket socket) {
         this.tcp = new TCP(socket);
@@ -39,8 +40,10 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
 //        jo.put("msg", msg);
         //TODO:
 //        UDP.send(clientIP, clientUDPPort, jo.toJSONString());
+//        logger.info(String.format("appDriver onmessage: %s, %s", channel, msg));
         JSONObject jo = JSON.parseObject(msg);
         values.put(channel, jo.getString(channel));
+//        logger.info("onMessage: " + values);
     }
 
     private static final String CTX_FILE_PATH = "Resources/configFile/ctxFile";
@@ -48,6 +51,9 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
     @Override
     public void run() {
         String msgFromClient;
+        AppConfig appConfig = null;
+        Map<String, SensorConfig> sensorConfigMap = Configuration.getResourceConfig().getSensorsConfig();
+        Map<String, ActuatorConfig> actuatorConfigMap = Configuration.getResourceConfig().getActuatorsConfig();
         while ((msgFromClient = tcp.recv()) != null) {
             // TODO:
             JSONObject jo = JSON.parseObject(msgFromClient);
@@ -63,45 +69,46 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
                 retJson.put("state", true);
 //                retJson.put("udp_port", clientUDPPort);
                 //TODO: 还有一些初始化工作
-                Configuration.getAppsConfig().put(appName, new AppConfig(appName));
+                appConfig = new AppConfig(appName);
+                Configuration.getAppsConfig().put(appName, appConfig);
                 tcp.send(retJson.toJSONString());
             } else if (api.equalsIgnoreCase("disconnect")) {
                 //TODO: 一些析构工作
-                AppConfig appConfig = Configuration.getAppsConfig().get(appName);
-                appConfig.getSensors().forEach(sensorConfig -> {
-                    sensorConfig.removeApp(appConfig);
-                    appConfig.removeSensor(sensorConfig);
-                    unsubscribe(sensorConfig.getSensorName());
-                });
-                appConfig.getActuators().forEach(actuatorConfig -> {
-                    actuatorConfig.removeApp(appConfig);
-                    appConfig.removeActuator(actuatorConfig);
-                });
-                Configuration.getAppsConfig().remove(appName);
-//                AppMgrThread.removePort(tcp.getSocket(), clientUDPPort);
-                AppMgrThread.removeGrpId(grpId);
-                //TODO:server相关资源取消
                 JSONObject retJson = new JSONObject(1);
-                retJson.put("state", true);
+                AppConfig finalAppConfig = appConfig;
+                if (appConfig != null) {
+                    appConfig.getSensorsName().forEach(sensorName -> {
+                        finalAppConfig.cancelSensor(sensorName);
+                        unsubscribe(sensorName);
+                    });
+                    appConfig.getActuatorsName().forEach(appConfig::cancelActuator);
+                    Configuration.getAppsConfig().remove(appName);
+                    appConfig = null;
+                    AppMgrThread.removeGrpId(grpId);
+                    retJson.put("state", true);
+                } else {
+                    retJson.put("state", false);
+                }
+                //TODO:server相关资源取消
                 tcp.send(retJson.toJSONString());
                 tcp.close();
 //
 //                logger.info("\n" + appName + " exit!");
 //                logger.info("sensors:");
-//                Configuration.getResourceConfig().getSensorsConfig().forEach((s, config) -> {
+//                sensorConfigMap.forEach((s, config) -> {
 //                    logger.info(s + " -> " + config.getAppsName());
 //                });
 //                logger.info("actuators:");
-//                Configuration.getResourceConfig().getActuatorsConfig().forEach((s, config) -> {
+//                actuatorConfigMap.forEach((s, config) -> {
 //                    logger.info(s + " -> " + config.getAppsName());
 //                });
 //                logger.info("apps:");
-//                Configuration.getAppsConfig().forEach((s, config) -> {
+//                appConfigMap.forEach((s, config) -> {
 //                    logger.info(s + " -> sensors:" + config.getSensorsName() + ", actuators:" + config.getActuatorsName());
 //                });
             } else if (api.equalsIgnoreCase("get_supported_sensors")) {
                 JSONArray retJsonArray = new JSONArray();
-                Configuration.getResourceConfig().getSensorsConfig().forEach((sensorName, config) -> {
+                sensorConfigMap.forEach((sensorName, config) -> {
                     JSONObject joo = new JSONObject(3);
                     joo.put("sensor_name", sensorName);
                     joo.put("state", config.isAlive() ? "on" : "off");
@@ -111,75 +118,112 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
                 tcp.send(retJsonArray.toJSONString());
             } else if (api.equalsIgnoreCase("get_registered_sensors")) {
                 JSONArray retJsonArray = new JSONArray();
-                AppConfig appConfig = Configuration.getAppsConfig().get(appName);
-                appConfig.getSensors().forEach(config -> {
-                    JSONObject joo = new JSONObject(3);
-                    joo.put("sensor_name", config.getSensorName());
-                    joo.put("state", config.isAlive() ? "on" : "off");
-                    joo.put("value_type", config.getSensorType());
-                    retJsonArray.add(joo);
-                });
+                if (appConfig != null) {
+                    appConfig.getSensors().forEach(config -> {
+                        JSONObject joo = new JSONObject(3);
+                        joo.put("sensor_name", config.getSensorName());
+                        joo.put("state", config.isAlive() ? "on" : "off");
+                        joo.put("value_type", config.getSensorType());
+                        retJsonArray.add(joo);
+                    });
+                }
                 tcp.send(retJsonArray.toJSONString());
             } else if (api.equalsIgnoreCase("get_registered_sensors_status")) {
                 JSONObject retJson = new JSONObject(1);
                 boolean status = true;
-                AppConfig appConfig = Configuration.getAppsConfig().get(appName);
-                for (SensorConfig config : appConfig.getSensors()) {
-                    if (!config.isAlive()) {
-                        status = false;
-                        break;
+                if (appConfig != null) {
+                    for (SensorConfig config : appConfig.getSensors()) {
+                        if (!config.isAlive()) {
+                            status = false;
+                            break;
+                        }
                     }
+                } else {
+                    status = false;
                 }
                 retJson.put("state", status);
                 tcp.send(retJson.toJSONString());
             } else if (api.equalsIgnoreCase("get_sensor_freq")) {
                 JSONObject retJson = new JSONObject(1);
                 String sensorName = jo.getString("sensor_name");
-                int freq = Configuration.getResourceConfig().getSensorsConfig().get(sensorName).getValueFreq();
-                retJson.put("freq", freq);
+                if (sensorConfigMap.containsKey(sensorName)) {
+                    retJson.put("freq", sensorConfigMap.get(sensorName).getValueFreq());
+                } else {
+                    retJson.put("freq", -1);
+                }
+                tcp.send(retJson.toJSONString());
+            } else if (api.equalsIgnoreCase("is_sensor_registered")) {
+                JSONObject retJson = new JSONObject(1);
+                String sensorName = jo.getString("sensor_name");
+                if (appConfig != null && sensorConfigMap.containsKey(sensorName)) {
+                    retJson.put("state", appConfig.getSensorsName().contains(sensorName));
+                } else {
+                    retJson.put("state", false);
+                }
                 tcp.send(retJson.toJSONString());
             } else if (api.equalsIgnoreCase("register_sensor")) {
                 JSONObject retJson = new JSONObject(1);
                 String sensorName = jo.getString("sensor_name");
-                //TODO:检查sensorName是否合法
-                Configuration.getAppsConfig().get(appName).registerSensor(sensorName);
-//                    logger.info("sensors:\n" + Configuration.getAppsConfig().get(appName).getSensors());
-                subscribe(sensorName, grpId);
-                SensorConfig sensorConfig = Configuration.getResourceConfig().getSensorsConfig().get(sensorName);
-                if (sensorConfig.getApps().size() == 1) {
-                    sensorConfig.startValueThread();
+                if (appConfig != null && sensorConfigMap.containsKey(sensorName)) {
+                    appConfig.registerSensor(sensorName);
+//                    logger.info("sensors:\n" + appConfig.getSensors());
+                    subscribe(sensorName, grpId);
+                    retJson.put("state", true);
+                } else {
+                    retJson.put("state", false);
                 }
-                retJson.put("state", true);
                 tcp.send(retJson.toJSONString());
             } else if (api.equalsIgnoreCase("cancel_sensor")) {
                 JSONObject retJson = new JSONObject(1);
                 String sensorName = jo.getString("sensor_name");
-                Configuration.getAppsConfig().get(appName).cancelSensor(sensorName);
-                unsubscribe(sensorName);
-                SensorConfig sensorConfig = Configuration.getResourceConfig().getSensorsConfig().get(sensorName);
-                if (sensorConfig.getApps().isEmpty()) {
-                    sensorConfig.stopValueThread();
+                if (appConfig != null && appConfig.getSensorsName().contains(sensorName)) {
+                    appConfig.cancelSensor(sensorName);
+                    unsubscribe(sensorName);
+                    SensorConfig sensorConfig = sensorConfigMap.get(sensorName);
+                    if (sensorConfig.getApps().isEmpty()) {
+                        sensorConfig.stopGetValue();
+                    }
+                    retJson.put("state", true);
+                } else {
+                    retJson.put("state", false);
                 }
-                retJson.put("state", true);
                 tcp.send(retJson.toJSONString());
             } else if (api.equalsIgnoreCase("cancel_all_sensors")) {
                 JSONObject retJson = new JSONObject(1);
-                AppConfig appConfig = Configuration.getAppsConfig().get(appName);
-                appConfig.getSensorsName().forEach(sensorName -> {
-                    appConfig.cancelSensor(sensorName);
-                    unsubscribe(sensorName);
-                    SensorConfig sensorConfig = Configuration.getResourceConfig().getSensorsConfig().get(sensorName);
-                    if (sensorConfig.getApps().isEmpty()) {
-                        sensorConfig.stopValueThread();
-                    }
-                });
-                retJson.put("state", true);
+                if (appConfig != null) {
+                    AppConfig finalAppConfig1 = appConfig;
+                    appConfig.getSensorsName().forEach(sensorName -> {
+                        finalAppConfig1.cancelSensor(sensorName);
+                        unsubscribe(sensorName);
+                        SensorConfig sensorConfig = sensorConfigMap.get(sensorName);
+                        if (sensorConfig.getApps().isEmpty()) {
+                            sensorConfig.stopGetValue();
+                        }
+                    });
+                    retJson.put("state", true);
+                } else {
+                    retJson.put("state", false);
+                };
                 tcp.send(retJson.toJSONString());
             } else if (api.equalsIgnoreCase("get_sensor_data")) {
                 JSONObject retJson = new JSONObject(1);
                 String sensorName = jo.getString("sensor_name");
-                String value = values.getOrDefault(sensorName, "@#$%");
-                retJson.put("value", value);
+                if (appConfig != null && appConfig.getSensorsName().contains(sensorName)) {
+                    while (values.get(sensorName) == null) {
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+//                    logger.info("get_sensor_data: " + values);
+                    }
+
+                    retJson.put("value", values.get(sensorName));
+                } else {
+                    retJson.put("value", "@#$%");
+                }
+
+//                logger.info("platform send: " + retJson);
                 tcp.send(retJson.toJSONString());
             } else if (api.equalsIgnoreCase("get_all_sensor_data")) {
                 JSONArray ja = new JSONArray();
@@ -192,7 +236,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
                 tcp.send(ja.toJSONString());
             } else if (api.equalsIgnoreCase("get_supported_actuators")) {
                 JSONArray retJsonArray = new JSONArray();
-                Configuration.getResourceConfig().getActuatorsConfig().forEach((actuatorName, config) -> {
+                actuatorConfigMap.forEach((actuatorName, config) -> {
                     JSONObject joo = new JSONObject(3);
                     joo.put("actuator_name", actuatorName);
                     joo.put("state", config.isAlive() ? "on" : "off");
@@ -202,54 +246,75 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
                 tcp.send(retJsonArray.toJSONString());
             } else if (api.equalsIgnoreCase("get_registered_actuators")) {
                 JSONArray retJsonArray = new JSONArray();
-                AppConfig appConfig = Configuration.getAppsConfig().get(appName);
-                appConfig.getActuators().forEach(config -> {
-                    JSONObject joo = new JSONObject(3);
-                    joo.put("actuator_name", config.getActuatorName());
-                    joo.put("state", config.isAlive() ? "on" : "off");
-                    joo.put("value_type", config.getActuatorType());
-                    retJsonArray.add(joo);
-                });
+                if (appConfig != null) {
+                    appConfig.getActuators().forEach(config -> {
+                        JSONObject joo = new JSONObject(3);
+                        joo.put("actuator_name", config.getActuatorName());
+                        joo.put("state", config.isAlive() ? "on" : "off");
+                        joo.put("value_type", config.getActuatorType());
+                        retJsonArray.add(joo);
+                    });
+                }
+
                 tcp.send(retJsonArray.toJSONString());
             } else if (api.equalsIgnoreCase("get_registered_actuators_status")) {
                 JSONObject retJson = new JSONObject(1);
                 //TODO:检查sensorName是否合法
                 boolean state = true;
-                for (ActuatorConfig config : Configuration.getAppsConfig().get(appName).getActuators()) {
-                    if (!config.isAlive()) {
-                        state = false;
-                        break;
+                if (appConfig != null) {
+                    for (ActuatorConfig config : appConfig.getActuators()) {
+                        if (!config.isAlive()) {
+                            state = false;
+                            break;
+                        }
                     }
+                } else {
+                    state = false;
                 }
+
                 retJson.put("state", state);
                 tcp.send(retJson.toJSONString());
             } else if (api.equalsIgnoreCase("register_actuator")) {
                 JSONObject retJson = new JSONObject(1);
                 String actuatorName = jo.getString("actuator_name");
-                //TODO:检查sensorName是否合法
-                Configuration.getAppsConfig().get(appName).registerActuator(actuatorName);
-                retJson.put("state", true);
+                if (appConfig != null && actuatorConfigMap.containsKey(actuatorName)) {
+                    appConfig.registerActuator(actuatorName);
+                    retJson.put("state", true);
+                } else {
+                    retJson.put("state", false);
+                }
                 tcp.send(retJson.toJSONString());
             } else if (api.equalsIgnoreCase("cancel_actuator")) {
                 JSONObject retJson = new JSONObject(1);
                 String actuatorName = jo.getString("actuator_name");
-                //TODO:检查sensorName是否合法
-                Configuration.getAppsConfig().get(appName).cancelActuator(actuatorName);
-                retJson.put("state", true);
+                if (appConfig != null && appConfig.getActuatorsName().contains(actuatorName)) {
+                    appConfig.cancelActuator(actuatorName);
+                    retJson.put("state", true);
+                } else {
+                    retJson.put("state", false);
+                }
                 tcp.send(retJson.toJSONString());
             } else if (api.equalsIgnoreCase("cancel_all_actuators")) {
                 JSONObject retJson = new JSONObject(1);
-                //TODO:检查sensorName是否合法
-                AppConfig appConfig = Configuration.getAppsConfig().get(appName);
-                appConfig.getActuatorsName().forEach(appConfig::cancelActuator);
-                retJson.put("state", true);
+                if (appConfig != null) {
+                    appConfig.getActuatorsName().forEach(appConfig::cancelActuator);
+                    retJson.put("state", true);
+                } else {
+                    retJson.put("state", false);
+                }
                 tcp.send(retJson.toJSONString());
             } else if (api.equalsIgnoreCase("set_actuator")) {
                 JSONObject retJson = new JSONObject(1);
                 String actuatorName = jo.getString("actuator_name");
-                String action = jo.getString("action");
-                PlatformUDP.send(new Cmd("actuator_set", actuatorName, action));
-                retJson.put("state", true);
+                if (appConfig != null
+                        && appConfig.getActuatorsName().contains(actuatorName)
+                        && actuatorConfigMap.get(actuatorName).isAlive()) {
+                    String action = jo.getString("action");
+                    PlatformUDP.send(new Cmd("actuator_set", actuatorName, action));
+                    retJson.put("state", true);
+                } else {
+                    retJson.put("state", false);
+                }
                 tcp.send(retJson.toJSONString());
             } else if (api.equalsIgnoreCase("is_server_on")) {
                 //TODO:是appCtxServer还是PlatformCtxServer
@@ -270,7 +335,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
                 String path = CTX_FILE_PATH + "/" + appName + "/" + jo.getString("file_name");
                 String content = jo.getString("content");
                 Util.writeFileContent(path, content);
-                Configuration.getAppsConfig().get(appName).setRuleFile(path);
+                appConfig.setRuleFile(path);
                 JSONObject retJson = new JSONObject(1);
                 retJson.put("state", true);
                 tcp.send(retJson.toJSONString());
@@ -278,7 +343,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
                 String path = CTX_FILE_PATH + "/" + appName + "/" + jo.getString("file_name");
                 String content = jo.getString("content");
                 Util.writeFileContent(path, content);
-                Configuration.getAppsConfig().get(appName).setPatternFile(path);
+                appConfig.setPatternFile(path);
                 JSONObject retJson = new JSONObject(1);
                 retJson.put("state", true);
                 tcp.send(retJson.toJSONString());
@@ -286,7 +351,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
                 String path = CTX_FILE_PATH + "/" + appName + "/" + jo.getString("file_name");
                 String content = jo.getString("content");
                 Util.writeFileContent(path, content);
-                Configuration.getAppsConfig().get(appName).setBfuncFile(path);
+                appConfig.setBfuncFile(path);
                 JSONObject retJson = new JSONObject(1);
                 retJson.put("state", true);
                 tcp.send(retJson.toJSONString());
@@ -294,7 +359,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
                 String path = CTX_FILE_PATH + "/" + appName + "/" + jo.getString("file_name");
                 String content = jo.getString("content");
                 Util.writeFileContent(path, content);
-                Configuration.getAppsConfig().get(appName).setMfuncFile(path);
+                appConfig.setMfuncFile(path);
                 JSONObject retJson = new JSONObject(1);
                 retJson.put("state", true);
                 tcp.send(retJson.toJSONString());
@@ -302,7 +367,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
                 //TODO:ctx还未实现该功能
             } else if (api.equalsIgnoreCase("set_ctx_validator")) {
                 String ctxValidator = jo.getString("ctx_validator");
-                Configuration.getAppsConfig().get(appName).setCtxValidator(ctxValidator);
+                appConfig.setCtxValidator(ctxValidator);
                 JSONObject retJson = new JSONObject(1);
                 retJson.put("state", true);
                 tcp.send(retJson.toJSONString());

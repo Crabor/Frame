@@ -75,6 +75,9 @@ public class AppConfig {
             for (String sensor : sensors) {
                 SensorConfig config = Configuration.getResourceConfig().getSensorsConfig().get(sensor);
                 addSensor(config);
+                if (config.getApps().isEmpty()) {
+                    config.startGetValue();
+                }
                 config.addApp(this);
             }
         } catch (Exception e) {
@@ -88,6 +91,9 @@ public class AppConfig {
                 SensorConfig config = Configuration.getResourceConfig().getSensorsConfig().get(sensor);
                 removeSensor(config);
                 config.removeApp(this);
+                if (config.getApps().isEmpty()) {
+                    config.stopGetValue();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

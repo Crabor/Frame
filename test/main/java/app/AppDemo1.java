@@ -1,6 +1,9 @@
 package app;
 
+import app.struct.ActuatorInfo;
 import app.struct.SensorInfo;
+import common.struct.CmdType;
+import common.struct.SensorModeType;
 
 import java.util.Map;
 
@@ -25,7 +28,7 @@ public class AppDemo1 extends AbstractApp {
     public void getMsg(String sensorName, String value) {
         // 因为注册了front传感器，所以每当front有新的数据时便会触发getMsg，
         // 其中channel是sensor名字，msg是sensor数据
-        logger.info(String.format("[%s]: getMsg(channel, msg) -> %s, %s", appName, sensorName, value));
+        logger.info(String.format("[%s]: getMsg(sensorName, value) -> %s, %s", appName, sensorName, value));
         //用户代码
     }
 
@@ -33,21 +36,45 @@ public class AppDemo1 extends AbstractApp {
         try {
             AppDemo1 app = new AppDemo1();
             app.connect("127.0.0.1", 8888);
-            Map<String, SensorInfo> supportedSensors = app.getSupportedSensors();
-            if (supportedSensors.containsKey("front")) {
-                app.registerSensor("front");
+            Map<String, ActuatorInfo> supportedActuators = app.getSupportedActuators();
+            if (supportedActuators.containsKey("xSpeed")) {
+                app.registerActuator("xSpeed");
             }
-            Thread.sleep(2000);
-            if (supportedSensors.containsKey("back")) {
-                app.registerSensor("back");
+            app.getRegisteredActuators();
+            if (supportedActuators.containsKey("ySpeed")) {
+                app.registerActuator("ySpeed");
             }
+            app.getRegisteredActuators();
+            app.getRegisteredActuatorStatus();
+            app.setActuator("xSpeed", "5");
+            app.cancelActuator("xSpeed");
+            app.setActuator("xSpeed", "6");
+            app.getRegisteredActuators();
+            app.cancelAllActuators();
+            app.getRegisteredActuators();
+//            Map<String, SensorInfo> supportedSensors = app.getSupportedSensors();
+//            app.registerSensor("front", SensorModeType.ACTIVE);
+//            app.registerSensor("front", SensorModeType.PASSIVE);
+//            app.getMsgThread(CmdType.START);
+//            Thread.sleep(2000);
+//            app.registerSensor("back", SensorModeType.PASSIVE);
+//            Thread.sleep(2000);
+//            app.getRegisteredSensors();
+//            app.getSensorData("front");
+//            app.getAllSensorData();
+//            app.cancelAllSensors();
+//            app.getRegisteredSensors();
+//            app.registerSensor("front", SensorModeType.PASSIVE);
+//            app.getMsgThread(CmdType.START);
+//            Thread.sleep(2000);
+//            app.getRegisteredSensorsStatus();
+//            Thread.sleep(2000);
+//            app.cancelSensor("front");
+//            Thread.sleep(2000);
+//            if (supportedSensors.containsKey("back")) {
+//                app.registerSensor("back", SensorModeType.PASSIVE);
+//            }
             Thread.sleep(2000);
-            app.getRegisteredSensors();
-            Thread.sleep(2000);
-            app.cancelSensor("front");
-            Thread.sleep(2000);
-            app.getRegisteredSensors();
-            Thread.sleep(10000);
             app.disconnect();
         } catch (Exception e) {
             e.printStackTrace();

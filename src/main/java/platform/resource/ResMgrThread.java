@@ -40,39 +40,6 @@ public class ResMgrThread implements Runnable {
         return instance;
     }
 
-    public class ValueThread extends Thread {
-        private volatile boolean shouldStop = false;
-        private SensorConfig config;
-
-        public ValueThread(SensorConfig config) {
-            this.config = config;
-        }
-
-        @Override
-        public void run() {
-            shouldStop = false;
-            while (!shouldStop) {
-                    try {
-                        Thread.sleep(1000 / config.getValueFreq());
-                        if (config.isAlive()) {
-                            Cmd sensor_get = new Cmd("sensor_get", config.getSensorName());
-                            PlatformUDP.send(sensor_get);
-//                            logger.debug(sensor_get);
-                        }
-                    } catch (ArithmeticException e) {
-                        //说明valueFreq == 0，即不是定时获取sensor value，而是由用户主动调用或者驱动程序主动push上来
-                        LockSupport.park();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-            }
-        }
-
-        public void stopThread() {
-            shouldStop = true;
-        }
-    }
-
     @Override
     public void run() {
         //init resource
@@ -141,8 +108,8 @@ public class ResMgrThread implements Runnable {
 //                    shouldStop = true;
 //                }
 //            });
-            ValueThread valueThread = new ValueThread(config);
-            config.setValueThread(valueThread);
+//            ValueThread valueThread = new ValueThread(config);
+//            config.setValueThread(valueThread);
 //            valueThread.start();
         });
 

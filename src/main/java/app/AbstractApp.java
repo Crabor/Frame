@@ -35,6 +35,7 @@ public abstract class AbstractApp implements App {
     //app:
     public class GetValueThread extends Thread {
         private volatile boolean shouldStop = false;
+        private volatile boolean stopped = true;
         private final String sensorName;
         private volatile int freq;
 //        private final int udpPort;
@@ -49,17 +50,18 @@ public abstract class AbstractApp implements App {
         }
 
         public void run() {
+            stopped = false;
             while (!shouldStop) {
                 try {
                     Thread.sleep(1000 / freq);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-
                 if (getMsgFlag) {
                     String value = getSensorData(sensorName);
                     getMsg(sensorName, value);
                 }
+
 //                JSONObject sensorJson = JSON.parseObject(UDP.recv(udpPort));
 //                if (sensorJson != null) {
 //                    String channel = sensorJson.getString("channel");
@@ -67,10 +69,18 @@ public abstract class AbstractApp implements App {
 //                    getMsg(channel, msg);
 //                }
             }
+            stopped = true;
         }
 
         public void stopThread() {
             shouldStop = true;
+            while (!stopped) {
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
 
@@ -98,16 +108,16 @@ public abstract class AbstractApp implements App {
 
     public boolean disconnect() {
         JSONObject jo = new JSONObject(2);
-        jo.put("api", "cancel_app");
+        jo.put("api", "disconnect");
         jo.put("app_name", appName);
-        tcp.send(jo.toJSONString());
-        JSONObject retJson = JSON.parseObject(tcp.recv());
         if (!valueThreads.isEmpty()) {
             valueThreads.forEach((sensorName, thread) -> {
                 thread.stopThread();
-                valueThreads.remove(sensorName);
             });
+            valueThreads.clear();
         }
+        tcp.send(jo.toJSONString());
+        JSONObject retJson = JSON.parseObject(tcp.recv());
         tcp.close();
         Boolean state = retJson.getBoolean("state");
         logger.info(String.format("[%s]: disconnect() -> %s", appName, state));
@@ -166,8 +176,20 @@ public abstract class AbstractApp implements App {
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
         int freq = retJson.getInteger("freq");
-        logger.info(String.format("[%s]: getSensorFreq(%s) -> %d", appName, sensorName, freq));
+//        logger.info(String.format("[%s]: getSensorFreq(%s) -> %d", appName, sensorName, freq));
         return freq;
+    }
+
+    private boolean isSensorRegistered(String sensorName) {
+        JSONObject jo = new JSONObject(3);
+        jo.put("api", "is_sensor_registered");
+        jo.put("app_name", appName);
+        jo.put("sensor_name", sensorName);
+        tcp.send(jo.toJSONString());
+        JSONObject retJson = JSON.parseObject(tcp.recv());
+        Boolean state = retJson.getBoolean("state");
+//        logger.info(String.format("[%s]: isSensorRegistered(%s) -> %s", appName, sensorName, state));
+        return state;
     }
 
     public boolean registerSensor(String sensorName, SensorModeType type, int freq) {
@@ -175,35 +197,37 @@ public abstract class AbstractApp implements App {
         jo.put("api", "register_sensor");
         jo.put("app_name", appName);
         jo.put("sensor_name", sensorName);
+        Boolean state = true;
+        if (!isSensorRegistered(sensorName)) {
+            tcp.send(jo.toJSONString());
+            JSONObject retJson = JSON.parseObject(tcp.recv());
+            state = retJson.getBoolean("state");
+        }
         if (type == SensorModeType.ACTIVE) {
             if (freq != -1) {
-                logger.info(String.format("[%s]: registerSensor(%s, %s, %d) -> false", appName, sensorName, type, freq));
-                return false;
+                state = false;
+            } else {
+                if (valueThreads.containsKey(sensorName)) {
+                    valueThreads.get(sensorName).stopThread();
+                    valueThreads.remove(sensorName);
+                }
             }
-            if (valueThreads.containsKey(sensorName)) {
-                valueThreads.get(sensorName).stopThread();
-                valueThreads.remove(sensorName);
-            }
-            tcp.send(jo.toJSONString());
         } else {
-            if (freq == -1) {
-                int valueFreq = getSensorFreq(sensorName);
-                GetValueThread thread = new GetValueThread(sensorName, valueFreq);
-                valueThreads.put(sensorName, thread);
-                tcp.send(jo.toJSONString());
-                thread.start();
-            } else if (freq > 0) {
+            if (freq == -1 || freq > 0) {
+                if (freq == -1) {
+                    freq = getSensorFreq(sensorName);
+                }
+                if (valueThreads.containsKey(sensorName)) {
+                    valueThreads.get(sensorName).stopThread();
+                    valueThreads.remove(sensorName);
+                }
                 GetValueThread thread = new GetValueThread(sensorName, freq);
                 valueThreads.put(sensorName, thread);
-                tcp.send(jo.toJSONString());
                 thread.start();
             } else {
-                logger.info(String.format("[%s]: registerSensor(%s, %s, %d) -> false", appName, sensorName, type, freq));
-                return false;
+                state = false;
             }
         }
-        JSONObject retJson = JSON.parseObject(tcp.recv());
-        Boolean state = retJson.getBoolean("state");
         logger.info(String.format("[%s]: registerSensor(%s, %s, %d) -> %s", appName, sensorName, type, freq, state));
         return state;
     }
@@ -239,8 +263,8 @@ public abstract class AbstractApp implements App {
         if (!valueThreads.isEmpty()) {
             valueThreads.forEach((sensorName, thread) -> {
                 thread.stopThread();
-                valueThreads.remove(sensorName);
             });
+            valueThreads.clear();
         }
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
@@ -257,14 +281,16 @@ public abstract class AbstractApp implements App {
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
         String value = retJson.getString("value");
-        logger.info(String.format("[%s]: getSensorData(%s) -> %s", appName, sensorName, value));
+        if (!Thread.currentThread().getStackTrace()[2].getClassName().contains("GetValueThread")) {
+            logger.info(String.format("[%s]: getSensorData(%s) -> %s", appName, sensorName, value));
+        }
         return value;
     }
 
     public Map<String, String> getAllSensorData() {
         Map<String, String> ret = new HashMap<>();
         JSONObject jo = new JSONObject(2);
-        jo.put("api", "get_sensor_data");
+        jo.put("api", "get_all_sensor_data");
         jo.put("app_name", appName);
         tcp.send(jo.toJSONString());
         JSONArray ja = JSON.parseArray(tcp.recv());
@@ -308,7 +334,7 @@ public abstract class AbstractApp implements App {
 
     public Map<String, ActuatorInfo> getRegisteredActuators() {
         JSONObject jo = new JSONObject(2);
-        jo.put("api", "get_supported_actuators");
+        jo.put("api", "get_registered_actuators");
         jo.put("app_name", appName);
         tcp.send(jo.toJSONString());
         JSONArray retJson = JSON.parseArray(tcp.recv());
@@ -337,7 +363,7 @@ public abstract class AbstractApp implements App {
         JSONObject jo = new JSONObject(3);
         jo.put("api", "register_actuator");
         jo.put("app_name", appName);
-        jo.put("sensor_name", actuatorName);
+        jo.put("actuator_name", actuatorName);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
         Boolean state = retJson.getBoolean("state");
@@ -349,7 +375,7 @@ public abstract class AbstractApp implements App {
         JSONObject jo = new JSONObject(3);
         jo.put("api", "cancel_actuator");
         jo.put("app_name", appName);
-        jo.put("sensor_name", actuatorName);
+        jo.put("actuator_name", actuatorName);
         tcp.send(jo.toJSONString());
         JSONObject retJson = JSON.parseObject(tcp.recv());
         Boolean state = retJson.getBoolean("state");

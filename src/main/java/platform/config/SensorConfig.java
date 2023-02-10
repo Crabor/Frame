@@ -1,8 +1,8 @@
 package platform.config;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.lang3.ObjectUtils;
-import platform.resource.ResMgrThread;
+import platform.communication.socket.Cmd;
+import platform.communication.socket.PlatformUDP;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,7 +15,7 @@ public class SensorConfig {
     private boolean isAlive = false;
     private int aliveFreq; //定时ping
     private int valueFreq; //定时获取value
-    private ResMgrThread.ValueThread valueThread;
+    private ValueThread valueThread = null;
     private String IPAddress;
     private int port;
     private final Set<AppConfig> apps = ConcurrentHashMap.newKeySet();
@@ -97,16 +97,19 @@ public class SensorConfig {
         return port;
     }
 
-    public void setValueThread(ResMgrThread.ValueThread valueThread) {
-        this.valueThread = valueThread;
-    }
-
-    public void startValueThread() {
+    public void startGetValue() {
+        if (valueThread != null) {
+            stopGetValue();
+        }
+        valueThread = new ValueThread();
         valueThread.start();
     }
 
-    public void stopValueThread() {
-        valueThread.stopThread();
+    public void stopGetValue() {
+        if (valueThread != null) {
+            valueThread.stopThread();
+        }
+        valueThread = null;
     }
 
     public void addApp(AppConfig app) {
@@ -136,7 +139,45 @@ public class SensorConfig {
                 ", sensorName='" + sensorName + '\'' +
                 ", fieldNames=" + fieldNames +
                 ", aliveFreq=" + aliveFreq +
-//                ", valueFreq=" + valueFreq +
+                ", valueFreq=" + valueFreq +
                 '}';
+    }
+
+    public class ValueThread extends Thread {
+        private volatile boolean shouldStop = false;
+        private volatile boolean stopped = true;
+
+        @Override
+        public void run() {
+            stopped = false;
+            while (!shouldStop) {
+//                logger.info("here");
+                try {
+                    Thread.sleep(1000 / getValueFreq());
+                    if (isAlive()) {
+                        Cmd sensor_get = new Cmd("sensor_get", getSensorName());
+                        PlatformUDP.send(sensor_get);
+//                            logger.debug(sensor_get);
+                    }
+                } catch (ArithmeticException e) {
+                    //说明valueFreq == 0，即不是定时获取sensor value，而是由用户主动调用或者驱动程序主动push上来
+                    LockSupport.park();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            stopped = true;
+        }
+
+        public void stopThread() {
+            shouldStop = true;
+            while (!stopped) {
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 }
