@@ -6,11 +6,6 @@
     "baseBfuncFile": "Resources/platform/platformBfunction.class",
     "basePatternFile": "Resources/platform/platformPatterns.xml",
     "baseMfuncFile": "",
-    "subscribe": [
-      {
-        "channel": "sensor",
-      },
-    ],
   },
   "InvServerConfiguration": {
     "serverOn": false,

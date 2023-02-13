@@ -14,6 +14,7 @@ public class simcar {
                 // if (cmd.args[0] is not ctx name)
                 // continue;
                 String ret = "";
+                System.out.println(cmd.cmd);
                 switch (cmd.cmd) {
                     case "sensor_on":
                     case "sensor_off":

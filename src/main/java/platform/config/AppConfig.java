@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AppConfig {
     private String appName;
     private int grpId;
-    private List<SubConfig> subConfigs = new ArrayList<>();
     private Set<SensorConfig> sensors = ConcurrentHashMap.newKeySet();
     private Set<ActorConfig> actors = ConcurrentHashMap.newKeySet();
 
@@ -86,9 +85,6 @@ public class AppConfig {
         return appName;
     }
 
-    public List<SubConfig> getSubConfigs() {
-        return subConfigs;
-    }
 
     public Set<SensorConfig> getSensors() {
         return sensors;
@@ -204,9 +200,8 @@ public class AppConfig {
         this.ctxServer = new AppCtxServer(this);
         this.ctxServer.init();
         //subscribe
-        // TODO:ctxServer转发给AppDriver
-        for(SubConfig subConfig : this.getSubConfigs()){
-            this.ctxServer.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId + 1);
+        for(SensorConfig sensorConfig : this.getSensors()){
+            this.ctxServer.subscribe(sensorConfig.getSensorName(), grpId, 1); // current 1
         }
         this.ctxServer.start();
     }

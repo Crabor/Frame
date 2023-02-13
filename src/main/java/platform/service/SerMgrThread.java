@@ -2,6 +2,7 @@ package platform.service;
 
 import platform.Platform;
 import platform.config.Configuration;
+import platform.config.SensorConfig;
 import platform.service.ctx.ctxServer.PlatformCtxServer;
 import platform.service.inv.CheckServer;
 import platform.config.SubConfig;
@@ -34,6 +35,17 @@ public class SerMgrThread implements Runnable{
     @Override
     public void run() {
         //init cxt & inv
+        //TODO:platformCtxServer初始化如何拦截所有grp?
+//        if(Configuration.getCtxServerConfig().isServerOn()){
+//            platformCtxServer = PlatformCtxServer.getInstance();
+//            platformCtxServer.init();
+//            for(SensorConfig)
+//            for (SubConfig subConfig : Configuration.getCtxServerConfig().getSubConfigList()) {
+//                platformCtxServer.subscribe(subConfig);
+//            }
+//            platformCtxServer.start();
+//        }
+
         //serverOn==false也要允许应用程序自主注册sensor，此时server起到一个转发的作用
 //        platformCtxServer = PlatformCtxServer.getInstance();
 //        platformCtxServer.init();

@@ -99,15 +99,12 @@ public class PlatformCtxServer extends AbstractCtxServer {
                 if(sensorInfos == null)
                     continue;
                 JSONObject pubJSONObj = MessageHandler.buildPubJSONObjWithIndex(sendingMsg, sensorInfos);
-                SubConfig sensorPubConfig = null;
-                for(SubConfig subConfig : appConfig.getSubConfigs()){
-                    if(subConfig.channel.equals("sensor")){
-                        sensorPubConfig = subConfig;
+                for(String sensorName : pubJSONObj.keySet()){
+                    if(sensorInfos.contains(sensorName)){
+                        logger.debug("PlatformCtxServer pub " + pubJSONObj.getString(sensorName) + " to " + appName + "-CtxServer");
+                        publish(sensorName, appConfig.getGrpId(), 0, pubJSONObj.getString(sensorName));
                     }
                 }
-                assert sensorPubConfig != null;
-                logger.debug("PlatformCtxServer pub " + pubJSONObj.toJSONString() + " to " + appName + "-CtxServer");
-                publish("sensor", sensorPubConfig.groupId, pubJSONObj.toJSONString());
             }
             serverStatistics.increaseSentMsgNum();
 
@@ -116,13 +113,17 @@ public class PlatformCtxServer extends AbstractCtxServer {
             sendIndexQue.poll();
         }
     }
-
+    
     public static boolean call(String appName, CmdType cmd, CtxServiceConfig config) {
         AppConfig appConfig = Configuration.getAppsConfig().get(appName);
         if (config != null) {
             appConfig.setCtxServiceConfig(config);
         }
-        if(cmd == CmdType.RESET){
+        if(cmd == CmdType.START){
+            appConfig.initCtxServer();
+            return true;
+        }
+        else if(cmd == CmdType.RESET){
             appConfig.resetCtxServer();
             return true;
         }

@@ -19,7 +19,6 @@ public class CtxServerConfig {
     private final String basePatternFile;
     private final String baseMfuncFile;
     private final Map<String, SensorConfig> sensorConfigMap;
-    private final List<SubConfig> subConfigList;
 
 
     public static CtxServerConfig getInstance(){
@@ -41,12 +40,6 @@ public class CtxServerConfig {
         basePatternFile = object.getString("basePatternFile");
         baseMfuncFile = object.getString("baseMfuncFile");
         sensorConfigMap = new HashMap<>();
-        subConfigList = new ArrayList<>();
-        JSONArray subs = object.getJSONArray("subscribe");
-        for (int i = 0; i < subs.size(); i++) {
-            JSONObject sub = subs.getJSONObject(i);
-            subConfigList.add(new SubConfig(sub));
-        }
     }
 
 
@@ -91,10 +84,6 @@ public class CtxServerConfig {
         return sensorConfigMap;
     }
 
-    public List<SubConfig> getSubConfigList() {
-        return subConfigList;
-    }
-
     @Override
     public String toString() {
         return "CtxServerConfig{" +
@@ -107,7 +96,6 @@ public class CtxServerConfig {
                 ", basePatternFile='" + basePatternFile + '\'' +
                 ", baseMfuncFile='" + baseMfuncFile + '\'' +
                 ", sensorConfigMap=" + sensorConfigMap +
-                ", subConfigs=" + subConfigList +
                 '}';
     }
 }

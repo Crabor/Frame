@@ -125,16 +125,10 @@ public class AppCtxServer extends AbstractCtxServer{
             JSONObject pubJSONObj = MessageHandler.buildPubJSONObjWithoutIndex(sendingMsg, originalMsg.getSensorInfos(appConfig.getAppName()));
             //only pub non-null context Msg
             if(!pubJSONObj.containsValue("")){
-                SubConfig sensorPubConfig = null;
-                for(SubConfig subConfig : appConfig.getSubConfigs()){
-                    if(subConfig.channel.equals("sensor")){
-                        sensorPubConfig = subConfig;
-                    }
-                }
-                assert sensorPubConfig != null;
                 logger.debug(appConfig.getAppName() + "-CtxServer pub " + pubJSONObj.toJSONString() +" to " + appConfig.getAppName());
-                //System.out.printf("%s-CtxServer publish %s to {sensor, %d, %d} %n", appConfig.getAppName(), pubMsgStr, sensorPubConfig.groupId, sensorPubConfig.priorityId);
-                publish("sensor", sensorPubConfig.groupId, sensorPubConfig.priorityId, pubJSONObj.toJSONString());
+                for(String sensorName : pubJSONObj.keySet()){
+                    publish(sensorName, appConfig.getGrpId(), 0, pubJSONObj.getString(sensorName));
+                }
                 serverStatistics.increaseSentMsgNum();
             }
             else{
