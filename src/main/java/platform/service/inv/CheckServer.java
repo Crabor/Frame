@@ -9,7 +9,7 @@ import platform.service.inv.algorithm.*;
 import platform.service.inv.struct.*;
 import platform.service.inv.struct.inv.InvAbstract;
 import platform.service.inv.struct.trace.Trace;
-import common.struct.CmdType;
+import common.struct.enumeration.CmdType;
 import common.util.Util;
 
 import java.io.File;

@@ -1,15 +1,18 @@
-package common.struct;
+package common.struct.enumeration;
 
-public enum ServiceType {
-    CTX,
-    INV;
+public enum CmdType {
+    RESET,
+    START,
+    STOP,
+    PAUSE;
 
-    public static ServiceType fromString(String typeStr) {
-        for (ServiceType type : ServiceType.values()) {
+    public static CmdType fromString(String typeStr) {
+        for (CmdType type : CmdType.values()) {
             if (type.name().equalsIgnoreCase(typeStr)) {
                 return type;
             }
         }
         throw new IllegalArgumentException("No constant with text " + typeStr + " found");
     }
+
 }

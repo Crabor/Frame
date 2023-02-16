@@ -5,12 +5,12 @@ import app.struct.SensorInfo;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import common.struct.SensorModeType;
+import common.struct.enumeration.SensorMode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import common.socket.TCP;
-import common.struct.CmdType;
-import common.struct.ServiceType;
+import common.struct.enumeration.CmdType;
+import common.struct.enumeration.ServiceType;
 import common.util.Util;
 
 import java.io.*;
@@ -192,7 +192,7 @@ public abstract class AbstractApp implements App {
         return state;
     }
 
-    public boolean registerSensor(String sensorName, SensorModeType type, int freq) {
+    public boolean registerSensor(String sensorName, SensorMode type, int freq) {
         JSONObject jo = new JSONObject(3);
         jo.put("api", "register_sensor");
         jo.put("app_name", appName);
@@ -203,7 +203,7 @@ public abstract class AbstractApp implements App {
             JSONObject retJson = JSON.parseObject(tcp.recv());
             state = retJson.getBoolean("state");
         }
-        if (type == SensorModeType.ACTIVE) {
+        if (type == SensorMode.ACTIVE) {
             if (freq != -1) {
                 state = false;
             } else {
@@ -232,12 +232,12 @@ public abstract class AbstractApp implements App {
         return state;
     }
 
-    public boolean registerSensor(String sensorName, SensorModeType type) {
+    public boolean registerSensor(String sensorName, SensorMode type) {
         return registerSensor(sensorName, type, -1);
     }
 
     public boolean registerSensor(String sensorName) {
-        return registerSensor(sensorName, SensorModeType.ACTIVE);
+        return registerSensor(sensorName, SensorMode.ACTIVE);
     }
 
     public boolean cancelSensor(String sensorName) {

@@ -1,9 +1,8 @@
 package app;
 
-import app.struct.ActuatorInfo;
 import app.struct.SensorInfo;
-import common.struct.CmdType;
-import common.struct.SensorModeType;
+import common.struct.enumeration.CmdType;
+import common.struct.enumeration.SensorMode;
 
 import java.util.Map;
 
@@ -58,18 +57,18 @@ public class AppDemo1 extends AbstractApp {
 //            app.getRegisteredActuators();
             Map<String, SensorInfo> supportedSensors = app.getSupportedSensors();
             if (supportedSensors.containsKey("front")) {
-                app.registerSensor("front", SensorModeType.PASSIVE);
+                app.registerSensor("front", SensorMode.PASSIVE);
             }
             app.getMsgThread(CmdType.START);
 //            Thread.sleep(2000);
-//            app.registerSensor("back", SensorModeType.PASSIVE);
+//            app.registerSensor("back", SensorMode.PASSIVE);
 //            Thread.sleep(2000);
 //            app.getRegisteredSensors();
 //            app.getSensorData("front");
 //            app.getAllSensorData();
 //            app.cancelAllSensors();
 //            app.getRegisteredSensors();
-//            app.registerSensor("front", SensorModeType.PASSIVE);
+//            app.registerSensor("front", SensorMode.PASSIVE);
 //            app.getMsgThread(CmdType.START);
 //            Thread.sleep(2000);
 //            app.getRegisteredSensorsStatus();
@@ -77,7 +76,7 @@ public class AppDemo1 extends AbstractApp {
 //            app.cancelSensor("front");
 //            Thread.sleep(2000);
 //            if (supportedSensors.containsKey("back")) {
-//                app.registerSensor("back", SensorModeType.PASSIVE);
+//                app.registerSensor("back", SensorMode.PASSIVE);
 //            }
             Thread.sleep(2000);
             app.disconnect();

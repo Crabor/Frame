@@ -11,8 +11,8 @@ import common.socket.TCP;
 import platform.config.ActuatorConfig;
 import platform.config.AppConfig;
 import platform.config.Configuration;
-import common.struct.CmdType;
-import common.struct.ServiceType;
+import common.struct.enumeration.CmdType;
+import common.struct.enumeration.ServiceType;
 import common.util.Util;
 import platform.config.SensorConfig;
 

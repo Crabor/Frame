@@ -2,8 +2,8 @@ package common.util;
 
 import com.alibaba.fastjson.JSONObject;
 import platform.communication.socket.CmdRet;
-import common.struct.CmdType;
-import common.struct.ServiceType;
+import common.struct.enumeration.CmdType;
+import common.struct.enumeration.ServiceType;
 import reactor.util.function.Tuple3;
 import reactor.util.function.Tuples;
 

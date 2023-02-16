@@ -1,17 +1,15 @@
-package common.struct;
+package common.struct.enumeration;
 
-public enum CmdType {
-    RESET,
-    START,
-    STOP;
+public enum SensorMode {
+    ACTIVE,
+    PASSIVE;
 
-    public static CmdType fromString(String typeStr) {
-        for (CmdType type : CmdType.values()) {
+    public static SensorMode fromString(String typeStr) {
+        for (SensorMode type : SensorMode.values()) {
             if (type.name().equalsIgnoreCase(typeStr)) {
                 return type;
             }
         }
         throw new IllegalArgumentException("No constant with text " + typeStr + " found");
     }
-
 }
