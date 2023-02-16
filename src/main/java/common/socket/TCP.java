@@ -5,14 +5,24 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class TCP {
-    Socket socket;
+    private final Socket socket;
+    private final Lock lock;
+    private final boolean lockFlag;
     private DataOutputStream out;
     private BufferedReader in;
 
-    public TCP(Socket socket) {
+    public TCP(Socket socket, boolean lockFlag) {
         this.socket = socket;
+        this.lockFlag = lockFlag;
+        if (lockFlag) {
+            this.lock = new ReentrantLock();
+        } else {
+            this.lock = null;
+        }
         try {
             out = new DataOutputStream(socket.getOutputStream());
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -26,11 +36,21 @@ public class TCP {
         }
     }
 
+    public TCP(Socket socket) {
+        this(socket, true);
+    }
+
     public void send(String str) {
         try {
+            if (lockFlag) {
+                lock.lock();
+            }
             out.writeBytes(str + '\n');
         } catch (IOException e) {
 //            e.printStackTrace();
+            if (lockFlag) {
+                lock.unlock();
+            }
             try {
                 socket.close();
             } catch (IOException ee) {
@@ -52,7 +72,9 @@ public class TCP {
                 ee.printStackTrace();
             }
         }
-
+        if (lockFlag) {
+            lock.unlock();
+        }
         return ret;
     }
 

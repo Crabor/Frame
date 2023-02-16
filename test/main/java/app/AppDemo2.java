@@ -7,18 +7,6 @@ import java.util.Map;
 public class AppDemo2 extends AbstractApp {
     @Override
     public void setting() {
-        //sensor setting
-//        Map<String, SensorInfo> supportedSensors = getSupportedSensors();
-//        if (supportedSensors.containsKey("front")) {
-//            registerSensor("front");
-//        }
-
-        //ctx setting
-//        setRuleFile("Resources/taxiTest/appOne/taxiRules.xml");
-//        setBfuncFile("Resources/taxiTest/appOne/taxiBfunction.class");
-//        setPatternFile("Resources/taxiTest/appOne/taxiPatterns.xml");
-//        setMfuncFile("Resources/taxiTest/appOne/taxiMfunction.class");
-//        call(ServiceType.CTX, CmdType.START);
     }
 
     @Override
@@ -33,16 +21,21 @@ public class AppDemo2 extends AbstractApp {
         try {
             AppDemo2 app = new AppDemo2();
             app.connect("127.0.0.1", 8888);
-            Map<String, SensorInfo> supportedSensors = app.getSupportedSensors();
-            if (supportedSensors.containsKey("front")) {
-                app.registerSensor("front");
+            //启动五个子线程
+            for (int i = 0; i < 10; i++) {
+                new Thread(() -> {
+                    while (true) {
+//                        try {
+//                            Thread.sleep(50);
+//                        } catch (InterruptedException e) {
+//                            throw new RuntimeException(e);
+//                        }
+                        app.getSupportedSensors();
+                    }
+                }).start();
             }
-            Thread.sleep(2000);
-            if (supportedSensors.containsKey("left")) {
-                app.registerSensor("left");
-            }
-            Thread.sleep(10000);
-            app.disconnect();
+            while (true);
+//            app.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
         }

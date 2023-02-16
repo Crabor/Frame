@@ -32,7 +32,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
     private ConcurrentHashMap<String, String> values = new ConcurrentHashMap<>();
 
     public AppDriver(Socket socket) {
-        this.tcp = new TCP(socket);
+        this.tcp = new TCP(socket, false);
     }
 
     @Override
