@@ -10,7 +10,7 @@ public class MyApp2 extends AbstractApp {
     }
 
     @Override
-    public void getMsg(String channel, String msg) {
+    public void getMsg(String sensorName, String value) {
 //        if (sensor) {
 //            //sensor to ctx
 //

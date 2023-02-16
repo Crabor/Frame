@@ -9,8 +9,8 @@ import platform.communication.pubsub.AbstractSubscriber;
 import io.lettuce.core.RedisClient;
 import platform.service.ctx.ctxServer.PlatformCtxServer;
 import platform.service.inv.CheckServer;
-import common.struct.CmdType;
-import common.struct.ServiceType;
+import common.struct.enumeration.CmdType;
+import common.struct.enumeration.ServiceType;
 import common.util.Util;
 import platform.service.SerMgrThread;
 
@@ -59,7 +59,7 @@ public class Platform {
         dir.mkdirs();
 
         //read config file
-        Configuration.analyzer("Resources/configFile/Configuration1");
+        Configuration.analyzer("Resources/configFile/ConfigurationNew");
 
         //init database
         RedisClient client = RedisClient.create(

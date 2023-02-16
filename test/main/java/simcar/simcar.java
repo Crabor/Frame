@@ -1,32 +1,13 @@
-package platform.testUDP;
+package simcar;
 
-import app.AbstractApp;
 import common.socket.UDP;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import platform.communication.socket.Cmd;
 import platform.communication.socket.CmdRet;
 
-public class zshApp extends AbstractApp {
-    @Override
-    public void setting() {
-//        config.registerSensor("left");
-    }
-
-    @Override
-    public void getMsg(String sensorName, String value) {
-        logger.debug("app recv: " + value);
-        //如果为sensor1
-
-        //sensor to ctx1
-
-        //transmit ctx1 to platform
-//        Cmd cmd = new Cmd("sensor_get", "ctx1");
-//        CmdRet cmdRet = new CmdRet(cmd, "ctx1 value");
-//        UDP.send("127.0.0.1", 8080, cmdRet.toJSONString());
-
-    }
-
+public class simcar {
     public static void main(String[] args) {
-        //driver
         new Thread(() -> {
             while (true) {
                 Cmd cmd = new Cmd(UDP.recv(8081));
@@ -36,22 +17,26 @@ public class zshApp extends AbstractApp {
                 switch (cmd.cmd) {
                     case "sensor_on":
                     case "sensor_off":
-                        //TODO
-                        ret = "true";
-                        break;
+                    case "actuator_on":
+                    case "actuator_off":
                     case "sensor_alive":
+                    case "actuator_alive":
                         //TODO
                         ret = "true";
                         break;
                     case "sensor_get":
+                        System.out.println("recv:" + cmd);
                         ret = "20";
+                        break;
+                    case "actuator_set":
+                        System.out.println("recv:" + cmd);
+                        ret = "true";
                         break;
                 }
                 CmdRet cmdRet = new CmdRet(cmd, ret);
                 UDP.send("127.0.0.1", 8080, cmdRet.toJSONString());
+//                System.out.println("send:" + cmdRet);
             }
         }).start();
-
-        //your app
     }
 }

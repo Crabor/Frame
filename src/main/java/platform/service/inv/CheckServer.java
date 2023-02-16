@@ -9,10 +9,12 @@ import platform.service.inv.algorithm.*;
 import platform.service.inv.struct.*;
 import platform.service.inv.struct.inv.InvAbstract;
 import platform.service.inv.struct.trace.Trace;
-import common.struct.CmdType;
+import common.struct.enumeration.CmdType;
 import common.util.Util;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class CheckServer implements Runnable {
@@ -107,12 +109,18 @@ public class CheckServer implements Runnable {
                                         String invClassName = "platform.service.inv.struct.inv.Inv" +
                                                 Util.makeFirstCharUpperCase(Configuration.getInvServerConfig().getInvGenType().toString().toLowerCase());
                                         try {
-                                            InvAbstract inv = (InvAbstract) Class.forName(invClassName).newInstance();
+                                            Class<?> clazz = Class.forName(invClassName);
+                                            Constructor<?> constructor = clazz.getDeclaredConstructor();
+                                            constructor.setAccessible(true);
+                                            Object instance = constructor.newInstance();
+                                            InvAbstract inv = (InvAbstract) instance;
                                             inv.setMetaData(appName, lineNumber, grp, checkObject.getName(), lineTrace);
                                             checkObject.getInvMap().get(lineNumber).put(grp, inv);
                                         } catch (InstantiationException |
                                                  IllegalAccessException |
-                                                 ClassNotFoundException e) {
+                                                 ClassNotFoundException |
+                                                 InvocationTargetException |
+                                                 NoSuchMethodException e) {
                                             e.printStackTrace();
                                         }
                                     }

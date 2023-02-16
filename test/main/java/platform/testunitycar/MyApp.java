@@ -14,8 +14,8 @@ public class MyApp extends AbstractApp {
     }
 
     @Override
-    public void getMsg(String channel, String msg) {
-        logger.debug("app recv: " + msg);
+    public void getMsg(String sensorName, String value) {
+        logger.debug("app recv: " + value);
 
         //method 1
 //        CheckObject left = CheckObject.fromJsonObjectString(msg);

@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class AppConfig {
     private String appName;
+    private int grpId;
     private List<SubConfig> subConfigs = new ArrayList<>();
     private Set<SensorConfig> sensors = ConcurrentHashMap.newKeySet();
     private Set<ActuatorConfig> actuators = ConcurrentHashMap.newKeySet();
@@ -42,6 +43,14 @@ public class AppConfig {
         this.appName = appName;
     }
 
+    public int getGrpId() {
+        return grpId;
+    }
+
+    public void setGrpId(int grpId) {
+        this.grpId = grpId;
+    }
+
     public String getAppName() {
         return appName;
     }
@@ -75,6 +84,9 @@ public class AppConfig {
             for (String sensor : sensors) {
                 SensorConfig config = Configuration.getResourceConfig().getSensorsConfig().get(sensor);
                 addSensor(config);
+                if (config.getApps().isEmpty()) {
+                    config.startGetValue();
+                }
                 config.addApp(this);
             }
         } catch (Exception e) {
@@ -88,6 +100,9 @@ public class AppConfig {
                 SensorConfig config = Configuration.getResourceConfig().getSensorsConfig().get(sensor);
                 removeSensor(config);
                 config.removeApp(this);
+                if (config.getApps().isEmpty()) {
+                    config.stopGetValue();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

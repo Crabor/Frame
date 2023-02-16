@@ -1,6 +1,6 @@
 package app;
 
 public interface App {
-    void getMsg(String channel, String msg);
+    void getMsg(String sensorName, String value);
     void setting();
 }

@@ -13,6 +13,8 @@ import platform.service.inv.struct.inv.InvAbstract;
 import platform.service.inv.struct.trace.Trace;
 import common.util.Util;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class CheckObject {
@@ -158,12 +160,19 @@ public class CheckObject {
                     String invClassName = "platform.service.inv.struct.inv.Inv" +
                             Util.makeFirstCharUpperCase(Configuration.getInvServerConfig().getInvGenType().toString().toLowerCase());
                     try {
-                        InvAbstract inv = (InvAbstract) Class.forName(invClassName).newInstance();
+                        Class<?> clazz = Class.forName(invClassName);
+                        Constructor<?> constructor = clazz.getDeclaredConstructor();
+                        constructor.setAccessible(true);
+                        Object instance = constructor.newInstance();
+                        InvAbstract inv = (InvAbstract) instance;
+
                         inv.setMetaData(appName, lineNumber, -1, name, new ArrayList<>());
                         invs.put(-1, inv);
                     } catch (InstantiationException |
                              IllegalAccessException |
-                             ClassNotFoundException e) {
+                             ClassNotFoundException |
+                             InvocationTargetException |
+                             NoSuchMethodException e) {
                         e.printStackTrace();
                     }
                 }
@@ -196,12 +205,18 @@ public class CheckObject {
             String invClassName = "platform.service.inv.struct.inv.Inv" +
                     Util.makeFirstCharUpperCase(Configuration.getInvServerConfig().getInvGenType().toString().toLowerCase());
             try {
-                InvAbstract invNew = (InvAbstract) Class.forName(invClassName).newInstance();
+                Class<?> clazz = Class.forName(invClassName);
+                Constructor<?> constructor = clazz.getDeclaredConstructor();
+                constructor.setAccessible(true);
+                Object instance = constructor.newInstance();
+                InvAbstract invNew = (InvAbstract) instance;
                 invNew.setMetaData(appName, lineNumber, group + 1, name, inv.getViolatedTrace(), InvState.INV_GENERATING);
                 invs.put(group + 1, invNew);
             } catch (InstantiationException |
                      IllegalAccessException |
-                     ClassNotFoundException e) {
+                     ClassNotFoundException |
+                     InvocationTargetException |
+                     NoSuchMethodException e) {
                 e.printStackTrace();
             }
             InvAbstract invNew = invs.get(group + 1);

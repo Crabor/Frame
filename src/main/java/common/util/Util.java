@@ -2,8 +2,8 @@ package common.util;
 
 import com.alibaba.fastjson.JSONObject;
 import platform.communication.socket.CmdRet;
-import common.struct.CmdType;
-import common.struct.ServiceType;
+import common.struct.enumeration.CmdType;
+import common.struct.enumeration.ServiceType;
 import reactor.util.function.Tuple3;
 import reactor.util.function.Tuples;
 
@@ -226,8 +226,13 @@ public class Util {
         return content;
     }
 
-    public static void writeFileContent(String path, String content) {
-        Path filePath = Path.of(path);
+    public static void writeFileContent(String dir, String name, String content) {
+        File file = new File(dir);
+//        System.out.println(dir);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        Path filePath = Path.of(dir + "/" + name);
         String realContent = content.replace(REPLACE_LINE_FEED, "\n");
         try {
             Files.writeString(filePath, realContent,

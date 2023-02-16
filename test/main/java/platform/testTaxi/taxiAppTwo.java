@@ -14,8 +14,8 @@ public class taxiAppTwo extends AbstractApp {
     }
 
     @Override
-    public void getMsg(String channel, String msg) {
-        logger.debug(appName + " recv " + msg);
-        System.out.println(appName + " recv " + msg);
+    public void getMsg(String sensorName, String value) {
+        logger.debug(appName + " recv " + value);
+        System.out.println(appName + " recv " + value);
     }
 }

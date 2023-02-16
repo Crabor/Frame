@@ -85,11 +85,14 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                                 setAlive(Boolean.parseBoolean(cmdRet.ret));
                         break;
                     case "sensor_get":
-//                        logger.debug("dd recv: " + cmdRet);
+//                        logger.info("dd recv: " + cmdRet);
                         if (!cmdRet.ret.equals("@#$%")) {
                             //TODO:时都需要再组装成json的信息？
-                            String msg = Util.formatToJsonString(cmdRet.args[0], cmdRet.ret);
-                            publish(cmdRet.args[0], msg);
+//                            String msg = Util.formatToJsonString(cmdRet.args[0], cmdRet.ret);
+                            // cmdRet.args[0] = "front"
+                            // cmdRet.ret = "20"
+                            // msg = {"front": "20"}
+                            publish(cmdRet.args[0], cmdRet.ret);
                         }
                         break;
                 }

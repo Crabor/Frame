@@ -1,8 +1,8 @@
 package platform.testTaxi;
 
 import app.AbstractApp;
-import common.struct.CmdType;
-import common.struct.ServiceType;
+import common.struct.enumeration.CmdType;
+import common.struct.enumeration.ServiceType;
 
 public class taxiAppOne extends AbstractApp {
 
@@ -17,10 +17,10 @@ public class taxiAppOne extends AbstractApp {
     }
 
     @Override
-    public void getMsg(String channel, String msg) {
-        logger.debug(appName + " recv " + msg);
-        System.out.println(appName + " recv " + msg);
-        if(msg.contains("2011-04-08-04:00:00:000")){
+    public void getMsg(String sensorName, String value) {
+        logger.debug(appName + " recv " + value);
+        System.out.println(appName + " recv " + value);
+        if(value.contains("2011-04-08-04:00:00:000")){
             call(ServiceType.CTX, CmdType.RESET);
         }
     }

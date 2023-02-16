@@ -27,4 +27,12 @@ public class ActuatorInfo {
             this.type = ValueType.DOUBLE;
         }
     }
+
+    @Override
+    public String toString() {
+        return "ActuatorInfo{" +
+                "state=" + state +
+                ", type=" + type +
+                '}';
+    }
 }

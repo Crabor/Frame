@@ -1,5 +1,6 @@
 package platform.resource;
 
+import common.socket.UDP;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import platform.Platform;
@@ -76,25 +77,40 @@ public class ResMgrThread implements Runnable {
             }).start();
 
             //get value thread
-            Thread valueThread = new Thread(() -> {
-                while (true) {
-                    try {
-                        Thread.sleep(1000 / config.getValueFreq());
-                        if (config.isAlive()) {
-                            Cmd sensor_get = new Cmd("sensor_get", config.getSensorName());
-                            PlatformUDP.send(sensor_get);
-//                            logger.debug(sensor_get);
-                        }
-                    } catch (ArithmeticException e) {
-                        //说明valueFreq == 0，即不是定时获取sensor value，而是由用户主动调用或者驱动程序主动push上来
-                        LockSupport.park();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            config.setValueThread(valueThread);
-            valueThread.start();
+//            Thread valueThread = new Thread(() -> {
+//                while (true) {
+//                    try {
+//                        Thread.sleep(1000 / config.getValueFreq());
+//                        if (config.isAlive()) {
+//                            Cmd sensor_get = new Cmd("sensor_get", config.getSensorName());
+//                            PlatformUDP.send(sensor_get);
+////                            logger.debug(sensor_get);
+//                        }
+//                    } catch (ArithmeticException e) {
+//                        //说明valueFreq == 0，即不是定时获取sensor value，而是由用户主动调用或者驱动程序主动push上来
+//                        LockSupport.park();
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            });
+//            Thread valueThread = new Thread(new Runnable() {
+//                private volatile boolean shouldStop = false;
+//                @Override
+//                public void run() {
+//                    shouldStop = false;
+//                    while (!shouldStop) {
+//
+//                    }
+//                }
+//
+//                public void stopThread() {
+//                    shouldStop = true;
+//                }
+//            });
+//            ValueThread valueThread = new ValueThread(config);
+//            config.setValueThread(valueThread);
+//            valueThread.start();
         });
 
         Configuration.getResourceConfig().getActuatorsConfig().forEach((name, config) -> {
