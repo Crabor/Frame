@@ -3,8 +3,8 @@ package app.struct;
 import com.alibaba.fastjson.JSONObject;
 
 public class SensorInfo {
-    State state;
-    ValueType type;
+    public State state;
+    public ValueType type;
 
     public SensorInfo(State state, ValueType type) {
         this.state = state;

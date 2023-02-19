@@ -2,6 +2,7 @@ package platform.testUDP;
 
 import app.AbstractApp;
 import common.socket.UDP;
+import common.struct.SensorData;
 import platform.communication.socket.Cmd;
 import platform.communication.socket.CmdRet;
 
@@ -12,7 +13,7 @@ public class zshApp extends AbstractApp {
     }
 
     @Override
-    public void getMsg(String sensorName, String value) {
+    public void getMsg(String sensorName, SensorData value) {
         logger.debug("app recv: " + value);
         //如果为sensor1
 

@@ -53,25 +53,21 @@
         "sensorName": "front",
         "sensorType": "Double",
         "fieldNames": "value",
-        "valueFreq": 2,
       },
       {
         "sensorName": "back",
         "sensorType": "Double",
         "fieldNames": "value",
-        "valueFreq": 2,
       },
       {
         "sensorName": "left",
         "sensorType": "Double",
         "fieldNames": "value",
-        "valueFreq": 2,
       },
       {
         "sensorName": "right",
         "sensorType": "Double",
         "fieldNames": "value",
-        "valueFreq": 2,
       },
     ],
     "ActorConfiguration": [

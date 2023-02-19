@@ -2,16 +2,16 @@ package app.struct;
 
 import com.alibaba.fastjson.JSONObject;
 
-public class ActuatorInfo {
-    State state;
-    ValueType type;
+public class ActorInfo {
+    public State state;
+    public ValueType type;
 
-    public ActuatorInfo(State state, ValueType type) {
+    public ActorInfo(State state, ValueType type) {
         this.state = state;
         this.type = type;
     }
 
-    public ActuatorInfo(JSONObject obj) {
+    public ActorInfo(JSONObject obj) {
         if (obj.getString("state").equalsIgnoreCase("on")) {
             this.state = State.ON;
         } else {
@@ -30,7 +30,7 @@ public class ActuatorInfo {
 
     @Override
     public String toString() {
-        return "ActuatorInfo{" +
+        return "ActorInfo{" +
                 "state=" + state +
                 ", type=" + type +
                 '}';

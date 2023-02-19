@@ -12,7 +12,7 @@ public class ResourceConfig {
 
     private Map<String, SensorConfig> sensorsConfig  = new HashMap<>();
 
-    private Map<String, ActuatorConfig> actuatorsConfig = new HashMap<>();
+    private Map<String, ActorConfig> actuatorsConfig = new HashMap<>();
 
     public ResourceConfig(JSONObject object) {
         this.deviceDriverConfig = new DeviceDriverConfig(object.getJSONObject("deviceDriver"));
@@ -25,7 +25,7 @@ public class ResourceConfig {
         JSONArray actuatorObj = (JSONArray) object.get("ActorConfiguration");
         for (Object actuator : actuatorObj) {
             JSONObject temp = (JSONObject) actuator;
-            actuatorsConfig.put(temp.getString("actuatorName"), new ActuatorConfig(temp));
+            actuatorsConfig.put(temp.getString("actuatorName"), new ActorConfig(temp));
         }
     }
 
@@ -41,7 +41,7 @@ public class ResourceConfig {
         return sensorsConfig;
     }
 
-    public Map<String, ActuatorConfig> getActuatorsConfig() {
+    public Map<String, ActorConfig> getActorsConfig() {
         return actuatorsConfig;
     }
 

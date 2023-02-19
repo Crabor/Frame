@@ -10,7 +10,7 @@ public class AppConfig {
     private int grpId;
     private List<SubConfig> subConfigs = new ArrayList<>();
     private Set<SensorConfig> sensors = ConcurrentHashMap.newKeySet();
-    private Set<ActuatorConfig> actuators = ConcurrentHashMap.newKeySet();
+    private Set<ActorConfig> actuators = ConcurrentHashMap.newKeySet();
 
     //ctxService related
     private AppCtxServer ctxServer;
@@ -71,69 +71,31 @@ public class AppConfig {
         return ret;
     }
 
-    public void addSensor(SensorConfig sensor) {
-        this.sensors.add(sensor);
-    }
-
-    public void removeSensor(SensorConfig sensor) {
-        this.sensors.remove(sensor);
-    }
-
-    public void registerSensor(String... sensors) {
-        try {
-            for (String sensor : sensors) {
-                SensorConfig config = Configuration.getResourceConfig().getSensorsConfig().get(sensor);
-                addSensor(config);
-                if (config.getApps().isEmpty()) {
-                    config.startGetValue();
-                }
-                config.addApp(this);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void cancelSensor(String... sensors) {
-        try {
-            for (String sensor : sensors) {
-                SensorConfig config = Configuration.getResourceConfig().getSensorsConfig().get(sensor);
-                removeSensor(config);
-                config.removeApp(this);
-                if (config.getApps().isEmpty()) {
-                    config.stopGetValue();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Set<ActuatorConfig> getActuators() {
+    public Set<ActorConfig> getActors() {
         return actuators;
     }
 
-    public Set<String> getActuatorsName() {
+    public Set<String> getActorsName() {
         Set<String> ret = new HashSet<>();
         actuators.forEach(config -> {
-            ret.add(config.getActuatorName());
+            ret.add(config.getActorName());
         });
         return ret;
     }
 
-    public void addActuator(ActuatorConfig actuator) {
+    public void addActor(ActorConfig actuator) {
         this.actuators.add(actuator);
     }
 
-    public void removeActuator(ActuatorConfig actuator) {
+    public void removeActor(ActorConfig actuator) {
         this.actuators.remove(actuator);
     }
 
-    public void registerActuator(String... actuators) {
+    public void registerActor(String... actuators) {
         try {
             for (String actuator : actuators) {
-                ActuatorConfig config = Configuration.getResourceConfig().getActuatorsConfig().get(actuator);
-                addActuator(config);
+                ActorConfig config = Configuration.getResourceConfig().getActorsConfig().get(actuator);
+                addActor(config);
                 config.addApp(this);
             }
         } catch (Exception e) {
@@ -141,11 +103,11 @@ public class AppConfig {
         }
     }
 
-    public void cancelActuator(String... actuators) {
+    public void cancelActor(String... actuators) {
         try {
             for (String actuator : actuators) {
-                ActuatorConfig config = Configuration.getResourceConfig().getActuatorsConfig().get(actuator);
-                removeActuator(config);
+                ActorConfig config = Configuration.getResourceConfig().getActorsConfig().get(actuator);
+                removeActor(config);
                 config.removeApp(this);
             }
         } catch (Exception e) {

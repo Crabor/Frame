@@ -113,7 +113,7 @@ public class ResMgrThread implements Runnable {
 //            valueThread.start();
         });
 
-        Configuration.getResourceConfig().getActuatorsConfig().forEach((name, config) -> {
+        Configuration.getResourceConfig().getActorsConfig().forEach((name, config) -> {
             //alive thread
             new Thread(() -> {
                 while (true) {
@@ -137,7 +137,7 @@ public class ResMgrThread implements Runnable {
 //        Configuration.getResourceConfig().getSensorsConfig().forEach((name, config) -> {
 //            config.setValueFreq(1);
 //        });
-//        Configuration.getResourceConfig().getActuatorsConfig().forEach((name, config) -> {
+//        Configuration.getResourceConfig().getActorsConfig().forEach((name, config) -> {
 //            config.setAliveFreq(2);
 //        });
 

@@ -1,5 +1,6 @@
 package platform;
 
+import common.struct.ServiceConfig;
 import platform.config.Configuration;
 import platform.app.AppMgrThread;
 import platform.communication.pubsub.Channel;
@@ -97,14 +98,14 @@ public class Platform {
         AbstractSubscriber.Close();
     }
 
-    public static String call(String appName, ServiceType type, CmdType cmd, String... args) {
-        String ret = null;
+    public static boolean call(String appName, ServiceType type, CmdType cmd, ServiceConfig config) {
+        boolean ret = false;
         switch (type) {
             case CTX:
-                ret = PlatformCtxServer.call(appName, cmd, args);
+                ret = PlatformCtxServer.call(appName, cmd, config);
                 break;
             case INV:
-                ret = CheckServer.call(appName, cmd, args);
+                ret = CheckServer.call(appName, cmd, config);
                 break;
         }
         return ret;

@@ -1,6 +1,7 @@
 package platform.service.inv;
 
 import com.alibaba.fastjson.JSONObject;
+import common.struct.ServiceConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import platform.config.Configuration;
@@ -231,8 +232,8 @@ public class CheckServer implements Runnable {
         peCount.pCxtCount++;
     }
 
-    public static String call(String appName, CmdType cmd, String... args) {
+    public static boolean call(String appName, CmdType cmd, ServiceConfig config) {
         //TODO
-        return null;
+        return false;
     }
 }

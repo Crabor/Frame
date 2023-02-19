@@ -72,7 +72,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                         }
                         break;
                     case "actuator_alive":
-                        Configuration.getResourceConfig().getActuatorsConfig().
+                        Configuration.getResourceConfig().getActorsConfig().
                                 get(cmdRet.args[0]).
                                 setAlive(Boolean.parseBoolean(cmdRet.ret));
                         break;
@@ -86,13 +86,13 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                         break;
                     case "sensor_get":
 //                        logger.info("dd recv: " + cmdRet);
-                        if (!cmdRet.ret.equals("@#$%")) {
                             //TODO:时都需要再组装成json的信息？
 //                            String msg = Util.formatToJsonString(cmdRet.args[0], cmdRet.ret);
                             // cmdRet.args[0] = "front"
                             // cmdRet.ret = "20"
                             // msg = {"front": "20"}
-                            publish(cmdRet.args[0], cmdRet.ret);
+                        for (int i = 1; i < cmdRet.args.length; i++) {
+                            publish(cmdRet.args[0], Integer.parseInt(cmdRet.args[i]), cmdRet.ret);
                         }
                         break;
                 }

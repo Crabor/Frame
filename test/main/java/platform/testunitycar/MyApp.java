@@ -2,6 +2,7 @@ package platform.testunitycar;
 
 
 import app.AbstractApp;
+import common.struct.SensorData;
 
 public class MyApp extends AbstractApp {
 
@@ -14,7 +15,7 @@ public class MyApp extends AbstractApp {
     }
 
     @Override
-    public void getMsg(String sensorName, String value) {
+    public void getMsg(String sensorName, SensorData value) {
         logger.debug("app recv: " + value);
 
         //method 1

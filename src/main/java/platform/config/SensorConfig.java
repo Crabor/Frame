@@ -1,12 +1,15 @@
 package platform.config;
 
 import com.alibaba.fastjson.JSONObject;
+import platform.app.struct.TimeLine;
+import platform.app.struct.TimeNode;
 import platform.communication.socket.Cmd;
 import platform.communication.socket.PlatformUDP;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.LockSupport;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class SensorConfig {
     private String sensorType;
@@ -14,11 +17,14 @@ public class SensorConfig {
     private List<String> fieldNames;
     private boolean isAlive = false;
     private int aliveFreq; //定时ping
-    private int valueFreq; //定时获取value
+    private long MIN_VALUE_FREQ;
+    private long MAX_VALUE_FREQ;
     private ValueThread valueThread = null;
-    private String IPAddress;
-    private int port;
+//    private String IPAddress;
+//    private int port;
     private final Set<AppConfig> apps = ConcurrentHashMap.newKeySet();
+    private TimeLine timeLine = new TimeLine();
+    private Lock timeLineLock = new ReentrantLock(false);
 
     public SensorConfig(JSONObject object){
         sensorName = object.getString("sensorName");
@@ -38,16 +44,35 @@ public class SensorConfig {
             aliveFreq = 1;
         }
         try {
-            valueFreq = object.getInteger("valueFreq");
+            MIN_VALUE_FREQ = object.getLong("minValueFreq");
         } catch (NullPointerException e) {
-            valueFreq = 0;
+            MIN_VALUE_FREQ = 1;
         }
+        try {
+            MAX_VALUE_FREQ = object.getLong("maxValueFreq");
+        } catch (NullPointerException e) {
+            MAX_VALUE_FREQ = 1000;
+        }
+        timeLineLock.lock();
     }
 
     public SensorConfig(String sensorName, String sensorType, String fieldNames) {
         this.sensorName = sensorName;
         this.sensorType = sensorType;
         this.fieldNames = Arrays.asList(fieldNames.split(","));
+        timeLineLock.lock();
+    }
+
+    public TimeLine getTimeLine() {
+        return timeLine;
+    }
+
+    public boolean checkValueFreq(long freq) {
+        return freq >= MIN_VALUE_FREQ && freq <= MAX_VALUE_FREQ;
+    }
+
+    public Lock getTimeLineLock() {
+        return timeLineLock;
     }
 
     public String getSensorType() {
@@ -78,24 +103,13 @@ public class SensorConfig {
         aliveFreq = freq;
     }
 
-    public int getValueFreq() {
-        return valueFreq;
-    }
-
-    public void setValueFreq(int freq) {
-        valueFreq = freq;
-        if (freq > 0 && valueThread != null) {
-            LockSupport.unpark(valueThread);
-        }
-    }
-
-    public String getIPAddress() {
-        return IPAddress;
-    }
-
-    public int getPort() {
-        return port;
-    }
+//    public String getIPAddress() {
+//        return IPAddress;
+//    }
+//
+//    public int getPort() {
+//        return port;
+//    }
 
     public void startGetValue() {
         if (valueThread != null) {
@@ -110,14 +124,6 @@ public class SensorConfig {
             valueThread.stopThread();
         }
         valueThread = null;
-    }
-
-    public void addApp(AppConfig app) {
-        this.apps.add(app);
-    }
-
-    public void removeApp(AppConfig app) {
-        this.apps.remove(app);
     }
 
     public Set<AppConfig> getApps() {
@@ -139,7 +145,8 @@ public class SensorConfig {
                 ", sensorName='" + sensorName + '\'' +
                 ", fieldNames=" + fieldNames +
                 ", aliveFreq=" + aliveFreq +
-                ", valueFreq=" + valueFreq +
+                ", MIN_VALUE_FREQ=" + MIN_VALUE_FREQ +
+                ", MAX_VALUE_FREQ=" + MAX_VALUE_FREQ +
                 '}';
     }
 
@@ -151,20 +158,24 @@ public class SensorConfig {
         public void run() {
             stopped = false;
             while (!shouldStop) {
-//                logger.info("here");
-                try {
-                    Thread.sleep(1000 / getValueFreq());
-                    if (isAlive()) {
-                        Cmd sensor_get = new Cmd("sensor_get", getSensorName());
-                        PlatformUDP.send(sensor_get);
-//                            logger.debug(sensor_get);
+                timeLineLock.lock();
+                TimeNode p = timeLine.getHead().forwards[0];
+                long timestamp = 0;
+                while (p != null) {
+                    try {
+                        Thread.sleep(p.time - timestamp);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
                     }
-                } catch (ArithmeticException e) {
-                    //说明valueFreq == 0，即不是定时获取sensor value，而是由用户主动调用或者驱动程序主动push上来
-                    LockSupport.park();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    timestamp = p.time;
+
+                    Cmd cmd = new Cmd("sensor_get",
+                            sensorName + " " + String.join(" ", p.appGrpIds));
+                    PlatformUDP.send(cmd);
+
+                    p = p.forwards[0];
                 }
+                timeLineLock.unlock();
             }
             stopped = true;
         }

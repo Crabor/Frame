@@ -14,6 +14,11 @@ public class Cmd {
         this.args = args;
     }
 
+    public Cmd(String cmd, String args) {
+        this.cmd = cmd;
+        this.args = args.split(" ");
+    }
+
     public Cmd(String json) {
         msg = json;
         msgObj  = JSON.parseObject(json);

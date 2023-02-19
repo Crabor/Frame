@@ -1,6 +1,7 @@
 package platform.testTaxi;
 
 import app.AbstractApp;
+import common.struct.SensorData;
 
 public class taxiAppTwo extends AbstractApp {
     @Override
@@ -14,7 +15,7 @@ public class taxiAppTwo extends AbstractApp {
     }
 
     @Override
-    public void getMsg(String sensorName, String value) {
+    public void getMsg(String sensorName, SensorData value) {
         logger.debug(appName + " recv " + value);
         System.out.println(appName + " recv " + value);
     }

@@ -19,7 +19,7 @@ public class TCP {
         this.socket = socket;
         this.lockFlag = lockFlag;
         if (lockFlag) {
-            this.lock = new ReentrantLock();
+            this.lock = new ReentrantLock(false);
         } else {
             this.lock = null;
         }
@@ -47,7 +47,7 @@ public class TCP {
             }
             out.writeBytes(str + '\n');
         } catch (IOException e) {
-//            e.printStackTrace();
+            e.printStackTrace();
             if (lockFlag) {
                 lock.unlock();
             }
@@ -65,7 +65,7 @@ public class TCP {
         try {
             ret = in.readLine();
         } catch (IOException e) {
-//            e.printStackTrace();
+            e.printStackTrace();
             try {
                 socket.close();
             } catch (IOException ee) {

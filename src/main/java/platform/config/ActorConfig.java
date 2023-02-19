@@ -6,14 +6,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ActuatorConfig {
+public class ActorConfig {
     private final String actuatorName;
     private String actuatorType;
     private boolean isAlive = false;
     private int aliveFreq;
     private final Set<AppConfig> apps = ConcurrentHashMap.newKeySet();
 
-    public ActuatorConfig(JSONObject object) {
+    public ActorConfig(JSONObject object) {
         actuatorName = object.getString("actuatorName");
         try {
             aliveFreq = object.getInteger("aliveFreq");
@@ -35,11 +35,11 @@ public class ActuatorConfig {
         aliveFreq = freq;
     }
 
-    public String getActuatorName() {
+    public String getActorName() {
         return actuatorName;
     }
 
-    public String getActuatorType() {
+    public String getActorType() {
         return actuatorType;
     }
 
@@ -73,7 +73,7 @@ public class ActuatorConfig {
 
     @Override
     public String toString() {
-        return "ActuatorConfig{" +
+        return "ActorConfig{" +
                 "actuatorName='" + actuatorName + '\'' +
                 ", actuatorType='" + actuatorType + '\'' +
                 ", aliveFreq=" + aliveFreq +
