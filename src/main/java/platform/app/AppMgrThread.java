@@ -13,7 +13,8 @@ public class AppMgrThread implements Runnable {
     private static Thread t;
     //第一维为ip，第二维为该ip已被占用的端口
     private static final Map<String, Set<Integer>> portMap = new HashMap<>();
-    private static final Set<Integer> grpIdSet = new HashSet<>();
+//    private static final Set<Integer> grpIdSet = new HashSet<>();
+    private static final Map<String, Integer> appGrpIdMap = new HashMap<>();
 
     // 构造方法私有化
     private AppMgrThread() {
@@ -103,16 +104,20 @@ public class AppMgrThread implements Runnable {
         s.remove(udpPort);
     }
 
-    public static int getNewGrpId() {
-        int ret = (int) (System.currentTimeMillis() % 65536);
-        int i = 0;
-        while (grpIdSet.contains(ret + i)) {
-            i++;
+    public static int getNewGrpId(String appName) {
+        if (appGrpIdMap.containsKey(appName)) {
+            return appGrpIdMap.get(appName);
+        } else {
+            int max = 0;
+            for (Integer i : appGrpIdMap.values()) {
+                max = Math.max(max, i);
+            }
+            appGrpIdMap.put(appName, max + 1);
+            return max + 1;
         }
-        return ret + i;
     }
 
-    public static void removeGrpId(int grpId) {
-        grpIdSet.remove(grpId);
+    public static void removeGrpId(String appName) {
+        appGrpIdMap.remove(appName);
     }
 }

@@ -20,11 +20,8 @@ public class SensorConfig {
     private long MIN_VALUE_FREQ;
     private long MAX_VALUE_FREQ;
     private ValueThread valueThread = null;
-//    private String IPAddress;
-//    private int port;
     private final Set<AppConfig> apps = ConcurrentHashMap.newKeySet();
-    private TimeLine timeLine = new TimeLine();
-    private Lock timeLineLock = new ReentrantLock(false);
+    private final TimeLine timeLine = new TimeLine();
 
     public SensorConfig(JSONObject object){
         sensorName = object.getString("sensorName");
@@ -36,7 +33,8 @@ public class SensorConfig {
         try {
             fieldNames = Arrays.asList(object.getString("fieldNames").split(","));
         } catch (NullPointerException e) {
-
+            fieldNames = new ArrayList<>();
+            fieldNames.add("default");
         }
         try {
             aliveFreq = object.getInteger("aliveFreq");
@@ -53,14 +51,12 @@ public class SensorConfig {
         } catch (NullPointerException e) {
             MAX_VALUE_FREQ = 1000;
         }
-        timeLineLock.lock();
     }
 
     public SensorConfig(String sensorName, String sensorType, String fieldNames) {
         this.sensorName = sensorName;
         this.sensorType = sensorType;
         this.fieldNames = Arrays.asList(fieldNames.split(","));
-        timeLineLock.lock();
     }
 
     public TimeLine getTimeLine() {
@@ -71,9 +67,9 @@ public class SensorConfig {
         return freq >= MIN_VALUE_FREQ && freq <= MAX_VALUE_FREQ;
     }
 
-    public Lock getTimeLineLock() {
-        return timeLineLock;
-    }
+//    public Lock getTimeLineLock() {
+//        return timeLineLock;
+//    }
 
     public String getSensorType() {
         return sensorType;
@@ -103,13 +99,9 @@ public class SensorConfig {
         aliveFreq = freq;
     }
 
-//    public String getIPAddress() {
-//        return IPAddress;
-//    }
-//
-//    public int getPort() {
-//        return port;
-//    }
+    public boolean isGetValueRunning() {
+        return valueThread != null;
+    }
 
     public void startGetValue() {
         if (valueThread != null) {
@@ -158,30 +150,56 @@ public class SensorConfig {
         public void run() {
             stopped = false;
             while (!shouldStop) {
-                timeLineLock.lock();
-                TimeNode p = timeLine.getHead().forwards[0];
+//                System.out.println(timeLine);
+                List<TimeNode> nodes;
+                synchronized (timeLine) {
+                    if (timeLine.size() == 0) {
+                        try {
+                            timeLine.wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+//                    TimeNode p = timeLine.getHead().forwards[0];
+//                    long timestamp = 0;
+//                    while (p != null) {
+//                        try {
+//                            Thread.sleep(p.time - timestamp);
+//                        } catch (InterruptedException e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                        timestamp = p.time;
+//
+//                        Cmd cmd = new Cmd("sensor_get",
+//                                sensorName + " " + String.join(" ", p.appGrpIds));
+//                        PlatformUDP.send(cmd);
+//
+//                        p = p.forwards[0];
+//                    }
+                    nodes = timeLine.getNodes();
+                }
                 long timestamp = 0;
-                while (p != null) {
+                for (TimeNode node : nodes) {
                     try {
-                        Thread.sleep(p.time - timestamp);
+                        Thread.sleep(node.time - timestamp);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                    timestamp = p.time;
 
                     Cmd cmd = new Cmd("sensor_get",
-                            sensorName + " " + String.join(" ", p.appGrpIds));
+                            sensorName + " " + String.join(" ", node.appGrpIds));
                     PlatformUDP.send(cmd);
-
-                    p = p.forwards[0];
+                    timestamp = node.time;
                 }
-                timeLineLock.unlock();
             }
             stopped = true;
         }
 
         public void stopThread() {
             shouldStop = true;
+            synchronized (timeLine) {
+                timeLine.notify();
+            }
             while (!stopped) {
                 try {
                     Thread.sleep(50);

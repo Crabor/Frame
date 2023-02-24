@@ -8,7 +8,7 @@ import platform.communication.socket.CmdRet;
 
 public class zshApp extends AbstractApp {
     @Override
-    public void setting() {
+    public void configApp() {
 //        config.registerSensor("left");
     }
 

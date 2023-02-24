@@ -10,7 +10,7 @@ public class AppConfig {
     private int grpId;
     private List<SubConfig> subConfigs = new ArrayList<>();
     private Set<SensorConfig> sensors = ConcurrentHashMap.newKeySet();
-    private Set<ActorConfig> actuators = ConcurrentHashMap.newKeySet();
+    private Set<ActorConfig> actors = ConcurrentHashMap.newKeySet();
 
     //ctxService related
     private AppCtxServer ctxServer;
@@ -72,29 +72,29 @@ public class AppConfig {
     }
 
     public Set<ActorConfig> getActors() {
-        return actuators;
+        return actors;
     }
 
     public Set<String> getActorsName() {
         Set<String> ret = new HashSet<>();
-        actuators.forEach(config -> {
+        actors.forEach(config -> {
             ret.add(config.getActorName());
         });
         return ret;
     }
 
-    public void addActor(ActorConfig actuator) {
-        this.actuators.add(actuator);
+    public void addActor(ActorConfig actor) {
+        this.actors.add(actor);
     }
 
-    public void removeActor(ActorConfig actuator) {
-        this.actuators.remove(actuator);
+    public void removeActor(ActorConfig actor) {
+        this.actors.remove(actor);
     }
 
-    public void registerActor(String... actuators) {
+    public void registerActor(String... actors) {
         try {
-            for (String actuator : actuators) {
-                ActorConfig config = Configuration.getResourceConfig().getActorsConfig().get(actuator);
+            for (String actor : actors) {
+                ActorConfig config = Configuration.getResourceConfig().getActorsConfig().get(actor);
                 addActor(config);
                 config.addApp(this);
             }
@@ -103,10 +103,10 @@ public class AppConfig {
         }
     }
 
-    public void cancelActor(String... actuators) {
+    public void cancelActor(String... actors) {
         try {
-            for (String actuator : actuators) {
-                ActorConfig config = Configuration.getResourceConfig().getActorsConfig().get(actuator);
+            for (String actor : actors) {
+                ActorConfig config = Configuration.getResourceConfig().getActorsConfig().get(actor);
                 removeActor(config);
                 config.removeApp(this);
             }
@@ -189,7 +189,7 @@ public class AppConfig {
         return "AppConfig{" +
                 "appName='" + appName + '\'' +
                 ", sensors=" + sensors +
-                ", actuators=" + actuators +
+                ", actors=" + actors +
                 ", ctxServer=" + ctxServer +
                 ", ctxServerOn=" + ctxServerOn +
                 ", ruleFile='" + ruleFile + '\'' +

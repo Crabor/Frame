@@ -5,7 +5,7 @@ import common.struct.SensorData;
 
 public class MyApp2 extends AbstractApp {
     @Override
-    public void setting() {
+    public void configApp() {
 //        config.registerSensor(sensor);
 //        ......
     }

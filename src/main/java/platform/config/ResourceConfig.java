@@ -12,7 +12,7 @@ public class ResourceConfig {
 
     private Map<String, SensorConfig> sensorsConfig  = new HashMap<>();
 
-    private Map<String, ActorConfig> actuatorsConfig = new HashMap<>();
+    private Map<String, ActorConfig> actorsConfig = new HashMap<>();
 
     public ResourceConfig(JSONObject object) {
         this.deviceDriverConfig = new DeviceDriverConfig(object.getJSONObject("deviceDriver"));
@@ -22,10 +22,10 @@ public class ResourceConfig {
             JSONObject temp = (JSONObject) sensor;
             sensorsConfig.put(temp.getString("sensorName"), new SensorConfig(temp));
         }
-        JSONArray actuatorObj = (JSONArray) object.get("ActorConfiguration");
-        for (Object actuator : actuatorObj) {
-            JSONObject temp = (JSONObject) actuator;
-            actuatorsConfig.put(temp.getString("actuatorName"), new ActorConfig(temp));
+        JSONArray actorObj = (JSONArray) object.get("ActorConfiguration");
+        for (Object actor : actorObj) {
+            JSONObject temp = (JSONObject) actor;
+            actorsConfig.put(temp.getString("actorName"), new ActorConfig(temp));
         }
     }
 
@@ -42,7 +42,7 @@ public class ResourceConfig {
     }
 
     public Map<String, ActorConfig> getActorsConfig() {
-        return actuatorsConfig;
+        return actorsConfig;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ResourceConfig {
                 "deviceDriverConfig=" + deviceDriverConfig + "\n" +
                 "databaseDriverConfig=" + databaseDriverConfig + "\n" +
                 "sensorsConfig=" + sensorsConfig + "\n" +
-                "actuatorsConfig=" + actuatorsConfig +
+                "actorsConfig=" + actorsConfig +
                 '}';
     }
 }

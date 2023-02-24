@@ -119,9 +119,9 @@ public class ResMgrThread implements Runnable {
                 while (true) {
                     try {
                         Thread.sleep(1000 / config.getAliveFreq());
-                        Cmd actuator_alive = new Cmd("actuator_alive", name);
-                        PlatformUDP.send(actuator_alive);
-//                        logger.debug(actuator_alive);
+                        Cmd actor_alive = new Cmd("actor_alive", name);
+                        PlatformUDP.send(actor_alive);
+//                        logger.debug(actor_alive);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

@@ -353,13 +353,13 @@ public class MySyncApp extends AbstractSyncApp {
     ],
     "ActorConfiguration": [
       {
-        "actuatorName": "x",
+        "actorName": "x",
       },
       {
-        "actuatorName": "y",
+        "actorName": "y",
       },
       {
-        "actuatorName": "z",
+        "actorName": "z",
       },
     ],
   },

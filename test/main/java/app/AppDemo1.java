@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class AppDemo1 extends AbstractApp {
     @Override
-    public void setting() {
+    public void configApp() {
         //sensor setting
 //        Map<String, SensorInfo> supportedSensors = getSupportedSensors();
 //        if (supportedSensors.containsKey("front")) {

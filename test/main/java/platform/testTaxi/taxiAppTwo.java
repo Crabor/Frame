@@ -5,7 +5,7 @@ import common.struct.SensorData;
 
 public class taxiAppTwo extends AbstractApp {
     @Override
-    public void setting() {
+    public void configApp() {
 //        config.registerSensor("taxis");
 //        config.setCtxServerOn(true);
 //        config.setRuleFile("Resources/taxiTest/appTwo/taxiRules.xml");

@@ -91,8 +91,8 @@ public class Configuration {
         return getResourceConfig().getSensorsConfig().get(sensorName).getApps();
     }
 
-    public static Set<AppConfig> getAppsByActorName(String actuatorName) {
-        return getResourceConfig().getActorsConfig().get(actuatorName).getApps();
+    public static Set<AppConfig> getAppsByActorName(String actorName) {
+        return getResourceConfig().getActorsConfig().get(actorName).getApps();
     }
 
     public static Set<SensorConfig> getSensorsByAppName(String appName) {

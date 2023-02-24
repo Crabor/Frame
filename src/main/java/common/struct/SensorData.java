@@ -36,6 +36,16 @@ public class SensorData {
         data.put(filed, value);
     }
 
+    public void set(String json) {
+        JSONObject jo = JSONObject.parseObject(json);
+        //遍历jo的所有entry
+        for (Map.Entry<String, Object> entry : jo.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            data.put(key, value);
+        }
+    }
+
     public static SensorData fromJSONString(String json) {
         JSONObject jo = JSONObject.parseObject(json);
         SensorData sensorData = new SensorData();
@@ -46,6 +56,11 @@ public class SensorData {
             sensorData.data.put(key, value);
         }
         return sensorData;
+    }
+
+    private static SensorData errorData = fromJSONString("{\"default\":\"@#$%\"}");
+    public static SensorData defaultErrorData() {
+    	return errorData;
     }
 
     @Override

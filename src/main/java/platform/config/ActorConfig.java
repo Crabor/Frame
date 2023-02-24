@@ -7,23 +7,23 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ActorConfig {
-    private final String actuatorName;
-    private String actuatorType;
+    private final String actorName;
+    private String actorType;
     private boolean isAlive = false;
     private int aliveFreq;
     private final Set<AppConfig> apps = ConcurrentHashMap.newKeySet();
 
     public ActorConfig(JSONObject object) {
-        actuatorName = object.getString("actuatorName");
+        actorName = object.getString("actorName");
         try {
             aliveFreq = object.getInteger("aliveFreq");
         } catch (NullPointerException e) {
             aliveFreq = 1;
         }
         try {
-            actuatorType = object.getString("actuatorType");
+            actorType = object.getString("actorType");
         } catch (NullPointerException e) {
-            actuatorType = "String";
+            actorType = "String";
         }
     }
 
@@ -36,11 +36,11 @@ public class ActorConfig {
     }
 
     public String getActorName() {
-        return actuatorName;
+        return actorName;
     }
 
     public String getActorType() {
-        return actuatorType;
+        return actorType;
     }
 
     public void addApp(AppConfig app) {
@@ -74,8 +74,8 @@ public class ActorConfig {
     @Override
     public String toString() {
         return "ActorConfig{" +
-                "actuatorName='" + actuatorName + '\'' +
-                ", actuatorType='" + actuatorType + '\'' +
+                "actorName='" + actorName + '\'' +
+                ", actorType='" + actorType + '\'' +
                 ", aliveFreq=" + aliveFreq +
                 '}';
     }

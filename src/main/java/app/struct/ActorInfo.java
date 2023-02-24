@@ -1,6 +1,7 @@
 package app.struct;
 
 import com.alibaba.fastjson.JSONObject;
+import common.struct.State;
 
 public class ActorInfo {
     public State state;
@@ -12,20 +13,8 @@ public class ActorInfo {
     }
 
     public ActorInfo(JSONObject obj) {
-        if (obj.getString("state").equalsIgnoreCase("on")) {
-            this.state = State.ON;
-        } else {
-            this.state = State.OFF;
-        }
-
-        String valueType = obj.getString("value_type");
-        if (valueType.equalsIgnoreCase("string")) {
-            this.type = ValueType.STRING;
-        } else if (valueType.equalsIgnoreCase("int")) {
-            this.type = ValueType.INT;
-        } else if (valueType.equalsIgnoreCase("double")) {
-            this.type = ValueType.DOUBLE;
-        }
+        this.state = State.fromString(obj.getString("state"));
+        this.type = ValueType.fromString(obj.getString("value_type"));
     }
 
     @Override

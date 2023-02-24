@@ -86,11 +86,11 @@ public class Platform {
         lockUntilMgrStartFlagEqual(3);
         logger.info("AppMgrThread started");
 
-        logger.info("channels: ");
-        for (Channel channel : Channel.getObjs()) {
-            logger.info(channel);
-        }
-        logger.info("subscribers: " + AbstractSubscriber.getObjs());
+//        logger.info("channels: ");
+//        for (Channel channel : Channel.getObjs()) {
+//            logger.info(channel);
+//        }
+//        logger.info("subscribers: " + AbstractSubscriber.getObjs());
     }
 
     public static void Close() {
@@ -106,6 +106,10 @@ public class Platform {
                 break;
             case INV:
                 ret = CheckServer.call(appName, cmd, config);
+                break;
+            case ALL:
+                ret = PlatformCtxServer.call(appName, cmd, config);
+                ret = CheckServer.call(appName, cmd, config) && ret;
                 break;
         }
         return ret;

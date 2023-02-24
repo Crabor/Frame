@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class AppDemo2 extends AbstractApp {
     @Override
-    public void setting() {
+    public void configApp() {
     }
 
     @Override

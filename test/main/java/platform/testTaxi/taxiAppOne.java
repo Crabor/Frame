@@ -8,7 +8,7 @@ import common.struct.enumeration.ServiceType;
 public class taxiAppOne extends AbstractApp {
 
     @Override
-    public void setting() {
+    public void configApp() {
 //        config.registerSensor("taxis");
 //        config.setCtxServerOn(true);
 //        config.setRuleFile("Resources/taxiTest/appOne/taxiRules.xml");

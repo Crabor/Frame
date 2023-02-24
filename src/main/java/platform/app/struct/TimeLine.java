@@ -1,8 +1,6 @@
 package platform.app.struct;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class TimeLine {
     public static final int MAX_LEVEL = 16;
@@ -13,6 +11,16 @@ public class TimeLine {
 
     public Map<Integer, Integer> getAppGrpId2Freq() {
         return appGrpId2Freq;
+    }
+
+    public List<TimeNode> getNodes() {
+        List<TimeNode> nodes = new ArrayList<>();
+        TimeNode p = head;
+        while (p.forwards[0] != null) {
+            nodes.add(p.forwards[0]);
+            p = p.forwards[0];
+        }
+        return nodes;
     }
 
     public TimeNode getHead() {
@@ -34,13 +42,14 @@ public class TimeLine {
     }
 
     public int size() {
-        int size = 0;
-        TimeNode p = head;
-        while (p.forwards[0] != null) {
-            size ++;
-            p = p.forwards[0];
-        }
-        return size;
+//        int size = 0;
+//        TimeNode p = head;
+//        while (p.forwards[0] != null) {
+//            size ++;
+//            p = p.forwards[0];
+//        }
+//        return size;
+        return appGrpId2Freq.size();
     }
 
     public void insert(long time, String appGrpId) {
@@ -121,6 +130,7 @@ public class TimeLine {
             long time = Math.round(sleepTime * i);
             insert(time, String.valueOf(appGrpId));
         }
+        appGrpId2Freq.put(appGrpId, freq);
     }
 
     private int randomLevel() {
@@ -135,6 +145,7 @@ public class TimeLine {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        sb.append("appGrpId2Freq: ").append(appGrpId2Freq).append("\ntimeLine: ");
         TimeNode p = head.forwards[0];
         while (p != null) {
             sb.append(p);

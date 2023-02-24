@@ -15,7 +15,7 @@ public abstract class AbstractApp implements App {
     public AbstractApp() {
         appName = getClass().getName();
         appDescription = "This is " + appName + ".";
-        setting();
+        configApp();
     }
 
     //API:
@@ -34,7 +34,7 @@ public abstract class AbstractApp implements App {
         public void run() {
             stopped = false;
             while (!shouldStop) {
-                JSONObject sensorJson = JSON.parseObject(UDP.recv(udpPort));
+                JSONObject sensorJson = JSON.parseObject(UDP.recv(udpPort, 2000));
                 if (sensorJson != null) {
                     String channel = sensorJson.getString("channel");
                     String msg = sensorJson.getString("msg");
@@ -77,7 +77,7 @@ public abstract class AbstractApp implements App {
 //        jo.put("app_name", appName);
 //        boolean state = false;
 //        try {
-//            tcp = new TCP(new Socket(ip, port));
+//            tcp = new AbstractTCP(new Socket(ip, port));
 //            tcp.send(jo.toJSONString());
 //
 //            JSONObject retJson = JSON.parseObject(tcp.recv());
@@ -260,10 +260,10 @@ public abstract class AbstractApp implements App {
 //        return true;
 //    }
 //
-//    //actuator:
+//    //actor:
 //    public Map<String, ActorInfo> getSupportedActors() {
 //        JSONObject jo = new JSONObject(2);
-//        jo.put("api", "get_supported_actuators");
+//        jo.put("api", "get_supported_actors");
 //        jo.put("app_name", appName);
 //        tcp.send(jo.toJSONString());
 //        JSONArray retJson = JSON.parseArray(tcp.recv());
@@ -271,7 +271,7 @@ public abstract class AbstractApp implements App {
 //        Map<String, ActorInfo> ret = new HashMap<>();
 //        retJson.forEach(obj -> {
 //            JSONObject joo = (JSONObject) obj;
-//            ret.put(joo.getString("actuator_name"), new ActorInfo(joo));
+//            ret.put(joo.getString("actor_name"), new ActorInfo(joo));
 //        });
 //        logger.info(String.format("[%s]: getSupportedActors() -> %s", appName, ret));
 //        return ret;
@@ -279,7 +279,7 @@ public abstract class AbstractApp implements App {
 //
 //    public Map<String, ActorInfo> getRegisteredActors() {
 //        JSONObject jo = new JSONObject(2);
-//        jo.put("api", "get_registered_actuators");
+//        jo.put("api", "get_registered_actors");
 //        jo.put("app_name", appName);
 //        tcp.send(jo.toJSONString());
 //        JSONArray retJson = JSON.parseArray(tcp.recv());
@@ -287,7 +287,7 @@ public abstract class AbstractApp implements App {
 //        Map<String, ActorInfo> ret = new HashMap<>();
 //        retJson.forEach(obj -> {
 //            JSONObject joo = (JSONObject) obj;
-//            ret.put(joo.getString("actuator_name"), new ActorInfo(joo));
+//            ret.put(joo.getString("actor_name"), new ActorInfo(joo));
 //        });
 //        logger.info(String.format("[%s]: getRegisteredActors() -> %s", appName, ret));
 //        return ret;
@@ -295,7 +295,7 @@ public abstract class AbstractApp implements App {
 //
 //    public boolean getRegisteredActorStatus() {
 //        JSONObject jo = new JSONObject(2);
-//        jo.put("api", "get_registered_actuators_status");
+//        jo.put("api", "get_registered_actors_status");
 //        jo.put("app_name", appName);
 //        tcp.send(jo.toJSONString());
 //        JSONObject retJson = JSON.parseObject(tcp.recv());
@@ -304,33 +304,33 @@ public abstract class AbstractApp implements App {
 //        return state;
 //    }
 //
-//    public boolean registerActor(String actuatorName) {
+//    public boolean registerActor(String actorName) {
 //        JSONObject jo = new JSONObject(3);
-//        jo.put("api", "register_actuator");
+//        jo.put("api", "register_actor");
 //        jo.put("app_name", appName);
-//        jo.put("actuator_name", actuatorName);
+//        jo.put("actor_name", actorName);
 //        tcp.send(jo.toJSONString());
 //        JSONObject retJson = JSON.parseObject(tcp.recv());
 //        Boolean state = retJson.getBoolean("state");
-//        logger.info(String.format("[%s]: registerActor(%s) -> %s", appName, actuatorName, state));
+//        logger.info(String.format("[%s]: registerActor(%s) -> %s", appName, actorName, state));
 //        return state;
 //    }
 //
-//    public boolean cancelActor(String actuatorName) {
+//    public boolean cancelActor(String actorName) {
 //        JSONObject jo = new JSONObject(3);
-//        jo.put("api", "cancel_actuator");
+//        jo.put("api", "cancel_actor");
 //        jo.put("app_name", appName);
-//        jo.put("actuator_name", actuatorName);
+//        jo.put("actor_name", actorName);
 //        tcp.send(jo.toJSONString());
 //        JSONObject retJson = JSON.parseObject(tcp.recv());
 //        Boolean state = retJson.getBoolean("state");
-//        logger.info(String.format("[%s]: cancelActor(%s) -> %s", appName, actuatorName, state));
+//        logger.info(String.format("[%s]: cancelActor(%s) -> %s", appName, actorName, state));
 //        return state;
 //    }
 //
 //    public boolean cancelAllActors() {
 //        JSONObject jo = new JSONObject(2);
-//        jo.put("api", "cancel_all_actuators");
+//        jo.put("api", "cancel_all_actors");
 //        jo.put("app_name", appName);
 //        tcp.send(jo.toJSONString());
 //        JSONObject retJson = JSON.parseObject(tcp.recv());
@@ -339,16 +339,16 @@ public abstract class AbstractApp implements App {
 //        return state;
 //    }
 //
-//    public boolean setActor(String actuatorName, String action) {
+//    public boolean setActor(String actorName, String action) {
 //        JSONObject jo = new JSONObject(4);
-//        jo.put("api", "set_actuator");
+//        jo.put("api", "set_actor");
 //        jo.put("app_name", appName);
-//        jo.put("actuator_name", actuatorName);
+//        jo.put("actor_name", actorName);
 //        jo.put("action", action);
 //        tcp.send(jo.toJSONString());
 //        JSONObject retJson = JSON.parseObject(tcp.recv());
 //        Boolean state = retJson.getBoolean("state");
-//        logger.info(String.format("[%s]: setActor(%s, %s) -> %s", appName, actuatorName, action, state));
+//        logger.info(String.format("[%s]: setActor(%s, %s) -> %s", appName, actorName, action, state));
 //        return state;
 //    }
 //

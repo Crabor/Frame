@@ -18,7 +18,11 @@ public class UDP {
     public static void close(int port) {
         DatagramSocket socket = sockets.get(port);
         sockets.remove(port);
-        socket.close();
+        try {
+            socket.close();
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
     }
 
     public static void send(String clientAddress, int clientPort, String msg) {
@@ -27,7 +31,7 @@ public class UDP {
             DatagramPacket packet = new DatagramPacket(data, data.length, InetAddress.getByName(clientAddress), clientPort);
             sockets.get(0).send(packet);
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -37,11 +41,15 @@ public class UDP {
             DatagramPacket packet = new DatagramPacket(data, data.length, clientAddress, clientPort);
             sockets.get(0).send(packet);
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
     public static String recv(int port) {
+        return recv(port, 0);
+    }
+
+    public static String recv(int port, int timeout) {
         byte[] data = new byte[0];
         DatagramPacket packet = null;
         try {
@@ -49,13 +57,15 @@ public class UDP {
             packet = new DatagramPacket(data, data.length);
             DatagramSocket socket = sockets.computeIfAbsent(port, k -> {
                 try {
-                    return new DatagramSocket(port);
+                    DatagramSocket s = new DatagramSocket(port);
+                    s.setSoTimeout(timeout);
+                    return s;
                 } catch (SocketException e) {
                     throw new RuntimeException(e);
                 }
             });
             socket.receive(packet);
-        } catch (IOException e) {
+        } catch (Exception e) {
             //TODO
             return null;
         }
