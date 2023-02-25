@@ -40,15 +40,18 @@ public class PlatformCtxServer extends AbstractCtxServer {
 
     @Override
     public void init() {
+        /*
         buildPatterns(CtxServerConfig.getInstance().getBasePatternFile(), CtxServerConfig.getInstance().getBaseMfuncFile());
         buildRules(CtxServerConfig.getInstance().getBaseRuleFile(), null); //only drop-latest for built-in rules
         this.chgGenerator = new ChgGenerator(PlatformCtxServer.getInstance());
         this.checker = new CheckerStarter(PlatformCtxServer.getInstance(), CtxServerConfig.getInstance().getBaseBfuncFile(), CtxServerConfig.getInstance().getCtxValidator());
         this.ctxFixer = new CtxFixer(PlatformCtxServer.getInstance());
+         */
     }
 
     @Override
     public void onMessage(String channel, String msg) {
+        /*
         //sensorName = front-back
         //value = 10-30
         logger.debug("platCtxServer recv: " + msg);
@@ -81,10 +84,12 @@ public class PlatformCtxServer extends AbstractCtxServer {
                 ctxFixer.addFixedContext(contextId, MessageHandler.cloneContext(originalMsg.getContextMap().get(contextId)));
             }
         }
+         */
     }
 
     @Override
     public void run() {
+        /*
         while(true){
             if(sendIndexQue.isEmpty())
                 continue;
@@ -112,8 +117,9 @@ public class PlatformCtxServer extends AbstractCtxServer {
             originalMsgMap.remove(sendIndex);
             sendIndexQue.poll();
         }
+         */
     }
-    
+
     public static boolean call(String appName, CmdType cmd, CtxServiceConfig config) {
         AppConfig appConfig = Configuration.getAppsConfig().get(appName);
         if (config != null) {

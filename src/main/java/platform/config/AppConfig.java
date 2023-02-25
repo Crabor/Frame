@@ -197,6 +197,7 @@ public class AppConfig {
     }
 
     public void initCtxServer(){
+        this.ctxServerOn = true;
         this.ctxServer = new AppCtxServer(this);
         this.ctxServer.init();
         //subscribe
@@ -207,7 +208,9 @@ public class AppConfig {
     }
 
     public void resetCtxServer(){
+        this.ctxServerOn = false;
         this.ctxServer.reset();
+        this.ctxServerOn = true;
     }
 
     @Override

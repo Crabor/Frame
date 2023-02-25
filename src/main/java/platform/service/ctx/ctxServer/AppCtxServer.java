@@ -13,20 +13,22 @@ import platform.service.ctx.statistics.ServerStatistics;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class AppCtxServer extends AbstractCtxServer{
+
+    private final AtomicLong atomicLong;
     private final AppConfig appConfig;
-    private long validMsgIndexLimit;
     private final ReentrantLock resetLock = new ReentrantLock();
 
     public AppCtxServer(AppConfig appConfig) {
         this.appConfig = appConfig;
-        this.validMsgIndexLimit = 0L;
         this.patternMap = new HashMap<>();
         this.ruleMap = new HashMap<>();
         this.resolverMap = new HashMap<>();
         this.serverStatistics = new ServerStatistics();
+        this.atomicLong = new AtomicLong();
     }
 
     public void reset(){
@@ -46,8 +48,6 @@ public class AppCtxServer extends AbstractCtxServer{
             this.chgGenerator.reset();
             this.ctxFixer.reset();
 
-            // reset后从validMsgIndexLimit开始接收
-            this.validMsgIndexLimit = PlatformCtxServer.getInstance().getMsgIndex().get() + 1L;
             // 重启服务
             this.restart();
             this.checker = new CheckerStarter(this, appConfig.getBfuncFile(), appConfig.getCtxValidator().toString());
@@ -67,8 +67,6 @@ public class AppCtxServer extends AbstractCtxServer{
 
     @Override
     public void onMessage(String channel, String msg) {
-        JSONObject msgJsonObj = JSONObject.parseObject(msg);
-        long msgIndex = Long.parseLong(msgJsonObj.getString("index"));
         //如果无法获取到锁，说明正在reset
         if(!resetLock.tryLock()){
             logger.debug(appConfig.getAppName() + "-CtxServer ignores: " + msg);
@@ -76,33 +74,20 @@ public class AppCtxServer extends AbstractCtxServer{
         }
 
         try{
-            //判断是否是reset之前的消息
-            if(msgIndex < validMsgIndexLimit) {
-                logger.debug(appConfig.getAppName() + "-CtxServer ignores: " + msg);
-                return;
-            }
-
             logger.debug(appConfig.getAppName() + "-CtxServer recv: " + msg);
             //System.out.printf("%s-CtxServer recv %s %n",appConfig.getAppName(), msg);
 
-            Message originalMsg = MessageHandler.jsonObject2Message(msgJsonObj);
-
-            if(originalMsg == null){
-                return;
-            }
+            JSONObject msgJsonObj = JSONObject.parseObject(msg);
+            long msgIndex = atomicLong.getAndIncrement();
+            Message originalMsg = MessageHandler.buildMsg(msgIndex, channel, msgJsonObj);
 
             addOriginalMsg(originalMsg);
             addSendIndex(originalMsg.getIndex());
             serverStatistics.increaseReceivedMsgNum();
-            if(appConfig.isCtxServerOn()){
-                List<Map.Entry<List<ContextChange>, ChgListType>> changesList = chgGenerator.generateChanges(originalMsg.getContextMap());
-                checker.check(changesList);
-            }
-            else{
-                for(String contextId : originalMsg.getContextMap().keySet()){
-                    ctxFixer.addFixedContext(contextId, MessageHandler.cloneContext(originalMsg.getContextMap().get(contextId)));
-                }
-            }
+
+            assert appConfig.isCtxServerOn();
+            List<Map.Entry<List<ContextChange>, ChgListType>> changesList = chgGenerator.generateChanges(originalMsg.getContextMap());
+            checker.check(changesList);
         } finally {
             resetLock.unlock();
         }
@@ -120,21 +105,14 @@ public class AppCtxServer extends AbstractCtxServer{
             if(!ctxFixer.getSendingMsgMap().containsKey(sendIndex))
                 continue;
             Message sendingMsg = ctxFixer.getSendingMsgMap().get(sendIndex);
-            Message originalMsg = getOriginalMsg(sendIndex);
             //发送消息
-            JSONObject pubJSONObj = MessageHandler.buildPubJSONObjWithoutIndex(sendingMsg, originalMsg.getSensorInfos(appConfig.getAppName()));
-            //only pub non-null context Msg
-            if(!pubJSONObj.containsValue("")){
-                logger.debug(appConfig.getAppName() + "-CtxServer pub " + pubJSONObj.toJSONString() +" to " + appConfig.getAppName());
-                for(String sensorName : pubJSONObj.keySet()){
-                    publish(sensorName, appConfig.getGrpId(), 0, pubJSONObj.getString(sensorName));
-                }
+            //每个msg只有一个sensor (框架2.1)
+            Map.Entry<String, JSONObject> pubMsgObj = MessageHandler.buildPubMsgObj(sendingMsg);
+            if(pubMsgObj != null){
+                logger.debug(appConfig.getAppName() + "-CtxServer pub " + pubMsgObj.getValue().toJSONString()  +" from " + pubMsgObj.getKey() + " to " + appConfig.getAppName());
+                publish(pubMsgObj.getKey(), appConfig.getGrpId(), 0, pubMsgObj.getValue().toJSONString());
                 serverStatistics.increaseSentMsgNum();
             }
-            else{
-                logger.debug(appConfig.getAppName() + "-CtxServer drop incomplete msg " + pubJSONObj.toJSONString());
-            }
-
             ctxFixer.getSendingMsgMap().remove(sendIndex);
             originalMsgMap.remove(sendIndex);
             sendIndexQue.poll();

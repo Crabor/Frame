@@ -36,24 +36,7 @@ public class SerMgrThread implements Runnable{
     public void run() {
         //init cxt & inv
         //TODO:platformCtxServer初始化如何拦截所有grp?
-//        if(Configuration.getCtxServerConfig().isServerOn()){
-//            platformCtxServer = PlatformCtxServer.getInstance();
-//            platformCtxServer.init();
-//            for(SensorConfig)
-//            for (SubConfig subConfig : Configuration.getCtxServerConfig().getSubConfigList()) {
-//                platformCtxServer.subscribe(subConfig);
-//            }
-//            platformCtxServer.start();
-//        }
 
-        //serverOn==false也要允许应用程序自主注册sensor，此时server起到一个转发的作用
-//        platformCtxServer = PlatformCtxServer.getInstance();
-//        platformCtxServer.init();
-//        for (SubConfig subConfig : Configuration.getCtxServerConfig().getSubConfigList()) {
-//            platformCtxServer.subscribe(subConfig);
-//        }
-//        platformCtxServer.start();
-//
 //        if (Configuration.getInvServerConfig().isServerOn()) {
 //            checkServer = CheckServer.getInstance();
 //            checkServer.start();
