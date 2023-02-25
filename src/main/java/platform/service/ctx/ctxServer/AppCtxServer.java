@@ -2,10 +2,8 @@ package platform.service.ctx.ctxServer;
 
 import com.alibaba.fastjson.JSONObject;
 import platform.config.AppConfig;
-import platform.config.SubConfig;
 import platform.service.ctx.ctxChecker.CheckerStarter;
 import platform.service.ctx.ctxChecker.context.ContextChange;
-import platform.service.ctx.ctxChecker.middleware.checkers.Checker;
 import platform.service.ctx.message.Message;
 import platform.service.ctx.message.MessageHandler;
 import platform.service.ctx.statistics.ServerStatistics;
@@ -31,6 +29,15 @@ public class AppCtxServer extends AbstractCtxServer{
         this.atomicLong = new AtomicLong();
     }
 
+    @Override
+    public void init() {
+        buildPatterns(appConfig.getPatternFile(), appConfig.getMfuncFile());
+        buildRules(appConfig.getRuleFile(), null); //currently only-use drop-latest
+        this.chgGenerator = new ChgGenerator(this);
+        this.checker = new CheckerStarter(this, appConfig.getBfuncFile(), appConfig.getCtxValidator().toString());
+        this.ctxFixer = new CtxFixer(this);
+    }
+
     public void reset(){
         //停止发送数据
         t.interrupt();
@@ -39,8 +46,10 @@ public class AppCtxServer extends AbstractCtxServer{
         resetLock.lock();
         try {
             // 重新构建Rules
+            this.patternMap.clear();
             this.ruleMap.clear();
             this.resolverMap.clear();
+            buildPatterns(appConfig.getPatternFile(), appConfig.getMfuncFile());
             buildRules(appConfig.getRuleFile(), null);
             // 清除旧数据
             this.originalMsgMap.clear();
@@ -56,17 +65,33 @@ public class AppCtxServer extends AbstractCtxServer{
         }
     }
 
-    @Override
-    public void init() {
-        buildPatterns(appConfig.getPatternFile(), appConfig.getMfuncFile());
-        buildRules(appConfig.getRuleFile(), null); //currently only-use drop-latest
-        this.chgGenerator = new ChgGenerator(this);
-        this.checker = new CheckerStarter(this, appConfig.getBfuncFile(), appConfig.getCtxValidator().toString());
-        this.ctxFixer = new CtxFixer(this);
+    public void stop(){
+        //停止发送数据
+        t.interrupt();
+        while(t.isInterrupted());
+        //停止接收数据
+        resetLock.lock();
+        try{
+            this.patternMap.clear();
+            this.ruleMap.clear();
+            this.resolverMap.clear();
+            this.originalMsgMap.clear();
+            this.sendIndexQue.clear();
+            this.checker = null;
+            this.chgGenerator = null;
+            this.ctxFixer = null;
+        } finally {
+            resetLock.unlock();
+        }
     }
+
 
     @Override
     public void onMessage(String channel, String msg) {
+        if(msg == null){
+            return;
+        }
+
         //如果无法获取到锁，说明正在reset
         if(!resetLock.tryLock()){
             logger.debug(appConfig.getAppName() + "-CtxServer ignores: " + msg);
@@ -86,8 +111,8 @@ public class AppCtxServer extends AbstractCtxServer{
             serverStatistics.increaseReceivedMsgNum();
 
             assert appConfig.isCtxServerOn();
-            List<Map.Entry<List<ContextChange>, ChgListType>> changesList = chgGenerator.generateChanges(originalMsg.getContextMap());
-            checker.check(changesList);
+            List<Map.Entry<List<ContextChange>, BatchType>> changeBatchList = chgGenerator.generateChangeBatches(originalMsg.getContext());
+            checker.check(changeBatchList);
         } finally {
             resetLock.unlock();
         }
@@ -102,9 +127,9 @@ public class AppCtxServer extends AbstractCtxServer{
             if(sendIndexQue.isEmpty())
                 continue;
             long sendIndex = sendIndexQue.peek();
-            if(!ctxFixer.getSendingMsgMap().containsKey(sendIndex))
+            if(!ctxFixer.getReadyMsgMap().containsKey(sendIndex))
                 continue;
-            Message sendingMsg = ctxFixer.getSendingMsgMap().get(sendIndex);
+            Message sendingMsg = ctxFixer.getReadyMsgMap().get(sendIndex);
             //发送消息
             //每个msg只有一个sensor (框架2.1)
             Map.Entry<String, JSONObject> pubMsgObj = MessageHandler.buildPubMsgObj(sendingMsg);
@@ -113,7 +138,7 @@ public class AppCtxServer extends AbstractCtxServer{
                 publish(pubMsgObj.getKey(), appConfig.getGrpId(), 0, pubMsgObj.getValue().toJSONString());
                 serverStatistics.increaseSentMsgNum();
             }
-            ctxFixer.getSendingMsgMap().remove(sendIndex);
+            ctxFixer.getReadyMsgMap().remove(sendIndex);
             originalMsgMap.remove(sendIndex);
             sendIndexQue.poll();
         }

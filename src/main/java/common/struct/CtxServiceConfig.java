@@ -45,6 +45,11 @@ public class CtxServiceConfig implements ServiceConfig{
     }
 
     @Override
+    public String toJSONString() {
+        return toString();
+    }
+
+    @Override
     public String toString() {
         return JSON.toJSONString(config);
     }

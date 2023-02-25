@@ -2,7 +2,7 @@ package platform.service.ctx.ctxChecker;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import platform.service.ctx.ctxServer.ChgListType;
+import platform.service.ctx.ctxServer.BatchType;
 import platform.service.ctx.message.MessageHandler;
 import platform.service.ctx.rule.Rule;
 import platform.service.ctx.ctxChecker.context.Context;
@@ -45,8 +45,16 @@ public class CheckerStarter {
             throw new RuntimeException(e);
         }
 
-        String technique = ctxValidator.split("\\+")[0];
-        String schedule = ctxValidator.split("\\+")[1];
+        String technique = "";
+        String schedule = "";
+        if(ctxValidator.equals("INFUSE")){
+            technique = "INFUSE_C";
+            schedule = "INFUSE_S";
+        }
+        else{
+            technique = ctxValidator.split("_")[0];
+            schedule = ctxValidator.split("_")[1];
+        }
 
         switch (technique) {
             case "ECC":
@@ -58,30 +66,25 @@ public class CheckerStarter {
             case "PCC":
                 this.checker = new PCC(ctxServer.getRuleMap(), this.contextPool, bfuncInstance);
                 break;
-            case "INFUSE_base":
-                this.checker = new BASE(ctxServer.getRuleMap(), this.contextPool, bfuncInstance);
-                break;
             case "INFUSE_C":
                 this.checker = new INFUSE_C(ctxServer.getRuleMap(), this.contextPool, bfuncInstance);
                 break;
+            default:
+                assert false;
         }
 
         switch (schedule){
             case "IMD":
                 this.scheduler = new IMD(contextPool, checker);
                 break;
-            case "GEAS_ori":
+            case "GEAS":
                 this.scheduler = new GEAS_ori(ctxServer.getRuleMap(), contextPool, checker);
-                break;
-            case "GEAS_opt_s":
-                this.scheduler = new GEAS_opt_s(ctxServer.getRuleMap(), contextPool, checker);
-                break;
-            case "GEAS_opt_c":
-                this.scheduler = new GEAS_opt_c(ctxServer.getRuleMap(), contextPool, checker);
                 break;
             case "INFUSE_S":
                 this.scheduler = new INFUSE_S(ctxServer.getRuleMap(), contextPool, checker);
                 break;
+            default:
+                assert false;
         }
 
         //check init
@@ -107,17 +110,18 @@ public class CheckerStarter {
             return null;
         }
         Path bfuncPath = Paths.get(bfuncFile).toAbsolutePath();
-        URLClassLoader classLoader = new URLClassLoader(new URL[]{ bfuncPath.getParent().toFile().toURI().toURL()});
-        Class<?> c = classLoader.loadClass(bfuncPath.getFileName().toString().substring(0, bfuncPath.getFileName().toString().length() - 6));
-        Constructor<?> constructor = c.getConstructor();
-        return constructor.newInstance();
+        try(URLClassLoader classLoader = new URLClassLoader(new URL[]{ bfuncPath.getParent().toFile().toURI().toURL()})){
+            Class<?> c = classLoader.loadClass(bfuncPath.getFileName().toString().substring(0, bfuncPath.getFileName().toString().length() - 6));
+            Constructor<?> constructor = c.getConstructor();
+            return constructor.newInstance();
+        }
     }
 
 
-    public void check(List<Map.Entry<List<ContextChange>, ChgListType>> changesList){
-        for(Map.Entry<List<ContextChange>, ChgListType> changesEntry : changesList){
-            List<ContextChange> changeList = changesEntry.getKey();
-            for(ContextChange change : changeList){
+    public void check(List<Map.Entry<List<ContextChange>, BatchType>> changeBatchList){
+        for(Map.Entry<List<ContextChange>, BatchType> batchEntry : changeBatchList){
+            List<ContextChange> changeBatch = batchEntry.getKey();
+            for(ContextChange change : changeBatch){
                 try{
                     this.scheduler.doSchedule(change);
                 } catch (Exception e){
@@ -132,13 +136,12 @@ public class CheckerStarter {
             }
 
             if(ctxServer.getResolverType() == ResolverType.INTIME){
-                ChgListType chgListType = changesEntry.getValue();
-
-                if(chgListType == ChgListType.GENERATE){
+                BatchType batchType = batchEntry.getValue();
+                if(batchType == BatchType.GENERATE){
                     Set<String> droppedCtxIdSet = new HashSet<>();
-                    List<ContextChange> resolveChgList = ctxServer.getCtxFixer().resolveInconsistenciesInTime(checker.getTempRuleLinksMap());
-                    checker.getTempRuleLinksMap().clear();
-                    for(ContextChange change : resolveChgList){
+                    List<ContextChange> resolveBatch = ctxServer.getCtxFixer().resolveViolationsInTime(checker.getRule2LinkSet());
+                    checker.getRule2LinkSet().clear();
+                    for(ContextChange change : resolveBatch){
                         try {
                             this.scheduler.doSchedule(change);
                         } catch (Exception e) {
@@ -160,17 +163,17 @@ public class CheckerStarter {
                         Set<String> patternIdSets = activateCtxMap.get(context);
                         if(patternIdSets.isEmpty()){
                             if(droppedCtxIdSet.contains(context.getContextId())){
-                                ctxServer.getCtxFixer().addFixedContext(context.getContextId(), null);
+                                ctxServer.getCtxFixer().buildReadyMsg(Long.parseLong(context.getContextId().split("_")[1]), null);
                             }
                             else{
-                                ctxServer.getCtxFixer().addFixedContext(context.getContextId(), MessageHandler.cloneContext(context));
+                                ctxServer.getCtxFixer().buildReadyMsg(Long.parseLong(context.getContextId().split("_")[1]), MessageHandler.cloneContext(context));
                             }
                             iterator.remove();
                         }
                     }
                 }
                 else{
-                    //TODO
+                    //TODO: overdue的Batch产生的incs如何resolve? 目前是不处理.
                     //当上下文被完全删除后，将上下文认为已经修复,准备发送。
                     HashMap<Context, Set<String>> activateCtxMap = contextPool.getActivateCtxMap();
                     Iterator<Context> iterator = activateCtxMap.keySet().iterator();
@@ -178,120 +181,34 @@ public class CheckerStarter {
                         Context context = iterator.next();
                         Set<String> patternIdSets = activateCtxMap.get(context);
                         if(patternIdSets.isEmpty()){
-                            ctxServer.getCtxFixer().addFixedContext(context.getContextId(), MessageHandler.cloneContext(context));
+                            ctxServer.getCtxFixer().buildReadyMsg(Long.parseLong(context.getContextId().split("_")[1]), MessageHandler.cloneContext(context));
                             iterator.remove();
                         }
                     }
                 }
-                checker.getTempRuleLinksMap().clear();
+                checker.getRule2LinkSet().clear();
             }
             else{
-                assert ctxServer.getResolverType() == ResolverType.DELAY;
-                //将生成的link丢给fixer
-                ctxServer.getCtxFixer().storeInconsistenciesForDelayResolving(checker.getTempRuleLinksMap());
-                checker.getTempRuleLinksMap().clear();
-
-                //当上下文被完全删除后，开始修复该上下文
-                HashMap<Context, Set<String>> activateCtxMap = contextPool.getActivateCtxMap();
-                Iterator<Context> iterator = activateCtxMap.keySet().iterator();
-                while(iterator.hasNext()) {
-                    Context context = iterator.next();
-                    Set<String> patternIdSets = activateCtxMap.get(context);
-                    if(patternIdSets.isEmpty()){
-                        ctxServer.getCtxFixer().fixContext(context);
-                        iterator.remove();
-                    }
-                }
+                assert false;
+                //TODO: 延迟resolve如何进行
+//                assert ctxServer.getResolverType() == ResolverType.DELAY;
+//                //将生成的link丢给fixer
+//                ctxServer.getCtxFixer().storeInconsistenciesForDelayResolving(checker.getRule2LinkSet());
+//                checker.getRule2LinkSet().clear();
+//
+//                //当上下文被完全删除后，开始修复该上下文
+//                HashMap<Context, Set<String>> activateCtxMap = contextPool.getActivateCtxMap();
+//                Iterator<Context> iterator = activateCtxMap.keySet().iterator();
+//                while(iterator.hasNext()) {
+//                    Context context = iterator.next();
+//                    Set<String> patternIdSets = activateCtxMap.get(context);
+//                    if(patternIdSets.isEmpty()){
+//                        ctxServer.getCtxFixer().fixContext(context);
+//                        iterator.remove();
+//                    }
+//                }
             }
 
         }
     }
-
-    /*
-
-    @Override
-    public void run() {
-        while (true) {
-            if(Thread.interrupted()){
-                return;
-            }
-            Map.Entry<List<ContextChange>, ChgListType> chgEntry = ctxServer.changeBufferConsumer();
-            if(chgEntry == null){
-                return; // changeBufferConsumer is interrupted.
-            }
-            List<ContextChange> changeList = chgEntry.getKey();
-            while(!changeList.isEmpty()){
-                ContextChange chg = changeList.get(0);
-                changeList.remove(0);
-                //logger.debug(Thread.currentThread().getId() + " " + chg);
-                try {
-                    this.scheduler.doSchedule(chg);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                if(chg.getChangeType() == ContextChange.ChangeType.ADDITION){
-                    ctxServer.getServerStatistics().increaseReceivedCtxNum(chg.getPatternId());
-                }
-                else if(chg.getChangeType() == ContextChange.ChangeType.DELETION){
-                    ctxServer.getServerStatistics().increaseCheckedCtxNum(chg.getPatternId());
-                }
-            }
-
-            if(ctxServer.getResolverType() == ResolverType.INTIME){
-                ChgListType chgListType = chgEntry.getValue();
-                if(chgListType == ChgListType.GENERATE){
-                    List<ContextChange> resolveChgList = ctxServer.getCtxFixer().resolveInconsistenciesInTime(checker.getTempRuleLinksMap());
-                    while(!resolveChgList.isEmpty()){
-                        ContextChange chg = resolveChgList.get(0);
-                        resolveChgList.remove(0);
-                        //logger.debug(Thread.currentThread().getId() + " " + chg);
-                        try {
-                            this.scheduler.doSchedule(chg);
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                    checker.getTempRuleLinksMap().clear();
-                }
-
-                //当上下文被完全删除后，将上下文认为已经修复,准备发送。
-                HashMap<Context, Set<String>> activateCtxMap = contextPool.getActivateCtxMap();
-                Iterator<Context> iterator = activateCtxMap.keySet().iterator();
-                while(iterator.hasNext()) {
-                    Context context = iterator.next();
-                    Set<String> patternIdSets = activateCtxMap.get(context);
-                    if(patternIdSets.isEmpty()){
-                        ctxServer.getCtxFixer().addFixedContext(context.getContextId(), MessageHandler.cloneContext(context));
-                        iterator.remove();
-                    }
-                }
-            }
-            else{
-                assert ctxServer.getResolverType() == ResolverType.DELAY;
-                //将生成的link丢给fixer
-                ctxServer.getCtxFixer().storeInconsistenciesForDelayResolving(checker.getTempRuleLinksMap());
-                checker.getTempRuleLinksMap().clear();
-
-                //当上下文被完全删除后，开始修复该上下文
-                HashMap<Context, Set<String>> activateCtxMap = contextPool.getActivateCtxMap();
-                Iterator<Context> iterator = activateCtxMap.keySet().iterator();
-                while(iterator.hasNext()) {
-                    Context context = iterator.next();
-                    Set<String> patternIdSets = activateCtxMap.get(context);
-                    if(patternIdSets.isEmpty()){
-                        ctxServer.getCtxFixer().fixContext(context);
-                        iterator.remove();
-                    }
-                }
-            }
-
-        }
-    }
-
-    public void reset(){
-        t.interrupt();
-        while(t.isInterrupted());
-    }
-
-     */
 }

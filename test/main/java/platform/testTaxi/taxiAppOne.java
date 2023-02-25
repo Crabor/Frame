@@ -11,9 +11,9 @@ public class taxiAppOne extends AbstractApp {
     public void configApp() {
 //        config.registerSensor("taxis");
 //        config.setCtxServerOn(true);
-//        config.setRuleFile("Resources/taxiTest/appOne/taxiRules.xml");
+//        config.setRuleFile("Resources/taxiTest/appOne/rules.xml");
 //        config.setBfuncFile("Resources/taxiTest/appOne/taxiBfunction.class");
-//        config.setPatternFile("Resources/taxiTest/appOne/taxiPatterns.xml");
+//        config.setPatternFile("Resources/taxiTest/appOne/patterns.xml");
 //        config.setMfuncFile("Resources/taxiTest/appOne/taxiMfunction.class");
     }
 

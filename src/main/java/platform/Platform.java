@@ -61,7 +61,7 @@ public class Platform {
         dir.mkdirs();
 
         //read config file
-        Configuration.analyzer("Resources/configFile/ConfigurationNew");
+        Configuration.analyzer("Resources/configFile/zlyConfiguration");
 
         //init database
         RedisClient client = RedisClient.create(

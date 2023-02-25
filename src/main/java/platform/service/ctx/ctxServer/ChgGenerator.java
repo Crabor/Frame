@@ -10,8 +10,8 @@ import platform.service.ctx.ctxChecker.context.ContextChange;
 
 import java.util.*;
 
-import static platform.service.ctx.ctxServer.ChgListType.GENERATE;
-import static platform.service.ctx.ctxServer.ChgListType.OVERDUE;
+import static platform.service.ctx.ctxServer.BatchType.GENERATE;
+import static platform.service.ctx.ctxServer.BatchType.OVERDUE;
 
 public class ChgGenerator {
 
@@ -34,8 +34,8 @@ public class ChgGenerator {
         }
     }
 
-    public List<Map.Entry<List<ContextChange>, ChgListType>> generateChanges(Map<String, Context> contextMap){
-        List<Map.Entry<List<ContextChange>, ChgListType>> retList = new ArrayList<>();
+    public List<Map.Entry<List<ContextChange>, BatchType>> generateChangeBatches(Context context){
+        List<Map.Entry<List<ContextChange>, BatchType>> retList = new ArrayList<>();
         //根据当前时间清理过时的contexts，生成相应的changes
         List<ContextChange> overdueList = new ArrayList<>();
         cleanOverdueContexts(overdueList);
@@ -43,39 +43,26 @@ public class ChgGenerator {
             retList.add(new AbstractMap.SimpleEntry<>(overdueList, OVERDUE));
         }
 
-        if(contextMap != null){
-            //为message中的每一个context寻找对应的patterns，并生成相应的changes
-            for(String contextId : contextMap.keySet()){
-                Context context = contextMap.get(contextId);
-                if(context == null){
-                    //由于被丢弃或者没获得，所以在生成Message的时候被设置为了null
-                    server.getCtxFixer().addFixedContext(contextId, null);
-                }
-                else{
-                    List<ContextChange> generateList = new ArrayList<>();
-                    boolean matched = false;
-                    String fromSensorName = contextId.substring(0, contextId.lastIndexOf("_"));
-                    for(Pattern pattern : server.getPatternMap().values()){
-                        if(pattern.getDataSourceType() == DataSourceType.pattern){
-                            assert false;
-                            continue;
-                            //TODO()
-                        }
-                        if(pattern.getDataSourceSet().contains(fromSensorName)){
-                            if(pattern.getMatcher() == null || match(pattern, context)){
-                                matched = true;
-                                generateList.addAll(generate(pattern, context));
-                            }
-                        }
-                    }
-                    if(!matched){
-                        server.getCtxFixer().addFixedContext(contextId, MessageHandler.cloneContext(contextMap.get(contextId)));
-                    }
-                    else{
-                        retList.add(new AbstractMap.SimpleEntry<>(generateList, GENERATE));
-                    }
+        assert context != null;
+        String contextId = context.getContextId();
+
+        List<ContextChange> generateList = new ArrayList<>();
+        boolean matched = false;
+        String fromSensorName = contextId.substring(0, contextId.lastIndexOf("_"));
+        for(Pattern pattern : server.getPatternMap().values()){
+            assert pattern.getDataSourceType() != DataSourceType.pattern; // TODO()
+            if(pattern.getDataSourceSet().contains(fromSensorName)){
+                if(pattern.getMatcher() == null || match(pattern, context)){
+                    matched = true;
+                    generateList.addAll(generate(pattern, context));
                 }
             }
+        }
+        if(!matched){
+            server.getCtxFixer().buildReadyMsg(Long.parseLong(contextId.split("_")[1]), MessageHandler.cloneContext(context));
+        }
+        else{
+            retList.add(new AbstractMap.SimpleEntry<>(generateList, GENERATE));
         }
 
         return retList;
@@ -144,7 +131,7 @@ public class ChgGenerator {
     }
 
 
-    public List<ContextChange> generateResolvedChanges(Set<Map.Entry<String, HashMap<String, String>>> resolvedFlatContextSet){
+    public List<ContextChange> generateResolveChangeBatch(Set<Map.Entry<String, HashMap<String, String>>> resolvedFlatContextSet){
         List<ContextChange> changeList = new ArrayList<>();
         for(Map.Entry<String, HashMap<String, String>> flatContext : resolvedFlatContextSet){
             String ctxId = flatContext.getKey();

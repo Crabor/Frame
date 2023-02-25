@@ -19,7 +19,7 @@ public abstract class Checker {
     // rule_id -> [(truthValue1, linkSet1), (truthValue2,linkSet2)]
     protected Map<String, List<Map.Entry<Boolean, Set<Link>>>> ruleLinksMap;
 
-    protected Map<String, Set<Link>> tempRuleLinksMap;
+    protected Map<String, Set<Link>> rule2LinkSet;
 
 
     public Checker(Map<String, Rule> ruleMap, ContextPool contextPool, Object bfuncInstance) {
@@ -27,7 +27,7 @@ public abstract class Checker {
         this.contextPool = contextPool;
         this.bfuncInstance = bfuncInstance;
         this.ruleLinksMap = new HashMap<>();
-        this.tempRuleLinksMap = new HashMap<>();
+        this.rule2LinkSet = new HashMap<>();
     }
 
     protected void storeLink(String rule_id, boolean truth, Set<Link> linkSet){
@@ -37,8 +37,8 @@ public abstract class Checker {
         );
 
         if(!linkSet.isEmpty()){
-            this.tempRuleLinksMap.computeIfAbsent(rule_id, k -> new HashSet<>(linkSet));
-            Objects.requireNonNull(this.tempRuleLinksMap.computeIfPresent(rule_id, (k, v) -> v)).addAll(linkSet);
+            this.rule2LinkSet.computeIfAbsent(rule_id, k -> new HashSet<>(linkSet));
+            Objects.requireNonNull(this.rule2LinkSet.computeIfPresent(rule_id, (k, v) -> v)).addAll(linkSet);
         }
     }
 
@@ -69,7 +69,7 @@ public abstract class Checker {
         return ruleLinksMap;
     }
 
-    public Map<String, Set<Link>> getTempRuleLinksMap() {
-        return tempRuleLinksMap;
+    public Map<String, Set<Link>> getRule2LinkSet() {
+        return rule2LinkSet;
     }
 }

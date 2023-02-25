@@ -4,10 +4,8 @@ import platform.service.ctx.ctxChecker.constraint.runtime.Link;
 import platform.service.ctx.ctxChecker.context.Context;
 import platform.service.ctx.ctxChecker.context.ContextChange;
 import platform.service.ctx.message.Message;
-import platform.service.ctx.message.MessageHandler;
 import platform.service.ctx.rule.Rule;
 import platform.service.ctx.rule.resolver.AbstractResolver;
-import platform.service.ctx.rule.resolver.ResolverType;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,10 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CtxFixer {
     private final AbstractCtxServer ctxServer;
 
-    private final TreeMap<Long, Message> fixingMsgMap;
-    private final ConcurrentHashMap<Long, Message> sendingMsgMap;
-
-    // in time resolve
+    private final ConcurrentHashMap<Long, Message> readyMsgMap;
 
     // delay resolve
     private final HashMap<String, Set<Map.Entry<String, Link>>> ctxId2Incs;
@@ -27,73 +22,53 @@ public class CtxFixer {
     public CtxFixer(AbstractCtxServer ctxServer) {
         this.ctxServer = ctxServer;
         this.ctxId2Incs = new HashMap<>();
-        this.fixingMsgMap = new TreeMap<>(Long::compareTo);
-        this.sendingMsgMap = new ConcurrentHashMap<>();
+        this.readyMsgMap = new ConcurrentHashMap<>();
     }
 
-    public void addFixedContext(String contextId, Context context){
-        long msgIndex =  Long.parseLong(contextId.substring(contextId.lastIndexOf("_") + 1));
-        Message fixingMsg = getOrPutDefaultFixingMsg(msgIndex);
-        fixingMsg.addContext(contextId, context);
-        if(checkCompleteness(fixingMsg)){
-            ctxServer.serverStatistics.increaseCheckedAndResolvedMsgNum();
-            sendingMsgMap.put(msgIndex, fixingMsg);
-            fixingMsgMap.remove(msgIndex);
-        }
+    public void buildReadyMsg(long msgIndex, Context context){
+        Message readyMsg = new Message(msgIndex);
+        readyMsg.addContext(context);
+        ctxServer.serverStatistics.increaseCheckedAndResolvedMsgNum();
+        readyMsgMap.put(msgIndex, readyMsg);
     }
 
-    private Message getOrPutDefaultFixingMsg(long index){
-        Message message = this.fixingMsgMap.getOrDefault(index, new Message(index));
-        this.fixingMsgMap.put(index, message);
-        return message;
-    }
-
-    private boolean checkCompleteness(Message fixingMsg){
-        Message originalMsg = ctxServer.getOriginalMsg(fixingMsg.getIndex());
-        //查看是否这条信息的所有context都已收齐
-        Set<String> originalMsgContextIds = originalMsg.getContextMap().keySet();
-        Set<String> fixingMsgContextIds = fixingMsg.getContextMap().keySet();
-        return originalMsgContextIds.containsAll(fixingMsgContextIds) && fixingMsgContextIds.containsAll(originalMsgContextIds);
-    }
-
-    public ConcurrentHashMap<Long, Message> getSendingMsgMap() {
-        return sendingMsgMap;
+    public ConcurrentHashMap<Long, Message> getReadyMsgMap() {
+        return readyMsgMap;
     }
 
     public void reset(){
         this.ctxId2Incs.clear();
-        this.fixingMsgMap.clear();
-        this.sendingMsgMap.clear();
+        this.readyMsgMap.clear();
     }
 
 
-    // in time resolve
-    public List<ContextChange> resolveInconsistenciesInTime(Map<String, Set<Link>> ruleId2LinkSet){
+    // in time resolving
+    public List<ContextChange> resolveViolationsInTime(Map<String, Set<Link>> ruleId2LinkSet){
         if(ruleId2LinkSet.isEmpty()){
             return new ArrayList<>();
         }
         //每次检测只检测由一个context引起的changeList，故只需统计优先级最高的resolver
-        String topRuleId = null;
-        AbstractResolver topResolver = null;
+        String selectedRuleId = null;
+        AbstractResolver selectedResolver = null;
         for(String ruleId : ruleId2LinkSet.keySet()){
             AbstractResolver resolver = ctxServer.getResolverMap().get(ruleId);
-            if(topResolver == null){
-                topRuleId = ruleId;
-                topResolver = resolver;
+            if(selectedResolver == null){
+                selectedRuleId = ruleId;
+                selectedResolver = resolver;
             }
             else{
-                if(topResolver.getPriority() < resolver.getPriority()) {
-                    topRuleId = ruleId;
-                    topResolver = resolver;
+                if(selectedResolver.getPriority() < resolver.getPriority()) {
+                    selectedRuleId = ruleId;
+                    selectedResolver = resolver;
                 }
             }
         }
-
-        Set<HashMap<String, Map.Entry<String, HashMap<String, String>>>> flatLinkSet = flattenLinkSet(ctxServer.getRuleMap().get(topRuleId), ruleId2LinkSet.get(topRuleId));
-
-        Set<Map.Entry<String, HashMap<String, String>>> resolvedFlatContextSet = topResolver.resolve(flatLinkSet);
-
-        return ctxServer.chgGenerator.generateResolvedChanges(resolvedFlatContextSet);
+        //将selectedRule相关的LinkSet变成通用容器
+        Set<HashMap<String, Map.Entry<String, HashMap<String, String>>>> flatLinkSet = flattenLinkSet(ctxServer.getRuleMap().get(selectedRuleId), ruleId2LinkSet.get(selectedRuleId));
+        //resolve
+        Set<Map.Entry<String, HashMap<String, String>>> resolvedFlatContextSet = selectedResolver.resolve(flatLinkSet);
+        //生成对应的resolveChangeBatch
+        return ctxServer.chgGenerator.generateResolveChangeBatch(resolvedFlatContextSet);
     }
 
     private Set<HashMap<String, Map.Entry<String, HashMap<String, String>>>> flattenLinkSet(Rule rule, Set<Link> linkSet){

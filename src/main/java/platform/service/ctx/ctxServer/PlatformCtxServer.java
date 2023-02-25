@@ -1,16 +1,8 @@
 package platform.service.ctx.ctxServer;
 
-import com.alibaba.fastjson.JSONObject;
 import common.struct.CtxServiceConfig;
-import common.struct.ServiceConfig;
 import platform.config.AppConfig;
 import platform.config.Configuration;
-import platform.config.CtxServerConfig;
-import platform.config.SubConfig;
-import platform.service.ctx.ctxChecker.context.ContextChange;
-import platform.service.ctx.message.Message;
-import platform.service.ctx.message.MessageHandler;
-import platform.service.ctx.ctxChecker.CheckerStarter;
 import platform.service.ctx.statistics.ServerStatistics;
 import common.struct.enumeration.CmdType;
 
@@ -20,7 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class PlatformCtxServer extends AbstractCtxServer {
 
     //如果支持新增ctx，那应该多设置一个index
-    private final AtomicLong msgIndex;
+    private final AtomicLong atomicLong;
 
     private static final class CtxBaseServerHolder {
         private static final PlatformCtxServer instance = new PlatformCtxServer();
@@ -35,7 +27,7 @@ public class PlatformCtxServer extends AbstractCtxServer {
         this.ruleMap = new HashMap<>();
         this.resolverMap = new HashMap<>();
         this.serverStatistics = new ServerStatistics();
-        this.msgIndex = new AtomicLong();
+        this.atomicLong = new AtomicLong();
     }
 
     @Override
@@ -51,6 +43,7 @@ public class PlatformCtxServer extends AbstractCtxServer {
 
     @Override
     public void onMessage(String channel, String msg) {
+        assert msg != null;
         /*
         //sensorName = front-back
         //value = 10-30
@@ -126,20 +119,17 @@ public class PlatformCtxServer extends AbstractCtxServer {
             appConfig.setCtxServiceConfig(config);
         }
         if(cmd == CmdType.START){
-            appConfig.initCtxServer();
-            return true;
+            return appConfig.initCtxServer();
         }
         else if(cmd == CmdType.RESET){
-            appConfig.resetCtxServer();
-            return true;
+            return appConfig.resetCtxServer();
+        }
+        else if(cmd == CmdType.STOP){
+            return appConfig.stopCtxServer();
         }
         else{
             //TODO
             return false;
         }
-    }
-
-    public AtomicLong getMsgIndex() {
-        return msgIndex;
     }
 }

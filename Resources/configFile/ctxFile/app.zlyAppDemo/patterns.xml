@@ -11,7 +11,7 @@
         <dataSource>
             <type>sensor</type>
             <sourceList>
-                <source>taxis</source>
+                <source>Car</source>
             </sourceList>
         </dataSource>
         <matcher>
@@ -26,13 +26,13 @@
     <pattern>
         <id>pat_002</id>
         <freshness>
-            <type>number</type> <!--可选项有time(ms)和number(#)-->
+            <type>number</type> <!--�	y	time(ms)�number(#)-->
             <value>2</value> <!--2000ms-->
         </freshness>
         <dataSource>
             <type>sensor</type>
             <sourceList>
-                <source>taxis</source>
+                <source>Car</source>
             </sourceList>
         </dataSource>
         <matcher>

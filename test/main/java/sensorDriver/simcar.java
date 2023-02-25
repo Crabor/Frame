@@ -1,8 +1,6 @@
-package simcar;
+package sensorDriver;
 
 import common.socket.UDP;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import platform.communication.socket.Cmd;
 import platform.communication.socket.CmdRet;
 
