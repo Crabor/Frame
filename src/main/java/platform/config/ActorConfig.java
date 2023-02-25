@@ -6,24 +6,24 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ActuatorConfig {
-    private final String actuatorName;
-    private String actuatorType;
+public class ActorConfig {
+    private final String actorName;
+    private String actorType;
     private boolean isAlive = false;
     private int aliveFreq;
     private final Set<AppConfig> apps = ConcurrentHashMap.newKeySet();
 
-    public ActuatorConfig(JSONObject object) {
-        actuatorName = object.getString("actuatorName");
+    public ActorConfig(JSONObject object) {
+        actorName = object.getString("actorName");
         try {
             aliveFreq = object.getInteger("aliveFreq");
         } catch (NullPointerException e) {
             aliveFreq = 1;
         }
         try {
-            actuatorType = object.getString("actuatorType");
+            actorType = object.getString("actorType");
         } catch (NullPointerException e) {
-            actuatorType = "String";
+            actorType = "String";
         }
     }
 
@@ -35,12 +35,12 @@ public class ActuatorConfig {
         aliveFreq = freq;
     }
 
-    public String getActuatorName() {
-        return actuatorName;
+    public String getActorName() {
+        return actorName;
     }
 
-    public String getActuatorType() {
-        return actuatorType;
+    public String getActorType() {
+        return actorType;
     }
 
     public void addApp(AppConfig app) {
@@ -73,9 +73,9 @@ public class ActuatorConfig {
 
     @Override
     public String toString() {
-        return "ActuatorConfig{" +
-                "actuatorName='" + actuatorName + '\'' +
-                ", actuatorType='" + actuatorType + '\'' +
+        return "ActorConfig{" +
+                "actorName='" + actorName + '\'' +
+                ", actorType='" + actorType + '\'' +
                 ", aliveFreq=" + aliveFreq +
                 '}';
     }

@@ -1,16 +1,17 @@
 package platform.testother;
 
 import app.AbstractApp;
+import common.struct.SensorData;
 
 public class MyApp2 extends AbstractApp {
     @Override
-    public void setting() {
+    public void configApp() {
 //        config.registerSensor(sensor);
 //        ......
     }
 
     @Override
-    public void getMsg(String sensorName, String value) {
+    public void getMsg(String sensorName, SensorData value) {
 //        if (sensor) {
 //            //sensor to ctx
 //

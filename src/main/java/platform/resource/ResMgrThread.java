@@ -113,15 +113,15 @@ public class ResMgrThread implements Runnable {
 //            valueThread.start();
         });
 
-        Configuration.getResourceConfig().getActuatorsConfig().forEach((name, config) -> {
+        Configuration.getResourceConfig().getActorsConfig().forEach((name, config) -> {
             //alive thread
             new Thread(() -> {
                 while (true) {
                     try {
                         Thread.sleep(1000 / config.getAliveFreq());
-                        Cmd actuator_alive = new Cmd("actuator_alive", name);
-                        PlatformUDP.send(actuator_alive);
-//                        logger.debug(actuator_alive);
+                        Cmd actor_alive = new Cmd("actor_alive", name);
+                        PlatformUDP.send(actor_alive);
+//                        logger.debug(actor_alive);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -137,7 +137,7 @@ public class ResMgrThread implements Runnable {
 //        Configuration.getResourceConfig().getSensorsConfig().forEach((name, config) -> {
 //            config.setValueFreq(1);
 //        });
-//        Configuration.getResourceConfig().getActuatorsConfig().forEach((name, config) -> {
+//        Configuration.getResourceConfig().getActorsConfig().forEach((name, config) -> {
 //            config.setAliveFreq(2);
 //        });
 

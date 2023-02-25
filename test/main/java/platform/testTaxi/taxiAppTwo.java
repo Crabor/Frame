@@ -1,10 +1,11 @@
 package platform.testTaxi;
 
 import app.AbstractApp;
+import common.struct.SensorData;
 
 public class taxiAppTwo extends AbstractApp {
     @Override
-    public void setting() {
+    public void configApp() {
 //        config.registerSensor("taxis");
 //        config.setCtxServerOn(true);
 //        config.setRuleFile("Resources/taxiTest/appTwo/taxiRules.xml");
@@ -14,7 +15,7 @@ public class taxiAppTwo extends AbstractApp {
     }
 
     @Override
-    public void getMsg(String sensorName, String value) {
+    public void getMsg(String sensorName, SensorData value) {
         logger.debug(appName + " recv " + value);
         System.out.println(appName + " recv " + value);
     }

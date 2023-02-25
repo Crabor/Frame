@@ -1,5 +1,9 @@
 package platform.config;
 
+import com.sun.tools.javac.Main;
+import common.struct.CtxServiceConfig;
+import common.struct.enumeration.CtxValidator;
+import common.util.Util;
 import platform.service.ctx.ctxServer.AppCtxServer;
 
 import java.util.*;
@@ -10,7 +14,7 @@ public class AppConfig {
     private int grpId;
     private List<SubConfig> subConfigs = new ArrayList<>();
     private Set<SensorConfig> sensors = ConcurrentHashMap.newKeySet();
-    private Set<ActuatorConfig> actuators = ConcurrentHashMap.newKeySet();
+    private Set<ActorConfig> actors = ConcurrentHashMap.newKeySet();
 
     //ctxService related
     private AppCtxServer ctxServer;
@@ -19,7 +23,34 @@ public class AppConfig {
     private String bfuncFile;
     private String patternFile;
     private String mfuncFile;
-    private String ctxValidator = "ECC+IMD";
+    private CtxValidator ctxValidator = CtxValidator.ECC_IMD;
+
+    public void setCtxServiceConfig(CtxServiceConfig config) {
+        String dir = "Resources/configFile/ctxFile/" + appName;
+        if (config.getRuleFileContent() != null) {
+            Util.writeFileContent(dir, "rules.xml", config.getRuleFileContent());
+            ruleFile = dir + "/rules.xml";
+        } else if (config.getPatternFileContent() != null) {
+            Util.writeFileContent(dir, "patterns.xml", config.getPatternFileContent());
+            patternFile = dir + "/patterns.xml";
+        } else if (config.getBfuncFileContent() != null) {
+            Util.writeFileContent(dir, "bfuncs.java", config.getBfuncFileContent());
+            String[] args = new String[] {dir + "/bfuncs.java"};
+            if (Main.compile(args) == 0) {
+                bfuncFile = dir + "/bfuncs.class";
+            }
+        } else if (config.getMfuncFileContent() != null) {
+            Util.writeFileContent(dir, "mfuncs.java", config.getMfuncFileContent());
+            String[] args = new String[] {dir + "/mfuncs.java"};
+            if (Main.compile(args) == 0) {
+                mfuncFile = dir + "/mfuncs.class";
+            }
+        } else if (config.getRfuncFileContent() != null) {
+            //TODO
+        } else if (config.getCtxValidator() != null) {
+            ctxValidator = config.getCtxValidator();
+        }
+    }
 
 //    public AppConfig(JSONObject object) {
 //        this.appName = object.getString("appName");
@@ -71,69 +102,31 @@ public class AppConfig {
         return ret;
     }
 
-    public void addSensor(SensorConfig sensor) {
-        this.sensors.add(sensor);
+    public Set<ActorConfig> getActors() {
+        return actors;
     }
 
-    public void removeSensor(SensorConfig sensor) {
-        this.sensors.remove(sensor);
-    }
-
-    public void registerSensor(String... sensors) {
-        try {
-            for (String sensor : sensors) {
-                SensorConfig config = Configuration.getResourceConfig().getSensorsConfig().get(sensor);
-                addSensor(config);
-                if (config.getApps().isEmpty()) {
-                    config.startGetValue();
-                }
-                config.addApp(this);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void cancelSensor(String... sensors) {
-        try {
-            for (String sensor : sensors) {
-                SensorConfig config = Configuration.getResourceConfig().getSensorsConfig().get(sensor);
-                removeSensor(config);
-                config.removeApp(this);
-                if (config.getApps().isEmpty()) {
-                    config.stopGetValue();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Set<ActuatorConfig> getActuators() {
-        return actuators;
-    }
-
-    public Set<String> getActuatorsName() {
+    public Set<String> getActorsName() {
         Set<String> ret = new HashSet<>();
-        actuators.forEach(config -> {
-            ret.add(config.getActuatorName());
+        actors.forEach(config -> {
+            ret.add(config.getActorName());
         });
         return ret;
     }
 
-    public void addActuator(ActuatorConfig actuator) {
-        this.actuators.add(actuator);
+    public void addActor(ActorConfig actor) {
+        this.actors.add(actor);
     }
 
-    public void removeActuator(ActuatorConfig actuator) {
-        this.actuators.remove(actuator);
+    public void removeActor(ActorConfig actor) {
+        this.actors.remove(actor);
     }
 
-    public void registerActuator(String... actuators) {
+    public void registerActor(String... actors) {
         try {
-            for (String actuator : actuators) {
-                ActuatorConfig config = Configuration.getResourceConfig().getActuatorsConfig().get(actuator);
-                addActuator(config);
+            for (String actor : actors) {
+                ActorConfig config = Configuration.getResourceConfig().getActorsConfig().get(actor);
+                addActor(config);
                 config.addApp(this);
             }
         } catch (Exception e) {
@@ -141,11 +134,11 @@ public class AppConfig {
         }
     }
 
-    public void cancelActuator(String... actuators) {
+    public void cancelActor(String... actors) {
         try {
-            for (String actuator : actuators) {
-                ActuatorConfig config = Configuration.getResourceConfig().getActuatorsConfig().get(actuator);
-                removeActuator(config);
+            for (String actor : actors) {
+                ActorConfig config = Configuration.getResourceConfig().getActorsConfig().get(actor);
+                removeActor(config);
                 config.removeApp(this);
             }
         } catch (Exception e) {
@@ -175,7 +168,7 @@ public class AppConfig {
         this.mfuncFile = mfuncFile;
     }
 
-    public void setCtxValidator(String ctxValidator) {
+    public void setCtxValidator(CtxValidator ctxValidator) {
         this.ctxValidator = ctxValidator;
     }
 
@@ -203,7 +196,7 @@ public class AppConfig {
         return mfuncFile;
     }
 
-    public String getCtxValidator() {
+    public CtxValidator getCtxValidator() {
         return ctxValidator;
     }
 
@@ -227,7 +220,7 @@ public class AppConfig {
         return "AppConfig{" +
                 "appName='" + appName + '\'' +
                 ", sensors=" + sensors +
-                ", actuators=" + actuators +
+                ", actors=" + actors +
                 ", ctxServer=" + ctxServer +
                 ", ctxServerOn=" + ctxServerOn +
                 ", ruleFile='" + ruleFile + '\'' +

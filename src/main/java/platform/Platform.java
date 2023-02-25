@@ -1,5 +1,7 @@
 package platform;
 
+import common.struct.CtxServiceConfig;
+import common.struct.ServiceConfig;
 import platform.config.Configuration;
 import platform.app.AppMgrThread;
 import platform.communication.pubsub.Channel;
@@ -85,11 +87,11 @@ public class Platform {
         lockUntilMgrStartFlagEqual(3);
         logger.info("AppMgrThread started");
 
-        logger.info("channels: ");
-        for (Channel channel : Channel.getObjs()) {
-            logger.info(channel);
-        }
-        logger.info("subscribers: " + AbstractSubscriber.getObjs());
+//        logger.info("channels: ");
+//        for (Channel channel : Channel.getObjs()) {
+//            logger.info(channel);
+//        }
+//        logger.info("subscribers: " + AbstractSubscriber.getObjs());
     }
 
     public static void Close() {
@@ -97,14 +99,18 @@ public class Platform {
         AbstractSubscriber.Close();
     }
 
-    public static String call(String appName, ServiceType type, CmdType cmd, String... args) {
-        String ret = null;
+    public static boolean call(String appName, ServiceType type, CmdType cmd, ServiceConfig config) {
+        boolean ret = false;
         switch (type) {
             case CTX:
-                ret = PlatformCtxServer.call(appName, cmd, args);
+                ret = PlatformCtxServer.call(appName, cmd, (CtxServiceConfig) config);
                 break;
             case INV:
-                ret = CheckServer.call(appName, cmd, args);
+                ret = CheckServer.call(appName, cmd, config);
+                break;
+            case ALL:
+                ret = PlatformCtxServer.call(appName, cmd, (CtxServiceConfig) config);
+                ret = CheckServer.call(appName, cmd, config) && ret;
                 break;
         }
         return ret;

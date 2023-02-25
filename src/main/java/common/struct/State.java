@@ -1,12 +1,11 @@
-package app.struct;
+package common.struct;
 
-public enum ValueType {
-    STRING,
-    INT,
-    DOUBLE;
+public enum State {
+    ON,
+    OFF;
 
-    public static ValueType fromString(String str) {
-        for (ValueType type : ValueType.values()) {
+    public static State fromString(String str) {
+        for (State type : State.values()) {
             if (type.name().equalsIgnoreCase(str)) {
                 return type;
             }

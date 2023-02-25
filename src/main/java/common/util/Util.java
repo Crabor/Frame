@@ -266,7 +266,29 @@ public class Util {
         return ret;
     }
 
-    public static void main(String[] args) {
+    // 定义计算最大公约数的方法
+    public static int gcd(int a, int b) {
+        if (b == 0) {
+            return a;
+        }
+        return gcd(b, a % b);
+    }
 
+    // 定义计算最小公倍数的方法
+    public static int lcm(int a, int b) {
+        return (a * b) / gcd(a, b);
+    }
+
+    // 定义计算整型列表中所有元素最小公倍数的方法
+    public static int lcmOfCollection(Collection<Integer> nums) {
+        int ret = 1;
+        for (int num : nums) {
+            ret = lcm(ret, num);
+        }
+        return ret;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(lcmOfCollection(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)));
     }
 }

@@ -17,18 +17,18 @@ public class simcar {
                 switch (cmd.cmd) {
                     case "sensor_on":
                     case "sensor_off":
-                    case "actuator_on":
-                    case "actuator_off":
+                    case "actor_on":
+                    case "actor_off":
                     case "sensor_alive":
-                    case "actuator_alive":
+                    case "actor_alive":
                         //TODO
                         ret = "true";
                         break;
                     case "sensor_get":
                         System.out.println("recv:" + cmd);
-                        ret = "20";
+                        ret = "{\"default\":20}";
                         break;
-                    case "actuator_set":
+                    case "actor_set":
                         System.out.println("recv:" + cmd);
                         ret = "true";
                         break;

@@ -398,13 +398,13 @@ Subscriber3: channel, hello
     //动作设施配置
     "ActorConfiguration": [
       {
-        "actuatorName": "x",
+        "actorName": "x",
       },
       {
-        "actuatorName": "y",
+        "actorName": "y",
       },
       {
-        "actuatorName": "z",
+        "actorName": "z",
       },
     ],
   },
@@ -431,25 +431,24 @@ Subscriber3: channel, hello
 {"cmd": "XXX", "args": "XXX"}
 
 平台接收协议格式（ret域需要硬件驱动按照协议自己编写）
-{"cmd": "XXX", "args": "XXX", "rets": "XXX"}
+{"cmd": "XXX", "args": "XXX", "ret": "XXX"}
 ```
 
 其中平台接收的协议格式中**cmd**、**args**项需与发送协议格式中的保持一致。
 
 ### 明文协议
 
-| cmd            | args                                                       | ret            | description                                                          |
-|----------------|------------------------------------------------------------|----------------|----------------------------------------------------------------------|
-| sensor_on      | <sensor_name>                                              | <true/false>   | 启动sensor<br/>true :打开成功<br/>false :打开失败                              |
-| sensor_off     | <sensor_name>                                              | <true/false>   | 关闭sensor<br/>true :关闭成功<br/>false :关闭失败                              |
-| sensor_alive   | <sensor_name>                                              | <true/false>   | 判断sensor状态<br/>true :sensor处于打开状态<br/>false :sensor处于关闭状态            |
-| sensor_get     | <sensor_name>                                              | <value_string> | 获取sensor值<br/>value_string :sensor值<br/>value_string == "@#$%" :获取失败 |
-| actuator_on    | <actuator_name>                                            | <true/false>   | 启动actuator<br/>true :启动成功<br/>false :启动失败                            |
-| actuator_off   | <actuator_name>                                            | <true/false>   | 关闭actuator<br/>true :关闭成功<br/>false :关闭失败                            |
-| actuator_alive | <actuator_name>                                            | <true/false>   | 判断actuator状态<br/>true :actuator处于打开状态<br/>false :actuator处于关闭状态      |
-| actuator_set   | <actuator_name> <value_string>                             | <true/false>   | 设置actuator值<br/>true :设置actuator值成功<br/>false :设置actuator值失败         |
-| channel_msg    | {"channel":<channel_name>,<br/>"message":<message_string>} | <true/false>   | 发送频道消息<br/>true :发送频道消息成功<br/>false :发送频道消息错误                        |
-| <custom_cmd>   | <custom_param>                                             | <custom_ret>   | 自定义命令                                                                |
+| cmd          | args                         | ret                                           | description                                                                                       |
+|--------------|------------------------------|-----------------------------------------------|---------------------------------------------------------------------------------------------------|
+| sensor_on    | sensor_name                  | true / false                                  | 启动sensor<br/>true :打开成功<br/>false :打开失败                                                           |
+| sensor_off   | sensor_name                  | true / false                                  | 关闭sensor<br/>true :关闭成功<br/>false :关闭失败                                                           |
+| sensor_alive | sensor_name                  | true / false                                  | 判断sensor状态<br/>true :sensor处于打开状态<br/>false :sensor处于关闭状态                                         |
+| sensor_get   | sensor_name app_grp_id1 ...  | {"default":"value"} / {"field1":"value1",...} | 获取sensor值<br/>{"default":"value"} :单值结构<br/>{"field1":"value1",...} :复合结构<br/>注:app_grp_id参数至少有一个 |
+| actor_on     | actor_name                   | true / false                                  | 启动actor<br/>true :启动成功<br/>false :启动失败                                                            |
+| actor_off    | actor_name                   | true / false                                  | 关闭actor<br/>true :关闭成功<br/>false :关闭失败                                                            |
+| actor_alive  | actor_name                   | true / false                                  | 判断actor状态<br/>true :actor处于打开状态<br/>false :actor处于关闭状态                                            |
+| actor_set    | actor_name app_grp_id action | true / false                                  | 设置actor值<br/>true :设置actor值成功<br/>false :设置actor值失败                                               |
+| channel_msg  | {"channel":"message"}        | true / false                                  | 发送频道消息<br/>true :发送频道消息成功<br/>false :发送频道消息错误                                                     |
 
 ## app
 
@@ -457,41 +456,42 @@ app与平台通信为tcp通信
 
 ### app与平台通信明文协议
 
-| 类名          | 编程API                                                                            | 转换为要发送的网络字符串                                                                                               | 平台返回的网络字符串                                                                |
-|-------------|----------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
-| AppMgr      | public boolean connect(String ip, int port);                                     | {"api":"connect","app_name":"xxxx"}                                                                        | {"state":true/false}                                                      |
-| AppMgr      | public boolean disconnect();                                                     | {"api":"disconnect","app_name":"xxxx"}                                                                     | {"state":true/false}                                                      |
-| SensorMgr   | public Map<String, SensorInfo> getSupportedSensors();                            | {"api":"get_supported_sensors","app_name":"xxxx"}                                                          | [{"sensor_name":"xxxx","state":"on/off","value_type":"xxxx"},{...},...]   |
-| SensorMgr   | public Map<String, SensorInfo> getRegisteredSensors();                           | {"api":"get_registered_sensors","app_name":"xxxx"}                                                         | [{"sensor_name":"xxxx","state":"on/off","value_type":"xxxx"},{...},...]   |
-| SensorMgr   | public boolean getRegisteredSensorsStatus();                                     | {"api":"get_registered_sensors_status","app_name":"xxxx"}                                                  | {"state":true/false}                                                      |
-| SensorMgr   | private int getSensorFreq(String sensorName);                                    | {"api":"get_sensor_freq","app_name":"xxxx","sensor_name":"xxxx"}                                           | {"freq":xxxx}                                                             |
-| SensorMgr   | private boolean isSensorRegistered(String sensorName);                           | {"api":"is_sensor_registered","app_name":"xxxx","sensor_name":"xxxx"}                                      | {"state":true/false}                                                      |
-| SensorMgr   | public boolean registerSensor(String sensorName, SensorModeType type, int freq); | {"api":"register_sensor","app_name":"xxxx","sensor_name":"xxxx"}                                           | {"state":true/false}                                                      |
-| SensorMgr   | public boolean registerSensor(String sensorName, SensorModeType type);           | {"api":"register_sensor","app_name":"xxxx","sensor_name":"xxxx"}                                           | {"state":true/false}                                                      |
-| SensorMgr   | public boolean registerSensor(String sensorName);                                | {"api":"register_sensor","app_name":"xxxx","sensor_name":"xxxx"}                                           | {"state":true/false}                                                      |
-| SensorMgr   | public boolean cancelSensor(String sensorName);                                  | {"api":"cancel_sensor","app_name":"xxxx","sensor_name":"xxxx"}                                             | {"state":true/false}                                                      |
-| SensorMgr   | public boolean cancelAllSensors();                                               | {"api":"cancel_all_sensors","app_name":"xxxx"}                                                             | {"state":true/false}                                                      |
-| SensorMgr   | public String getSensorData(String sensorName);                                  | {"api":"get_sensor_data","app_name":"xxxx","sensor_name":"xxxx"}                                           | {"value":"xxxx"}                                                          |
-| SensorMgr   | public Map<String, String> getAllSensorData();                                   | {"api":"get_all_sensors","app_name":"xxxx"}                                                                | [{"sensor_name":"xxxx","value":"xxxx"},{...},...]                         |
-| SensorMgr   | public boolean getMsgThread(CmdType type);                                       |                                                                                                            |                                                                           |
-| ActuatorMgr | public Map<String, ActuatorInfo> getSupportedActuators();                        | {"api":"get_supported_actuators","app_name":"xxxx"}                                                        | [{"actuator_name":"xxxx","state":"on/off","value_type":"xxxx"},{...},...] |
-| ActuatorMgr | public Map<String, ActuatorInfo> getRegisteredActuators();                       | {"api":"get_registered_actuators","app_name":"xxxx"}                                                       | [{"actuator_name":"xxxx","state":"on/off","value_type":"xxxx"},{...},...] |
-| ActuatorMgr | public boolean getRegisteredActuatorStatus();                                    | {"api":"get_registered_actuators_status","app_name":"xxxx"}                                                | {"state":true/false}                                                      |
-| ActuatorMgr | public boolean registerActuator(String actuatorName);                            | {"api":"register_actuator","app_name":"xxxx","actuator_name":"xxxx"}                                       | {"state":true/false}                                                      |
-| ActuatorMgr | public boolean cancelActuator(String actuatorName);                              | {"api":"cancel_actuator","app_name":"xxxx","actuator_name":"xxxx"}                                         | {"state":true/false}                                                      |
-| ActuatorMgr | public boolean cancelAllActuators();                                             | {"api":"cancel_all_actuators","app_name":"xxxx"}                                                           | {"state":true/false}                                                      |
-| ActuatorMgr | public boolean setActuator(String actuatorName, String action);                  | {"api":"set_actuator","app_name":"xxxx","actuator_name":"xxxx","action":"xxxx"}                            | {"state":true/false}                                                      |
-| AbstractApp | public boolean isServerOn(ServiceType type);                                     | {"api":"is_server_on","app_name":"xxxx","service_type":"xxxx"}                                             | {"state":true/false}                                                      |
-| AbstractApp | public String call(ServiceType serviceType, CmdType cmdType, String... args);    | {"api":"call","app_name":"xxxx","service_type":"xxxx","cmd_type":"xxxx","args":[{"arg":"xxxx"},{...},...]} | {"ret":"xxxx"}                                                            |
-| ctx         | public boolean setRuleFile(String ruleFile);                                     | {"api":"set_rule_file","app_name":"xxxx","file_name":"xxxx","content":"xxxx"}                              | {"state":true/false}                                                      |
-| ctx         | public boolean setPatternFile(String patternFile);                               | {"api":"set_pattern_file","app_name":"xxxx","file_name":"xxxx","content":"xxxx"}                           | {"state":true/false}                                                      |
-| ctx         | public boolean setBfuncFile(String bfuncFile);                                   | {"api":"set_bfunc_file","app_name":"xxxx","file_name":"xxxx","content":"xxxx"}                             | {"state":true/false}                                                      |
-| ctx         | public boolean setMfuncFile(String mfuncFile);                                   | {"api":"set_mfunc_file","app_name":"xxxx","file_name":"xxxx","content":"xxxx"}                             | {"state":true/false}                                                      |
-| ctx         | public boolean setRfuncFile(String rfuncFile);                                   | {"api":"set_rfunc_file","app_name":"xxxx","file_name":"xxxx","content":"xxxx"}                             | {"state":true/false}                                                      |
-| ctx         | public boolean setCtxValidator(String ctxValidator);                             | {"api":"set_ctx_validator","app_name":"xxxx","ctx_validator":"xxxx"}                                       | {"state":true/false}                                                      |
-| inv(有比较多问题) |                                                                                  |                                                                                                            |                                                                           |
-|             |                                                                                  |                                                                                                            |                                                                           |
-|             |                                                                                  |                                                                                                            |                                                                           |
+| 编程API                                                                              | 转换为要发送的网络字符串                                                                          | 平台返回的网络字符串                                                                         |
+|------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
+| public boolean connectPlatform(String ip, int port);                               | {"api":"connect"}                                                                     | {"state":true/false}                                                               |
+| public boolean disConnectPlatform();                                               | {"api":"disconnect"}                                                                  | {"state":true/false}                                                               |
+| public boolean checkConnected();                                                   | {"api":"is_connected"}                                                                | {"state":true/false}                                                               |
+| public boolean registerApp(AbstractApp app);                                       | {"api":"register_app","app_name":"xxxx"}                                              | {"state":true/false,"udp_port":xxxx}                                               |
+| public boolean unregisterApp(AbstractApp app);                                     | {"api":"unregister_app","app_name":"xxxx"}                                            | {"state":true/false}                                                               |
+| public Map<String, SensorInfo> getSupportedSensors();                              | {"api":"get_supported_sensors"}                                                       | [{"sensor_name":"xxxx","state":"on/off","value_type":"xxxx"},...]                  |
+| public Map<String, SensorInfo> getRegisteredSensors();                             | {"api":"get_registered_sensors"}                                                      | [{"sensor_name":"xxxx","state":"on/off","value_type":"xxxx"},...]                  |
+| public boolean getRegisteredSensorsStatus();                                       | {"api":"get_registered_sensors_status"}                                               | {"state":true/false}                                                               |
+| public boolean registerSensor(String sensorName, SensorMode mode, int freq);       | {"api":"register_sensor","sensor_name":"xxxx","mode":"xxxx","freq":xxxx}              | {"state":true/false}                                                               |
+| public boolean cancelSensor(String sensorName);                                    | {"api":"cancel_sensor","sensor_name":"xxxx"}                                          | {"state":true/false}                                                               |
+| public boolean cancelAllSensors();                                                 | {"api":"cancel_all_sensors"}                                                          | {"state":true/false}                                                               |
+| public String getSensorData(String sensorName);                                    | {"api":"get_sensor_data","sensor_name":"xxxx"}                                        | {"default":"value"} / {"field1":"value1",...}                                      |
+| public Map<String, String> getAllSensorData();                                     | {"api":"get_all_sensor_data"}                                                         | [{"sensor_name":"xxxx","value":{"default":"value"} / {"field1":"value1",...}},...] |
+| public boolean getMsgThread(CmdType cmd);                                          | {"api":"get_msg_thread","cmd":"xxxx"}                                                 | {"state":true/false}                                                               |
+| public Map<String, ActorInfo> getSupportedActors();                                | {"api":"get_supported_actors"}                                                        | [{"actor_name":"xxxx","state":"on/off","value_type":"xxxx"},...]                   |
+| public Map<String, ActorInfo> getRegisteredActors();                               | {"api":"get_registered_actors"}                                                       | [{"actor_name":"xxxx","state":"on/off","value_type":"xxxx"},...]                   |
+| public boolean getRegisteredActorsStatus();                                        | {"api":"get_registered_actors_status"}                                                | {"state":true/false}                                                               |
+| public boolean registerActor(String actorName);                                    | {"api":"register_actor","actor_name":"xxxx"}                                          | {"state":true/false}                                                               |
+| public boolean cancelActor(String actorName);                                      | {"api":"cancel_actor","actor_name":"xxxx"}                                            | {"state":true/false}                                                               |
+| public boolean cancelAllActors();                                                  | {"api":"cancel_all_actors"}                                                           | {"state":true/false}                                                               |
+| public boolean setActorCmd(String actorName, String action)                        | {"api":"set_actor_cmd","actor_name":"xxxx","action":"xxxx"}                           | {"state":true/false}                                                               |
+| public boolean isServiceOn(ServiceType service);                                   | {"api":"is_service_on","service_type":"xxxx"}                                         | {"state":true/false}                                                               |
+| public boolean serviceStart(ServiceType service, ServiceConfig config);            | {"api":"start_service","service_type":"xxxx","config":"config_json"}                  | {"state":true/false}                                                               |
+| public boolean serviceStop(ServiceType service);                                   | {"api":"stop_service","service_type":"xxxx"}                                          | {"state":true/false}                                                               |
+| public String serviceCall(ServiceType service, CmdType cmd, ServiceConfig config); | {"api":"service_call","service_type":"xxxx","cmd_type":"xxxx","config":"config_json"} | {"ret":"xxxx"}                                                                     |
+| public boolean setRuleFile(String ruleFile);                                       | {"api":"set_rule_file","file_name":"xxxx","content":"xxxx"}                           | {"state":true/false}                                                               |
+| public boolean setPatternFile(String patternFile);                                 | {"api":"set_pattern_file","file_name":"xxxx","content":"xxxx"}                        | {"state":true/false}                                                               |
+| public boolean setBfuncFile(String bfuncFile);                                     | {"api":"set_bfunc_file","file_name":"xxxx","content":"xxxx"}                          | {"state":true/false}                                                               |
+| public boolean setMfuncFile(String mfuncFile);                                     | {"api":"set_mfunc_file","file_name":"xxxx","content":"xxxx"}                          | {"state":true/false}                                                               |
+| public boolean setRfuncFile(String rfuncFile);                                     | {"api":"set_rfunc_file","file_name":"xxxx","content":"xxxx"}                          | {"state":true/false}                                                               |
+| public boolean setCtxValidator(String ctxValidator);                               | {"api":"set_ctx_validator","ctx_validator":"xxxx"}                                    | {"state":true/false}                                                               |
+|                                                                                    |                                                                                       |                                                                                    |
+|                                                                                    |                                                                                       |                                                                                    |
+|                                                                                    |                                                                                       |                                                                                    |
 
 
 

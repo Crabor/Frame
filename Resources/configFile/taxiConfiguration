@@ -45,7 +45,7 @@
     "deviceDriver": {
       "subscribe": [
         {
-          "channel": "actuator",
+          "channel": "actor",
         },
         {
           "channel": "check",
@@ -58,7 +58,7 @@
           "channel": "sensor",
         },
         {
-          "channel": "actuator",
+          "channel": "actor",
         },
         {
           "channel": "check",
@@ -77,13 +77,13 @@
     ],
     "ActorConfiguration": [
           {
-            "actuatorName": "xSpeed",
+            "actorName": "xSpeed",
           },
           {
-            "actuatorName": "ySpeed",
+            "actorName": "ySpeed",
           },
           {
-            "actuatorName": "zSpeed",
+            "actorName": "zSpeed",
           },
     ],
   },

@@ -55,8 +55,8 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                 CmdRet cmdRet = PlatformUDP.recv();
                 logger.debug("dd recv: " + cmdRet);
                 switch (cmdRet.cmd) {
-                    case "actuator_on":
-                    case "actuator_off":
+                    case "actor_on":
+                    case "actor_off":
                     case "sensor_on":
                     case "sensor_off":
                         if (Boolean.parseBoolean(cmdRet.ret)) {
@@ -65,14 +65,17 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                             logger.warn(cmdRet.getCmdMsg() + " failed!");
                         }
                         break;
-                    case "actuator_set":
+                    case "actor_set":
+//                        logger.info(cmdRet);
+                        publish(cmdRet.args[0], Integer.parseInt(cmdRet.args[1]), cmdRet.ret);
+                        break;
                     case "channel_message":
                         if (!Boolean.parseBoolean(cmdRet.ret)) {
                             logger.warn(cmdRet.getCmdMsg() + " failed!");
                         }
                         break;
-                    case "actuator_alive":
-                        Configuration.getResourceConfig().getActuatorsConfig().
+                    case "actor_alive":
+                        Configuration.getResourceConfig().getActorsConfig().
                                 get(cmdRet.args[0]).
                                 setAlive(Boolean.parseBoolean(cmdRet.ret));
                         break;
@@ -86,13 +89,13 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                         break;
                     case "sensor_get":
 //                        logger.info("dd recv: " + cmdRet);
-                        if (!cmdRet.ret.equals("@#$%")) {
                             //TODO:时都需要再组装成json的信息？
 //                            String msg = Util.formatToJsonString(cmdRet.args[0], cmdRet.ret);
                             // cmdRet.args[0] = "front"
                             // cmdRet.ret = "20"
                             // msg = {"front": "20"}
-                            publish(cmdRet.args[0], cmdRet.ret);
+                        for (int i = 1; i < cmdRet.args.length; i++) {
+                            publish(cmdRet.args[0], Integer.parseInt(cmdRet.args[i]), cmdRet.ret);
                         }
                         break;
                 }
@@ -112,7 +115,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
     @Override
     public void onMessage(String channel, String msg) {
         logger.debug("dd send channel_message: " + msg);
-        //receive msg from actuator channel than transmit to car
+        //receive msg from actor channel than transmit to car
         JSONObject jo = new JSONObject(2);
         jo.put("channel", channel);
         jo.put("message", msg);

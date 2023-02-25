@@ -11,10 +11,10 @@ import java.util.*;
 public class AppMgrThread implements Runnable {
     private static AppMgrThread instance;
     private static Thread t;
-//    private final List<App> apps = new ArrayList<>();
     //第一维为ip，第二维为该ip已被占用的端口
-//    private static final Map<String, Set<Integer>> portMap = new HashMap<>();
-    private static final Set<Integer> grpIdSet = new HashSet<>();
+    private static final Map<String, Set<Integer>> portMap = new HashMap<>();
+//    private static final Set<Integer> grpIdSet = new HashSet<>();
+    private static final Map<String, Integer> appGrpIdMap = new HashMap<>();
 
     // 构造方法私有化
     private AppMgrThread() {
@@ -40,7 +40,7 @@ public class AppMgrThread implements Runnable {
 //        for (AppConfig appConfig : Configuration.getAppsConfig().values()) {
 //            try {
 //                Object app = Class.forName(appConfig.getAppName()).newInstance();
-//                apps.add((App) app);
+//                appGrpIds.add((App) app);
 //                appConfig.getSubConfigs().forEach(config -> {
 //                    ((AbstractSubscriber) app).subscribe(config);
 //                });
@@ -77,43 +77,47 @@ public class AppMgrThread implements Runnable {
     }
 
 //    public List<App> getApps() {
-//        return apps;
+//        return appGrpIds;
 //    }
 
-//    public static int getNewPort(Socket socket) {
-//        String clientHost = socket.getInetAddress().getHostAddress();
-//        int clientPort = socket.getPort();
-//        if (!portMap.containsKey(clientHost)) {
-//            portMap.put(clientHost, new HashSet<>());
-//        }
-//        Set<Integer> clientPorts = portMap.get(clientHost);
-//        clientPorts.add(clientPort);
-//        int i = 1;
-//        while (clientPorts.contains(clientPort + i)) {
-//            i++;
-//        }
-//        clientPorts.add(clientPort + i);
-//        return clientPort + i;
-//    }
-
-//    public static void removePort(Socket socket, int udpPort) {
-//        String clientHost = socket.getInetAddress().getHostAddress();
-//        int clientPort = socket.getPort();
-//        Set<Integer> s = portMap.get(clientHost);
-//        s.remove(clientPort);
-//        s.remove(udpPort);
-//    }
-
-    public static int getNewGrpId() {
-        int ret = (int) (System.currentTimeMillis() % 65536);
-        int i = 0;
-        while (grpIdSet.contains(ret + i)) {
+    public static int getNewPort(Socket socket) {
+        String clientHost = socket.getInetAddress().getHostAddress();
+        int clientPort = socket.getPort();
+        if (!portMap.containsKey(clientHost)) {
+            portMap.put(clientHost, new HashSet<>());
+        }
+        Set<Integer> clientPorts = portMap.get(clientHost);
+        clientPorts.add(clientPort);
+        int i = 1;
+        while (clientPorts.contains(clientPort + i)) {
             i++;
         }
-        return ret + i;
+        clientPorts.add(clientPort + i);
+        return clientPort + i;
     }
 
-    public static void removeGrpId(int grpId) {
-        grpIdSet.remove(grpId);
+    public static void removePort(Socket socket, int udpPort) {
+        String clientHost = socket.getInetAddress().getHostAddress();
+        int clientPort = socket.getPort();
+        Set<Integer> s = portMap.get(clientHost);
+        s.remove(clientPort);
+        s.remove(udpPort);
+    }
+
+    public static int getNewGrpId(String appName) {
+        if (appGrpIdMap.containsKey(appName)) {
+            return appGrpIdMap.get(appName);
+        } else {
+            int max = 0;
+            for (Integer i : appGrpIdMap.values()) {
+                max = Math.max(max, i);
+            }
+            appGrpIdMap.put(appName, max + 1);
+            return max + 1;
+        }
+    }
+
+    public static void removeGrpId(String appName) {
+        appGrpIdMap.remove(appName);
     }
 }

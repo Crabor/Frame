@@ -13,19 +13,19 @@
     ],
   },
   "InvServerConfiguration": {
-      "serverOn": false,
-      "groupThro": 10,
-      "kMeansGroupSize": 1,
-      "dosThro": 0.5,
-      "groupTraceType": "csv",
-      "invGenMode": "total",
-      "invGenType": "numeric",
+    "serverOn": false,
+    "groupThro": 10,
+    "kMeansGroupSize": 1,
+    "dosThro": 0.5,
+    "groupTraceType": "csv",
+    "invGenMode": "total",
+    "invGenType": "numeric",
   },
   "ResourceConfiguration": {
     "deviceDriver": {
       "subscribe": [
         {
-          "channel": "actuator",
+          "channel": "actor",
         },
         {
           "channel": "check",
@@ -38,7 +38,7 @@
           "channel": "sensor",
         },
         {
-          "channel": "actuator",
+          "channel": "actor",
         },
         {
           "channel": "check",
@@ -50,42 +50,58 @@
     },
     "SensorConfiguration": [
       {
-        "sensorName": "front",
+        "sensorName": "GPS_001",
         "sensorType": "Double",
-        "fieldNames": "value",
-        "valueFreq": 2,
       },
       {
-        "sensorName": "back",
+        "sensorName": "GPS_002",
         "sensorType": "Double",
-        "fieldNames": "value",
-        "valueFreq": 2,
       },
       {
-        "sensorName": "left",
+        "sensorName": "GPS_003",
         "sensorType": "Double",
-        "fieldNames": "value",
-        "valueFreq": 2,
       },
       {
-        "sensorName": "right",
+        "sensorName": "GPS_004",
         "sensorType": "Double",
-        "fieldNames": "value",
-        "valueFreq": 2,
+      },
+      {
+        "sensorName": "GPS_005",
+        "sensorType": "Double",
+      },
+      {
+        "sensorName": "GPS_006",
+        "sensorType": "Double",
+      },
+      {
+        "sensorName": "GPS_007",
+        "sensorType": "Double",
+      },
+      {
+        "sensorName": "GPS_008",
+        "sensorType": "Double",
+      },
+      {
+        "sensorName": "GPS_009",
+        "sensorType": "Double",
+      },
+      {
+        "sensorName": "GPS_0010",
+        "sensorType": "Double",
       },
     ],
     "ActorConfiguration": [
       {
-        "actuatorName": "xSpeed",
-        "actuatorType": "Double",
+        "actorName": "xSpeed",
+        "actorType": "Double",
       },
       {
-        "actuatorName": "ySpeed",
-        "actuatorType": "Double",
+        "actorName": "ySpeed",
+        "actorType": "Double",
       },
       {
-        "actuatorName": "zSpeed",
-        "actuatorType": "Double",
+        "actorName": "zSpeed",
+        "actorType": "Double",
       },
     ],
   },
@@ -105,6 +121,6 @@
     ]
   },
   "TCPConfig": {
-    "serverPort": 8888,
+    "serverPort": 8079,
   },
 }
