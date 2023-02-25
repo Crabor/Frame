@@ -1,5 +1,9 @@
 package platform.config;
 
+import com.sun.tools.javac.Main;
+import common.struct.CtxServiceConfig;
+import common.struct.enumeration.CtxValidator;
+import common.util.Util;
 import platform.service.ctx.ctxServer.AppCtxServer;
 
 import java.util.*;
@@ -19,7 +23,34 @@ public class AppConfig {
     private String bfuncFile;
     private String patternFile;
     private String mfuncFile;
-    private String ctxValidator = "ECC+IMD";
+    private CtxValidator ctxValidator = CtxValidator.ECC_IMD;
+
+    public void setCtxServiceConfig(CtxServiceConfig config) {
+        String dir = "Resources/configFile/ctxFile/" + appName;
+        if (config.getRuleFileContent() != null) {
+            Util.writeFileContent(dir, "rules.xml", config.getRuleFileContent());
+            ruleFile = dir + "/rules.xml";
+        } else if (config.getPatternFileContent() != null) {
+            Util.writeFileContent(dir, "patterns.xml", config.getPatternFileContent());
+            patternFile = dir + "/patterns.xml";
+        } else if (config.getBfuncFileContent() != null) {
+            Util.writeFileContent(dir, "bfuncs.java", config.getBfuncFileContent());
+            String[] args = new String[] {dir + "/bfuncs.java"};
+            if (Main.compile(args) == 0) {
+                bfuncFile = dir + "/bfuncs.class";
+            }
+        } else if (config.getMfuncFileContent() != null) {
+            Util.writeFileContent(dir, "mfuncs.java", config.getMfuncFileContent());
+            String[] args = new String[] {dir + "/mfuncs.java"};
+            if (Main.compile(args) == 0) {
+                mfuncFile = dir + "/mfuncs.class";
+            }
+        } else if (config.getRfuncFileContent() != null) {
+            //TODO
+        } else if (config.getCtxValidator() != null) {
+            ctxValidator = config.getCtxValidator();
+        }
+    }
 
 //    public AppConfig(JSONObject object) {
 //        this.appName = object.getString("appName");
@@ -137,7 +168,7 @@ public class AppConfig {
         this.mfuncFile = mfuncFile;
     }
 
-    public void setCtxValidator(String ctxValidator) {
+    public void setCtxValidator(CtxValidator ctxValidator) {
         this.ctxValidator = ctxValidator;
     }
 
@@ -165,7 +196,7 @@ public class AppConfig {
         return mfuncFile;
     }
 
-    public String getCtxValidator() {
+    public CtxValidator getCtxValidator() {
         return ctxValidator;
     }
 

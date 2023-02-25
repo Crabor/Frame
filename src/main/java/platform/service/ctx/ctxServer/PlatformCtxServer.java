@@ -1,6 +1,7 @@
 package platform.service.ctx.ctxServer;
 
 import com.alibaba.fastjson.JSONObject;
+import common.struct.CtxServiceConfig;
 import common.struct.ServiceConfig;
 import platform.config.AppConfig;
 import platform.config.Configuration;
@@ -116,11 +117,13 @@ public class PlatformCtxServer extends AbstractCtxServer {
         }
     }
 
-    public static boolean call(String appName, CmdType cmd, ServiceConfig config) {
+    public static boolean call(String appName, CmdType cmd, CtxServiceConfig config) {
+        AppConfig appConfig = Configuration.getAppsConfig().get(appName);
+        if (config != null) {
+            appConfig.setCtxServiceConfig(config);
+        }
         if(cmd == CmdType.RESET){
-            logger.debug("CtxServer for " + appName + " resetting");
-            Configuration.getAppsConfig().get(appName).resetCtxServer();
-            logger.debug("CtxServer for " + appName + " restarted");
+            appConfig.resetCtxServer();
             return true;
         }
         else{

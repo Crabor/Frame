@@ -1,6 +1,7 @@
 package common.struct;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import common.struct.enumeration.CtxValidator;
 import common.util.Util;
 
@@ -49,6 +50,39 @@ public class CtxServiceConfig implements ServiceConfig{
 
     public static CtxServiceConfig fromJSONString(String json) {
         //TODO:检查是否有效
-        return JSON.parseObject(json, CtxServiceConfig.class);
+        CtxServiceConfig config = new CtxServiceConfig();
+        JSONObject jo = JSON.parseObject(json);
+        for (Map.Entry<String, Object> entry : jo.entrySet()) {
+            config.config.put(entry.getKey(), entry.getValue().toString());
+        }
+        return config;
+    }
+
+    public CtxValidator getCtxValidator() {
+        if (config.containsKey("ctx_validator")) {
+            return CtxValidator.fromString(config.get("ctx_validator"));
+        } else {
+            return null;
+        }
+    }
+
+    public String getRuleFileContent() {
+        return config.getOrDefault("rule_file_content", null);
+    }
+
+    public String getPatternFileContent() {
+        return config.getOrDefault("pattern_file_content", null);
+    }
+
+    public String getBfuncFileContent() {
+        return config.getOrDefault("bfunc_file_content", null);
+    }
+
+    public String getMfuncFileContent() {
+        return config.getOrDefault("mfunc_file_content", null);
+    }
+
+    public String getRfuncFileContent() {
+        return config.getOrDefault("rfunc_file_content", null);
     }
 }

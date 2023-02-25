@@ -1,5 +1,6 @@
 package platform;
 
+import common.struct.CtxServiceConfig;
 import common.struct.ServiceConfig;
 import platform.config.Configuration;
 import platform.app.AppMgrThread;
@@ -102,13 +103,13 @@ public class Platform {
         boolean ret = false;
         switch (type) {
             case CTX:
-                ret = PlatformCtxServer.call(appName, cmd, config);
+                ret = PlatformCtxServer.call(appName, cmd, (CtxServiceConfig) config);
                 break;
             case INV:
                 ret = CheckServer.call(appName, cmd, config);
                 break;
             case ALL:
-                ret = PlatformCtxServer.call(appName, cmd, config);
+                ret = PlatformCtxServer.call(appName, cmd, (CtxServiceConfig) config);
                 ret = CheckServer.call(appName, cmd, config) && ret;
                 break;
         }

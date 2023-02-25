@@ -52,7 +52,7 @@ public class AppCtxServer extends AbstractCtxServer{
             // 重启服务
             this.restart();
             this.chgGenerator.restart();
-            this.checker = new CheckerStarter(this, appConfig.getBfuncFile(), appConfig.getCtxValidator());
+            this.checker = new CheckerStarter(this, appConfig.getBfuncFile(), appConfig.getCtxValidator().toString());
             this.checker.start();
         } finally {
             resetLock.unlock();
@@ -66,7 +66,7 @@ public class AppCtxServer extends AbstractCtxServer{
         this.chgGenerator = new ChgGenerator(this);
         this.chgGenerator.start();
         this.ctxFixer = new CtxFixer(this);
-        this.checker = new CheckerStarter(this, appConfig.getBfuncFile(), appConfig.getCtxValidator());
+        this.checker = new CheckerStarter(this, appConfig.getBfuncFile(), appConfig.getCtxValidator().toString());
         this.checker.start();
     }
 

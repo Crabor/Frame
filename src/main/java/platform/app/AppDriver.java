@@ -691,8 +691,12 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
 
     private String serviceCall(ServiceType service, CmdType cmd, ServiceConfig config) {
         JSONObject retJson = new JSONObject(1);
-        boolean ret = Platform.call(appConfig.getAppName(), service, cmd, config);
-        retJson.put("ret", ret);
+        if (appConfig == null) {
+            retJson.put("ret", false);
+        } else {
+            boolean ret = Platform.call(appConfig.getAppName(), service, cmd, config);
+            retJson.put("ret", ret);
+        }
         return retJson.toJSONString();
     }
 }
