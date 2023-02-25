@@ -45,44 +45,8 @@
     },
     "SensorConfiguration": [
       {
-        "sensorName": "GPS_001",
-        "sensorType": "Double",
-      },
-      {
-        "sensorName": "GPS_002",
-        "sensorType": "Double",
-      },
-      {
-        "sensorName": "GPS_003",
-        "sensorType": "Double",
-      },
-      {
-        "sensorName": "GPS_004",
-        "sensorType": "Double",
-      },
-      {
-        "sensorName": "GPS_005",
-        "sensorType": "Double",
-      },
-      {
-        "sensorName": "GPS_006",
-        "sensorType": "Double",
-      },
-      {
-        "sensorName": "GPS_007",
-        "sensorType": "Double",
-      },
-      {
-        "sensorName": "GPS_008",
-        "sensorType": "Double",
-      },
-      {
-        "sensorName": "GPS_009",
-        "sensorType": "Double",
-      },
-      {
-        "sensorName": "GPS_0010",
-        "sensorType": "Double",
+        "sensorName": "Car",
+        "sensorType": "String",
       },
     ],
     "ActorConfiguration": [

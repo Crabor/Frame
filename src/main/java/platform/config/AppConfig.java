@@ -12,13 +12,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AppConfig {
     private String appName;
     private int grpId;
-    private List<SubConfig> subConfigs = new ArrayList<>();
     private Set<SensorConfig> sensors = ConcurrentHashMap.newKeySet();
     private Set<ActorConfig> actors = ConcurrentHashMap.newKeySet();
 
     //ctxService related
     private AppCtxServer ctxServer;
-    private boolean ctxServerOn;
+    private boolean ctxServerOn = false;
     private String ruleFile;
     private String bfuncFile;
     private String patternFile;
@@ -30,25 +29,31 @@ public class AppConfig {
         if (config.getRuleFileContent() != null) {
             Util.writeFileContent(dir, "rules.xml", config.getRuleFileContent());
             ruleFile = dir + "/rules.xml";
-        } else if (config.getPatternFileContent() != null) {
+        }
+        if (config.getPatternFileContent() != null) {
             Util.writeFileContent(dir, "patterns.xml", config.getPatternFileContent());
             patternFile = dir + "/patterns.xml";
-        } else if (config.getBfuncFileContent() != null) {
+        }
+        if (config.getBfuncFileContent() != null) {
             Util.writeFileContent(dir, "bfuncs.java", config.getBfuncFileContent());
             String[] args = new String[] {dir + "/bfuncs.java"};
             if (Main.compile(args) == 0) {
                 bfuncFile = dir + "/bfuncs.class";
             }
-        } else if (config.getMfuncFileContent() != null) {
+        }
+        if (config.getMfuncFileContent() != null) {
             Util.writeFileContent(dir, "mfuncs.java", config.getMfuncFileContent());
             String[] args = new String[] {dir + "/mfuncs.java"};
             if (Main.compile(args) == 0) {
                 mfuncFile = dir + "/mfuncs.class";
             }
-        } else if (config.getRfuncFileContent() != null) {
+        }
+        if (config.getRfuncFileContent() != null) {
             //TODO
-        } else if (config.getCtxValidator() != null) {
+        }
+        if (config.getCtxValidator() != null) {
             ctxValidator = config.getCtxValidator();
+            ctxValidator = CtxValidator.ECC_IMD;
         }
     }
 
@@ -86,9 +91,6 @@ public class AppConfig {
         return appName;
     }
 
-    public List<SubConfig> getSubConfigs() {
-        return subConfigs;
-    }
 
     public Set<SensorConfig> getSensors() {
         return sensors;
@@ -200,19 +202,29 @@ public class AppConfig {
         return ctxValidator;
     }
 
-    public void initCtxServer(){
+    public boolean initCtxServer(){
         this.ctxServer = new AppCtxServer(this);
         this.ctxServer.init();
         //subscribe
-        // TODO:ctxServer转发给AppDriver
-        for(SubConfig subConfig : this.getSubConfigs()){
-            this.ctxServer.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId + 1);
+        for(SensorConfig sensorConfig : this.getSensors()){
+            this.ctxServer.subscribe(sensorConfig.getSensorName(), grpId, 1); // apps are 0, so it should be 1.
         }
         this.ctxServer.start();
+        this.ctxServerOn = true;
+        return true;
     }
 
-    public void resetCtxServer(){
+    public boolean resetCtxServer(){
+        this.ctxServerOn = false;
         this.ctxServer.reset();
+        this.ctxServerOn = true;
+        return true;
+    }
+
+    public boolean stopCtxServer(){
+        this.ctxServer.stop();
+        this.ctxServerOn = false;
+        return true;
     }
 
     @Override

@@ -1,8 +1,6 @@
-package simcar;
+package sensorDriver;
 
 import common.socket.UDP;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import platform.communication.socket.Cmd;
 import platform.communication.socket.CmdRet;
 
@@ -14,6 +12,7 @@ public class simcar {
                 // if (cmd.args[0] is not ctx name)
                 // continue;
                 String ret = "";
+                System.out.println(cmd.cmd);
                 switch (cmd.cmd) {
                     case "sensor_on":
                     case "sensor_off":

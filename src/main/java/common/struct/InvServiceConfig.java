@@ -12,4 +12,9 @@ public class InvServiceConfig implements ServiceConfig{
     public static InvServiceConfig fromJSONString(String json) {
         return JSON.parseObject(json, InvServiceConfig.class);
     }
+
+    @Override
+    public String toJSONString() {
+        return toString();
+    }
 }

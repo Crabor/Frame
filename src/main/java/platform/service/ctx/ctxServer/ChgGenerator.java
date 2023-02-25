@@ -9,70 +9,63 @@ import platform.service.ctx.ctxChecker.context.Context;
 import platform.service.ctx.ctxChecker.context.ContextChange;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
 
-public class ChgGenerator implements Runnable {
-    private Thread t;
+import static platform.service.ctx.ctxServer.BatchType.GENERATE;
+import static platform.service.ctx.ctxServer.BatchType.OVERDUE;
+
+public class ChgGenerator {
 
     private final AbstractCtxServer server;
-    private final PriorityBlockingQueue<Map.Entry<Long, Map.Entry<String, Context>>> activateContextsTimeQue;
-    private final ConcurrentHashMap<String, LinkedBlockingQueue<Context>> activateContextsNumberMap;
+    private final PriorityQueue<Map.Entry<Long, Map.Entry<String, Context>>> activateContextsTimeQue;
+    private final HashMap<String, LinkedList<Context>> activateContextsNumberMap;
 
     public ChgGenerator(AbstractCtxServer server){
         this.server = server;
-        this.activateContextsTimeQue = new PriorityBlockingQueue<>(50, (o1, o2) -> (int) (o1.getKey() - o2.getKey()));
-        this.activateContextsNumberMap = new ConcurrentHashMap<>();
+        this.activateContextsTimeQue = new PriorityQueue<>(50, (o1, o2) -> (int) (o1.getKey() - o2.getKey()));
+        this.activateContextsNumberMap = new HashMap<>();
         initActivateContextsNumberMap(server.getPatternMap());
     }
 
     private void initActivateContextsNumberMap(HashMap<String, Pattern> patternHashMap){
         for(Pattern pattern : patternHashMap.values()){
             if(pattern.getFreshnessType() == FreshnessType.number){
-                activateContextsNumberMap.put(pattern.getPatternId(), new LinkedBlockingQueue<>());
+                activateContextsNumberMap.put(pattern.getPatternId(), new LinkedList<>());
             }
         }
     }
 
-    public synchronized void generateChanges(Map<String, Context> contextMap){
-        List<ContextChange> changeList = new ArrayList<>();
+    public List<Map.Entry<List<ContextChange>, BatchType>> generateChangeBatches(Context context){
+        List<Map.Entry<List<ContextChange>, BatchType>> retList = new ArrayList<>();
         //根据当前时间清理过时的contexts，生成相应的changes
-        cleanOverdueContexts(changeList);
+        List<ContextChange> overdueList = new ArrayList<>();
+        cleanOverdueContexts(overdueList);
+        if(!overdueList.isEmpty()){
+            retList.add(new AbstractMap.SimpleEntry<>(overdueList, OVERDUE));
+        }
 
-        if(contextMap != null){
-            //为message中的每一个context寻找对应的patterns，并生成相应的changes
-            for(String contextId : contextMap.keySet()){
-                Context context = contextMap.get(contextId);
-                if(context == null){
-                    //由于被丢弃或者没获得，所以在生成Message的时候被设置为了null
-                    server.getCtxFixer().addFixedContext(contextId, null);
-                }
-                else{
-                    boolean matched = false;
-                    String fromSensorName = contextId.substring(0, contextId.lastIndexOf("_"));
-                    for(Pattern pattern : server.getPatternMap().values()){
-                        if(pattern.getDataSourceType() == DataSourceType.pattern){
-                            assert false;
-                            continue;
-                            //TODO()
-                        }
-                        if(pattern.getDataSourceSet().contains(fromSensorName)){
-                            if(pattern.getMatcher() == null || match(pattern, context)){
-                                matched = true;
-                                changeList.addAll(generate(pattern, context));
-                            }
-                        }
-                    }
-                    if(!matched){
-                        server.getCtxFixer().addFixedContext(contextId, MessageHandler.cloneContext(contextMap.get(contextId)));
-                    }
+        assert context != null;
+        String contextId = context.getContextId();
+
+        List<ContextChange> generateList = new ArrayList<>();
+        boolean matched = false;
+        String fromSensorName = contextId.substring(0, contextId.lastIndexOf("_"));
+        for(Pattern pattern : server.getPatternMap().values()){
+            assert pattern.getDataSourceType() != DataSourceType.pattern; // TODO()
+            if(pattern.getDataSourceSet().contains(fromSensorName)){
+                if(pattern.getMatcher() == null || match(pattern, context)){
+                    matched = true;
+                    generateList.addAll(generate(pattern, context));
                 }
             }
         }
+        if(!matched){
+            server.getCtxFixer().buildReadyMsg(Long.parseLong(contextId.split("_")[1]), MessageHandler.cloneContext(context));
+        }
+        else{
+            retList.add(new AbstractMap.SimpleEntry<>(generateList, GENERATE));
+        }
 
-        //将changes写入buffer
-        server.changeBufferProducer(changeList);
+        return retList;
     }
 
     private void cleanOverdueContexts(List<ContextChange> changeList){
@@ -105,9 +98,9 @@ public class ChgGenerator implements Runnable {
         List<ContextChange> changeList = new ArrayList<>();
         //判断是否是number，如果是，判断是否满容量，如果是，先生成delChange，如果有delChange，则要考虑 inducing from-pattern changes.
         if(pattern.getFreshnessType() == FreshnessType.number){
-            LinkedBlockingQueue<Context> queue = activateContextsNumberMap.get(pattern.getPatternId());
-            if(queue.size() == Integer.parseInt(pattern.getFreshnessValue())){
-                Context oldContext = queue.poll();
+            LinkedList<Context> linkedList = activateContextsNumberMap.get(pattern.getPatternId());
+            if(linkedList.size() == Integer.parseInt(pattern.getFreshnessValue())){
+                Context oldContext = linkedList.pollFirst();
                 assert oldContext != null;
                 ContextChange delChange = new ContextChange();
                 delChange.setChangeType(ContextChange.ChangeType.DELETION);
@@ -126,8 +119,8 @@ public class ChgGenerator implements Runnable {
 
         //更新activateContexts容器
         if(pattern.getFreshnessType() == FreshnessType.number){
-            LinkedBlockingQueue<Context> queue = activateContextsNumberMap.get(pattern.getPatternId());
-            queue.add(context);
+            LinkedList<Context> linkedList = activateContextsNumberMap.get(pattern.getPatternId());
+            linkedList.offerLast(context);
         }
         else if(pattern.getFreshnessType() == FreshnessType.time){
             long overdueTime = new Date().getTime() + Long.parseLong(pattern.getFreshnessValue());
@@ -137,37 +130,65 @@ public class ChgGenerator implements Runnable {
         return changeList;
     }
 
-    @Override
-    public void run() {
-        while(true){
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                break;
+
+    public List<ContextChange> generateResolveChangeBatch(Set<Map.Entry<String, HashMap<String, String>>> resolvedFlatContextSet){
+        List<ContextChange> changeList = new ArrayList<>();
+        for(Map.Entry<String, HashMap<String, String>> flatContext : resolvedFlatContextSet){
+            String ctxId = flatContext.getKey();
+            HashMap<String, String> ctx = flatContext.getValue();
+            /*只存在两种情况：
+            1. ctx == null：表示删除这一上下文，只需生成delete change
+            2. ctx != null: 表示修改这一上下文，先生成原来的delete change,再生成add change
+             */
+            if(ctx == null){
+                // time freshness
+                Iterator<Map.Entry<Long, Map.Entry<String, Context>>> queIter = activateContextsTimeQue.iterator();
+                while(queIter.hasNext()){
+                    Map.Entry<Long, Map.Entry<String, Context>> entry = queIter.next();
+                    if(entry.getValue().getValue().getContextId().equals(ctxId)){
+                        //delete change
+                        ContextChange delChange = new ContextChange();
+                        delChange.setChangeType(ContextChange.ChangeType.DELETION);
+                        delChange.setPatternId(entry.getValue().getKey());
+                        delChange.setContext(entry.getValue().getValue());
+                        changeList.add(delChange);
+
+                        queIter.remove();
+                    }
+                }
+
+                // number freshness
+                for(String patternId : activateContextsNumberMap.keySet()){
+                    Iterator<Context> listIter = activateContextsNumberMap.get(patternId).iterator();
+                    while(listIter.hasNext()){
+                        Context context = listIter.next();
+                        if(context.getContextId().equals(ctxId)){
+                            //delete change
+                            ContextChange delChange = new ContextChange();
+                            delChange.setChangeType(ContextChange.ChangeType.DELETION);
+                            delChange.setPatternId(patternId);
+                            delChange.setContext(context);
+                            changeList.add(delChange);
+
+                            listIter.remove();
+                        }
+                    }
+                }
             }
-            generateChanges(null);
+            else{
+                //TODO
+                assert false;
+            }
         }
+
+        return changeList;
     }
 
-    public void start(){
-        if (t == null) {
-            t = new Thread(this, getClass().getName());
-            t.start();
-        }
-    }
 
     public void reset(){
-        t.interrupt();
-        while(t.isInterrupted());
-        generateChanges(null); // To ensure the last generateChanges invocation is done
         activateContextsTimeQue.clear();
         activateContextsNumberMap.clear();
         initActivateContextsNumberMap(server.getPatternMap());
     }
 
-
-    public void restart(){
-        t = new Thread(this, getClass().getName());
-        t.start();
-    }
 }

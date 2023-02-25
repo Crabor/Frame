@@ -1,7 +1,7 @@
 import java.util.Map;
 import java.util.List;
 
-public class taxiMfunction {
+public class mfuncs {
 
     public boolean mfunc(final String funcName, final Map<String, String> ctxFields, final List<String> extraArgumentList) throws Exception {
         if ("onService".equals(funcName)) {
@@ -13,7 +13,7 @@ public class taxiMfunction {
     }
 
     private boolean onService(final Map<String, String> ctxFields, final List<String> extraArgumentList){
-        String status = ctxFields.get("status");
+        String status = ctxFields.get("state");
         return !status.equalsIgnoreCase(extraArgumentList.get(0));
     }
 }

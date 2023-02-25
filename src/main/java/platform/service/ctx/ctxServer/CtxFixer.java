@@ -2,103 +2,161 @@ package platform.service.ctx.ctxServer;
 
 import platform.service.ctx.ctxChecker.constraint.runtime.Link;
 import platform.service.ctx.ctxChecker.context.Context;
+import platform.service.ctx.ctxChecker.context.ContextChange;
 import platform.service.ctx.message.Message;
-import platform.service.ctx.message.MessageHandler;
-import platform.service.ctx.rule.resolver.ResolverType;
+import platform.service.ctx.rule.Rule;
+import platform.service.ctx.rule.resolver.AbstractResolver;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CtxFixer {
     private final AbstractCtxServer ctxServer;
-    private final HashMap<String, Set<String>> ctxId2IncRuleIdSet;
-    private final TreeMap<Long, Message> fixingMsgMap;
-    private final ConcurrentHashMap<Long, Message> sendingMsgMap;
+
+    private final ConcurrentHashMap<Long, Message> readyMsgMap;
+
+    // delay resolve
+    private final HashMap<String, Set<Map.Entry<String, Link>>> ctxId2Incs;
+
 
     public CtxFixer(AbstractCtxServer ctxServer) {
         this.ctxServer = ctxServer;
-        this.ctxId2IncRuleIdSet = new HashMap<>();
-        this.fixingMsgMap = new TreeMap<>(Long::compareTo);
-        this.sendingMsgMap = new ConcurrentHashMap<>();
+        this.ctxId2Incs = new HashMap<>();
+        this.readyMsgMap = new ConcurrentHashMap<>();
     }
 
-    public void filterInconsistencies(Map<String, Set<Link>> ruleId2LinkSet){
+    public void buildReadyMsg(long msgIndex, Context context){
+        Message readyMsg = new Message(msgIndex);
+        readyMsg.addContext(context);
+        ctxServer.serverStatistics.increaseCheckedAndResolvedMsgNum();
+        readyMsgMap.put(msgIndex, readyMsg);
+    }
+
+    public ConcurrentHashMap<Long, Message> getReadyMsgMap() {
+        return readyMsgMap;
+    }
+
+    public void reset(){
+        this.ctxId2Incs.clear();
+        this.readyMsgMap.clear();
+    }
+
+
+    // in time resolving
+    public List<ContextChange> resolveViolationsInTime(Map<String, Set<Link>> ruleId2LinkSet){
+        if(ruleId2LinkSet.isEmpty()){
+            return new ArrayList<>();
+        }
+        //每次检测只检测由一个context引起的changeList，故只需统计优先级最高的resolver
+        String selectedRuleId = null;
+        AbstractResolver selectedResolver = null;
+        for(String ruleId : ruleId2LinkSet.keySet()){
+            AbstractResolver resolver = ctxServer.getResolverMap().get(ruleId);
+            if(selectedResolver == null){
+                selectedRuleId = ruleId;
+                selectedResolver = resolver;
+            }
+            else{
+                if(selectedResolver.getPriority() < resolver.getPriority()) {
+                    selectedRuleId = ruleId;
+                    selectedResolver = resolver;
+                }
+            }
+        }
+        //将selectedRule相关的LinkSet变成通用容器
+        Set<HashMap<String, Map.Entry<String, HashMap<String, String>>>> flatLinkSet = flattenLinkSet(ctxServer.getRuleMap().get(selectedRuleId), ruleId2LinkSet.get(selectedRuleId));
+        //resolve
+        Set<Map.Entry<String, HashMap<String, String>>> resolvedFlatContextSet = selectedResolver.resolve(flatLinkSet);
+        //生成对应的resolveChangeBatch
+        return ctxServer.chgGenerator.generateResolveChangeBatch(resolvedFlatContextSet);
+    }
+
+    private Set<HashMap<String, Map.Entry<String, HashMap<String, String>>>> flattenLinkSet(Rule rule, Set<Link> linkSet){
+        Set<HashMap<String, Map.Entry<String, HashMap<String, String>>>> convertedLinkSet = new HashSet<>();
+        for(Link link : linkSet){
+            HashMap<String, Map.Entry<String, HashMap<String, String>>> flatLink = new HashMap<>();
+            for(Map.Entry<String, Context> va : link.getVaSet()){
+                String var = va.getKey();
+                Context context = va.getValue();
+                HashMap<String, String> ctxFields = new HashMap<>();
+                for(String fieldName : context.getContextFields().keySet()){
+                    ctxFields.put(fieldName, context.getContextFields().get(fieldName));
+                }
+                flatLink.put(rule.getVarPatternMap().get(var), new AbstractMap.SimpleEntry<>(context.getContextId(), ctxFields));
+            }
+            convertedLinkSet.add(flatLink);
+        }
+        return convertedLinkSet;
+    }
+
+
+    // delay resolve
+    public void storeInconsistenciesForDelayResolving(Map<String, Set<Link>> ruleId2LinkSet){
         for(String ruleId : ruleId2LinkSet.keySet()){
             ctxServer.getServerStatistics().addLinks(ruleId, ruleId2LinkSet.get(ruleId));
-            String variable = ctxServer.getResolverMap().get(ruleId).getVariable();
             for(Link link : ruleId2LinkSet.get(ruleId)){
+                Map.Entry<String, Link> ruleLinkPair = new AbstractMap.SimpleEntry<>(ruleId, link);
                 for(Map.Entry<String, Context> va : link.getVaSet()){
-                    if(va.getKey().equals(variable)){
-                        ctxId2IncRuleIdSet.computeIfAbsent(va.getValue().getContextId(), k -> new HashSet<>());
-                        ctxId2IncRuleIdSet.get(va.getValue().getContextId()).add(ruleId);
-                    }
+                    ctxId2Incs.putIfAbsent(va.getValue().getContextId(), new HashSet<>());
+                    ctxId2Incs.get(va.getValue().getContextId()).add(ruleLinkPair);
                 }
             }
         }
     }
 
     public void fixContext(Context context){
-        if(!ctxId2IncRuleIdSet.containsKey(context.getContextId())){
+        //TODO
+        /*
+        if(!ctxId2Incs.containsKey(context.getContextId())){
             addFixedContext(context.getContextId(), MessageHandler.cloneContext(context));
             return;
         }
+
         String contextId = context.getContextId();
         ResolverType resolverType = null;
         Map<String, String> fixingPairs = null;
-        for(String ruleId : ctxId2IncRuleIdSet.get(contextId)){
+        for(Map.Entry<String, Link> ruleLinkPair : ctxId2Incs.get(contextId)){
+            String ruleId = ruleLinkPair.getKey();
+            Link link = ruleLinkPair.getValue();
+            String resolveVar = ctxServer.getResolverMap().get(ruleId).getVariable();
             ResolverType tmpType = ctxServer.getResolverMap().get(ruleId).getResolverType();
-            if(resolverType != ResolverType.drop){
-                resolverType = tmpType;
-            }
-            if(resolverType == ResolverType.fix){
-                fixingPairs = ctxServer.getResolverMap().get(ruleId).getFixingPairs();
-            }
+            for(Map.Entry<String, Context> va : link.getVaSet()){
+                if(va.getKey().equals(resolveVar) && va.getValue().getContextId().equals(contextId)){
+                    resolverType = resolverType == ResolverType.drop ? ResolverType.drop : tmpType;
+                    fixingPairs = resolverType == ResolverType.fix ? ctxServer.getResolverMap().get(ruleId).getFixingPairs() : null;
 
-            String variable = ctxServer.getResolverMap().get(ruleId).getVariable();
-            ctxServer.getServerStatistics().increaseProblematicCtxNum(ctxServer.getRuleMap().get(ruleId).getVarPatternMap().get(variable));
+                    ctxServer.getServerStatistics().increaseProblematicCtxNum(ctxServer.getRuleMap().get(ruleId).getVarPatternMap().get(resolveVar));
+                }
+            }
         }
-        if(resolverType == ResolverType.drop){
+
+        //remove side effect
+        if(resolverType != null){
+            for(Map.Entry<String, Link> ruleLinkPair : ctxId2Incs.get(contextId)){
+                Iterator<String> iterator = ctxId2Incs.keySet().iterator();
+                while(iterator.hasNext()){
+                    String ctxId = iterator.next();
+                    if(ctxId.equals(contextId)) continue;
+                    ctxId2Incs.get(ctxId).remove(ruleLinkPair);
+                    if(ctxId2Incs.get(ctxId).isEmpty()){
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+        ctxId2Incs.remove(contextId);
+
+        if(resolverType == null){
+            addFixedContext(context.getContextId(), MessageHandler.cloneContext(context));
+        }
+        else if(resolverType == ResolverType.drop){
             addFixedContext(contextId, null);
         }
         else if(resolverType == ResolverType.fix){
             addFixedContext(contextId, MessageHandler.fixAndCloneContext(context, fixingPairs));
         }
         //TODO: maybe other resolverTypes
-    }
-
-    public void addFixedContext(String contextId, Context context){
-        long msgIndex =  Long.parseLong(contextId.substring(contextId.lastIndexOf("_") + 1));
-        Message fixingMsg = getOrPutDefaultFixingMsg(msgIndex);
-        fixingMsg.addContext(contextId, context);
-        if(completenessChecking(fixingMsg)){
-            ctxServer.serverStatistics.increaseCheckedAndResolvedMsgNum();
-            sendingMsgMap.put(msgIndex, fixingMsg);
-            fixingMsgMap.remove(msgIndex);
-        }
-    }
-
-    private Message getOrPutDefaultFixingMsg(long index){
-        Message message = this.fixingMsgMap.getOrDefault(index, new Message(index));
-        this.fixingMsgMap.put(index, message);
-        return message;
-    }
-
-    private boolean completenessChecking(Message fixingMsg){
-        Message originalMsg = ctxServer.getOriginalMsg(fixingMsg.getIndex());
-        //查看是否这条信息的所有context都已收齐
-        Set<String> originalMsgContextIds = originalMsg.getContextMap().keySet();
-        Set<String> fixingMsgContextIds = fixingMsg.getContextMap().keySet();
-        return originalMsgContextIds.containsAll(fixingMsgContextIds) && fixingMsgContextIds.containsAll(originalMsgContextIds);
-    }
-
-    public ConcurrentHashMap<Long, Message> getSendingMsgMap() {
-        return sendingMsgMap;
-    }
-
-    public void reset(){
-        this.ctxId2IncRuleIdSet.clear();
-        this.fixingMsgMap.clear();
-        this.sendingMsgMap.clear();
+         */
     }
 
 }

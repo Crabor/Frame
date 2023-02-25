@@ -492,7 +492,7 @@ public class RemoteConnector {
         JSONObject jo = new JSONObject(3);
         jo.put("api", "start_service");
         jo.put("service_type", service.toString());
-        jo.put("config", config);
+        jo.put("config", config.toJSONString());
         tcp.send(jo.toJSONString());
 
         boolean state = false;
