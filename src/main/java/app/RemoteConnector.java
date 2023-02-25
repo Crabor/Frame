@@ -526,7 +526,7 @@ public class RemoteConnector {
         jo.put("api", "service_call");
         jo.put("service_type", service.toString());
         jo.put("cmd_type", cmd.toString());
-        jo.put("config", config);
+        jo.put("config", config.toJSONString());
         tcp.send(jo.toJSONString());
 
         boolean state = false;
