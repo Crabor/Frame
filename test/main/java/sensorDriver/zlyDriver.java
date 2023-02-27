@@ -2,6 +2,7 @@ package sensorDriver;
 
 import com.alibaba.fastjson.JSONObject;
 import common.socket.UDP;
+import common.struct.SensorData;
 import platform.communication.socket.Cmd;
 import platform.communication.socket.CmdRet;
 
@@ -52,16 +53,10 @@ public class zlyDriver {
                         break;
                     case "sensor_get":
                         System.out.println("recv:" + cmd);
-                        JSONObject retJsonObj = new JSONObject();
-                        String[] fields = data.get(cnt.getAndIncrement()).split(",");
-                        retJsonObj.put("timeStamp", fields[0]);
-                        retJsonObj.put("carId", fields[1]);
-                        retJsonObj.put("longitude", fields[2]);
-                        retJsonObj.put("latitude", fields[3]);
-                        retJsonObj.put("speed", fields[4]);
-                        retJsonObj.put("direction", fields[5]);
-                        retJsonObj.put("state", fields[6]);
-                        ret = retJsonObj.toJSONString();
+                        String[] fields = {"timeStamp", "carId", "longitude", "latitude", "speed", "direction", "state"};
+                        String[] values = data.get(cnt.getAndIncrement()).split(",");
+                        SensorData sensorData = new SensorData(fields, values);
+                        ret = sensorData.toString();
                         break;
                     case "actor_set":
                         //System.out.println("recv:" + cmd);
