@@ -13,34 +13,34 @@ public class testpubsub2 {
 
     public static void main(String[] args) throws InterruptedException {
         //init database
-        RedisClient client = RedisClient.create("redis://localhost:6379");
-        Publisher.Init(client);
-        AbstractSubscriber.Init(client);
-
-        Channel c = new Channel("channel");
-        AbstractSubscriber s1 = new AbstractSubscriber() {
-            @Override
-            public void onMessage(String channel, String msg) {
-                System.out.println("s1 recv " + msg);
-            }
-        };
-        s1.subscribe(c, 0, 0);
-        s1.subscribe(c, 1, 0);
-
-        AbstractSubscriber s2 = new AbstractSubscriber() {
-            @Override
-            public void onMessage(String channel, String msg) {
-                System.out.println("s2 recv " + msg);
-                GrpPrioPair gpm = getGrpPrioPair(channel);
-                publish(c, gpm.groupId, gpm.priorityId - 1, msg + msg);
-            }
-        };
-        s2.subscribe(c,1, 1);
-
-        Publisher p = new Publisher();
-        p.publish(c, "hello");
-
-        while (true);
+//        RedisClient client = RedisClient.create("redis://localhost:6379");
+//        Publisher.Init(client);
+//        AbstractSubscriber.Init(client);
+//
+//        Channel c = new Channel("channel");
+//        AbstractSubscriber s1 = new AbstractSubscriber() {
+//            @Override
+//            public void onMessage(String channel, String msg) {
+//                System.out.println("s1 recv " + msg);
+//            }
+//        };
+//        s1.subscribe(c, 0, 0);
+//        s1.subscribe(c, 1, 0);
+//
+//        AbstractSubscriber s2 = new AbstractSubscriber() {
+//            @Override
+//            public void onMessage(String channel, String msg) {
+//                System.out.println("s2 recv " + msg);
+//                GrpPrioPair gpm = getGrpPrioPair(channel);
+//                publish(c, gpm.groupId, gpm.priorityId - 1, msg + msg);
+//            }
+//        };
+//        s2.subscribe(c,1, 1);
+//
+//        Publisher p = new Publisher();
+//        p.publish(c, "hello");
+//
+//        while (true);
 
 //
 //        AbstractSubscriber s2 = new AbstractSubscriber() {

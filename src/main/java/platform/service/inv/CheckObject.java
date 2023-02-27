@@ -34,7 +34,7 @@ public class CheckObject {
 
     private static final Log logger = LogFactory.getLog(CheckObject.class);
 
-    private Publisher publisher = new Publisher();
+//    private Publisher publisher = new Publisher();
 
     private CheckObject(String appName, String name, double value) {
         if (contains(appName, name)) {

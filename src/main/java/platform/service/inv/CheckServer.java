@@ -31,7 +31,7 @@ public class CheckServer implements Runnable {
     private static final Map<String, Map<Integer, List<CheckObject>>> lineMap = new HashMap<>();
     
     private static final Log logger = LogFactory.getLog(CheckServer.class);
-    private static final Publisher publisher = new Publisher();
+//    private static final Publisher publisher = new Publisher();
 
     // 构造方法私有化
     private CheckServer() {
@@ -160,7 +160,7 @@ public class CheckServer implements Runnable {
         }
         List<CheckInfo> checkInfoList = lineMap.get(checkInfo.lineNumber);
         checkInfoList.add(checkInfo);
-        publisher.publish("check", JSONObject.toJSONString(checkInfo));
+        Publisher.publish("check", JSONObject.toJSONString(checkInfo));
     }
 
     public static Map<String, Map<Integer, Map<Integer, List<CheckInfo>>>> getCheckMap() {

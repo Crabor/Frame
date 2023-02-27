@@ -1,6 +1,7 @@
 package platform.resource.driver;
 
 import com.alibaba.fastjson.JSONObject;
+import platform.communication.pubsub.Publisher;
 import platform.communication.socket.PlatformUDP;
 import platform.communication.socket.Cmd;
 import platform.config.Configuration;
@@ -67,7 +68,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                         break;
                     case "actor_set":
 //                        logger.info(cmdRet);
-                        publish(cmdRet.args[0], Integer.parseInt(cmdRet.args[1]), cmdRet.ret);
+                        Publisher.publish(cmdRet.args[0], Integer.parseInt(cmdRet.args[1]), cmdRet.ret);
                         break;
                     case "channel_message":
                         if (!Boolean.parseBoolean(cmdRet.ret)) {
@@ -95,7 +96,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                             // cmdRet.ret = "20"
                             // msg = {"front": "20"}
                         for (int i = 1; i < cmdRet.args.length; i++) {
-                            publish(cmdRet.args[0], Integer.parseInt(cmdRet.args[i]), cmdRet.ret);
+                            Publisher.publish(cmdRet.args[0], Integer.parseInt(cmdRet.args[i]), cmdRet.ret);
                         }
                         break;
                 }
