@@ -12,6 +12,21 @@ public class SensorData {
         data = new HashMap<>();
     }
 
+    public SensorData(String json) {
+    	data = new HashMap<>();
+    	set(json);
+    }
+
+    public SensorData(String[] fields, Object[] values) {
+    	data = new HashMap<>();
+    	set(fields, values);
+    }
+
+    public SensorData(String filed, Object value) {
+    	data = new HashMap<>();
+    	set(filed, value);
+    }
+
     public int size() {
         return data.size();
     }
@@ -36,6 +51,12 @@ public class SensorData {
         data.put(filed, value);
     }
 
+    public void set(String[] fields, Object[] values) {
+    	for(int i = 0; i < fields.length; i++) {
+    		data.put(fields[i], values[i]);
+    	}
+    }
+
     public void set(String json) {
         JSONObject jo = JSONObject.parseObject(json);
         //遍历jo的所有entry
@@ -58,7 +79,7 @@ public class SensorData {
         return sensorData;
     }
 
-    private static SensorData errorData = fromJSONString("{\"default\":\"@#$%\"}");
+    private static final SensorData errorData = fromJSONString("{\"default\":\"@#$%\"}");
     public static SensorData defaultErrorData() {
     	return errorData;
     }

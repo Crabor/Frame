@@ -29,3 +29,4 @@ out
 #file
 *.DS_Store
 *.rdb
+/Resources/configFile/ctxFile/
