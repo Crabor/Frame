@@ -227,6 +227,12 @@ public class AppConfig {
         return true;
     }
 
+    //inv related
+    public boolean isInvServerOn() {
+        //TODO
+        return false;
+    }
+
     @Override
     public String toString() {
         return "AppConfig{" +

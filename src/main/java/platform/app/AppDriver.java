@@ -219,73 +219,6 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
             if (api.equalsIgnoreCase("disconnect")) {
                 break;
             }
-//            else if (api.equalsIgnoreCase("set_rule_file")) {
-//                JSONObject retJson = new JSONObject(1);
-//                String content = jo.getString("content");
-//                String dir = CTX_FILE_PATH + "/" + appName;
-//                Util.writeFileContent(dir, jo.getString("file_name"), content);
-//                if (appConfig != null) {
-//                    appConfig.setRuleFile(dir + "/" + jo.getString("file_name"));
-//                    retJson.put("state", true);
-//                } else {
-//                    retJson.put("state", false);
-//                }
-//                tcp.send(retJson.toJSONString());
-//            } else if (api.equalsIgnoreCase("set_pattern_file")) {
-//                JSONObject retJson = new JSONObject(1);
-//                String content = jo.getString("content");
-//                String dir = CTX_FILE_PATH + "/" + appName;
-//                Util.writeFileContent(dir, jo.getString("file_name"), content);
-//                if (appConfig != null) {
-//                    appConfig.setPatternFile(dir + "/" + jo.getString("file_name"));
-//                    retJson.put("state", true);
-//                } else {
-//                    retJson.put("state", false);
-//                }
-//                tcp.send(retJson.toJSONString());
-//            } else if (api.equalsIgnoreCase("set_bfunc_file")) {
-//                JSONObject retJson = new JSONObject(1);
-//                String content = jo.getString("content");
-//                String dir = CTX_FILE_PATH + "/" + appName;
-//                String fileName = jo.getString("file_name");
-//                String javaFile = fileName.replace(".class", ".java");
-//                Util.writeFileContent(dir, javaFile, content);
-//                String[] args = new String[] {dir + "/" + javaFile};
-//                if(Main.compile(args) == 0 && appConfig != null) {
-//                    appConfig.setBfuncFile(dir + "/" + fileName);
-//                    retJson.put("state", true);
-//                } else {
-//                    retJson.put("state", false);
-//                }
-//                tcp.send(retJson.toJSONString());
-//            } else if (api.equalsIgnoreCase("set_mfunc_file")) {
-//                JSONObject retJson = new JSONObject(1);
-//                String content = jo.getString("content");
-//                String dir = CTX_FILE_PATH + "/" + appName;
-//                String fileName = jo.getString("file_name");
-//                String javaFile = fileName.replace(".class", ".java");
-//                Util.writeFileContent(dir, javaFile, content);
-//                String[] args = new String[] {dir + "/" + javaFile};
-//                if(Main.compile(args) == 0 && appConfig != null) {
-//                    appConfig.setMfuncFile(dir + "/" + fileName);
-//                    retJson.put("state", true);
-//                } else {
-//                    retJson.put("state", false);
-//                }
-//                tcp.send(retJson.toJSONString());
-//            } else if (api.equalsIgnoreCase("set_rfunc_file")) {
-//                //TODO:ctx还未实现该功能
-//            } else if (api.equalsIgnoreCase("set_ctx_validator")) {
-//                JSONObject retJson = new JSONObject(1);
-//                String ctxValidator = jo.getString("ctx_validator");
-//                if (appConfig != null) {
-//                    appConfig.setCtxValidator(ctxValidator);
-//                    retJson.put("state", true);
-//                } else {
-//                    retJson.put("state", false);
-//                }
-//                tcp.send(retJson.toJSONString());
-//            }
         }
         tcp.close();
     }
@@ -347,6 +280,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
             clientUDPPort = -1;
             getMsgThreadState = false;
             //TODO:还有剩余资源待释放
+            serviceCall(ServiceType.CTX, CmdType.STOP, null);
             retJson.put("state", true);
         } else {
             retJson.put("state", false);
@@ -685,8 +619,21 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
     }
 
     private String isServiceOn(ServiceType service) {
-        //TODO: 未实现
-        return "{\"state\":true}";
+        boolean state = false;
+        if (appConfig != null) {
+            switch (service) {
+                case CTX:
+                    state = appConfig.isCtxServerOn();
+                    break;
+                case INV:
+                    state = appConfig.isInvServerOn();
+                    break;
+                case ALL:
+                    state = appConfig.isCtxServerOn() && appConfig.isInvServerOn();
+                    break;
+            }
+        }
+        return "{\"state\":" + state + "}";
     }
 
     private String serviceCall(ServiceType service, CmdType cmd, ServiceConfig config) {
