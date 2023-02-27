@@ -10,7 +10,7 @@ import java.util.Map;
 public class AppDemo5 extends AbstractApp {
     @Override
     public void getMsg(String sensorName, SensorData value) {
-
+//        logger.info(String.format("[%s]: getMsg(channel, msg) -> %s, %s", appName, sensorName, value));
     }
 
     @Override

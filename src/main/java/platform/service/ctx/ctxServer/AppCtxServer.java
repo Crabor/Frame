@@ -1,6 +1,7 @@
 package platform.service.ctx.ctxServer;
 
 import com.alibaba.fastjson.JSONObject;
+import platform.communication.pubsub.Publisher;
 import platform.config.AppConfig;
 import platform.service.ctx.ctxChecker.CheckerStarter;
 import platform.service.ctx.ctxChecker.context.ContextChange;
@@ -135,7 +136,7 @@ public class AppCtxServer extends AbstractCtxServer{
             Map.Entry<String, JSONObject> pubMsgObj = MessageHandler.buildPubMsgObj(sendingMsg);
             if(pubMsgObj != null){
                 logger.debug(appConfig.getAppName() + "-CtxServer pub " + pubMsgObj.getValue().toJSONString()  +" from " + pubMsgObj.getKey() + " to " + appConfig.getAppName());
-                publish(pubMsgObj.getKey(), appConfig.getGrpId(), 0, pubMsgObj.getValue().toJSONString());
+                Publisher.publish(pubMsgObj.getKey(), appConfig.getGrpId(), 0, pubMsgObj.getValue().toJSONString());
                 serverStatistics.increaseSentMsgNum();
             }
             ctxFixer.getReadyMsgMap().remove(sendIndex);

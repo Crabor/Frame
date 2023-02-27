@@ -61,14 +61,14 @@ public class Platform {
         dir.mkdirs();
 
         //read config file
-        Configuration.analyzer("Resources/configFile/zlyConfiguration");
+        Configuration.analyzer("Resources/configFile/ConfigurationNew");
 
         //init database
         RedisClient client = RedisClient.create(
                 "redis://" + Configuration.getRedisConfig().getServerAddress() + ":" +
                         Configuration.getRedisConfig().getServerPort());
-        Publisher.Init(client);
-        AbstractSubscriber.Init(client);
+//        Publisher.Init(client);
+//        AbstractSubscriber.Init(client);
 
         //init mgr
         resMgr = ResMgrThread.getInstance();
@@ -95,8 +95,8 @@ public class Platform {
     }
 
     public static void Close() {
-        Publisher.Close();
-        AbstractSubscriber.Close();
+//        Publisher.Close();
+//        AbstractSubscriber.Close();
     }
 
     public static boolean call(String appName, ServiceType type, CmdType cmd, ServiceConfig config) {
