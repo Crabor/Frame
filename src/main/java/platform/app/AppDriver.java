@@ -280,7 +280,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
             clientUDPPort = -1;
             getMsgThreadState = false;
             //TODO:还有剩余资源待释放
-            serviceCall(ServiceType.CTX, CmdType.STOP, null);
+            serviceCall(ServiceType.ALL, CmdType.STOP, null);
             retJson.put("state", true);
         } else {
             retJson.put("state", false);

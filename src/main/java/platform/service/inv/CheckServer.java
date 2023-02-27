@@ -234,6 +234,6 @@ public class CheckServer implements Runnable {
 
     public static boolean call(String appName, CmdType cmd, ServiceConfig config) {
         //TODO
-        return false;
+        return true;
     }
 }
