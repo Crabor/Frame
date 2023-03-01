@@ -1,7 +1,9 @@
 package app;
 
+import app.struct.ActorInfo;
 import app.struct.SensorInfo;
 import common.struct.SensorData;
+import common.struct.State;
 import common.struct.enumeration.CmdType;
 import common.struct.enumeration.SensorMode;
 
@@ -24,11 +26,12 @@ public class AppDemo5 extends AbstractApp {
         connector.connectPlatform("127.0.0.1", 8079);
         connector.registerApp(demo);
         String sensorName = "GPS_001";
-        Map<String, SensorInfo> supportedSensors = connector.getSupportedSensors();
-        if (supportedSensors.containsKey(sensorName)) {
-            connector.registerSensor(sensorName, SensorMode.PASSIVE, 1);
+        String actorName = "xSpeed";
+        Map<String, ActorInfo> supportedActors = connector.getSupportedActors();
+        if (supportedActors.containsKey(actorName) && supportedActors.get(actorName).state == State.ON) {
+            connector.registerActor(actorName);
         }
-        connector.getMsgThread(CmdType.START);
+        connector.setActorCmd(actorName, "10");
         while (true);
 //        Thread.sleep(10000);
 //        connector.cancelAllSensors();

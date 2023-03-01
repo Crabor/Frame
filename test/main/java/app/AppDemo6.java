@@ -10,7 +10,7 @@ import java.util.Map;
 public class AppDemo6 extends AbstractApp {
     @Override
     public void getMsg(String sensorName, SensorData value) {
-
+        logger.info(String.format("[%s]: getMsg(channel, msg) -> %s, %s", appName, sensorName, value));
     }
 
     @Override
@@ -29,7 +29,10 @@ public class AppDemo6 extends AbstractApp {
             connector.registerSensor(sensorName, SensorMode.PASSIVE, 2);
         }
         connector.getMsgThread(CmdType.START);
-        while (true);
+        while (true) {
+            Thread.sleep(1000);
+            connector.getSensorData(sensorName);
+        }
 //        Thread.sleep(10000);
 //        connector.cancelAllSensors();
 //        connector.unregisterApp(demo);

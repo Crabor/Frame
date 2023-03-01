@@ -61,12 +61,12 @@ public class Platform {
         dir.mkdirs();
 
         //read config file
-        Configuration.analyzer("Resources/configFile/zlyConfiguration");
+        Configuration.analyzer("Resources/configFile/ConfigurationNew");
 
         //init database
-        RedisClient client = RedisClient.create(
-                "redis://" + Configuration.getRedisConfig().getServerAddress() + ":" +
-                        Configuration.getRedisConfig().getServerPort());
+//        RedisClient client = RedisClient.create(
+//                "redis://" + Configuration.getRedisConfig().getServerAddress() + ":" +
+//                        Configuration.getRedisConfig().getServerPort());
 //        Publisher.Init(client);
 //        AbstractSubscriber.Init(client);
 
