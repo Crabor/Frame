@@ -222,6 +222,9 @@ public class AppConfig {
     }
 
     public boolean stopCtxServer(){
+        for(SensorConfig sensorConfig : this.getSensors()){
+            this.ctxServer.unsubscribe(sensorConfig.getSensorName()); // apps are 0, so it should be 1.
+        }
         this.ctxServer.stop();
         this.ctxServerOn = false;
         return true;
