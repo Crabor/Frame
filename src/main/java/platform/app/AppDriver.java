@@ -9,8 +9,7 @@ import common.socket.UDP;
 import common.struct.*;
 import common.struct.enumeration.SensorMode;
 import platform.Platform;
-import platform.app.struct.SetState;
-import platform.app.struct.TimeLine;
+import common.struct.SetState;
 import platform.communication.pubsub.AbstractSubscriber;
 import platform.communication.socket.Cmd;
 import platform.communication.socket.PlatformUDP;
@@ -23,12 +22,8 @@ import platform.config.SensorConfig;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class AppDriver extends AbstractSubscriber implements Runnable {
     private TCP tcp;
@@ -37,9 +32,9 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
     private int grpId = -1;
     private boolean getMsgThreadState = false;
     private AppConfig appConfig = null;
-    private final ConcurrentHashMap<String, SensorData> sensorValues = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, SynchronousSensorData> sensorValues = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Boolean> getSensorDataFlag = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, SetState> actorSetState = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, SynchronousSetState> actorSetState = new ConcurrentHashMap<>();
 
     public AppDriver(Socket socket) {
         this.tcp = new AppDriverTCP(socket, false);
@@ -92,25 +87,20 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
                 jo.put("channel", channel);
                 jo.put("msg", msg);
                 UDP.send(clientIP, clientUDPPort, jo.toJSONString());
-            }
-            if (!sensorValues.containsKey(channel)) {
-                sensorValues.put(channel, SensorData.fromJSONString(msg));
             } else {
-                synchronized (sensorValues.get(channel)) {
-                    sensorValues.get(channel).set(msg);
-                    sensorValues.get(channel).notify();
-                    getSensorDataFlag.put(channel, false);
+                //getSensorData
+                if (!sensorValues.containsKey(channel)) {
+                    sensorValues.put(channel, new SynchronousSensorData(1));
                 }
+                sensorValues.get(channel).put(SensorData.fromJSONString(msg));
+                getSensorDataFlag.put(channel, false);
             }
         } else {
+            //actorSetCmd
             if (!actorSetState.containsKey(channel)) {
-                actorSetState.put(channel, new SetState(Boolean.parseBoolean(msg)));
-            } else {
-                synchronized (actorSetState.get(channel)) {
-                    actorSetState.get(channel).set(Boolean.parseBoolean(msg));
-                    actorSetState.get(channel).notify();
-                }
+                actorSetState.put(channel, new SynchronousSetState(1));
             }
+            actorSetState.get(channel).put(SetState.fromString(msg));
         }
     }
 
@@ -352,7 +342,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
             sensorConfig.getApps().add(appConfig);
             subscribe(sensorName, grpId);
         }
-        sensorValues.put(sensorName, new SensorData());
+        sensorValues.put(sensorName, new SynchronousSensorData(1));
         getSensorDataFlag.put(sensorName, false);
 
 //        if (sensorConfig.getTimeLine().size() != 0) {
@@ -403,11 +393,10 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
             unsubscribe(sensorName);
         }
         if (sensorValues.containsKey(sensorName)) {
-            synchronized (sensorValues.get(sensorName)) {
-                sensorValues.get(sensorName).notify();
-            }
+            sensorValues.get(sensorName).put(SensorData.defaultErrorData());
         }
-        getSensorDataFlag.put(sensorName, false);
+        sensorValues.remove(sensorName);
+        getSensorDataFlag.remove(sensorName);
 
 //        if (sensorConfig.getTimeLine().size() != 0) {
 //            sensorConfig.getTimeLineLock().lock();
@@ -453,16 +442,9 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
             PlatformUDP.send(cmd);
             getSensorDataFlag.put(sensorName, true);
             if (!sensorValues.containsKey(sensorName)) {
-                sensorValues.put(sensorName, new SensorData());
+                sensorValues.put(sensorName, new SynchronousSensorData(1));
             }
-            synchronized (sensorValues.get(sensorName)) {
-                try {
-                    sensorValues.get(sensorName).wait(2000);
-                    value = sensorValues.get(sensorName).toString();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            value = sensorValues.get(sensorName).blockTake().toString();
         }
         return value;
     }
@@ -551,6 +533,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
             appConfig.getActors().add(actorConfig);
             actorConfig.getApps().add(appConfig);
             subscribe(actorName, grpId);
+            actorSetState.put(actorName, new SynchronousSetState(1));
             retJson.put("state", true);
         } else {
             retJson.put("state", false);
@@ -566,6 +549,10 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
             appConfig.getActors().remove(actorConfig);
             actorConfig.getApps().remove(appConfig);
             unsubscribe(actorName);
+            if (actorSetState.containsKey(actorName)) {
+                actorSetState.get(actorName).put(new SetState(false));
+            }
+            actorSetState.remove(actorName);
             retJson.put("state", true);
         } else {
             retJson.put("state", false);
@@ -602,16 +589,10 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
                 && actorConfigMap.get(actorName).isAlive()) {
             PlatformUDP.send(new Cmd("actor_set", actorName + " " + grpId + " " + action));
             if (!actorSetState.containsKey(actorName)) {
-                actorSetState.put(actorName, new SetState());
+                actorSetState.put(actorName, new SynchronousSetState(1));
             }
-            synchronized (actorSetState.get(actorName)) {
-                try {
-                    actorSetState.get(actorName).wait();
-                    retJson.put("state", actorSetState.get(actorName).get());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            boolean state = actorSetState.get(actorName).blockTake().get();
+            retJson.put("state", state);
         } else {
             retJson.put("state", false);
         }
