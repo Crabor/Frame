@@ -26,13 +26,10 @@ public class AppDemo6 extends AbstractApp {
         String sensorName = "GPS_001";
         Map<String, SensorInfo> supportedSensors = connector.getSupportedSensors();
         if (supportedSensors.containsKey(sensorName)) {
-            connector.registerSensor(sensorName, SensorMode.PASSIVE, 2);
+            connector.registerSensor(sensorName, SensorMode.PASSIVE, 1);
         }
         connector.getMsgThread(CmdType.START);
-        while (true) {
-            Thread.sleep(1000);
-            connector.getSensorData(sensorName);
-        }
+        while (true);
 //        Thread.sleep(10000);
 //        connector.cancelAllSensors();
 //        connector.unregisterApp(demo);

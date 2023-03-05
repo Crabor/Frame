@@ -20,7 +20,9 @@ public class AppDemo3 extends AbstractApp {
         connector.connectPlatform("127.0.0.1", 8079);
         connector.registerApp(app);
         connector.checkConnected();
-        connector.unregisterApp(app);
-        connector.disConnectPlatform();
+
+        while(true);
+//        connector.unregisterApp(app);
+//        connector.disConnectPlatform();
     }
 }
