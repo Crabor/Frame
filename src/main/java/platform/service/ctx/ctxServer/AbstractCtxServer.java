@@ -18,7 +18,6 @@ import platform.service.ctx.rule.resolver.*;
 import platform.service.ctx.rule.Rule;
 import platform.service.ctx.ctxChecker.constraint.formulas.*;
 import platform.service.ctx.ctxChecker.constraint.runtime.RuntimeNode;
-import platform.service.ctx.ctxChecker.context.ContextChange;
 import platform.service.ctx.statistics.ServerStatistics;
 
 import java.io.File;
@@ -43,9 +42,9 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
 
     protected final ConcurrentHashMap<Long, Message> originalMsgMap = new ConcurrentHashMap<>();
 
-    protected final ConcurrentLinkedQueue<Long> sendIndexQue = new ConcurrentLinkedQueue<>();
+    protected final ConcurrentHashMap<String, ConcurrentLinkedQueue<Long>> channel2IndexQue = new ConcurrentHashMap<>();
 
-    protected ChgGenerator chgGenerator;
+    protected ChangeGenerator changeGenerator;
 
     protected CheckerStarter checker;
 
@@ -377,7 +376,7 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
         }
     }
 
-    protected void addOriginalMsg(Message message){
+    protected void addOriginalMessage(Message message){
         this.originalMsgMap.put(message.getIndex(), message);
     }
 
@@ -385,10 +384,13 @@ public abstract class AbstractCtxServer extends AbstractSubscriber implements Ru
         return this.originalMsgMap.get(index);
     }
 
-    protected void addSendIndex(long index){
-        this.sendIndexQue.add(index);
+    protected void addIndex2Channel(String channel, long index){
+        this.channel2IndexQue.get(channel).add(index);
     }
 
+    public ConcurrentHashMap<String, ConcurrentLinkedQueue<Long>> getChannel2IndexQue() {
+        return channel2IndexQue;
+    }
 
     //fixer related
     public CtxFixer getCtxFixer() {

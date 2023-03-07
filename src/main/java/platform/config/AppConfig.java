@@ -8,6 +8,7 @@ import platform.service.ctx.ctxServer.AppCtxServer;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AppConfig {
     private String appName;
@@ -16,7 +17,7 @@ public class AppConfig {
     private Set<ActorConfig> actors = ConcurrentHashMap.newKeySet();
 
     //ctxService related
-    private AppCtxServer ctxServer;
+    private AppCtxServer ctxServer = null;
     private boolean ctxServerOn = false;
     private String ruleFile;
     private String bfuncFile;
@@ -102,6 +103,32 @@ public class AppConfig {
             ret.add(config.getSensorName());
         });
         return ret;
+    }
+
+    public boolean addSensor(SensorConfig sensorConfig){
+        if(sensors.contains(sensorConfig)){
+            return false;
+        }
+        else{
+            sensors.add(sensorConfig);
+            if(ctxServer != null){
+                ctxServer.getChannel2IndexQue().put(sensorConfig.getSensorName(), new ConcurrentLinkedQueue<>());
+            }
+            return true;
+        }
+    }
+
+    public boolean removeSensor(SensorConfig sensorConfig){
+        if(sensors.contains(sensorConfig)){
+            sensors.remove(sensorConfig);
+            if(ctxServer != null){
+                ctxServer.getChannel2IndexQue().remove(sensorConfig.getSensorName());
+            }
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     public Set<ActorConfig> getActors() {
@@ -208,6 +235,7 @@ public class AppConfig {
         //subscribe
         for(SensorConfig sensorConfig : this.getSensors()){
             this.ctxServer.subscribe(sensorConfig.getSensorName(), grpId, 1); // apps are 0, so it should be 1.
+            this.ctxServer.getChannel2IndexQue().put(sensorConfig.getSensorName(), new ConcurrentLinkedQueue<>());
         }
         this.ctxServer.start();
         this.ctxServerOn = true;
@@ -224,6 +252,7 @@ public class AppConfig {
     public boolean stopCtxServer(){
         for(SensorConfig sensorConfig : this.getSensors()){
             this.ctxServer.unsubscribe(sensorConfig.getSensorName()); // apps are 0, so it should be 1.
+            this.ctxServer.getChannel2IndexQue().remove(sensorConfig.getSensorName());
         }
         this.ctxServer.stop();
         this.ctxServerOn = false;

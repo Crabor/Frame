@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CtxFixer {
     private final AbstractCtxServer ctxServer;
 
-    private final ConcurrentHashMap<Long, Message> readyMsgMap;
+    private final ConcurrentHashMap<Long, Message> validatedMsgMap;
 
     // delay resolve
     private final HashMap<String, Set<Map.Entry<String, Link>>> ctxId2Incs;
@@ -22,23 +22,23 @@ public class CtxFixer {
     public CtxFixer(AbstractCtxServer ctxServer) {
         this.ctxServer = ctxServer;
         this.ctxId2Incs = new HashMap<>();
-        this.readyMsgMap = new ConcurrentHashMap<>();
+        this.validatedMsgMap = new ConcurrentHashMap<>();
     }
 
-    public void buildReadyMsg(long msgIndex, Context context){
-        Message readyMsg = new Message(msgIndex);
-        readyMsg.addContext(context);
+    public void buildValidatedMessage(long msgIndex, Context context){
+        Message validatedMsg = new Message(msgIndex);
+        validatedMsg.addContext(context);
         ctxServer.serverStatistics.increaseCheckedAndResolvedMsgNum();
-        readyMsgMap.put(msgIndex, readyMsg);
+        validatedMsgMap.put(msgIndex, validatedMsg);
     }
 
-    public ConcurrentHashMap<Long, Message> getReadyMsgMap() {
-        return readyMsgMap;
+    public ConcurrentHashMap<Long, Message> getValidatedMsgMap() {
+        return validatedMsgMap;
     }
 
     public void reset(){
         this.ctxId2Incs.clear();
-        this.readyMsgMap.clear();
+        this.validatedMsgMap.clear();
     }
 
 
@@ -68,7 +68,7 @@ public class CtxFixer {
         //resolve
         Set<Map.Entry<String, HashMap<String, String>>> resolvedFlatContextSet = selectedResolver.resolve(flatLinkSet);
         //生成对应的resolveChangeBatch
-        return ctxServer.chgGenerator.generateResolveChangeBatch(resolvedFlatContextSet);
+        return ctxServer.changeGenerator.generateResolveChangeBatch(resolvedFlatContextSet);
     }
 
     private Set<HashMap<String, Map.Entry<String, HashMap<String, String>>>> flattenLinkSet(Rule rule, Set<Link> linkSet){
