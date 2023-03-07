@@ -139,8 +139,10 @@ public class CheckerStarter {
                 BatchType batchType = batchEntry.getValue();
                 if(batchType == BatchType.GENERATE){
                     Set<String> droppedCtxIdSet = new HashSet<>();
-                    List<ContextChange> resolveBatch = ctxServer.getCtxFixer().resolveViolationsInTime(checker.getRule2LinkSet());
-                    checker.getRule2LinkSet().clear();
+                    List<ContextChange> resolveBatch = ctxServer.getCtxFixer().resolveViolationsInTime(checker.getRule2LinksForSingleCheck());
+                    //一个batch检测结束
+                    checker.getRule2LinksForSingleCheck().clear();
+                    checker.getRule2LinksForBatchChecks().clear();
                     for(ContextChange change : resolveBatch){
                         try {
                             this.scheduler.doSchedule(change);
@@ -186,7 +188,7 @@ public class CheckerStarter {
                         }
                     }
                 }
-                checker.getRule2LinkSet().clear();
+                checker.getRule2LinksForBatchChecks().clear();
             }
             else{
                 assert false;
