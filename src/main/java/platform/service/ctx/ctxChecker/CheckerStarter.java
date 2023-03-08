@@ -135,12 +135,12 @@ public class CheckerStarter {
                 }
             }
 
+            //一个batch检测结束
             if(ctxServer.getResolverType() == ResolverType.INTIME){
                 BatchType batchType = batchEntry.getValue();
                 if(batchType == BatchType.GENERATE){
                     Set<String> droppedCtxIdSet = new HashSet<>();
-                    List<ContextChange> resolveBatch = ctxServer.getCtxFixer().resolveViolationsInTime(checker.getRule2LinkSet());
-                    checker.getRule2LinkSet().clear();
+                    List<ContextChange> resolveBatch = ctxServer.getCtxFixer().resolveViolationsInTime(checker.getRule2LinksForSingleCheck());
                     for(ContextChange change : resolveBatch){
                         try {
                             this.scheduler.doSchedule(change);
@@ -163,10 +163,10 @@ public class CheckerStarter {
                         Set<String> patternIdSets = activateCtxMap.get(context);
                         if(patternIdSets.isEmpty()){
                             if(droppedCtxIdSet.contains(context.getContextId())){
-                                ctxServer.getCtxFixer().buildReadyMsg(Long.parseLong(context.getContextId().split("_")[1]), null);
+                                ctxServer.getCtxFixer().buildValidatedMessage(Long.parseLong(context.getContextId().split("_")[1]), null);
                             }
                             else{
-                                ctxServer.getCtxFixer().buildReadyMsg(Long.parseLong(context.getContextId().split("_")[1]), MessageHandler.cloneContext(context));
+                                ctxServer.getCtxFixer().buildValidatedMessage(Long.parseLong(context.getContextId().split("_")[1]), MessageHandler.cloneContext(context));
                             }
                             iterator.remove();
                         }
@@ -181,12 +181,13 @@ public class CheckerStarter {
                         Context context = iterator.next();
                         Set<String> patternIdSets = activateCtxMap.get(context);
                         if(patternIdSets.isEmpty()){
-                            ctxServer.getCtxFixer().buildReadyMsg(Long.parseLong(context.getContextId().split("_")[1]), MessageHandler.cloneContext(context));
+                            ctxServer.getCtxFixer().buildValidatedMessage(Long.parseLong(context.getContextId().split("_")[1]), MessageHandler.cloneContext(context));
                             iterator.remove();
                         }
                     }
                 }
-                checker.getRule2LinkSet().clear();
+                checker.getRule2LinksForSingleCheck().clear();
+                checker.getRule2LinksForBatchChecks().clear();
             }
             else{
                 assert false;

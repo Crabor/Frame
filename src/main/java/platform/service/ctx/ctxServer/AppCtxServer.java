@@ -12,6 +12,7 @@ import platform.service.ctx.statistics.ServerStatistics;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -34,7 +35,7 @@ public class AppCtxServer extends AbstractCtxServer{
     public void init() {
         buildPatterns(appConfig.getPatternFile(), appConfig.getMfuncFile());
         buildRules(appConfig.getRuleFile(), null); //currently only-use drop-latest
-        this.chgGenerator = new ChgGenerator(this);
+        this.changeGenerator = new ChangeGenerator(this);
         this.checker = new CheckerStarter(this, appConfig.getBfuncFile(), appConfig.getCtxValidator().toString());
         this.ctxFixer = new CtxFixer(this);
     }
@@ -54,8 +55,8 @@ public class AppCtxServer extends AbstractCtxServer{
             buildRules(appConfig.getRuleFile(), null);
             // 清除旧数据
             this.originalMsgMap.clear();
-            this.sendIndexQue.clear();
-            this.chgGenerator.reset();
+            this.channel2IndexQue.clear();
+            this.changeGenerator.reset();
             this.ctxFixer.reset();
 
             // 重启服务
@@ -77,9 +78,9 @@ public class AppCtxServer extends AbstractCtxServer{
             this.ruleMap.clear();
             this.resolverMap.clear();
             this.originalMsgMap.clear();
-            this.sendIndexQue.clear();
+            this.channel2IndexQue.clear();
             this.checker = null;
-            this.chgGenerator = null;
+            this.changeGenerator = null;
             this.ctxFixer = null;
         } finally {
             resetLock.unlock();
@@ -93,7 +94,7 @@ public class AppCtxServer extends AbstractCtxServer{
             return;
         }
 
-        //如果无法获取到锁，说明正在reset
+        //如果无法获取到锁，说明正在reset/stop
         if(!resetLock.tryLock()){
             logger.debug(appConfig.getAppName() + "-CtxServer ignores: " + msg);
             return;
@@ -103,16 +104,16 @@ public class AppCtxServer extends AbstractCtxServer{
             logger.debug(appConfig.getAppName() + "-CtxServer recv: " + msg);
             //System.out.printf("%s-CtxServer recv %s %n",appConfig.getAppName(), msg);
 
-            JSONObject msgJsonObj = JSONObject.parseObject(msg);
+            JSONObject dataObj = JSONObject.parseObject(msg);
             long msgIndex = atomicLong.getAndIncrement();
-            Message originalMsg = MessageHandler.buildMsg(msgIndex, channel, msgJsonObj);
+            Message originalMsg = MessageHandler.buildMessage(msgIndex, channel, dataObj);
 
-            addOriginalMsg(originalMsg);
-            addSendIndex(originalMsg.getIndex());
+            addOriginalMessage(originalMsg);
+            addIndex2Channel(channel, originalMsg.getIndex());
             serverStatistics.increaseReceivedMsgNum();
 
             assert appConfig.isCtxServerOn();
-            List<Map.Entry<List<ContextChange>, BatchType>> changeBatchList = chgGenerator.generateChangeBatches(originalMsg.getContext());
+            List<Map.Entry<List<ContextChange>, BatchType>> changeBatchList = changeGenerator.generateChangeBatches(originalMsg.getContext());
             checker.check(changeBatchList);
         } finally {
             resetLock.unlock();
@@ -125,23 +126,31 @@ public class AppCtxServer extends AbstractCtxServer{
             if(Thread.interrupted()){
                 return;
             }
-            if(sendIndexQue.isEmpty())
-                continue;
-            long sendIndex = sendIndexQue.peek();
-            if(!ctxFixer.getReadyMsgMap().containsKey(sendIndex))
-                continue;
-            Message sendingMsg = ctxFixer.getReadyMsgMap().get(sendIndex);
-            //发送消息
-            //每个msg只有一个sensor (框架2.1)
-            Map.Entry<String, JSONObject> pubMsgObj = MessageHandler.buildPubMsgObj(sendingMsg);
-            if(pubMsgObj != null){
-                logger.debug(appConfig.getAppName() + "-CtxServer pub " + pubMsgObj.getValue().toJSONString()  +" from " + pubMsgObj.getKey() + " to " + appConfig.getAppName());
-                Publisher.publish(pubMsgObj.getKey(), appConfig.getGrpId(), 0, pubMsgObj.getValue().toJSONString());
-                serverStatistics.increaseSentMsgNum();
+            for(String channel : channel2IndexQue.keySet()){
+                ConcurrentLinkedQueue<Long> indexQue = channel2IndexQue.get(channel);
+                if(indexQue.isEmpty()){
+                    continue;
+                }
+                long sendIndex = indexQue.peek();
+                if(!ctxFixer.getValidatedMsgMap().containsKey(sendIndex)){
+                    continue;
+                }
+                Message validatedMsg = ctxFixer.getValidatedMsgMap().get(sendIndex);
+                //发送消息
+                Map.Entry<String, JSONObject> validatedMsgObj = MessageHandler.buildValidatedMessageJsonObj(validatedMsg);
+                if(validatedMsgObj == null){
+                    //被drop了
+                    //TODO()
+                }
+                else{
+                    logger.debug(appConfig.getAppName() + "-CtxServer pub " + validatedMsgObj.getValue().toJSONString()  +" from " + validatedMsgObj.getKey() + " to " + appConfig.getAppName());
+                    Publisher.publish(validatedMsgObj.getKey(), appConfig.getGrpId(), 0, validatedMsgObj.getValue().toJSONString());
+                    serverStatistics.increaseSentMsgNum();
+                }
+                ctxFixer.getValidatedMsgMap().remove(sendIndex);
+                originalMsgMap.remove(sendIndex);
+                indexQue.poll();
             }
-            ctxFixer.getReadyMsgMap().remove(sendIndex);
-            originalMsgMap.remove(sendIndex);
-            sendIndexQue.poll();
         }
     }
 }

@@ -13,13 +13,13 @@ import java.util.*;
 import static platform.service.ctx.ctxServer.BatchType.GENERATE;
 import static platform.service.ctx.ctxServer.BatchType.OVERDUE;
 
-public class ChgGenerator {
+public class ChangeGenerator {
 
     private final AbstractCtxServer server;
     private final PriorityQueue<Map.Entry<Long, Map.Entry<String, Context>>> activateContextsTimeQue;
     private final HashMap<String, LinkedList<Context>> activateContextsNumberMap;
 
-    public ChgGenerator(AbstractCtxServer server){
+    public ChangeGenerator(AbstractCtxServer server){
         this.server = server;
         this.activateContextsTimeQue = new PriorityQueue<>(50, (o1, o2) -> (int) (o1.getKey() - o2.getKey()));
         this.activateContextsNumberMap = new HashMap<>();
@@ -59,7 +59,7 @@ public class ChgGenerator {
             }
         }
         if(!matched){
-            server.getCtxFixer().buildReadyMsg(Long.parseLong(contextId.split("_")[1]), MessageHandler.cloneContext(context));
+            server.getCtxFixer().buildValidatedMessage(Long.parseLong(contextId.split("_")[1]), MessageHandler.cloneContext(context));
         }
         else{
             retList.add(new AbstractMap.SimpleEntry<>(generateList, GENERATE));

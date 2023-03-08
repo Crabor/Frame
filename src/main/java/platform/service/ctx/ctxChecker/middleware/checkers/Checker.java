@@ -17,28 +17,37 @@ public abstract class Checker {
     protected Object bfuncInstance;
 
     // rule_id -> [(truthValue1, linkSet1), (truthValue2,linkSet2)]
-    protected Map<String, List<Map.Entry<Boolean, Set<Link>>>> ruleLinksMap;
+    protected Map<String, List<Map.Entry<Boolean, Set<Link>>>> rule2LinksForAllChecks;
 
-    protected Map<String, Set<Link>> rule2LinkSet;
+    protected Map<String, Set<Link>> rule2LinksForBatchChecks;
+
+    protected Map<String, Set<Link>> rule2LinksForSingleCheck;
 
 
     public Checker(Map<String, Rule> ruleMap, ContextPool contextPool, Object bfuncInstance) {
         this.ruleMap = ruleMap;
         this.contextPool = contextPool;
         this.bfuncInstance = bfuncInstance;
-        this.ruleLinksMap = new HashMap<>();
-        this.rule2LinkSet = new HashMap<>();
+        this.rule2LinksForAllChecks = new HashMap<>();
+        this.rule2LinksForBatchChecks = new HashMap<>();
+        this.rule2LinksForSingleCheck = new HashMap<>();
     }
 
     protected void storeLink(String rule_id, boolean truth, Set<Link> linkSet){
-        this.ruleLinksMap.computeIfAbsent(rule_id, k -> new ArrayList<>());
-        Objects.requireNonNull(this.ruleLinksMap.computeIfPresent(rule_id, (k, v) -> v)).add(
+        this.rule2LinksForAllChecks.computeIfAbsent(rule_id, k -> new ArrayList<>());
+        Objects.requireNonNull(this.rule2LinksForAllChecks.computeIfPresent(rule_id, (k, v) -> v)).add(
                 new AbstractMap.SimpleEntry<>(truth, linkSet)
         );
 
         if(!linkSet.isEmpty()){
-            this.rule2LinkSet.computeIfAbsent(rule_id, k -> new HashSet<>(linkSet));
-            Objects.requireNonNull(this.rule2LinkSet.computeIfPresent(rule_id, (k, v) -> v)).addAll(linkSet);
+            this.rule2LinksForBatchChecks.computeIfAbsent(rule_id, k -> new HashSet<>(linkSet));
+            Objects.requireNonNull(this.rule2LinksForBatchChecks.computeIfPresent(rule_id, (k, v) -> v)).addAll(linkSet);
+        }
+
+       this.rule2LinksForSingleCheck.remove(rule_id);
+        if(!linkSet.isEmpty()){
+            this.rule2LinksForSingleCheck.computeIfAbsent(rule_id, k -> new HashSet<>(linkSet));
+            Objects.requireNonNull(this.rule2LinksForSingleCheck.computeIfPresent(rule_id, (k, v) -> v)).addAll(linkSet);
         }
     }
 
@@ -65,11 +74,15 @@ public abstract class Checker {
         return bfuncInstance;
     }
 
-    public Map<String, List<Map.Entry<Boolean, Set<Link>>>> getRuleLinksMap() {
-        return ruleLinksMap;
+    public Map<String, List<Map.Entry<Boolean, Set<Link>>>> getRule2LinksForAllChecks() {
+        return rule2LinksForAllChecks;
     }
 
-    public Map<String, Set<Link>> getRule2LinkSet() {
-        return rule2LinkSet;
+    public Map<String, Set<Link>> getRule2LinksForBatchChecks() {
+        return rule2LinksForBatchChecks;
+    }
+
+    public Map<String, Set<Link>> getRule2LinksForSingleCheck() {
+        return rule2LinksForSingleCheck;
     }
 }

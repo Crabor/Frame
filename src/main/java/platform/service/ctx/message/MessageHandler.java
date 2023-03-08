@@ -1,22 +1,17 @@
 package platform.service.ctx.message;
 
 import com.alibaba.fastjson.JSONObject;
-import platform.config.AppConfig;
-import platform.config.Configuration;
-import platform.config.CtxServerConfig;
 import platform.service.ctx.ctxChecker.context.Context;
 
 import java.util.AbstractMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class MessageHandler {
 
     //框架2.1
-    public static Message buildMsg(long msgIndex, String sensorName, JSONObject msgObj){
+    public static Message buildMessage(long msgIndex, String sensorName, JSONObject dataObj){
         Message message = new Message(msgIndex);
-        message.addContext(buildContext(msgIndex, sensorName, msgObj));
+        message.addContext(buildContext(msgIndex, sensorName, dataObj));
         return message;
     }
 
@@ -39,17 +34,17 @@ public class MessageHandler {
         return retContext;
     }
 
-    public static Map.Entry<String, JSONObject> buildPubMsgObj(final Message sendingMsg){
-        Context context = sendingMsg.getContext();
+    public static Map.Entry<String, JSONObject> buildValidatedMessageJsonObj(final Message validatedMsg){
+        Context context = validatedMsg.getContext();
         if(context == null){
             return null;
         }
         else{
-            JSONObject msgObj = new JSONObject();
+            JSONObject dataObj = new JSONObject();
             for(String field : context.getContextFields().keySet()){
-                msgObj.put(field, context.getContextFields().get(field));
+                dataObj.put(field, context.getContextFields().get(field));
             }
-            return new AbstractMap.SimpleEntry<>(context.getContextId().split("_")[0], msgObj);
+            return new AbstractMap.SimpleEntry<>(context.getContextId().split("_")[0], dataObj);
         }
     }
 }

@@ -337,11 +337,11 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
     private void _registerSensor(String sensorName, SensorMode mode, int freq) {
         SensorConfig sensorConfig = Configuration.getResourceConfig().getSensorsConfig().get(sensorName);
 
-        if (!appConfig.getSensors().contains(sensorConfig)) {
-            appConfig.getSensors().add(sensorConfig);
+        if(appConfig.addSensor(sensorConfig)){
             sensorConfig.getApps().add(appConfig);
             subscribe(sensorName, grpId);
         }
+
         sensorValues.put(sensorName, new SynchronousSensorData(1));
         getSensorDataFlag.put(sensorName, false);
 
@@ -383,8 +383,8 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
 
     public void _cancelSensor(String sensorName) {
         SensorConfig sensorConfig = Configuration.getResourceConfig().getSensorsConfig().get(sensorName);
-        if (appConfig.getSensors().contains(sensorConfig)) {
-            appConfig.getSensors().remove(sensorConfig);
+
+        if(appConfig.removeSensor(sensorConfig)){
             sensorConfig.getApps().remove(appConfig);
             if (sensorConfig.getApps().size() == 0) {
                 //TODO:可能有死锁
@@ -392,6 +392,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
             }
             unsubscribe(sensorName);
         }
+
         if (sensorValues.containsKey(sensorName)) {
             sensorValues.get(sensorName).put(SensorData.defaultErrorData());
         }
