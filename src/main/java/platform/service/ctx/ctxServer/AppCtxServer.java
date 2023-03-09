@@ -57,7 +57,9 @@ public class AppCtxServer extends AbstractCtxServer{
             buildRules(appConfig.getRuleFile(), null);
             // 清除旧数据
             this.originalMsgMap.clear();
-            this.channel2IndexQue.clear();
+            for(ConcurrentLinkedQueue<Long> que : this.channel2IndexQue.values()){
+                que.clear();
+            }
             this.changeGenerator.reset();
             this.ctxFixer.reset();
 
