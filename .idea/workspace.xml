@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="ANALYZE_TEST_SOURCES" value="false" />
+    <option name="ANALYZE_INJECTED_CODE" value="false" />
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="78115992-4503-470b-beb5-d7602ef66f8a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/service/ctx/ctxServer/AppCtxServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/service/ctx/ctxServer/AppCtxServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/service/ctx/message/MessageHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/service/ctx/message/MessageHandler.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2EW01UAuKZr9NBHh504lhFh3zT8" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/zhanglingyu/Phd/project/platform/frame&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="ReactorSettings">
+    <option name="notificationShown" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Resources/taxiTest/appTwo" />
+      <recent name="$PROJECT_DIR$/test/main/java/platform/testTaxi" />
+      <recent name="$PROJECT_DIR$/Resources/platform" />
+      <recent name="$PROJECT_DIR$/Resources" />
+      <recent name="$PROJECT_DIR$/Resources/taxiTest" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Resources/taxiTest/AppOne" />
+      <recent name="$PROJECT_DIR$/Resources/platform" />
+      <recent name="$PROJECT_DIR$/Resources" />
+      <recent name="$PROJECT_DIR$/src/main/java/platform/service/ctx/ctxServiceFrame" />
+      <recent name="$PROJECT_DIR$/Resources/taxiTest" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.Test">
+    <configuration name="RunPlatform" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="platform.RunPlatform" />
+      <module name="frame" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="platform.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Test" />
+      <module name="frame" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="zshDriver" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="sensorDriver.zshDriver" />
+      <module name="frame" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="sensorDriver.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Test" />
+        <item itemvalue="Application.RunPlatform" />
+        <item itemvalue="Application.zshDriver" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="78115992-4503-470b-beb5-d7602ef66f8a" name="Changes" comment="" />
+      <created>1662695818241</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1662695818241</updated>
+      <workItem from="1662695824950" duration="13698000" />
+      <workItem from="1664507092018" duration="1672000" />
+      <workItem from="1664508778989" duration="61855000" />
+      <workItem from="1665111765824" duration="113069000" />
+      <workItem from="1665630288448" duration="421000" />
+      <workItem from="1665630775541" duration="210000" />
+      <workItem from="1666001551979" duration="1612000" />
+      <workItem from="1666061654863" duration="3459000" />
+      <workItem from="1666164555234" duration="2501000" />
+      <workItem from="1666246761860" duration="20690000" />
+      <workItem from="1666319487212" duration="1001000" />
+      <workItem from="1666955282396" duration="4000" />
+      <workItem from="1666955294871" duration="41000" />
+      <workItem from="1668216027786" duration="22677000" />
+      <workItem from="1668308539297" duration="14716000" />
+      <workItem from="1670152071247" duration="3538000" />
+      <workItem from="1670229651654" duration="346000" />
+      <workItem from="1670311531215" duration="1104000" />
+      <workItem from="1670404038722" duration="4000" />
+      <workItem from="1670671410533" duration="699000" />
+      <workItem from="1670748588457" duration="1127000" />
+      <workItem from="1676809577094" duration="107000" />
+      <workItem from="1677296614690" duration="31022000" />
+      <workItem from="1677376224991" duration="3177000" />
+      <workItem from="1677466686093" duration="30000" />
+      <workItem from="1677644019570" duration="1287000" />
+      <workItem from="1677659601529" duration="273000" />
+      <workItem from="1677722841839" duration="20501000" />
+      <workItem from="1678280075844" duration="89000" />
+      <workItem from="1678356766963" duration="1782000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="zly" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="*" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.NumberFormatException" package="java.lang" />
+          <option name="timeStamp" value="17" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

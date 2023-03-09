@@ -1,6 +1,8 @@
 package platform.service.ctx.ctxServer;
 
 import com.alibaba.fastjson.JSONObject;
+import common.struct.SensorData;
+import common.struct.enumeration.SensorDataType;
 import platform.communication.pubsub.Publisher;
 import platform.config.AppConfig;
 import platform.service.ctx.ctxChecker.CheckerStarter;
@@ -104,9 +106,10 @@ public class AppCtxServer extends AbstractCtxServer{
             logger.debug(appConfig.getAppName() + "-CtxServer recv: " + msg);
             //System.out.printf("%s-CtxServer recv %s %n",appConfig.getAppName(), msg);
 
-            JSONObject dataObj = JSONObject.parseObject(msg);
+            SensorData sensorData = SensorData.fromJSONString(msg);
+            assert sensorData.getType() == SensorDataType.MSG;
             long msgIndex = atomicLong.getAndIncrement();
-            Message originalMsg = MessageHandler.buildMessage(msgIndex, channel, dataObj);
+            Message originalMsg = MessageHandler.buildMessage(msgIndex, channel, sensorData);
 
             addOriginalMessage(originalMsg);
             addIndex2Channel(channel, originalMsg.getIndex());
