@@ -39,25 +39,41 @@ public class testdaikon {
     }
 
     public static void main(String[] args) throws IOException {
+        //删除output/input.decls和output/input.dtrace文件和output/output.inv.gz文件
+        File file = new File("output/input.decls");
+        if (file.exists()) {
+            file.delete();
+        }
+        file = new File("output/input.dtrace");
+        if (file.exists()) {
+            file.delete();
+        }
+        file = new File("output/output.inv.gz");
+        if (file.exists()) {
+            file.delete();
+        }
+
+
         testdaikon test = new testdaikon();
         test.printVarNames(List.of("x", "y", "z", "a"));
 
-        for (int i = 0; i < 10; i++) {
-            int x = i;
-            int y = i * 2;
-            int z = (int) Math.pow(2 , i);
+        for (int i = 1; i <= 1000; i++) {
+            int x = 100;
+            int y = i % 38;
+            int z = x * y;
             int a =  x + y + z;
             test.printValues(List.of(String.valueOf(x), String.valueOf(y), String.valueOf(z), String.valueOf(a)));
         }
 
 //        EltUpperBoundFloat.dkconfig_minimal_interesting = Long.MAX_VALUE;
-        daikon.config.Configuration.getInstance().apply("daikon.inv.unary.sequence.EltUpperBoundFloat" +
-                ".maximal_interesting", String.valueOf(Long.MAX_VALUE));
-        daikon.config.Configuration.getInstance().apply("daikon.inv.unary.sequence.EltUpperBoundFloat" +
-                ".minimal_interesting", String.valueOf(Long.MIN_VALUE));
+//        daikon.config.Configuration.getInstance().apply("daikon.inv.unary.sequence.EltUpperBoundFloat" +
+//                ".maximal_interesting", String.valueOf(Long.MAX_VALUE));
+//        daikon.config.Configuration.getInstance().apply("daikon.inv.unary.sequence.EltUpperBoundFloat" +
+//                ".minimal_interesting", String.valueOf(Long.MIN_VALUE));
 
         String outputFile = "output/output.inv.gz";
         String[] daikonArgs = new String[] {
+                "--nohierarchy",
                 "output/input.dtrace",
                 "output/input.decls",
                 "-o",
@@ -65,6 +81,16 @@ public class testdaikon {
         };
 //        Daikon.dkconfig_calc_possible_invs = true;
         daikon.Daikon.main(daikonArgs);
+        //遍历输出生成的不变式
+        PptMap all_ppts = Daikon.all_ppts;
+        for (daikon.PptTopLevel ppt : all_ppts.pptIterable()) {
+            System.out.println(ppt.name() + " (" + ppt.num_samples() + " samples)");
+            for (daikon.inv.Invariant inv : ppt.getInvariants()) {
+                    System.out.println(inv.format() + " " + inv.getClass().getName() + " (" + inv.ppt.num_samples() + " " +
+                            "samples)" +
+                            " " + inv.getConfidence());
+            }
+        }
         System.out.println("Daikon analysis completed successfully!");
 
 //        daikon.PrintInvariants.main(new String[] {outputFile});

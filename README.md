@@ -438,17 +438,41 @@ Subscriber3: channel, hello
 
 ### 明文协议
 
-| cmd          | args                         | ret                                           | description                                                                                       |
-|--------------|------------------------------|-----------------------------------------------|---------------------------------------------------------------------------------------------------|
-| sensor_on    | sensor_name                  | true / false                                  | 启动sensor<br/>true :打开成功<br/>false :打开失败                                                           |
-| sensor_off   | sensor_name                  | true / false                                  | 关闭sensor<br/>true :关闭成功<br/>false :关闭失败                                                           |
-| sensor_alive | sensor_name                  | true / false                                  | 判断sensor状态<br/>true :sensor处于打开状态<br/>false :sensor处于关闭状态                                         |
-| sensor_get   | sensor_name app_grp_id1 ...  | {"default":"value"} / {"field1":"value1",...} | 获取sensor值<br/>{"default":"value"} :单值结构<br/>{"field1":"value1",...} :复合结构<br/>注:app_grp_id参数至少有一个 |
-| actor_on     | actor_name                   | true / false                                  | 启动actor<br/>true :启动成功<br/>false :启动失败                                                            |
-| actor_off    | actor_name                   | true / false                                  | 关闭actor<br/>true :关闭成功<br/>false :关闭失败                                                            |
-| actor_alive  | actor_name                   | true / false                                  | 判断actor状态<br/>true :actor处于打开状态<br/>false :actor处于关闭状态                                            |
-| actor_set    | actor_name app_grp_id action | true / false                                  | 设置actor值<br/>true :设置actor值成功<br/>false :设置actor值失败                                               |
-| channel_msg  | {"channel":"message"}        | true / false                                  | 发送频道消息<br/>true :发送频道消息成功<br/>false :发送频道消息错误                                                     |
+| cmd           | args                              | ret                                           | description                                                                                       |
+|---------------|-----------------------------------|-----------------------------------------------|---------------------------------------------------------------------------------------------------|
+| sensor_create | sensor_name device_ip device_port | sensor_config                                 | 向平台动态增加sensor<br/>注:此消息只由外部程序发给平台                                                                 |
+| sensor_on     | sensor_name                       | true / false                                  | 启动sensor<br/>true :打开成功<br/>false :打开失败                                                           |
+| sensor_off    | sensor_name                       | true / false                                  | 关闭sensor<br/>true :关闭成功<br/>false :关闭失败                                                           |
+| sensor_alive  | sensor_name                       | true / false                                  | 判断sensor状态<br/>true :sensor处于打开状态<br/>false :sensor处于关闭状态                                         |
+| sensor_get    | sensor_name app_grp_id1 ...       | {"default":"value"} / {"field1":"value1",...} | 获取sensor值<br/>{"default":"value"} :单值结构<br/>{"field1":"value1",...} :复合结构<br/>注:app_grp_id参数至少有一个 |
+| actor_create  | actor_name device_ip device_port  | actor_config                                  | 向平台动态增加actor<br/>注:此消息只由外部程序发给平台                                                                  |
+| actor_on      | actor_name                        | true / false                                  | 启动actor<br/>true :启动成功<br/>false :启动失败                                                            |
+| actor_off     | actor_name                        | true / false                                  | 关闭actor<br/>true :关闭成功<br/>false :关闭失败                                                            |
+| actor_alive   | actor_name                        | true / false                                  | 判断actor状态<br/>true :actor处于打开状态<br/>false :actor处于关闭状态                                            |
+| actor_set     | actor_name app_grp_id action      | true / false                                  | 设置actor值<br/>true :设置actor值成功<br/>false :设置actor值失败                                               |
+| channel_msg   | {"channel":"message"}             | true / false                                  | 发送频道消息<br/>true :发送频道消息成功<br/>false :发送频道消息错误                                                     |
+
+### sensor_config
+
+```json
+{
+  "name": "XXXX",
+  "type": "Sensor",
+  "fields": {//only for sensors，单域传感器可不设置
+    "filedName1": "speed",
+    "filedName2": "longitude"
+  }
+}
+```
+
+### actor_config
+
+```json
+{
+  "name": "XXXX",
+  "type": "Actor"
+}
+```
 
 ## app
 
