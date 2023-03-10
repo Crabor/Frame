@@ -11,7 +11,7 @@ public class PrimaryKeyMatcher extends AbstractMatcher{
     private final List<String> optionalValueList;
 
     public PrimaryKeyMatcher(String field) {
-        this.matcherType = MatcherType.primaryKey;
+        this.matcherType = MatcherType.PRIMARY_KEY;
         this.mfuncInstance = null;
         this.field = field;
         this.optionalValueList = new ArrayList<>();

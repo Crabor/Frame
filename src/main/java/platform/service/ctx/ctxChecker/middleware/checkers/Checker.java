@@ -78,11 +78,11 @@ public abstract class Checker {
         return rule2LinksForAllChecks;
     }
 
-    public Map<String, Set<Link>> getRule2LinksForBatchChecks() {
+    public Map<String, Set<Link>> getLinksForBatchChecks() {
         return rule2LinksForBatchChecks;
     }
 
-    public Map<String, Set<Link>> getRule2LinksForSingleCheck() {
+    public Map<String, Set<Link>> getLinksForSingleCheck() {
         return rule2LinksForSingleCheck;
     }
 }

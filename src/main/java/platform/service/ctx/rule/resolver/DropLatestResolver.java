@@ -1,13 +1,11 @@
 package platform.service.ctx.rule.resolver;
 
-import platform.service.ctx.ctxChecker.context.Context;
-
 import java.util.*;
 
 public class DropLatestResolver extends AbstractResolver{
 
     public DropLatestResolver() {
-        this.resolverStrategy = ResolverStrategy.drop_latest;
+        this.resolverStrategy = ResolverStrategy.DROP_LATEST;
     }
 
     @Override

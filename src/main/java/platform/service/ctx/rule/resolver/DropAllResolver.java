@@ -1,13 +1,11 @@
 package platform.service.ctx.rule.resolver;
 
-import platform.service.ctx.ctxChecker.context.Context;
-
 import java.util.*;
 
 public class DropAllResolver extends AbstractResolver{
 
     public DropAllResolver() {
-        this.resolverStrategy = ResolverStrategy.drop_all;
+        this.resolverStrategy = ResolverStrategy.DROP_ALL;
     }
 
     @Override

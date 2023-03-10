@@ -1,0 +1,171 @@
+{
+  "CtxServerConfiguration": {
+    "serverOn": true,
+    "CtxValidator": "ECC+IMD",
+    "baseRuleFile": "Resources/platform/platformRules.xml",
+    "baseBfuncFile": "Resources/platform/platformBfunction.class",
+    "basePatternFile": "Resources/platform/platformPatterns.xml",
+    "baseMfuncFile": "",
+  },
+  "InvServerConfiguration": {
+      "serverOn": false,
+      "groupThro": 10,
+      "kMeansGroupSize": 1,
+      "dosThro": 0.5,
+      "groupTraceType": "csv",
+      "invGenMode": "total",
+      "invGenType": "numeric",
+  },
+  "ResourceConfiguration": {
+    "deviceDriver": {
+      "subscribe": [
+        {
+          "channel": "actor",
+        },
+        {
+          "channel": "check",
+        }
+      ],
+    },
+    "databaseDriver": {
+      "subscribe": [
+        {
+          "channel": "sensor",
+        },
+        {
+          "channel": "actor",
+        },
+        {
+          "channel": "check",
+        },
+        {
+          "channel": "ctxStat",
+        },
+      ],
+    },
+    "SensorConfiguration": [
+      {
+        "sensorName": "0",
+        "sensorType": "String",
+      },
+      {
+        "sensorName": "1",
+        "sensorType": "String",
+      },
+      {
+        "sensorName": "2",
+        "sensorType": "String",
+      },
+      {
+        "sensorName": "3",
+        "sensorType": "String",
+      },
+      {
+        "sensorName": "4",
+        "sensorType": "String",
+      },
+      {
+        "sensorName": "5",
+        "sensorType": "String",
+      },
+      {
+        "sensorName": "6",
+        "sensorType": "String",
+      },
+      {
+        "sensorName": "7",
+        "sensorType": "String",
+      },
+      {
+        "sensorName": "8",
+        "sensorType": "String",
+      },
+      {
+        "sensorName": "9",
+        "sensorType": "String",
+      },
+      {
+        "sensorName": "context",
+        "sensorType": "String",
+      },
+      {
+        "sensorName": "front",
+        "sensorType": "Double",
+      },
+      {
+        "sensorName": "right",
+        "sensorType": "Double",
+      },
+    ],
+    "ActorConfiguration": [
+      {
+        "actorName": "Blue_Car",
+        "actorType": "int",
+      },
+      {
+        "actorName": "Orange_Car",
+        "actorType": "int",
+      },
+      {
+        "actorName": "White_Car",
+        "actorType": "int",
+      },
+      {
+        "actorName": "Silver_SUV",
+        "actorType": "int",
+      },
+      {
+        "actorName": "Pink_Car",
+        "actorType": "int",
+      },
+      {
+        "actorName": "Yellow_Car",
+        "actorType": "int",
+      },
+      {
+        "actorName": "Green_Car",
+        "actorType": "int",
+      },
+      {
+        "actorName": "Red_Car",
+        "actorType": "int",
+      },
+      {
+        "actorName": "xSpeed",
+        "actorType": "Double",
+      },
+      {
+        "actorName": "ySpeed",
+        "actorType": "Double",
+      },
+      {
+        "actorName": "zSpeed",
+        "actorType": "Double",
+      },
+    ],
+  },
+  "RedisConfig": {
+    "serverAddress": "127.0.0.1",
+    "serverPort": "6379",
+  },
+  "UDPConfig": {
+    "serverPort": 8080,
+    "clientPort": [
+      {
+        "port": 8081,
+      },
+      {
+        "port": 8082,
+      },
+      {
+        "port": 8083,
+      },
+      {
+        "port": 8084,
+      },
+    ]
+  },
+  "TCPConfig": {
+    "serverPort": 8888,
+  },
+}

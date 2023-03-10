@@ -36,8 +36,8 @@ public class zlyAppDemo extends AbstractApp{
         }
 
         CtxServiceConfig ctxServiceConfig = new CtxServiceConfig();
-        ctxServiceConfig.setCtxResources("Resources/zlyTest/appOne/rules.xml",
-                "Resources/zlyTest/appOne/patterns.xml",
+        ctxServiceConfig.setCtxResources("Resources/zlyTest/appOne/rules_yellow.xml",
+                "Resources/zlyTest/appOne/patterns_yellow.xml",
                 "Resources/zlyTest/appOne/bfuncs.java",
                 "Resources/zlyTest/appOne/mfuncs.java",
                 null);

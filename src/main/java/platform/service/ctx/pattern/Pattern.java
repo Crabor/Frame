@@ -19,7 +19,6 @@ public class Pattern {
         this.dataSourceSet = new HashSet<>();
     }
 
-
     public void addDataSource(String dataSource) {this.dataSourceSet.add(dataSource);}
 
     public void setPatternId(String patternId) {

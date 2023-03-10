@@ -1,7 +1,7 @@
 package platform.service.ctx.ctxServer;
 
 
-import platform.service.ctx.message.MessageHandler;
+import platform.service.ctx.ctxChecker.context.ChangeBatch;
 import platform.service.ctx.pattern.Pattern;
 import platform.service.ctx.pattern.types.DataSourceType;
 import platform.service.ctx.pattern.types.FreshnessType;
@@ -10,37 +10,39 @@ import platform.service.ctx.ctxChecker.context.ContextChange;
 
 import java.util.*;
 
-import static platform.service.ctx.ctxServer.BatchType.GENERATE;
-import static platform.service.ctx.ctxServer.BatchType.OVERDUE;
+import static platform.service.ctx.ctxChecker.context.ChangeBatchType.GENERATE;
+import static platform.service.ctx.ctxChecker.context.ChangeBatchType.OVERDUE;
 
 public class ChangeGenerator {
 
-    private final AbstractCtxServer server;
+    private final AbstractCtxServer ctxServer;
     private final PriorityQueue<Map.Entry<Long, Map.Entry<String, Context>>> activateContextsTimeQue;
     private final HashMap<String, LinkedList<Context>> activateContextsNumberMap;
 
-    public ChangeGenerator(AbstractCtxServer server){
-        this.server = server;
+    public ChangeGenerator(AbstractCtxServer ctxServer){
+        this.ctxServer = ctxServer;
         this.activateContextsTimeQue = new PriorityQueue<>(50, (o1, o2) -> (int) (o1.getKey() - o2.getKey()));
         this.activateContextsNumberMap = new HashMap<>();
-        initActivateContextsNumberMap(server.getPatternMap());
+        initActivateContextsNumberMap(ctxServer.getPatternManager().getPatternMap());
     }
 
     private void initActivateContextsNumberMap(HashMap<String, Pattern> patternHashMap){
         for(Pattern pattern : patternHashMap.values()){
-            if(pattern.getFreshnessType() == FreshnessType.number){
+            if(pattern.getFreshnessType() == FreshnessType.NUMBER){
                 activateContextsNumberMap.put(pattern.getPatternId(), new LinkedList<>());
             }
         }
     }
 
-    public List<Map.Entry<List<ContextChange>, BatchType>> generateChangeBatches(Context context){
-        List<Map.Entry<List<ContextChange>, BatchType>> retList = new ArrayList<>();
+    public List<ChangeBatch> generateChangeBatches(Context context){
+        List<ChangeBatch> changeBatchList = new ArrayList<>();
         //根据当前时间清理过时的contexts，生成相应的changes
         List<ContextChange> overdueList = new ArrayList<>();
         cleanOverdueContexts(overdueList);
         if(!overdueList.isEmpty()){
-            retList.add(new AbstractMap.SimpleEntry<>(overdueList, OVERDUE));
+            ChangeBatch overdueChangeBatch = new ChangeBatch(OVERDUE);
+            overdueChangeBatch.setChangeList(overdueList);
+            changeBatchList.add(overdueChangeBatch);
         }
 
         assert context != null;
@@ -49,8 +51,8 @@ public class ChangeGenerator {
         List<ContextChange> generateList = new ArrayList<>();
         boolean matched = false;
         String fromSensorName = contextId.substring(0, contextId.lastIndexOf("_"));
-        for(Pattern pattern : server.getPatternMap().values()){
-            assert pattern.getDataSourceType() != DataSourceType.pattern; // TODO()
+        for(Pattern pattern : ctxServer.getPatternManager().getPatternMap().values()){
+            assert pattern.getDataSourceType() != DataSourceType.PATTERN; // TODO()
             if(pattern.getDataSourceSet().contains(fromSensorName)){
                 if(pattern.getMatcher() == null || match(pattern, context)){
                     matched = true;
@@ -59,13 +61,15 @@ public class ChangeGenerator {
             }
         }
         if(!matched){
-            server.getCtxFixer().buildValidatedMessage(Long.parseLong(contextId.split("_")[1]), MessageHandler.cloneContext(context));
+            ctxServer.getItemManager().addValidatedItem(Long.parseLong(contextId.split("_")[1]), context);
         }
         else{
-            retList.add(new AbstractMap.SimpleEntry<>(generateList, GENERATE));
+            ChangeBatch generateChangeBatch = new ChangeBatch(GENERATE);
+            generateChangeBatch.setChangeList(generateList);
+            changeBatchList.add(generateChangeBatch);
         }
 
-        return retList;
+        return changeBatchList;
     }
 
     private void cleanOverdueContexts(List<ContextChange> changeList){
@@ -97,7 +101,7 @@ public class ChangeGenerator {
     private List<ContextChange> generate(Pattern pattern, Context context){
         List<ContextChange> changeList = new ArrayList<>();
         //判断是否是number，如果是，判断是否满容量，如果是，先生成delChange，如果有delChange，则要考虑 inducing from-pattern changes.
-        if(pattern.getFreshnessType() == FreshnessType.number){
+        if(pattern.getFreshnessType() == FreshnessType.NUMBER){
             LinkedList<Context> linkedList = activateContextsNumberMap.get(pattern.getPatternId());
             if(linkedList.size() == Integer.parseInt(pattern.getFreshnessValue())){
                 Context oldContext = linkedList.pollFirst();
@@ -118,11 +122,11 @@ public class ChangeGenerator {
         changeList.add(addChange);
 
         //更新activateContexts容器
-        if(pattern.getFreshnessType() == FreshnessType.number){
+        if(pattern.getFreshnessType() == FreshnessType.NUMBER){
             LinkedList<Context> linkedList = activateContextsNumberMap.get(pattern.getPatternId());
             linkedList.offerLast(context);
         }
-        else if(pattern.getFreshnessType() == FreshnessType.time){
+        else if(pattern.getFreshnessType() == FreshnessType.TIME){
             long overdueTime = new Date().getTime() + Long.parseLong(pattern.getFreshnessValue());
             activateContextsTimeQue.add(new AbstractMap.SimpleEntry<>(overdueTime, new AbstractMap.SimpleEntry<>(pattern.getPatternId(), context)));
         }
@@ -188,7 +192,7 @@ public class ChangeGenerator {
     public void reset(){
         activateContextsTimeQue.clear();
         activateContextsNumberMap.clear();
-        initActivateContextsNumberMap(server.getPatternMap());
+        initActivateContextsNumberMap(ctxServer.patternManager.getPatternMap());
     }
 
 }

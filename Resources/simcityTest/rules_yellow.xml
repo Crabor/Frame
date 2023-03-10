@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+
+<rules>
+    <rule>
+        <id>rule_still</id>
+        <formula>
+            <forall var = "v1" in = "latest">
+                <bfunction name="notStill">
+                    <param pos="1" var="v1"/>
+                </bfunction>
+            </forall>
+        </formula>
+        <resovler>
+            <strategy>drop-latest</strategy>
+            <group>0</group>
+            <priority>0</priority>
+        </resovler>
+    </rule>
+
+    <rule>
+        <id>rule_order_yellow</id>
+        <formula>
+            <forall var = "v1" in = "yellowcar1">
+                <not>
+                    <and>
+                        <exists var="v2" in="yellowcar2">
+                            <bfunction name="earlier_than">
+                                <param pos="1" var="v1"/>
+                                <param pos="2" var="v2"/>
+                            </bfunction>
+                        </exists>
+                        <not>
+                            <exists var="v3" in="yellowcar3">
+                                <bfunction name="prev_location">
+                                    <param pos="1" var="v1"/>
+                                    <param pos="2" var="v3"/>
+                                </bfunction>
+                            </exists>
+                        </not>
+                    </and>
+                </not>
+            </forall>
+        </formula>
+        <resovler>
+            <strategy>drop-latest</strategy>
+            <group>1</group>
+            <priority>1</priority>
+        </resovler>
+    </rule>
+
+    <rule>
+        <id>rule_double_yellow</id>
+        <formula>
+            <forall var = "v1" in = "yellowcar4">
+                <not>
+                    <exists var="v2" in="yellowcar5">
+                        <and>
+                            <not>
+                                <bfunction name = "sameLoc">
+                                    <param pos="1" var="v1"/>
+                                    <param pos="2" var="v2"/>
+                                </bfunction>
+                            </not>
+                            <bfunction name = "sameTime">
+                                <param pos="1" var="v1"/>
+                                <param pos="2" var="v2"/>
+                            </bfunction>
+                        </and>
+                    </exists>
+                </not>
+            </forall>
+        </formula>
+        <resovler>
+            <strategy>drop-latest</strategy>
+            <group>1</group>
+            <priority>2</priority>
+        </resovler>
+    </rule>
+</rules>

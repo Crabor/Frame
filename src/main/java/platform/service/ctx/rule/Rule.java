@@ -6,10 +6,22 @@ import platform.service.ctx.ctxChecker.constraint.formulas.Formula;
 import platform.service.ctx.ctxChecker.context.Context;
 import platform.service.ctx.ctxChecker.context.ContextChange;
 import platform.service.ctx.ctxChecker.middleware.checkers.Checker;
+import platform.service.ctx.rule.resolver.AbstractResolver;
 
 import java.util.*;
 
 public class Rule {
+
+    private AbstractResolver abstractResolver;
+
+    public AbstractResolver getAbstractResolver() {
+        return abstractResolver;
+    }
+
+    public void setAbstractResolver(AbstractResolver abstractResolver) {
+        this.abstractResolver = abstractResolver;
+    }
+
     private String rule_id;
     //syntax construction
     private Formula formula;
