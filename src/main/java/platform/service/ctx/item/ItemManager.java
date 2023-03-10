@@ -1,15 +1,19 @@
 package platform.service.ctx.item;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import common.struct.SensorData;
+import platform.service.ctx.ctxChecker.constraint.runtime.Link;
 import platform.service.ctx.ctxChecker.context.Context;
 import platform.service.ctx.ctxServer.AbstractCtxServer;
 
-import java.util.AbstractMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicLong;
+
+import static common.struct.enumeration.SensorDataType.*;
 
 public class ItemManager {
 
@@ -81,18 +85,66 @@ public class ItemManager {
         validatedItemMap.remove(itemIndex);
     }
 
-    public Map.Entry<String, JSONObject> buildValidatedItemJsonObj(final Item validatedMsg){
-        Context context = validatedMsg.getContext();
-        if(context == null){
-            return null;
+    public void updateItemsViolations(Map<String, Set<Link>> ruleId2LinkSet){
+        for(String ruleId : ruleId2LinkSet.keySet()){
+            for(Link link : ruleId2LinkSet.get(ruleId)){
+                for(Map.Entry<String, Context> entry : link.getVaSet()){
+                    long itemIndex = Long.parseLong(entry.getValue().getContextId().split("_")[1]);
+                    Item item = getItem(itemIndex);
+                    item.addViolatedRule(ruleId);
+                }
+            }
+        }
+    }
+
+    public void updateItemState(long itemIndex, ItemState itemState){
+        Item item = getItem(itemIndex);
+        item.setItemState(itemState);
+    }
+
+
+    public List<JSONObject> buildValidatedMessageList(final Item validatedItem, final Item originalItem){
+        List<JSONObject> validatedMessageList = new ArrayList<>();
+        if(originalItem.getItemState() == ItemState.INIT){
+            //生成MSG
+            Context context = validatedItem.getContext();
+            JSONObject jsonObject = new JSONObject();
+            for(String field : context.getContextFields().keySet()){
+                jsonObject.put(field, context.getContextFields().get(field));
+            }
+            validatedMessageList.add(jsonObject);
+        }
+        else if(originalItem.getItemState() == ItemState.DROPPED){
+            //生成INC_RESULT
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("sensor_data_type", INC_RESULT);
+            JSONObject incResultJO = new JSONObject();
+            JSONArray violatedRulesJA = JSON.parseArray(JSON.toJSONString(List.of(originalItem.getViolatedRules())));
+            incResultJO.put("violated_rules", violatedRulesJA);
+            incResultJO.put("resolve_strategy", "dropped");
+            jsonObject.put("default", incResultJO);
+            validatedMessageList.add(jsonObject);
         }
         else{
-            JSONObject dataObj = new JSONObject();
+            Context context = validatedItem.getContext();
+            //生成INC_RESULT
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("sensor_data_type", INC_RESULT);
+            JSONObject incResultJO = new JSONObject();
+            JSONArray violatedRulesJA = JSON.parseArray(JSON.toJSONString(List.of(originalItem.getViolatedRules())));
+            incResultJO.put("violated_rules", violatedRulesJA);
+            incResultJO.put("resolve_strategy", "fixed");
+            jsonObject.put("default", incResultJO);
+            validatedMessageList.add(jsonObject);
+            //生成MSG
+            JSONObject jsonObject1 = new JSONObject();
             for(String field : context.getContextFields().keySet()){
-                dataObj.put(field, context.getContextFields().get(field));
+                jsonObject1.put(field, context.getContextFields().get(field));
             }
-            return new AbstractMap.SimpleEntry<>(context.getContextId().split("_")[0], dataObj);
+            validatedMessageList.add(jsonObject1);
         }
+
+        return validatedMessageList;
     }
 
     public AbstractCtxServer getCtxServer() {

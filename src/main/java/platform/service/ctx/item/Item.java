@@ -11,11 +11,12 @@ public class Item {
 
     private final Set<String> violatedRules;
 
-    private String state;
+    private ItemState itemState;
 
     public Item(long index) {
         this.index = index;
         this.violatedRules = new HashSet<>();
+        this.itemState = ItemState.INIT;
     }
 
     public void addContext(Context context){ this.context = context;}
@@ -24,8 +25,8 @@ public class Item {
         this.violatedRules.add(ruleId);
     }
 
-    public void setState(String state){
-        this.state = state;
+    public void setItemState(ItemState itemState) {
+        this.itemState = itemState;
     }
 
     public long getIndex() {
@@ -40,8 +41,8 @@ public class Item {
         return violatedRules;
     }
 
-    public String getState() {
-        return state;
+    public ItemState getItemState() {
+        return itemState;
     }
 
     @Override

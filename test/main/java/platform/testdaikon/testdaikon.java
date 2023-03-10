@@ -15,7 +15,7 @@ public class testdaikon {
 
     protected void printVarNames(List<String> varNames) throws IOException {
         this.varNames = varNames;
-        String fileName = "output/input.decls";
+        String fileName = "CtxServerOutput.txt/input.decls";
         File file = new File(fileName);
         if (!file.exists()) {
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true)));
@@ -28,7 +28,7 @@ public class testdaikon {
     }
 
     protected void printValues(List<String> values) throws IOException{
-        String fileName = "output/input.dtrace";
+        String fileName = "CtxServerOutput.txt/input.dtrace";
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, true)));
         out.write("aprogram.point:::POINT\n");
         for (int i = 0; i < varNames.size(); i++) {
@@ -56,10 +56,10 @@ public class testdaikon {
         daikon.config.Configuration.getInstance().apply("daikon.inv.unary.sequence.EltUpperBoundFloat" +
                 ".minimal_interesting", String.valueOf(Long.MIN_VALUE));
 
-        String outputFile = "output/output.inv.gz";
+        String outputFile = "CtxServerOutput.txt/CtxServerOutput.txt.inv.gz";
         String[] daikonArgs = new String[] {
-                "output/input.dtrace",
-                "output/input.decls",
+                "CtxServerOutput.txt/input.dtrace",
+                "CtxServerOutput.txt/input.decls",
                 "-o",
                 outputFile
         };

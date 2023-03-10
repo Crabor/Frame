@@ -55,8 +55,8 @@ public class Platform {
     }
 
     public static void Init() {
-        //delete output dir
-        File dir = new File("output/");
+        //delete CtxServerOutput.txt dir
+        File dir = new File("CtxServerOutput.txt/");
         Util.deleteDir(dir);
         dir.mkdirs();
 

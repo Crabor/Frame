@@ -8,12 +8,14 @@ import platform.config.AppConfig;
 import platform.service.ctx.ctxChecker.CheckerStarter;
 import platform.service.ctx.item.Item;
 import platform.service.ctx.item.ItemManager;
+import platform.service.ctx.item.ItemState;
 import platform.service.ctx.pattern.PatternManager;
 import platform.service.ctx.rule.RuleManager;
 import platform.service.ctx.rule.resolver.ResolverType;
 import platform.service.ctx.statistics.ServerStatistics;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -125,16 +127,12 @@ public class AppCtxServer extends AbstractCtxServer{
                 if(!itemManager.getValidatedItemMap().containsKey(sendIndex)){
                     continue;
                 }
-                Item validatedItem = itemManager.getValidatedItemMap().get(sendIndex);
-                //发送消息
-                Map.Entry<String, JSONObject> validatedItemObj = itemManager.buildValidatedItemJsonObj(validatedItem);
-                if(validatedItemObj == null){
-                    //被drop了
-                    //TODO()
-                }
-                else{
-                    logger.debug(appConfig.getAppName() + "-CtxServer pub " + validatedItemObj.getValue().toJSONString()  +" from " + validatedItemObj.getKey() + " to " + appConfig.getAppName());
-                    Publisher.publish(validatedItemObj.getKey(), appConfig.getGrpId(), 0, validatedItemObj.getValue().toJSONString());
+                Item originalItem = itemManager.getItem(sendIndex);
+                Item validatedItem = itemManager.getValidatedItem(sendIndex);
+                List<JSONObject> pubMessageList = itemManager.buildValidatedMessageList(validatedItem, originalItem);
+                for(JSONObject pubMessage : pubMessageList){
+                    logger.debug(appConfig.getAppName() + "-CtxServer pub " + pubMessage.toJSONString()  +" from " + channel + " to " + appConfig.getAppName());
+                    Publisher.publish(channel, appConfig.getGrpId(), 0, pubMessage.toJSONString());
                     serverStatistics.increaseSentMsgNum();
                 }
                 itemManager.removeValidatedItem(sendIndex);

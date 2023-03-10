@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class InvAbstract{
-    protected final String invDir = "output/inv/";
+    protected final String invDir = "CtxServerOutput.txt/inv/";
     protected String invFileName;
     String appName;
     int lineNumber;

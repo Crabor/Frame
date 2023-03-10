@@ -139,6 +139,7 @@ public class CheckerStarter {
                 if(changeBatchType == ChangeBatchType.GENERATE){
 
                     //根据报告的incs进行resolve
+                    ctxServer.getItemManager().updateItemsViolations(checker.getLinksForSingleCheck());
                     List<ContextChange> resolveChangeList = ctxServer.getCtxFixer().resolveViolationsInTime(checker.getLinksForSingleCheck());
                     Set<String> droppedContextIdSet = new HashSet<>();
                     for(ContextChange change : resolveChangeList){

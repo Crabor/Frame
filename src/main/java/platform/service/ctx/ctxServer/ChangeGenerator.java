@@ -2,6 +2,7 @@ package platform.service.ctx.ctxServer;
 
 
 import platform.service.ctx.ctxChecker.context.ChangeBatch;
+import platform.service.ctx.item.ItemState;
 import platform.service.ctx.pattern.Pattern;
 import platform.service.ctx.pattern.types.DataSourceType;
 import platform.service.ctx.pattern.types.FreshnessType;
@@ -145,6 +146,9 @@ public class ChangeGenerator {
             2. ctx != null: 表示修改这一上下文，先生成原来的delete change,再生成add change
              */
             if(ctx == null){
+                // update item state
+                ctxServer.getItemManager().updateItemState(Long.parseLong(ctxId.split("_")[1]), ItemState.DROPPED);
+
                 // time freshness
                 Iterator<Map.Entry<Long, Map.Entry<String, Context>>> queIter = activateContextsTimeQue.iterator();
                 while(queIter.hasNext()){
@@ -181,6 +185,8 @@ public class ChangeGenerator {
             }
             else{
                 //TODO
+                // update item state
+                ctxServer.getItemManager().updateItemState(Long.parseLong(ctxId.split("_")[1]), ItemState.FIXED);
                 assert false;
             }
         }
