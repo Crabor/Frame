@@ -478,6 +478,33 @@ Subscriber3: channel, hello
 }
 ```
 
+### config_file
+
+```json
+[
+  {
+    "name": "GPS_001",
+    "type": "Sensor",
+    "fields": [
+      {
+        "fieldName": "speed"
+      },
+      {
+        "fieldName": "longitude"
+      }
+    ]
+  },
+  {
+    "name": "left",
+    "type": "Sensor"
+  },
+  {
+    "name": "left_front_wheel",
+    "type": "Actor"
+  }
+]
+```
+
 ### 示例代码
 
 java驱动程序
@@ -492,28 +519,26 @@ public class Driver {
         int platformPort = 8080;
         String deviceIP = "127.0.0.1";
         int devicePort = 8081;
-        String sensorName = "GPS_001";
+        String file = "config.json";
 
-        JSONObject sensorConfig = new JSONObject();
-        sensorConfig.put("name", sensorName);
-        sensorConfig.put("type", "Sensor");
-        JSONArray fields = new JSONArray();
-        JSONObject field1 = new JSONObject();
-        field1.put("fieldName", "speed");
-        fields.add(field1);
-        JSONObject field2 = new JSONObject();
-        field2.put("fieldName", "longitude");
-        fields.add(field2);
-        sensorConfig.put("fields", fields);
-        
-        JSONObject sensorCreateCmd = new JSONObject();
-        sensorCreateCmd.put("cmd", "sensor_create");
-        sensorCreateCmd.put("args", sensorName + " " + deviceIP + " " + devicePort);
-        sensorCreateCmd.put("ret", sensorConfig.toJSONString());
-        
-        //create sensor
-        UdpClient udpClient = new UdpClient();
-        udpClient.send(sensorCreateCmd.toJSONString(), platformIP, platformPort);
+        //read config file
+        String str = FileUtils.readFileToString(file,"UTF-8");
+        JSONArray config = JSONArray.parseArray(str);
+        for (int i = 0; i < config.size(); i++) {
+            JSONObject item = config.getJSONObject(i);
+            String name = item.getString("name");
+            String type = item.getString("type");
+            String cmd = type.equalsIgnoreCase("Sensor") ? "sensor_create" : "actor_create";
+
+            JSONObject createCmd = new JSONObject();
+            createCmd.put("cmd", cmd);
+            createCmd.put("args", name + " " + deviceIP + " " + devicePort);
+            createCmd.put("ret", item.toJSONString());
+            
+            //create sensor / actor
+            UdpClient udpClient = new UdpClient();
+            udpClient.send(createCmd.toJSONString(), platformIP, platformPort);
+        }
         
         while (true) {
             //udp recv
@@ -535,6 +560,18 @@ public class Driver {
                 case "sensor_get":
                     ret = "{\"speed\":10,\"longitude\":20}";
                     break;
+                case "actor_on":
+                    ret = "true";
+                    break;
+                case "actor_off":
+                    ret = "true";
+                    break;
+                case "actor_alive":
+                    ret = "true";
+                    break;
+                case "actor_set":
+                    ret = "true";
+                    break;
                 default:
                     break;
             }
@@ -555,30 +592,22 @@ platform_ip = "127.0.0.1"
 platform_port = 8080
 device_ip = "127.0.0.1"
 device_port = 8081
-sensor_name = "GPS_001"
+file = "config.json"
 
-sensor_config = {
-    "name": sensor_name,
-    "type": "Sensor",
-    "fields": [
-        {
-            "fieldName": "speed"
-        },
-        {
-            "fieldName": "longitude"
-        }
-    ]
-}
-
-sensor_create_cmd = {
-    "cmd": "sensor_create",
-    "args": sensor_name + " " + device_ip + " " + str(device_port),
-    "ret": sensor_config
-}
-
-# create sensor
-udp_client = UdpClient()
-udp_client.send(json.dumps(sensor_create_cmd), platform_ip, platform_port)
+# read config file
+with open(file, "r") as f:
+    config = json.load(f)
+for item in config:
+    name = item["name"]
+    type = item["type"]
+    cmd = "sensor_create" if type == "Sensor" else "actor_create"
+    create_cmd = {
+        "cmd": cmd,
+        "args": name + " " + device_ip + " " + str(device_port),
+        "ret": item
+    }
+    # create sensor / actor
+    udp_client.send(json.dumps(create_cmd), platform_ip, platform_port)
 
 while True:
     # udp recv
@@ -595,6 +624,14 @@ while True:
         ret = true
     elif cmd == "sensor_get":
         ret = {"speed": 10, "longitude": 20}
+    elif cmd == "actor_on":
+        ret = true
+    elif cmd == "actor_off":
+        ret = true
+    elif cmd == "actor_alive":
+        ret = true
+    elif cmd == "actor_set":
+        ret = true
     ret_json = {
         "cmd": cmd,
         "args": args,
@@ -628,28 +665,26 @@ namespace Driver
             int platformPort = 8080;
             string deviceIP = "127.0.0.1";
             int devicePort = 8081;
-            string sensorName = "GPS_001";
+            string file = "config.json";
             
-            JObject sensorConfig = new JObject();
-            sensorConfig.Add("name", sensorName);
-            sensorConfig.Add("type", "Sensor");
-            JArray fields = new JArray();
-            JObject field1 = new JObject();
-            field1.Add("fieldName", "speed");
-            fields.Add(field1);
-            JObject field2 = new JObject();
-            field2.Add("fieldName", "longitude");
-            fields.Add(field2);
-            sensorConfig.Add("fields", fields);
+            //read config file
+            string str = System.IO.File.ReadAllText(file);
+            JArray config = JArray.Parse(str);
+            for (int i = 0; i < config.Count; i++)
+            {
+                JObject item = (JObject)config[i];
+                string name = item["name"].ToString();
+                string type = item["type"].ToString();
+                string cmd = type == "Sensor" ? "sensor_create" : "actor_create";
+                JObject createCmd = new JObject();
+                createCmd.Add("cmd", cmd);
+                createCmd.Add("args", name + " " + deviceIP + " " + devicePort);
+                createCmd.Add("ret", item);
                 
-            JObject sensorCreateCmd = new JObject();
-            sensorCreateCmd.Add("cmd", "sensor_create");
-            sensorCreateCmd.Add("args", sensorName + " " + deviceIP + " " + devicePort);
-            sensorCreateCmd.Add("ret", sensorConfig.ToString());
-            
-            //create sensor
-            UdpClient udpClient = new UdpClient();
-            udpClient.Send(sensorCreateCmd.ToString(), platformIP, platformPort);
+                //create sensor / actor
+                UdpClient udpClient = new UdpClient();
+                udpClient.Send(createCmd.ToString(), platformIP, platformPort);
+            }
             
             while (true)
             {
@@ -672,6 +707,18 @@ namespace Driver
                         break;
                     case "sensor_get":
                         ret = "{\"speed\":10,\"longitude\":20}";
+                        break;
+                    case "actor_on":
+                        ret = "true";
+                        break;
+                    case "actor_off":
+                        ret = "true";
+                        break;
+                    case "actor_alive":
+                        ret = "true";
+                        break;
+                    case "actor_set":
+                        ret = "true";
                         break;
                     default:
                         break;
