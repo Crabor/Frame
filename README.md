@@ -456,12 +456,16 @@ Subscriber3: channel, hello
 
 ```json
 {
-  "name": "XXXX",
+  "name": "GPS_001",
   "type": "Sensor",
-  "fields": {//only for sensors，单域传感器可不设置
-    "filedName1": "speed",
-    "filedName2": "longitude"
-  }
+  "fields": [//only for sensors，单域传感器可不设置
+    {
+      "fieldName": "speed"
+    },
+    {
+      "fieldName": "longitude"
+    }
+  ]
 }
 ```
 
@@ -471,6 +475,215 @@ Subscriber3: channel, hello
 {
   "name": "XXXX",
   "type": "Actor"
+}
+```
+
+### 示例代码
+
+java驱动程序
+
+```java
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+public class Driver {
+    public static void main(String[] args) {
+        String platformIP = "127.0.0.1";
+        int platformPort = 8080;
+        String deviceIP = "127.0.0.1";
+        int devicePort = 8081;
+        String sensorName = "GPS_001";
+
+        JSONObject sensorConfig = new JSONObject();
+        sensorConfig.put("name", sensorName);
+        sensorConfig.put("type", "Sensor");
+        JSONArray fields = new JSONArray();
+        JSONObject field1 = new JSONObject();
+        field1.put("fieldName", "speed");
+        fields.add(field1);
+        JSONObject field2 = new JSONObject();
+        field2.put("fieldName", "longitude");
+        fields.add(field2);
+        sensorConfig.put("fields", fields);
+        
+        JSONObject sensorCreateCmd = new JSONObject();
+        sensorCreateCmd.put("cmd", "sensor_create");
+        sensorCreateCmd.put("args", sensorName + " " + deviceIP + " " + devicePort);
+        sensorCreateCmd.put("ret", sensorConfig.toJSONString());
+        
+        //create sensor
+        UdpClient udpClient = new UdpClient();
+        udpClient.send(sensorCreateCmd.toJSONString(), platformIP, platformPort);
+        
+        while (true) {
+            //udp recv
+            String recv = udpClient.recv();
+            JSONObject recvJson = JSONObject.parseObject(recv);
+            String cmd = recvJson.getString("cmd");
+            String args = recvJson.getString("args");
+            String ret = "";
+            switch (cmd) {
+                case "sensor_on":
+                    ret = "true";
+                    break;
+                case "sensor_off":
+                    ret = "true";
+                    break;
+                case "sensor_alive":
+                    ret = "true";
+                    break;
+                case "sensor_get":
+                    ret = "{\"speed\":10,\"longitude\":20}";
+                    break;
+                default:
+                    break;
+            }
+            JSONObject retJson = new JSONObject();
+            retJson.put("cmd", cmd);
+            retJson.put("args", args);
+            retJson.put("ret", ret);
+            udpClient.send(retJson.toJSONString(), platformIP, platformPort);
+        }
+    }
+}
+```
+
+python驱动程序
+
+```python
+platform_ip = "127.0.0.1"
+platform_port = 8080
+device_ip = "127.0.0.1"
+device_port = 8081
+sensor_name = "GPS_001"
+
+sensor_config = {
+    "name": sensor_name,
+    "type": "Sensor",
+    "fields": [
+        {
+            "fieldName": "speed"
+        },
+        {
+            "fieldName": "longitude"
+        }
+    ]
+}
+
+sensor_create_cmd = {
+    "cmd": "sensor_create",
+    "args": sensor_name + " " + device_ip + " " + str(device_port),
+    "ret": sensor_config
+}
+
+# create sensor
+udp_client = UdpClient()
+udp_client.send(json.dumps(sensor_create_cmd), platform_ip, platform_port)
+
+while True:
+    # udp recv
+    recv = udp_client.recv()
+    recv_json = json.loads(recv)
+    cmd = recv_json["cmd"]
+    args = recv_json["args"]
+    ret = ""
+    if cmd == "sensor_on":
+        ret = true
+    elif cmd == "sensor_off":
+        ret = true
+    elif cmd == "sensor_alive":
+        ret = true
+    elif cmd == "sensor_get":
+        ret = {"speed": 10, "longitude": 20}
+    ret_json = {
+        "cmd": cmd,
+        "args": args,
+        "ret": ret
+    }
+    udp_client.send(json.dumps(ret_json), platform_ip, platform_port)
+```
+
+c#驱动程序
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+
+namespace Driver
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string platformIP = "127.0.0.1";
+            int platformPort = 8080;
+            string deviceIP = "127.0.0.1";
+            int devicePort = 8081;
+            string sensorName = "GPS_001";
+            
+            JObject sensorConfig = new JObject();
+            sensorConfig.Add("name", sensorName);
+            sensorConfig.Add("type", "Sensor");
+            JArray fields = new JArray();
+            JObject field1 = new JObject();
+            field1.Add("fieldName", "speed");
+            fields.Add(field1);
+            JObject field2 = new JObject();
+            field2.Add("fieldName", "longitude");
+            fields.Add(field2);
+            sensorConfig.Add("fields", fields);
+                
+            JObject sensorCreateCmd = new JObject();
+            sensorCreateCmd.Add("cmd", "sensor_create");
+            sensorCreateCmd.Add("args", sensorName + " " + deviceIP + " " + devicePort);
+            sensorCreateCmd.Add("ret", sensorConfig.ToString());
+            
+            //create sensor
+            UdpClient udpClient = new UdpClient();
+            udpClient.Send(sensorCreateCmd.ToString(), platformIP, platformPort);
+            
+            while (true)
+            {
+                //udp recv
+                string recv = udpClient.Recv();
+                JObject recvJson = JObject.Parse(recv);
+                string cmd = recvJson["cmd"].ToString();
+                string args = recvJson["args"].ToString();
+                string ret = "";
+                switch (cmd)
+                {
+                    case "sensor_on":
+                        ret = "true";
+                        break;
+                    case "sensor_off":
+                        ret = "true";
+                        break;
+                    case "sensor_alive":
+                        ret = "true";
+                        break;
+                    case "sensor_get":
+                        ret = "{\"speed\":10,\"longitude\":20}";
+                        break;
+                    default:
+                        break;
+                }
+                JObject retJson = new JObject();
+                retJson.Add("cmd", cmd);
+                retJson.Add("args", args);
+                retJson.Add("ret", ret);
+                udpClient.Send(retJson.ToString(), platformIP, platformPort);
+            }
+        }
+    }
 }
 ```
 
