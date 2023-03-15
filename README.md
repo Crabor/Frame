@@ -438,14 +438,14 @@ Subscriber3: channel, hello
 
 ### 明文协议
 
-| 报文方向   | CMD       | 发送方的发送的消息                             | 接受方回复的消息                                      | description          |
-|--------|-----------|---------------------------------------|-----------------------------------------------|----------------------|
-| W -> P | Register  | {"cmd":"register", "config":<config>} | {"state":true/false}                          | 向平台注册并打开sensor/actor |
-| W -> P | Shutdown  | {"cmd":"shutdown"}                    | {"state":true/false}                          | 关闭sensor/actor       |
-| P -> W | SensorGet | {"cmd":"sensor_get"}                  | {"default":"value"} / {"field1":"value1",...} | 获取sensor值            |
-| P -> W | ActorSet  | {"cmd":"actor_set", "action":"XXXX"}  | {"state":true/false}                          | 设定actor值             |
+| 报文方向   | CMD       | 发送方的发送的消息                                  | 接受方回复的消息                                      | description          |
+|--------|-----------|--------------------------------------------|-----------------------------------------------|----------------------|
+| W -> P | Register  | {"cmd":"register", "config":<json_config>} | {"state":true/false}                          | 向平台注册并打开sensor/actor |
+| W -> P | Shutdown  | {"cmd":"shutdown"}                         | {"state":true/false}                          | 关闭sensor/actor       |
+| P -> W | SensorGet | {"cmd":"sensor_get"}                       | {"default":"value"} / {"field1":"value1",...} | 获取sensor值            |
+| P -> W | ActorSet  | {"cmd":"actor_set", "action":"XXXX"}       | {"state":true/false}                          | 设定actor值             |
 
-#### <config>
+#### <json_config>
 
 SensorConfig（注意Fields字段只有复合型传感器才需要）:
 
