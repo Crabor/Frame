@@ -58,7 +58,7 @@ public class testdaikon {
         test.printVarNames(List.of("x", "y", "z", "a"));
 
         for (int i = 1; i <= 1000; i++) {
-            int x = 100;
+            int x = i;
             int y = i % 38;
             int z = x * y;
             int a =  x + y + z;
@@ -73,11 +73,13 @@ public class testdaikon {
 
         String outputFile = "output/output.inv.gz";
         String[] daikonArgs = new String[] {
-                "--nohierarchy",
+//                "--nohierarchy",
                 "output/input.dtrace",
                 "output/input.decls",
                 "-o",
-                outputFile
+                outputFile,
+                "--config",
+                "Resources/configFile/platform/inv/config.txt",
         };
 //        Daikon.dkconfig_calc_possible_invs = true;
         daikon.Daikon.main(daikonArgs);
@@ -89,6 +91,16 @@ public class testdaikon {
                     System.out.println(inv.format() + " " + inv.getClass().getName() + " (" + inv.ppt.num_samples() + " " +
                             "samples)" +
                             " " + inv.getConfidence());
+//                    if (inv instanceof daikon.inv.unary.UnaryInvariant) {
+//                        System.out.println("\tcheck 1000: " + ((daikon.inv.unary.UnaryInvariant) inv).check(1000L, 1,
+//                                1));
+//                    } else if (inv instanceof daikon.inv.binary.BinaryInvariant) {
+//                        System.out.println("\tcheck 1000 1001: " + ((daikon.inv.binary.BinaryInvariant) inv).check(1000L
+//                                , 1001L,  1, 1));
+//                    } else if (inv instanceof daikon.inv.ternary.TernaryInvariant) {
+//                        System.out.println("\tcheck 1000 1001 1002: " + ((daikon.inv.ternary.TernaryInvariant) inv).check(1000L
+//                                , 1001L, 1002L, 1, 1));
+//                    }
             }
         }
         System.out.println("Daikon analysis completed successfully!");

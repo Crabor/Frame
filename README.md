@@ -438,71 +438,47 @@ Subscriber3: channel, hello
 
 ### 明文协议
 
-| cmd           | args                              | ret                                           | description                                                                                       |
-|---------------|-----------------------------------|-----------------------------------------------|---------------------------------------------------------------------------------------------------|
-| sensor_create | sensor_name device_ip device_port | sensor_config                                 | 向平台动态增加sensor<br/>注:此消息只由外部程序发给平台                                                                 |
-| sensor_on     | sensor_name                       | true / false                                  | 启动sensor<br/>true :打开成功<br/>false :打开失败                                                           |
-| sensor_off    | sensor_name                       | true / false                                  | 关闭sensor<br/>true :关闭成功<br/>false :关闭失败                                                           |
-| sensor_alive  | sensor_name                       | true / false                                  | 判断sensor状态<br/>true :sensor处于打开状态<br/>false :sensor处于关闭状态                                         |
-| sensor_get    | sensor_name app_grp_id1 ...       | {"default":"value"} / {"field1":"value1",...} | 获取sensor值<br/>{"default":"value"} :单值结构<br/>{"field1":"value1",...} :复合结构<br/>注:app_grp_id参数至少有一个 |
-| actor_create  | actor_name device_ip device_port  | actor_config                                  | 向平台动态增加actor<br/>注:此消息只由外部程序发给平台                                                                  |
-| actor_on      | actor_name                        | true / false                                  | 启动actor<br/>true :启动成功<br/>false :启动失败                                                            |
-| actor_off     | actor_name                        | true / false                                  | 关闭actor<br/>true :关闭成功<br/>false :关闭失败                                                            |
-| actor_alive   | actor_name                        | true / false                                  | 判断actor状态<br/>true :actor处于打开状态<br/>false :actor处于关闭状态                                            |
-| actor_set     | actor_name app_grp_id action      | true / false                                  | 设置actor值<br/>true :设置actor值成功<br/>false :设置actor值失败                                               |
-| channel_msg   | {"channel":"message"}             | true / false                                  | 发送频道消息<br/>true :发送频道消息成功<br/>false :发送频道消息错误                                                     |
+| 报文方向   | CMD       | 发送方的发送的消息                             | 接受方回复的消息                                      | description          |
+|--------|-----------|---------------------------------------|-----------------------------------------------|----------------------|
+| W -> P | Register  | {"cmd":"register", "config":<config>} | {"state":true/false}                          | 向平台注册并打开sensor/actor |
+| W -> P | Shutdown  | {"cmd":"shutdown"}                    | {"state":true/false}                          | 关闭sensor/actor       |
+| P -> W | SensorGet | {"cmd":"sensor_get"}                  | {"default":"value"} / {"field1":"value1",...} | 获取sensor值            |
+| P -> W | ActorSet  | {"cmd":"actor_set", "action":"XXXX"}  | {"state":true/false}                          | 设定actor值             |
 
-### sensor_config
+#### <config>
+
+SensorConfig（注意Fields字段只有复合型传感器才需要）:
 
 ```json
 {
-  "name": "GPS_001",
-  "type": "Sensor",
-  "fields": [//only for sensors，单域传感器可不设置
-    {
-      "fieldName": "speed"
-    },
-    {
-      "fieldName": "longitude"
+  "ConnectConfig": {
+    "PlatformIP": "127.0.0.1",
+    "PlatformPort": 8080
+  },
+  "DeviceInfo": {
+    "Name": "Car_1",
+    "Type": "Sensor",
+    "Fields": {
+      "fieldName1": "XXXX",
+      "fieldName2": "XXXX"
     }
-  ]
+  }
 }
 ```
 
-### actor_config
+ActorConfig:
 
 ```json
 {
-  "name": "XXXX",
-  "type": "Actor"
-}
-```
-
-### config_file
-
-```json
-[
-  {
-    "name": "GPS_001",
-    "type": "Sensor",
-    "fields": [
-      {
-        "fieldName": "speed"
-      },
-      {
-        "fieldName": "longitude"
-      }
-    ]
+  "ConnectConfig": {
+    "PlatformIP": "127.0.0.1",
+    "PlatformPort": 8080
   },
-  {
-    "name": "left",
-    "type": "Sensor"
-  },
-  {
-    "name": "left_front_wheel",
-    "type": "Actor"
+  "DeviceInfo": {
+    "Name": "Car_1_Speed",
+    "Type": "Actor"
   }
-]
+}
 ```
 
 ### 示例代码
@@ -510,76 +486,47 @@ Subscriber3: channel, hello
 java驱动程序
 
 ```java
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
 
-public class Driver {
-    public static void main(String[] args) {
-        String platformIP = "127.0.0.1";
-        int platformPort = 8080;
-        String deviceIP = "127.0.0.1";
-        int devicePort = 8081;
-        String file = "config.json";
+public class WrapperDemo {
+    public static void main(String[] args) throws IOException {
+        String config = "{\"ConnectConfig\":{\"PlatformIP\":\"127.0.0.1\",\"PlatformPort\":8080},\"DeviceInfo\":{\"Name\":\"Car_1\",\"Type\":\"Sensor\",\"Fields\":{\"fieldName1\":\"Speed\",\"fieldName2\":\"Longitude\"}}}";
 
-        //read config file
-        String str = FileUtils.readFileToString(file,"UTF-8");
-        JSONArray config = JSONArray.parseArray(str);
-        for (int i = 0; i < config.size(); i++) {
-            JSONObject item = config.getJSONObject(i);
-            String name = item.getString("name");
-            String type = item.getString("type");
-            String cmd = type.equalsIgnoreCase("Sensor") ? "sensor_create" : "actor_create";
+        JSONObject json = JSONObject.parseObject(config);
+        JSONObject connectConfig = json.getJSONObject("ConnectConfig");
+        String platformIP = connectConfig.getString("PlatformIP");
+        int platformPort = connectConfig.getIntValue("PlatformPort");
+        JSONObject registerCmd = new JSONObject();
+        registerCmd.put("cmd", "register");
+        registerCmd.put("config", config);
 
-            JSONObject createCmd = new JSONObject();
-            createCmd.put("cmd", cmd);
-            createCmd.put("args", name + " " + deviceIP + " " + devicePort);
-            createCmd.put("ret", item.toJSONString());
-            
-            //create sensor / actor
-            UdpClient udpClient = new UdpClient();
-            udpClient.send(createCmd.toJSONString(), platformIP, platformPort);
-        }
-        
-        while (true) {
-            //udp recv
-            String recv = udpClient.recv();
-            JSONObject recvJson = JSONObject.parseObject(recv);
-            String cmd = recvJson.getString("cmd");
-            String args = recvJson.getString("args");
-            String ret = "";
-            switch (cmd) {
-                case "sensor_on":
-                    ret = "true";
-                    break;
-                case "sensor_off":
-                    ret = "true";
-                    break;
-                case "sensor_alive":
-                    ret = "true";
-                    break;
-                case "sensor_get":
-                    ret = "{\"speed\":10,\"longitude\":20}";
-                    break;
-                case "actor_on":
-                    ret = "true";
-                    break;
-                case "actor_off":
-                    ret = "true";
-                    break;
-                case "actor_alive":
-                    ret = "true";
-                    break;
-                case "actor_set":
-                    ret = "true";
-                    break;
-                default:
-                    break;
+        Socket socket = new Socket(platformIP, platformPort);
+        DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+        out.writeBytes(registerCmd.toJSONString() + '\n');
+        boolean succeed = JSON.parseObject(in.readLine()).getBooleanValue("state");
+
+        if (succeed) {
+            while (true) {
+                JSONObject recv = JSON.parseObject(in.readLine());
+                String retJson = "";
+                if (recv.getString("cmd").equalsIgnoreCase("sensor_get")) {
+                    //TODO: get data from sensor
+                    retJson = "{\"Speed\": 100, \"Longitude\": 120}";
+                } else if (recv.getString("cmd").equalsIgnoreCase("actor_set")) {
+                    String action = recv.getString("action");
+                    //TODO: set data to actor
+                    retJson = "{\"state\": true}";
+                }
+                out.writeBytes(retJson + '\n');
             }
-            JSONObject retJson = new JSONObject();
-            retJson.put("cmd", cmd);
-            retJson.put("args", args);
-            retJson.put("ret", ret);
-            udpClient.send(retJson.toJSONString(), platformIP, platformPort);
         }
     }
 }
@@ -588,146 +535,91 @@ public class Driver {
 python驱动程序
 
 ```python
-platform_ip = "127.0.0.1"
-platform_port = 8080
-device_ip = "127.0.0.1"
-device_port = 8081
-file = "config.json"
+import socket
+import json
 
-# read config file
-with open(file, "r") as f:
-    config = json.load(f)
-for item in config:
-    name = item["name"]
-    type = item["type"]
-    cmd = "sensor_create" if type == "Sensor" else "actor_create"
-    create_cmd = {
-        "cmd": cmd,
-        "args": name + " " + device_ip + " " + str(device_port),
-        "ret": item
-    }
-    # create sensor / actor
-    udp_client.send(json.dumps(create_cmd), platform_ip, platform_port)
+config = "{\"ConnectConfig\":{\"PlatformIP\":\"127.0.0.1\",\"PlatformPort\":8080},\"DeviceInfo\":{\"Name\":\"Car_1\",\"Type\":\"Sensor\",\"Fields\":{\"fieldName1\":\"Speed\",\"fieldName2\":\"Longitude\"}}}"
 
-while True:
-    # udp recv
-    recv = udp_client.recv()
-    recv_json = json.loads(recv)
-    cmd = recv_json["cmd"]
-    args = recv_json["args"]
-    ret = ""
-    if cmd == "sensor_on":
-        ret = true
-    elif cmd == "sensor_off":
-        ret = true
-    elif cmd == "sensor_alive":
-        ret = true
-    elif cmd == "sensor_get":
-        ret = {"speed": 10, "longitude": 20}
-    elif cmd == "actor_on":
-        ret = true
-    elif cmd == "actor_off":
-        ret = true
-    elif cmd == "actor_alive":
-        ret = true
-    elif cmd == "actor_set":
-        ret = true
-    ret_json = {
-        "cmd": cmd,
-        "args": args,
-        "ret": ret
-    }
-    udp_client.send(json.dumps(ret_json), platform_ip, platform_port)
+json_config = json.loads(config)
+connect_config = json_config["ConnectConfig"]
+platform_ip = connect_config["PlatformIP"]
+platform_port = connect_config["PlatformPort"]
+register_cmd = {"cmd": "register", "config": config}
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((platform_ip, platform_port))
+s.send(json.dumps(register_cmd).encode())
+succeed = json.loads(s.recv(1024).decode())["state"]
+
+if succeed:
+    while True:
+        recv = json.loads(s.recv(1024).decode())
+        ret_json = ""
+        if recv["cmd"] == "sensor_get":
+           #TODO: get data from sensor
+           ret_json = "{\"Speed\": 100, \"Longitude\": 120}"
+        elif recv["cmd"] == "actor_set":
+            action = recv["action"]
+            #TODO: set data to actor
+            ret_json = "{\"state\": true}"
+        s.send(ret_json.encode())
 ```
 
 c#驱动程序
 
 ```csharp
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-namespace Driver
+namespace WrapperDemo
 {
     class Program
     {
         static void Main(string[] args)
         {
-            string platformIP = "127.0.0.1";
-            int platformPort = 8080;
-            string deviceIP = "127.0.0.1";
-            int devicePort = 8081;
-            string file = "config.json";
+            string config = "{\"ConnectConfig\":{\"PlatformIP\":\"127.0.0.1\",\"PlatformPort\":8080},\"DeviceInfo\":{\"Name\":\"Car_1\",\"Type\":\"Sensor\",\"Fields\":{\"fieldName1\":\"Speed\",\"fieldName2\":\"Longitude\"}}}";
             
-            //read config file
-            string str = System.IO.File.ReadAllText(file);
-            JArray config = JArray.Parse(str);
-            for (int i = 0; i < config.Count; i++)
-            {
-                JObject item = (JObject)config[i];
-                string name = item["name"].ToString();
-                string type = item["type"].ToString();
-                string cmd = type == "Sensor" ? "sensor_create" : "actor_create";
-                JObject createCmd = new JObject();
-                createCmd.Add("cmd", cmd);
-                createCmd.Add("args", name + " " + deviceIP + " " + devicePort);
-                createCmd.Add("ret", item);
-                
-                //create sensor / actor
-                UdpClient udpClient = new UdpClient();
-                udpClient.Send(createCmd.ToString(), platformIP, platformPort);
-            }
+            JObject json = JObject.Parse(config);
+            JObject connectConfig = (JObject)json["ConnectConfig"];
+            string platformIP = (string)connectConfig["PlatformIP"];
+            int platformPort = (int)connectConfig["PlatformPort"];
+            JObject registerCmd = new JObject();
+            registerCmd["cmd"] = "register";
+            registerCmd["config"] = config;
             
-            while (true)
+            TcpClient client = new TcpClient(platformIP, platformPort);
+            NetworkStream stream = client.GetStream();
+            
+            byte[] data = Encoding.UTF8.GetBytes(registerCmd.ToString());
+            stream.Write(data, 0, data.Length);
+            bool succeed = (bool)JObject.Parse(Encoding.UTF8.GetString(data))["state"];
+            
+            if (succeed)
             {
-                //udp recv
-                string recv = udpClient.Recv();
-                JObject recvJson = JObject.Parse(recv);
-                string cmd = recvJson["cmd"].ToString();
-                string args = recvJson["args"].ToString();
-                string ret = "";
-                switch (cmd)
+                while (true)
                 {
-                    case "sensor_on":
-                        ret = "true";
-                        break;
-                    case "sensor_off":
-                        ret = "true";
-                        break;
-                    case "sensor_alive":
-                        ret = "true";
-                        break;
-                    case "sensor_get":
-                        ret = "{\"speed\":10,\"longitude\":20}";
-                        break;
-                    case "actor_on":
-                        ret = "true";
-                        break;
-                    case "actor_off":
-                        ret = "true";
-                        break;
-                    case "actor_alive":
-                        ret = "true";
-                        break;
-                    case "actor_set":
-                        ret = "true";
-                        break;
-                    default:
-                        break;
+                    byte[] recv = new byte[1024];
+                    stream.Read(recv, 0, recv.Length);
+                    JObject recvJson = JObject.Parse(Encoding.UTF8.GetString(recv));
+                    string retJson = "";
+                    if (recvJson["cmd"].ToString() == "sensor_get")
+                    {
+                        //TODO: get data from sensor
+                        retJson = "{\"Speed\": 100, \"Longitude\": 120}";
+                    }
+                    else if (recvJson["cmd"].ToString() == "actor_set")
+                    {
+                        string action = (string)recvJson["action"];
+                        //TODO: set data to actor
+                        retJson = "{\"state\": true}";
+                    }
+                    data = Encoding.UTF8.GetBytes(retJson);
+                    stream.Write(data, 0, data.Length);
                 }
-                JObject retJson = new JObject();
-                retJson.Add("cmd", cmd);
-                retJson.Add("args", args);
-                retJson.Add("ret", ret);
-                udpClient.Send(retJson.ToString(), platformIP, platformPort);
             }
         }
     }
@@ -740,44 +632,63 @@ app与平台通信为tcp通信
 
 ### app与平台通信明文协议
 
-| 编程API                                                                              | 转换为要发送的网络字符串                                                                          | 平台返回的网络字符串                                                                         |
-|------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
-| public boolean connectPlatform(String ip, int port);                               | {"api":"connect"}                                                                     | {"state":true/false}                                                               |
-| public boolean disConnectPlatform();                                               | {"api":"disconnect"}                                                                  | {"state":true/false}                                                               |
-| public boolean checkConnected();                                                   | {"api":"is_connected"}                                                                | {"state":true/false}                                                               |
-| public boolean registerApp(AbstractApp app);                                       | {"api":"register_app","app_name":"xxxx"}                                              | {"state":true/false,"udp_port":xxxx}                                               |
-| public boolean unregisterApp(AbstractApp app);                                     | {"api":"unregister_app","app_name":"xxxx"}                                            | {"state":true/false}                                                               |
-| public Map<String, SensorInfo> getSupportedSensors();                              | {"api":"get_supported_sensors"}                                                       | [{"sensor_name":"xxxx","state":"on/off","value_type":"xxxx"},...]                  |
-| public Map<String, SensorInfo> getRegisteredSensors();                             | {"api":"get_registered_sensors"}                                                      | [{"sensor_name":"xxxx","state":"on/off","value_type":"xxxx"},...]                  |
-| public boolean getRegisteredSensorsStatus();                                       | {"api":"get_registered_sensors_status"}                                               | {"state":true/false}                                                               |
-| public boolean registerSensor(String sensorName, SensorMode mode, int freq);       | {"api":"register_sensor","sensor_name":"xxxx","mode":"xxxx","freq":xxxx}              | {"state":true/false}                                                               |
-| public boolean cancelSensor(String sensorName);                                    | {"api":"cancel_sensor","sensor_name":"xxxx"}                                          | {"state":true/false}                                                               |
-| public boolean cancelAllSensors();                                                 | {"api":"cancel_all_sensors"}                                                          | {"state":true/false}                                                               |
-| public String getSensorData(String sensorName);                                    | {"api":"get_sensor_data","sensor_name":"xxxx"}                                        | {"default":"value"} / {"field1":"value1",...}                                      |
-| public Map<String, String> getAllSensorData();                                     | {"api":"get_all_sensor_data"}                                                         | [{"sensor_name":"xxxx","value":{"default":"value"} / {"field1":"value1",...}},...] |
-| public boolean getMsgThread(CmdType cmd);                                          | {"api":"get_msg_thread","cmd":"xxxx"}                                                 | {"state":true/false}                                                               |
-| public Map<String, ActorInfo> getSupportedActors();                                | {"api":"get_supported_actors"}                                                        | [{"actor_name":"xxxx","state":"on/off","value_type":"xxxx"},...]                   |
-| public Map<String, ActorInfo> getRegisteredActors();                               | {"api":"get_registered_actors"}                                                       | [{"actor_name":"xxxx","state":"on/off","value_type":"xxxx"},...]                   |
-| public boolean getRegisteredActorsStatus();                                        | {"api":"get_registered_actors_status"}                                                | {"state":true/false}                                                               |
-| public boolean registerActor(String actorName);                                    | {"api":"register_actor","actor_name":"xxxx"}                                          | {"state":true/false}                                                               |
-| public boolean cancelActor(String actorName);                                      | {"api":"cancel_actor","actor_name":"xxxx"}                                            | {"state":true/false}                                                               |
-| public boolean cancelAllActors();                                                  | {"api":"cancel_all_actors"}                                                           | {"state":true/false}                                                               |
-| public boolean setActorCmd(String actorName, String action)                        | {"api":"set_actor_cmd","actor_name":"xxxx","action":"xxxx"}                           | {"state":true/false}                                                               |
-| public boolean isServiceOn(ServiceType service);                                   | {"api":"is_service_on","service_type":"xxxx"}                                         | {"state":true/false}                                                               |
-| public boolean serviceStart(ServiceType service, ServiceConfig config);            | {"api":"start_service","service_type":"xxxx","config":"config_json"}                  | {"state":true/false}                                                               |
-| public boolean serviceStop(ServiceType service);                                   | {"api":"stop_service","service_type":"xxxx"}                                          | {"state":true/false}                                                               |
-| public String serviceCall(ServiceType service, CmdType cmd, ServiceConfig config); | {"api":"service_call","service_type":"xxxx","cmd_type":"xxxx","config":"config_json"} | {"state":true/false}                                                               |
-| public boolean setRuleFile(String ruleFile);                                       | {"api":"set_rule_file","file_name":"xxxx","content":"xxxx"}                           | {"state":true/false}                                                               |
-| public boolean setPatternFile(String patternFile);                                 | {"api":"set_pattern_file","file_name":"xxxx","content":"xxxx"}                        | {"state":true/false}                                                               |
-| public boolean setBfuncFile(String bfuncFile);                                     | {"api":"set_bfunc_file","file_name":"xxxx","content":"xxxx"}                          | {"state":true/false}                                                               |
-| public boolean setMfuncFile(String mfuncFile);                                     | {"api":"set_mfunc_file","file_name":"xxxx","content":"xxxx"}                          | {"state":true/false}                                                               |
-| public boolean setRfuncFile(String rfuncFile);                                     | {"api":"set_rfunc_file","file_name":"xxxx","content":"xxxx"}                          | {"state":true/false}                                                               |
-| public boolean setCtxValidator(String ctxValidator);                               | {"api":"set_ctx_validator","ctx_validator":"xxxx"}                                    | {"state":true/false}                                                               |
-|                                                                                    |                                                                                       |                                                                                    |
-|                                                                                    |                                                                                       |                                                                                    |
-|                                                                                    |                                                                                       |                                                                                    |
+| 编程API                                                                              | App -> Platform                                                                  | Platform -> App                                                                    |
+|------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
+| public boolean connectPlatform(String ip, int port);                               | {"api":"connect"}                                                                | {"state":true/false}                                                               |
+| public boolean disConnectPlatform();                                               | {"api":"disconnect"}                                                             | {"state":true/false}                                                               |
+| public boolean checkConnected();                                                   | {"api":"is_connected"}                                                           | {"state":true/false}                                                               |
+| public boolean registerApp(AbstractApp app);                                       | {"api":"register_app","app_name":"xxxx"}                                         | {"state":true/false,"udp_port":xxxx}                                               |
+| public boolean unregisterApp(AbstractApp app);                                     | {"api":"unregister_app","app_name":"xxxx"}                                       | {"state":true/false}                                                               |
+| public Map<String, SensorInfo> getSupportedSensors();                              | {"api":"get_supported_sensors"}                                                  | [{"sensor_name":"xxxx","state":"on/off","value_type":"xxxx"},...]                  |
+| public Map<String, SensorInfo> getRegisteredSensors();                             | {"api":"get_registered_sensors"}                                                 | [{"sensor_name":"xxxx","state":"on/off","value_type":"xxxx"},...]                  |
+| public boolean getRegisteredSensorsStatus();                                       | {"api":"get_registered_sensors_status"}                                          | {"state":true/false}                                                               |
+| public boolean registerSensor(String sensorName, SensorMode mode, int freq);       | {"api":"register_sensor","sensor_name":"xxxx","mode":"xxxx","freq":xxxx}         | {"state":true/false}                                                               |
+| public boolean cancelSensor(String sensorName);                                    | {"api":"cancel_sensor","sensor_name":"xxxx"}                                     | {"state":true/false}                                                               |
+| public boolean cancelAllSensors();                                                 | {"api":"cancel_all_sensors"}                                                     | {"state":true/false}                                                               |
+| public String getSensorData(String sensorName);                                    | {"api":"get_sensor_data","sensor_name":"xxxx"}                                   | {"default":"value"} / {"field1":"value1",...}                                      |
+| public Map<String, String> getAllSensorData();                                     | {"api":"get_all_sensor_data"}                                                    | [{"sensor_name":"xxxx","value":{"default":"value"} / {"field1":"value1",...}},...] |
+| public boolean getMsgThread(CmdType cmd);                                          | {"api":"get_msg_thread","cmd":"xxxx"}                                            | {"state":true/false}                                                               |
+| public Map<String, ActorInfo> getSupportedActors();                                | {"api":"get_supported_actors"}                                                   | [{"actor_name":"xxxx","state":"on/off","value_type":"xxxx"},...]                   |
+| public Map<String, ActorInfo> getRegisteredActors();                               | {"api":"get_registered_actors"}                                                  | [{"actor_name":"xxxx","state":"on/off","value_type":"xxxx"},...]                   |
+| public boolean getRegisteredActorsStatus();                                        | {"api":"get_registered_actors_status"}                                           | {"state":true/false}                                                               |
+| public boolean registerActor(String actorName);                                    | {"api":"register_actor","actor_name":"xxxx"}                                     | {"state":true/false}                                                               |
+| public boolean cancelActor(String actorName);                                      | {"api":"cancel_actor","actor_name":"xxxx"}                                       | {"state":true/false}                                                               |
+| public boolean cancelAllActors();                                                  | {"api":"cancel_all_actors"}                                                      | {"state":true/false}                                                               |
+| public boolean setActorCmd(String actorName, String action)                        | {"api":"set_actor_cmd","actor_name":"xxxx","action":"xxxx"}                      | {"state":true/false}                                                               |
+| public boolean isServiceOn(ServiceType service);                                   | {"api":"is_service_on","service_type":"xxxx"}                                    | {"state":true/false}                                                               |
+| public boolean serviceStart(ServiceType service, ServiceConfig config);            | {"api":"start_service","service_type":"xxxx","config":<config>}                  | {"state":true/false}                                                               |
+| public boolean serviceStop(ServiceType service);                                   | {"api":"stop_service","service_type":"xxxx"}                                     | {"state":true/false}                                                               |
+| public String serviceCall(ServiceType service, CmdType cmd, ServiceConfig config); | {"api":"service_call","service_type":"xxxx","cmd_type":"xxxx","config":<config>} | {"state":true/false}                                                               |
+| public boolean setRuleFile(String ruleFile);                                       | {"api":"set_rule_file","file_name":"xxxx","content":"xxxx"}                      | {"state":true/false}                                                               |
+| public boolean setPatternFile(String patternFile);                                 | {"api":"set_pattern_file","file_name":"xxxx","content":"xxxx"}                   | {"state":true/false}                                                               |
+| public boolean setBfuncFile(String bfuncFile);                                     | {"api":"set_bfunc_file","file_name":"xxxx","content":"xxxx"}                     | {"state":true/false}                                                               |
+| public boolean setMfuncFile(String mfuncFile);                                     | {"api":"set_mfunc_file","file_name":"xxxx","content":"xxxx"}                     | {"state":true/false}                                                               |
+| public boolean setRfuncFile(String rfuncFile);                                     | {"api":"set_rfunc_file","file_name":"xxxx","content":"xxxx"}                     | {"state":true/false}                                                               |
+| public boolean setCtxValidator(String ctxValidator);                               | {"api":"set_ctx_validator","ctx_validator":"xxxx"}                               | {"state":true/false}                                                               |
+|                                                                                    |                                                                                  |                                                                                    |
+|                                                                                    |                                                                                  |                                                                                    |
+|                                                                                    |                                                                                  |                                                                                    |
 
+#### <config>
 
+CtxServiceConfig
+
+```json
+{
+  "rule_file_content": "xxxx",
+  "pattern_file_content": "xxxx",
+  "bfunc_file_content": "xxxx",
+  "mfunc_file_content": "xxxx",
+  "rfunc_file_content": "xxxx",
+  "ctx_validator": "xxxx"
+}
+```
+
+InvServiceConfig
+
+```json
+
+```
 
 
 
