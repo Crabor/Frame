@@ -89,7 +89,7 @@ public class KMeans {
     // 重新计算每个簇的质心，并判断终止条件是否满足，如果不满足更新各簇的质心,如果满足就返回true.len是数据的维数
     public boolean calNewCenter(List<SegInfo> objects, int len) {
 //        try {
-//            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("CtxServerOutput.txt/kmeans-center.txt", true)));
+//            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("output/kmeans-center.txt", true)));
 //            out.write("center" + iter++ + ":\n");
 //            for (int i = 0; i < k; i ++) {
 //                for (int j = 0; j < len; j++) {

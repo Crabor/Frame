@@ -220,7 +220,7 @@ public class CheckObject {
                 e.printStackTrace();
             }
             InvAbstract invNew = invs.get(group + 1);
-            //CtxServerOutput.txt trace
+            //output trace
             Trace traceOutput =  Configuration.getInvServerConfig().getGroupTraceType();
             traceOutput.printTrace(appName, lineNumber, group + 1, CheckServer.getSegMap().get(appName), invNew.getTrace());
             logger.info("grp" + (group + 1) + "=" + invNew.getTrace());
