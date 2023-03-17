@@ -13,7 +13,7 @@ public class FunctionMatcher extends AbstractMatcher{
     private final List<String> extraArgList;
 
     public FunctionMatcher(String funcName, Object mfuncInstance){
-        this.matcherType = MatcherType.function;
+        this.matcherType = MatcherType.FUNCTION;
         this.mfuncInstance = mfuncInstance;
         this.funcName = funcName;
         this.extraArgList = new ArrayList<>();

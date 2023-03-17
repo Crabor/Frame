@@ -171,18 +171,18 @@ public GrpPrioPair getGrpPrio(AbstractSubscriber s);
 ### publisher
 
 ```java
-public void publish(Channel channel, String message);
+public void publish(Channel channel, String item);
 /*publisher会向channel中所有group的subscriber发送消息
 （当然同一组的消息只会被最高优先级的subscriber接收）*/
 
-public void publish(Channel channel, int groupId, String message)
+public void publish(Channel channel, int groupId, String item)
 /*publisher只会向channel中指定group的subscriber发送消息
 （当然同一组的消息只会被最高优先级的subscriber接收）*/
 
-public void publish(Channel channel, int groupId, int priorityId, String message);
+public void publish(Channel channel, int groupId, int priorityId, String item);
 /*publisher只会向channel中指定group的指定优先级及以下的subscriber发送消息
 比如sensor频道的group0有三个subscriber0、1、2，优先级依次是0、1、2，
-那么当publish(sensor, 0, 1, message)时只会看优先级1以下的subscriber1和subscriber0，
+那么当publish(sensor, 0, 1, item)时只会看优先级1以下的subscriber1和subscriber0，
 而subscriber1的优先级高于subscriber0.所以只有subscriber1接收到此message*/
 ```
 
@@ -203,11 +203,11 @@ public void subscribe(Channel channel, int groupId, int priorityId);
 /*以下方法是protected，只允许AbstractSubscriber子类访问，
 方便在onMessage内部想将处理后的message转发出去的情形*/
 
-protected void publish(Channel channel, String message);
+protected void publish(Channel channel, String item);
 
-protected void publish(Channel channel, int groupId, String message);
+protected void publish(Channel channel, int groupId, String item);
 
-protected void publish(Channel channel, int groupId, int priorityId, String message);
+protected void publish(Channel channel, int groupId, int priorityId, String item);
 ```
 
 下面说明如何继承AbstractSubscriber类：
@@ -448,7 +448,7 @@ Subscriber3: channel, hello
 | actor_off    | actor_name                   | true / false                                  | 关闭actor<br/>true :关闭成功<br/>false :关闭失败                                                            |
 | actor_alive  | actor_name                   | true / false                                  | 判断actor状态<br/>true :actor处于打开状态<br/>false :actor处于关闭状态                                            |
 | actor_set    | actor_name app_grp_id action | true / false                                  | 设置actor值<br/>true :设置actor值成功<br/>false :设置actor值失败                                               |
-| channel_msg  | {"channel":"message"}        | true / false                                  | 发送频道消息<br/>true :发送频道消息成功<br/>false :发送频道消息错误                                                     |
+| channel_msg  | {"channel":"item"}        | true / false                                  | 发送频道消息<br/>true :发送频道消息成功<br/>false :发送频道消息错误                                                     |
 
 ## app
 

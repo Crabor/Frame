@@ -55,13 +55,13 @@ public class Platform {
     }
 
     public static void Init() {
-        //delete output dir
-        File dir = new File("output/");
+        //delete CtxServerOutput.txt dir
+        File dir = new File("CtxServerOutput.txt/");
         Util.deleteDir(dir);
         dir.mkdirs();
 
         //read config file
-        Configuration.analyzer("Resources/configFile/ConfigurationNew");
+        Configuration.analyzer("Resources/configFile/Configuration_zsh");
 
         //init database
 //        RedisClient client = RedisClient.create(

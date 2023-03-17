@@ -1,0 +1,41 @@
+{default={"resolve_strategy":"dropped","violated_rules":[["rule_still"]]}}
+{cur_loc=Crossroad 0, car=Blue Car, state=1, prev_loc=Street 3, next_loc=Street 2, timestamp=1670916981372}
+{cur_loc=Street 2, car=Blue Car, state=1, prev_loc=Crossroad 0, next_loc=Crossroad 2, timestamp=1670916982807}
+{cur_loc=Crossroad 2, car=Blue Car, state=1, prev_loc=Street 2, next_loc=Street 8, timestamp=1670916983294}
+{default={"resolve_strategy":"dropped","violated_rules":[["rule_order_blue"]]}}
+{cur_loc=Street 8, car=Blue Car, state=1, prev_loc=Crossroad 2, next_loc=Crossroad 3, timestamp=1670916984758}
+{cur_loc=Crossroad 3, car=Blue Car, state=1, prev_loc=Street 8, next_loc=Street 9, timestamp=1670916985908}
+{default={"resolve_strategy":"dropped","violated_rules":[["rule_order_blue"]]}}
+{cur_loc=Street 9, car=Blue Car, state=1, prev_loc=Crossroad 3, next_loc=Crossroad 4, timestamp=1670916986704}
+{cur_loc=Crossroad 4, car=Blue Car, state=1, prev_loc=Street 9, next_loc=Street 10, timestamp=1670916987498}
+{cur_loc=Street 10, car=Blue Car, state=1, prev_loc=Crossroad 4, next_loc=Crossroad 6, timestamp=1670916987949}
+{default={"resolve_strategy":"dropped","violated_rules":[["rule_order_blue"]]}}
+{cur_loc=Crossroad 6, car=Blue Car, state=1, prev_loc=Street 10, next_loc=Street 16, timestamp=1670916990336}
+{cur_loc=Street 16, car=Blue Car, state=1, prev_loc=Crossroad 6, next_loc=Crossroad 5, timestamp=1670916991196}
+{cur_loc=Crossroad 5, car=Blue Car, state=1, prev_loc=Street 16, next_loc=Street 15, timestamp=1670916991906}
+{cur_loc=Street 15, car=Blue Car, state=1, prev_loc=Crossroad 5, next_loc=Street 14, timestamp=1670916992360}
+{cur_loc=Street 14, car=Blue Car, state=1, prev_loc=Street 15, next_loc=Street 11, timestamp=1670916993689}
+{default={"resolve_strategy":"dropped","violated_rules":[["rule_order_blue"]]}}
+{default={"resolve_strategy":"dropped","violated_rules":[["rule_order_blue"]]}}
+{default={"resolve_strategy":"dropped","violated_rules":[["rule_order_blue"]]}}
+{cur_loc=Street 11, car=Blue Car, state=1, prev_loc=Street 14, next_loc=Crossroad 2, timestamp=1670916997518}
+{cur_loc=Crossroad 2, car=Blue Car, state=1, prev_loc=Street 11, next_loc=Street 5, timestamp=1670916998351}
+{default={"resolve_strategy":"dropped","violated_rules":[["rule_order_blue"]]}}
+{cur_loc=Street 5, car=Blue Car, state=1, prev_loc=Crossroad 2, next_loc=Crossroad 0, timestamp=1670916998842}
+{cur_loc=Crossroad 0, car=Blue Car, state=1, prev_loc=Street 5, next_loc=Street 0, timestamp=1670916999646}
+{cur_loc=Street 0, car=Blue Car, state=1, prev_loc=Crossroad 0, next_loc=Crossroad 1, timestamp=1670917000016}
+{default={"resolve_strategy":"dropped","violated_rules":[["rule_order_blue"]]}}
+{cur_loc=Crossroad 1, car=Blue Car, state=1, prev_loc=Street 0, next_loc=Street 6, timestamp=1670917002685}
+{cur_loc=Street 6, car=Blue Car, state=1, prev_loc=Crossroad 1, next_loc=Crossroad 3, timestamp=1670917003330}
+{cur_loc=Crossroad 3, car=Blue Car, state=1, prev_loc=Street 6, next_loc=Street 12, timestamp=1670917003963}
+{default={"resolve_strategy":"dropped","violated_rules":[["rule_order_blue"]]}}
+{cur_loc=Street 12, car=Blue Car, state=1, prev_loc=Crossroad 3, next_loc=Crossroad 5, timestamp=1670917004621}
+{cur_loc=Crossroad 5, car=Blue Car, state=1, prev_loc=Street 12, next_loc=Street 17, timestamp=1670917005344}
+{cur_loc=Street 17, car=Blue Car, state=1, prev_loc=Crossroad 5, next_loc=Crossroad 6, timestamp=1670917006430}
+{cur_loc=Crossroad 6, car=Blue Car, state=1, prev_loc=Street 17, next_loc=Street 13, timestamp=1670917007359}
+{default={"resolve_strategy":"dropped","violated_rules":[["rule_order_blue"]]}}
+{cur_loc=Street 13, car=Blue Car, state=1, prev_loc=Crossroad 6, next_loc=Crossroad 4, timestamp=1670917008792}
+{cur_loc=Crossroad 4, car=Blue Car, state=1, prev_loc=Street 13, next_loc=Street 7, timestamp=1670917009515}
+{default={"resolve_strategy":"dropped","violated_rules":[["rule_order_blue"]]}}
+{cur_loc=Street 7, car=Blue Car, state=1, prev_loc=Crossroad 4, next_loc=Street 1, timestamp=1670917010201}
+{cur_loc=Street 1, car=Blue Car, state=1, prev_loc=Street 7, next_loc=Street 4, timestamp=1670917010756}

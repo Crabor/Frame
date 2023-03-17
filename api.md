@@ -72,16 +72,16 @@ public GrpPrioPair getGrpPrio(AbstractSubscriber s)
 
 ```java
 //发布message到channel
-public void publish(Channel channel, String message);
+public void publish(Channel channel, String item);
 
 //发布message到channel，只有指定group的订阅者才能接收到
-public void publish(Channel channel, int groupId, String message);
+public void publish(Channel channel, int groupId, String item);
 
 /*publisher只会向channel中指定group的指定优先级及以下的subscriber发送消息
 比如sensor频道的group0有三个subscriber0、1、2，优先级依次是0、1、2，
-那么当publish(sensor, 0, 1, message)时只会看优先级1以下的subscriber1和subscriber0，
+那么当publish(sensor, 0, 1, item)时只会看优先级1以下的subscriber1和subscriber0，
 而subscriber1的优先级高于subscriber0.所以只有subscriber1接收到此message*/
-public void publish(Channel channel, int groupId, int priorityId, String message);
+public void publish(Channel channel, int groupId, int priorityId, String item);
 ```
 
 ## invariant

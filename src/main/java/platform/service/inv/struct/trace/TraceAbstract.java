@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class TraceAbstract implements Trace{
-    protected static String ROOT_DIR_NAME = "output/trace/";
+    protected static String ROOT_DIR_NAME = "CtxServerOutput.txt/trace/";
     protected String traceDir;
 
     @Override

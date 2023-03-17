@@ -11,7 +11,7 @@ public class CustomizedResolver extends AbstractResolver{
     private Object rfuncInstance;
 
     public CustomizedResolver(Object rfuncInstance) {
-        this.resolverStrategy = ResolverStrategy.customized;
+        this.resolverStrategy = ResolverStrategy.CUSTOMIZED;
         this.rfuncInstance = rfuncInstance;
     }
 

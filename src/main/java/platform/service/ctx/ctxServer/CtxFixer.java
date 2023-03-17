@@ -3,7 +3,7 @@ package platform.service.ctx.ctxServer;
 import platform.service.ctx.ctxChecker.constraint.runtime.Link;
 import platform.service.ctx.ctxChecker.context.Context;
 import platform.service.ctx.ctxChecker.context.ContextChange;
-import platform.service.ctx.message.Message;
+import platform.service.ctx.item.Item;
 import platform.service.ctx.rule.Rule;
 import platform.service.ctx.rule.resolver.AbstractResolver;
 
@@ -13,8 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CtxFixer {
     private final AbstractCtxServer ctxServer;
 
-    private final ConcurrentHashMap<Long, Message> validatedMsgMap;
-
     // delay resolve
     private final HashMap<String, Set<Map.Entry<String, Link>>> ctxId2Incs;
 
@@ -22,27 +20,13 @@ public class CtxFixer {
     public CtxFixer(AbstractCtxServer ctxServer) {
         this.ctxServer = ctxServer;
         this.ctxId2Incs = new HashMap<>();
-        this.validatedMsgMap = new ConcurrentHashMap<>();
     }
 
-    public void buildValidatedMessage(long msgIndex, Context context){
-        Message validatedMsg = new Message(msgIndex);
-        validatedMsg.addContext(context);
-        ctxServer.serverStatistics.increaseCheckedAndResolvedMsgNum();
-        validatedMsgMap.put(msgIndex, validatedMsg);
-    }
-
-    public ConcurrentHashMap<Long, Message> getValidatedMsgMap() {
-        return validatedMsgMap;
-    }
 
     public void reset(){
         this.ctxId2Incs.clear();
-        this.validatedMsgMap.clear();
     }
 
-
-    // in time resolving
     public List<ContextChange> resolveViolationsInTime(Map<String, Set<Link>> ruleId2LinkSet){
         if(ruleId2LinkSet.isEmpty()){
             return new ArrayList<>();
@@ -51,7 +35,7 @@ public class CtxFixer {
         String selectedRuleId = null;
         AbstractResolver selectedResolver = null;
         for(String ruleId : ruleId2LinkSet.keySet()){
-            AbstractResolver resolver = ctxServer.getResolverMap().get(ruleId);
+            AbstractResolver resolver = ctxServer.getRuleManager().getResolver(ruleId);
             if(selectedResolver == null){
                 selectedRuleId = ruleId;
                 selectedResolver = resolver;
@@ -64,7 +48,7 @@ public class CtxFixer {
             }
         }
         //将selectedRule相关的LinkSet变成通用容器
-        Set<HashMap<String, Map.Entry<String, HashMap<String, String>>>> flatLinkSet = flattenLinkSet(ctxServer.getRuleMap().get(selectedRuleId), ruleId2LinkSet.get(selectedRuleId));
+        Set<HashMap<String, Map.Entry<String, HashMap<String, String>>>> flatLinkSet = flattenLinkSet(ctxServer.getRuleManager().getRule(selectedRuleId), ruleId2LinkSet.get(selectedRuleId));
         //resolve
         Set<Map.Entry<String, HashMap<String, String>>> resolvedFlatContextSet = selectedResolver.resolve(flatLinkSet);
         //生成对应的resolveChangeBatch

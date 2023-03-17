@@ -8,9 +8,9 @@ public class taxiAppTwo extends AbstractApp {
     public void configApp() {
 //        config.registerSensor("taxis");
 //        config.setCtxServerOn(true);
-//        config.setRuleFile("Resources/taxiTest/appTwo/rules.xml");
+//        config.setRuleFile("Resources/taxiTest/appTwo/rules_yellow.xml");
 //        config.setBfuncFile("Resources/taxiTest/appTwo/taxiBfunction.class");
-//        config.setPatternFile("Resources/taxiTest/appTwo/patterns.xml");
+//        config.setPatternFile("Resources/taxiTest/appTwo/patterns_yellow.xml");
 //        config.setMfuncFile("Resources/taxiTest/appTwo/taxiMfunction.class");
     }
 

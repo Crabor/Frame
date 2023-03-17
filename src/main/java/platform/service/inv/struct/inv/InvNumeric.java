@@ -45,7 +45,7 @@ public class InvNumeric extends InvAbstract {
 
     @Override
     public void setInv() {
-        String traceFileName = "output/trace/csv/" + appName + "-" + "line" + lineNumber + "-" + "grp" + group + ".csv";
+        String traceFileName = "CtxServerOutput.txt/trace/csv/" + appName + "-" + "line" + lineNumber + "-" + "grp" + group + ".csv";
         try {
             CSVReader reader = new CSVReader(new FileReader(traceFileName));
             String[] names = reader.readNext();

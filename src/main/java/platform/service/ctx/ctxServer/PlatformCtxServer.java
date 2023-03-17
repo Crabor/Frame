@@ -11,9 +11,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class PlatformCtxServer extends AbstractCtxServer {
 
-    //如果支持新增ctx，那应该多设置一个index
-    private final AtomicLong atomicLong;
-
     private static final class CtxBaseServerHolder {
         private static final PlatformCtxServer instance = new PlatformCtxServer();
     }
@@ -23,11 +20,7 @@ public class PlatformCtxServer extends AbstractCtxServer {
     }
 
     public PlatformCtxServer() {
-        this.patternMap = new HashMap<>();
-        this.ruleMap = new HashMap<>();
-        this.resolverMap = new HashMap<>();
-        this.serverStatistics = new ServerStatistics();
-        this.atomicLong = new AtomicLong();
+
     }
 
     @Override
@@ -119,7 +112,7 @@ public class PlatformCtxServer extends AbstractCtxServer {
             appConfig.setCtxServiceConfig(config);
         }
         if(cmd == CmdType.START){
-            return appConfig.initCtxServer();
+            return appConfig.startCtxServer();
         }
         else if(cmd == CmdType.RESET){
             return appConfig.resetCtxServer();
