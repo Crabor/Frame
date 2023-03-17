@@ -30,3 +30,4 @@ out
 *.DS_Store
 *.rdb
 /Resources/configFile/ctxFile/
+/.idea/workspace.xml
