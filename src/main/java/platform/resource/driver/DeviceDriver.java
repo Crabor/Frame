@@ -68,7 +68,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                         break;
                     case "actor_set":
 //                        logger.info(cmdRet);
-                        Publisher.publish(cmdRet.args[0], Integer.parseInt(cmdRet.args[1]), cmdRet.ret);
+//                        Publisher.publish(cmdRet.args[0], Integer.parseInt(cmdRet.args[1]), cmdRet.ret);
                         break;
                     case "channel_message":
                         if (!Boolean.parseBoolean(cmdRet.ret)) {
