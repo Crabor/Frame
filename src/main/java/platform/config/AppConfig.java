@@ -28,12 +28,12 @@ public class AppConfig {
     public void setCtxServiceConfig(CtxServiceConfig config) {
         String dir = "Resources/configFile/ctxFile/" + appName;
         if (config.getRuleFileContent() != null) {
-            Util.writeFileContent(dir, "rules.xml", config.getRuleFileContent());
-            ruleFile = dir + "/rules.xml";
+            Util.writeFileContent(dir, "rules_yellow.xml", config.getRuleFileContent());
+            ruleFile = dir + "/rules_yellow.xml";
         }
         if (config.getPatternFileContent() != null) {
-            Util.writeFileContent(dir, "patterns.xml", config.getPatternFileContent());
-            patternFile = dir + "/patterns.xml";
+            Util.writeFileContent(dir, "patterns_yellow.xml", config.getPatternFileContent());
+            patternFile = dir + "/patterns_yellow.xml";
         }
         if (config.getBfuncFileContent() != null) {
             Util.writeFileContent(dir, "bfuncs.java", config.getBfuncFileContent());
@@ -112,7 +112,7 @@ public class AppConfig {
         else{
             sensors.add(sensorConfig);
             if(ctxServer != null){
-                ctxServer.getChannel2IndexQue().put(sensorConfig.getSensorName(), new ConcurrentLinkedQueue<>());
+                ctxServer.getItemManager().createIndexQue(sensorConfig.getSensorName());
             }
             return true;
         }
@@ -122,7 +122,7 @@ public class AppConfig {
         if(sensors.contains(sensorConfig)){
             sensors.remove(sensorConfig);
             if(ctxServer != null){
-                ctxServer.getChannel2IndexQue().remove(sensorConfig.getSensorName());
+                ctxServer.getItemManager().removeIndexQue(sensorConfig.getSensorName());
             }
             return true;
         }
@@ -229,13 +229,12 @@ public class AppConfig {
         return ctxValidator;
     }
 
-    public boolean initCtxServer(){
+    public boolean startCtxServer(){
         this.ctxServer = new AppCtxServer(this);
         this.ctxServer.init();
-        //subscribe
         for(SensorConfig sensorConfig : this.getSensors()){
             this.ctxServer.subscribe(sensorConfig.getSensorName(), grpId, 1); // apps are 0, so it should be 1.
-            this.ctxServer.getChannel2IndexQue().put(sensorConfig.getSensorName(), new ConcurrentLinkedQueue<>());
+            this.ctxServer.getItemManager().createIndexQue(sensorConfig.getSensorName());
         }
         this.ctxServer.start();
         this.ctxServerOn = true;
@@ -252,7 +251,7 @@ public class AppConfig {
     public boolean stopCtxServer(){
         for(SensorConfig sensorConfig : this.getSensors()){
             this.ctxServer.unsubscribe(sensorConfig.getSensorName()); // apps are 0, so it should be 1.
-            this.ctxServer.getChannel2IndexQue().remove(sensorConfig.getSensorName());
+            this.ctxServer.getItemManager().removeIndexQue(sensorConfig.getSensorName());
         }
         this.ctxServer.stop();
         this.ctxServerOn = false;

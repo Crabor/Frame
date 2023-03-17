@@ -424,13 +424,13 @@ Subscriber3: channel, hello
 
 ## resource manage
 
-平台和外部驱动程序通信采用UDP明文协议。通信流程为平台发送明文命令给硬件驱动程序，硬件驱动程序接收命令后执行，然后返回返回值。明文协议格式为：
+平台和外部程序通信采用UDP明文协议。通信流程为平台发送明文命令给硬件驱动程序，硬件驱动程序接收命令后执行，然后返回返回值。明文协议格式为：
 
 ```txt
-平台 -> 驱动程序：
+平台发送协议格式：
 {"cmd": "XXX", "args": "XXX"}
 
-驱动程序 -> 平台：
+平台接收协议格式（ret域需要硬件驱动按照协议自己编写）
 {"cmd": "XXX", "args": "XXX", "ret": "XXX"}
 ```
 
@@ -438,193 +438,17 @@ Subscriber3: channel, hello
 
 ### 明文协议
 
-| 报文方向   | CMD       | 发送方的发送的消息                                  | 接受方回复的消息                                      | description          |
-|--------|-----------|--------------------------------------------|-----------------------------------------------|----------------------|
-| W -> P | Register  | {"cmd":"register", "config":<json_config>} | {"state":true/false}                          | 向平台注册并打开sensor/actor |
-| W -> P | Shutdown  | {"cmd":"shutdown"}                         | {"state":true/false}                          | 关闭sensor/actor       |
-| P -> W | SensorGet | {"cmd":"sensor_get"}                       | {"default":"value"} / {"field1":"value1",...} | 获取sensor值            |
-| P -> W | ActorSet  | {"cmd":"actor_set", "action":"XXXX"}       | {"state":true/false}                          | 设定actor值             |
-
-#### <json_config>
-
-SensorConfig（注意Fields字段只有复合型传感器才需要）:
-
-```json
-{
-  "ConnectConfig": {
-    "PlatformIP": "127.0.0.1",
-    "PlatformPort": 8080
-  },
-  "DeviceInfo": {
-    "Name": "Car_1",
-    "Type": "Sensor",
-    "Fields": {
-      "fieldName1": "XXXX",
-      "fieldName2": "XXXX"
-    }
-  }
-}
-```
-
-ActorConfig:
-
-```json
-{
-  "ConnectConfig": {
-    "PlatformIP": "127.0.0.1",
-    "PlatformPort": 8080
-  },
-  "DeviceInfo": {
-    "Name": "Car_1_Speed",
-    "Type": "Actor"
-  }
-}
-```
-
-### 示例代码
-
-java驱动程序
-
-```java
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
-
-public class WrapperDemo {
-    public static void main(String[] args) throws IOException {
-        String config = "{\"ConnectConfig\":{\"PlatformIP\":\"127.0.0.1\",\"PlatformPort\":8080},\"DeviceInfo\":{\"Name\":\"Car_1\",\"Type\":\"Sensor\",\"Fields\":{\"fieldName1\":\"Speed\",\"fieldName2\":\"Longitude\"}}}";
-
-        JSONObject json = JSONObject.parseObject(config);
-        JSONObject connectConfig = json.getJSONObject("ConnectConfig");
-        String platformIP = connectConfig.getString("PlatformIP");
-        int platformPort = connectConfig.getIntValue("PlatformPort");
-        JSONObject registerCmd = new JSONObject();
-        registerCmd.put("cmd", "register");
-        registerCmd.put("config", config);
-
-        Socket socket = new Socket(platformIP, platformPort);
-        DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-        out.writeBytes(registerCmd.toJSONString() + '\n');
-        boolean succeed = JSON.parseObject(in.readLine()).getBooleanValue("state");
-
-        if (succeed) {
-            while (true) {
-                JSONObject recv = JSON.parseObject(in.readLine());
-                String retJson = "";
-                if (recv.getString("cmd").equalsIgnoreCase("sensor_get")) {
-                    //TODO: get data from sensor
-                    retJson = "{\"Speed\": 100, \"Longitude\": 120}";
-                } else if (recv.getString("cmd").equalsIgnoreCase("actor_set")) {
-                    String action = recv.getString("action");
-                    //TODO: set data to actor
-                    retJson = "{\"state\": true}";
-                }
-                out.writeBytes(retJson + '\n');
-            }
-        }
-    }
-}
-```
-
-python驱动程序
-
-```python
-import socket
-import json
-
-config = "{\"ConnectConfig\":{\"PlatformIP\":\"127.0.0.1\",\"PlatformPort\":8080},\"DeviceInfo\":{\"Name\":\"Car_1\",\"Type\":\"Sensor\",\"Fields\":{\"fieldName1\":\"Speed\",\"fieldName2\":\"Longitude\"}}}"
-
-json_config = json.loads(config)
-connect_config = json_config["ConnectConfig"]
-platform_ip = connect_config["PlatformIP"]
-platform_port = connect_config["PlatformPort"]
-register_cmd = {"cmd": "register", "config": config}
-
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((platform_ip, platform_port))
-s.send(json.dumps(register_cmd).encode())
-succeed = json.loads(s.recv(1024).decode())["state"]
-
-if succeed:
-    while True:
-        recv = json.loads(s.recv(1024).decode())
-        ret_json = ""
-        if recv["cmd"] == "sensor_get":
-           #TODO: get data from sensor
-           ret_json = "{\"Speed\": 100, \"Longitude\": 120}"
-        elif recv["cmd"] == "actor_set":
-            action = recv["action"]
-            #TODO: set data to actor
-            ret_json = "{\"state\": true}"
-        s.send(ret_json.encode())
-```
-
-c#驱动程序
-
-```csharp
-using System;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-namespace WrapperDemo
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            string config = "{\"ConnectConfig\":{\"PlatformIP\":\"127.0.0.1\",\"PlatformPort\":8080},\"DeviceInfo\":{\"Name\":\"Car_1\",\"Type\":\"Sensor\",\"Fields\":{\"fieldName1\":\"Speed\",\"fieldName2\":\"Longitude\"}}}";
-            
-            JObject json = JObject.Parse(config);
-            JObject connectConfig = (JObject)json["ConnectConfig"];
-            string platformIP = (string)connectConfig["PlatformIP"];
-            int platformPort = (int)connectConfig["PlatformPort"];
-            JObject registerCmd = new JObject();
-            registerCmd["cmd"] = "register";
-            registerCmd["config"] = config;
-            
-            TcpClient client = new TcpClient(platformIP, platformPort);
-            NetworkStream stream = client.GetStream();
-            
-            byte[] data = Encoding.UTF8.GetBytes(registerCmd.ToString());
-            stream.Write(data, 0, data.Length);
-            bool succeed = (bool)JObject.Parse(Encoding.UTF8.GetString(data))["state"];
-            
-            if (succeed)
-            {
-                while (true)
-                {
-                    byte[] recv = new byte[1024];
-                    stream.Read(recv, 0, recv.Length);
-                    JObject recvJson = JObject.Parse(Encoding.UTF8.GetString(recv));
-                    string retJson = "";
-                    if (recvJson["cmd"].ToString() == "sensor_get")
-                    {
-                        //TODO: get data from sensor
-                        retJson = "{\"Speed\": 100, \"Longitude\": 120}";
-                    }
-                    else if (recvJson["cmd"].ToString() == "actor_set")
-                    {
-                        string action = (string)recvJson["action"];
-                        //TODO: set data to actor
-                        retJson = "{\"state\": true}";
-                    }
-                    data = Encoding.UTF8.GetBytes(retJson);
-                    stream.Write(data, 0, data.Length);
-                }
-            }
-        }
-    }
-}
-```
+| cmd          | args                         | ret                                           | description                                                                                       |
+|--------------|------------------------------|-----------------------------------------------|---------------------------------------------------------------------------------------------------|
+| sensor_on    | sensor_name                  | true / false                                  | 启动sensor<br/>true :打开成功<br/>false :打开失败                                                           |
+| sensor_off   | sensor_name                  | true / false                                  | 关闭sensor<br/>true :关闭成功<br/>false :关闭失败                                                           |
+| sensor_alive | sensor_name                  | true / false                                  | 判断sensor状态<br/>true :sensor处于打开状态<br/>false :sensor处于关闭状态                                         |
+| sensor_get   | sensor_name app_grp_id1 ...  | {"default":"value"} / {"field1":"value1",...} | 获取sensor值<br/>{"default":"value"} :单值结构<br/>{"field1":"value1",...} :复合结构<br/>注:app_grp_id参数至少有一个 |
+| actor_on     | actor_name                   | true / false                                  | 启动actor<br/>true :启动成功<br/>false :启动失败                                                            |
+| actor_off    | actor_name                   | true / false                                  | 关闭actor<br/>true :关闭成功<br/>false :关闭失败                                                            |
+| actor_alive  | actor_name                   | true / false                                  | 判断actor状态<br/>true :actor处于打开状态<br/>false :actor处于关闭状态                                            |
+| actor_set    | actor_name app_grp_id action | true / false                                  | 设置actor值<br/>true :设置actor值成功<br/>false :设置actor值失败                                               |
+| channel_msg  | {"channel":"item"}        | true / false                                  | 发送频道消息<br/>true :发送频道消息成功<br/>false :发送频道消息错误                                                     |
 
 ## app
 

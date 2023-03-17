@@ -17,9 +17,9 @@ public class AppDemo1 extends AbstractApp {
 //        }
 
         //ctx setting
-//        setRuleFile("Resources/taxiTest/appOne/rules.xml");
+//        setRuleFile("Resources/taxiTest/appOne/rules_yellow.xml");
 //        setBfuncFile("Resources/taxiTest/appOne/taxiBfunction.class");
-//        setPatternFile("Resources/taxiTest/appOne/patterns.xml");
+//        setPatternFile("Resources/taxiTest/appOne/patterns_yellow.xml");
 //        setMfuncFile("Resources/taxiTest/appOne/taxiMfunction.class");
 //        call(ServiceType.CTX, CmdType.START);
     }
@@ -36,9 +36,9 @@ public class AppDemo1 extends AbstractApp {
 //        try {
 //            AppDemo1 app = new AppDemo1();
 //            app.connect("127.0.0.1", 8888);
-////            app.setRuleFile("Resources/taxiTest/appOne/rules.xml");
+////            app.setRuleFile("Resources/taxiTest/appOne/rules_yellow.xml");
 ////            app.setBfuncFile("Resources/taxiTest/appOne/taxiBfunction.class");
-////            app.setPatternFile("Resources/taxiTest/appOne/patterns.xml");
+////            app.setPatternFile("Resources/taxiTest/appOne/patterns_yellow.xml");
 ////            app.setMfuncFile("Resources/taxiTest/appOne/taxiMfunction.class");
 ////            Map<String, ActorInfo> supportedActors = app.getSupportedActors();
 ////            if (supportedActors.containsKey("xSpeed")) {

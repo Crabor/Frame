@@ -35,7 +35,7 @@ public class CheckServer implements Runnable {
 
     // 构造方法私有化
     private CheckServer() {
-        File dir = new File("output/inv/");
+        File dir = new File("CtxServerOutput.txt/inv/");
         Util.deleteDir(dir);
         dir.mkdirs();
     }
@@ -86,7 +86,7 @@ public class CheckServer implements Runnable {
                             logger.info(grp + "=" + iters);
                         });
 
-                        //output group trace & gen inv
+                        //CtxServerOutput.txt group trace & gen inv
                         Trace traceOutput =  Configuration.getInvServerConfig().getGroupTraceType();
                         dos.getOutGrps().forEach((grp, iters) -> {
                             Map<Integer, List<Integer>> linesTrace = new HashMap<>();
@@ -99,7 +99,7 @@ public class CheckServer implements Runnable {
                                 });
                             });
                             linesTrace.forEach((lineNumber, lineTrace) -> {
-                                // trace output
+                                // trace CtxServerOutput.txt
                                 traceOutput.printTrace(appName, lineNumber, grp, segMap.get(appName), iters);
                                 // inv meta info
                                 lineMap.get(appName).get(lineNumber).forEach(checkObject -> {
