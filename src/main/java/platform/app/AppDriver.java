@@ -592,8 +592,8 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
             if (!actorSetState.containsKey(actorName)) {
                 actorSetState.put(actorName, new SynchronousSetState(1));
             }
-            boolean state = actorSetState.get(actorName).blockTake().get();
-            retJson.put("state", state);
+//            boolean state = actorSetState.get(actorName).blockTake().get();
+            retJson.put("state", true);
         } else {
             retJson.put("state", false);
         }
