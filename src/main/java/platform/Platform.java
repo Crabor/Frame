@@ -61,7 +61,7 @@ public class Platform {
         dir.mkdirs();
 
         //read config file
-        Configuration.analyzer("Resources/configFile/Configuration_zsh");
+        Configuration.analyzer("Resources/configFile/ConfigurationNew");
 
         //init database
 //        RedisClient client = RedisClient.create(

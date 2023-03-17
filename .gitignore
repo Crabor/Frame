@@ -31,3 +31,4 @@ out
 *.rdb
 /Resources/configFile/ctxFile/
 /.idea/workspace.xml
+/.idea/leetcode/
