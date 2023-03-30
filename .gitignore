@@ -29,6 +29,6 @@ out
 #file
 *.DS_Store
 *.rdb
-/Resources/configFile/ctxFile/
-/.idea/workspace.xml
-/.idea/leetcode/
+Resources/configFile/ctxFile/
+.idea/workspace.xml
+.idea/leetcode/
