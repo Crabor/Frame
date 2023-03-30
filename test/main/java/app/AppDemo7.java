@@ -20,7 +20,7 @@ public class AppDemo7 extends AbstractApp {
 
     public static void main(String[] args) {
         AppDemo7 demo = new AppDemo7();
-        RemoteConnector connector = RemoteConnector.getInstance();
+        AppRemoteConnector connector = AppRemoteConnector.getInstance();
         connector.connectPlatform("127.0.0.1", 8079);
         connector.registerApp(demo);
         String sensorName = "GPS_001";

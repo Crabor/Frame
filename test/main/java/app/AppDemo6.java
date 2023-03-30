@@ -20,7 +20,7 @@ public class AppDemo6 extends AbstractApp {
 
     public static void main(String[] args) throws InterruptedException {
         AppDemo6 demo = new AppDemo6();
-        RemoteConnector connector = RemoteConnector.getInstance();
+        AppRemoteConnector connector = AppRemoteConnector.getInstance();
         connector.connectPlatform("127.0.0.1", 8079);
         connector.registerApp(demo);
         String sensorName = "GPS_001";

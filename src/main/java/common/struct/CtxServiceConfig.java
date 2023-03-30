@@ -21,11 +21,11 @@ public class CtxServiceConfig implements ServiceConfig{
 
     public boolean setCtxResources(String ruleFile, String patternFile, String bfuncFile, String mfuncFile, String rfuncFile) {
 
-        String ruleFileContent = ruleFile == null ? null : Util.readFileContent(ruleFile);
-        String patternFileContent = patternFile == null ? null : Util.readFileContent(patternFile);
-        String bfuncFileContent = bfuncFile == null ? null : Util.readFileContent(bfuncFile);
-        String mfuncFileContent = mfuncFile == null ? null : Util.readFileContent(mfuncFile);
-        String rfuncFileContent = rfuncFile == null ? null : Util.readFileContent(rfuncFile);
+        String ruleFileContent = ruleFile == null ? null : Util.readFileContent(ruleFile, "//huanhang");
+        String patternFileContent = patternFile == null ? null : Util.readFileContent(patternFile, "//huanhang");
+        String bfuncFileContent = bfuncFile == null ? null : Util.readFileContent(bfuncFile, "//huanhang");
+        String mfuncFileContent = mfuncFile == null ? null : Util.readFileContent(mfuncFile, "//huanhang");
+        String rfuncFileContent = rfuncFile == null ? null : Util.readFileContent(rfuncFile, "//huanhang");
 
         if (ruleFileContent != null && patternFileContent != null && bfuncFileContent != null) {
             config.put("rule_file_content", ruleFileContent);

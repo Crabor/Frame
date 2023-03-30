@@ -1,11 +1,8 @@
 package app;
 
 import app.struct.ActorInfo;
-import app.struct.SensorInfo;
 import common.struct.SensorData;
 import common.struct.State;
-import common.struct.enumeration.CmdType;
-import common.struct.enumeration.SensorMode;
 
 import java.util.Map;
 
@@ -22,7 +19,7 @@ public class AppDemo8 extends AbstractApp {
 
     public static void main(String[] args) {
         AppDemo8 demo = new AppDemo8();
-        RemoteConnector connector = RemoteConnector.getInstance();
+        AppRemoteConnector connector = AppRemoteConnector.getInstance();
         connector.connectPlatform("127.0.0.1", 8079);
         connector.registerApp(demo);
 

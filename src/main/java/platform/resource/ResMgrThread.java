@@ -1,16 +1,14 @@
 package platform.resource;
 
-import common.socket.UDP;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import platform.Platform;
-import platform.communication.socket.PlatformUDP;
-import platform.communication.socket.Cmd;
 import platform.config.*;
-import platform.resource.driver.DeviceDriver;
 import platform.resource.driver.DBDriver;
 
-import java.util.concurrent.locks.LockSupport;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class ResMgrThread implements Runnable {
     private static ResMgrThread instance;
@@ -43,38 +41,38 @@ public class ResMgrThread implements Runnable {
     @Override
     public void run() {
         //init resource
-        DeviceDriverConfig ddc = Configuration.getResourceConfig().getDeviceDriverConfig();
-        dd = new DeviceDriver();
-        for (SubConfig subConfig : ddc.getSubConfigs()) {
-            dd.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
-        }
-
-        DatabaseDriverConfig dbdc = Configuration.getResourceConfig().getDatabaseDriverConfig();
-        dbd = new DBDriver();
-        for (SubConfig subConfig : dbdc.getSubConfigs()) {
-            dbd.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
-        }
+//        DeviceDriverConfig ddc = Configuration.getResourceConfig().getDeviceDriverConfig();
+//        dd = new DeviceDriver();
+//        for (SubConfig subConfig : ddc.getSubConfigs()) {
+//            dd.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
+//        }
+//
+//        DatabaseDriverConfig dbdc = Configuration.getResourceConfig().getDatabaseDriverConfig();
+//        dbd = new DBDriver();
+//        for (SubConfig subConfig : dbdc.getSubConfigs()) {
+//            dbd.subscribe(subConfig.channel, subConfig.groupId, subConfig.priorityId);
+//        }
 
         Platform.incrMgrStartFlag();
 
         Platform.lockUntilMgrStartFlagEqual(3);
-        dd.start();
-        dbd.start();
+//        dd.start();
+//        dbd.start();
         //TODO
-        Configuration.getResourceConfig().getSensorsConfig().forEach((name, config) -> {
-            //alive thread
-            new Thread(() -> {
-                while (true) {
-                    try {
-                        Thread.sleep(1000 / config.getAliveFreq());
-                        Cmd sensor_alive = new Cmd("sensor_alive", name);
-                        PlatformUDP.send(sensor_alive);
-//                        logger.debug(sensor_alive);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
+//        Configuration.getResourceConfig().getSensorsConfig().forEach((name, config) -> {
+//            //alive thread
+//            new Thread(() -> {
+//                while (true) {
+//                    try {
+//                        Thread.sleep(1000 / config.getAliveFreq());
+//                        Cmd sensor_alive = new Cmd("sensor_alive", name);
+//                        PlatformUDP.send(sensor_alive);
+////                        logger.debug(sensor_alive);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }).start();
 
             //get value thread
 //            Thread valueThread = new Thread(() -> {
@@ -111,23 +109,23 @@ public class ResMgrThread implements Runnable {
 //            ValueThread valueThread = new ValueThread(config);
 //            config.setValueThread(valueThread);
 //            valueThread.start();
-        });
+//        });
 
-        Configuration.getResourceConfig().getActorsConfig().forEach((name, config) -> {
-            //alive thread
-            new Thread(() -> {
-                while (true) {
-                    try {
-                        Thread.sleep(1000 / config.getAliveFreq());
-                        Cmd actor_alive = new Cmd("actor_alive", name);
-                        PlatformUDP.send(actor_alive);
-//                        logger.debug(actor_alive);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-        });
+//        Configuration.getResourceConfig().getActorsConfig().forEach((name, config) -> {
+//            //alive thread
+//            new Thread(() -> {
+//                while (true) {
+//                    try {
+//                        Thread.sleep(1000 / config.getAliveFreq());
+//                        Cmd actor_alive = new Cmd("actor_alive", name);
+//                        PlatformUDP.send(actor_alive);
+////                        logger.debug(actor_alive);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }).start();
+//        });
 
 //        try {
 //            Thread.sleep(5000);
@@ -142,6 +140,16 @@ public class ResMgrThread implements Runnable {
 //        });
 
 //        while (true);
+        try {
+            ServerSocket serverSocket = new ServerSocket(Configuration.getTcpConfig().getDeviceListenPort());
+            while (true) {
+                Socket socket = serverSocket.accept();
+                new Thread(new DeviceDriver(socket)).start();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public DBDriver getDBDriver() {

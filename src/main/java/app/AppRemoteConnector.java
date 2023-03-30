@@ -15,39 +15,37 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RemoteConnector {
+public class AppRemoteConnector {
     //单例模式
-    private static RemoteConnector instance;
+    private static AppRemoteConnector instance;
     private TCP tcp = null;
     private int udpPort = -1;
-    private Log logger = LogFactory.getLog(RemoteConnector.class);
+    private Log logger = LogFactory.getLog(AppRemoteConnector.class);
     private AbstractApp app = null;
 
-    private RemoteConnector() {}
+    private AppRemoteConnector() {}
 
-    public static RemoteConnector getInstance() {
+    public static AppRemoteConnector getInstance() {
         if (instance == null) {
-            synchronized (RemoteConnector.class) {
+            synchronized (AppRemoteConnector.class) {
                 if (instance == null) {
-                    instance = new RemoteConnector();
+                    instance = new AppRemoteConnector();
                 }
             }
         }
         return instance;
     }
 
-    public class RemoteConnectorTCP extends AbstractTCP {
-        public RemoteConnectorTCP(Socket socket, boolean lockFlag) {
+    public class AppRemoteConnectorTCP extends AbstractTCP {
+        public AppRemoteConnectorTCP(Socket socket, boolean lockFlag) {
             super(socket, lockFlag);
         }
 
-        public RemoteConnectorTCP(Socket socket) {
+        public AppRemoteConnectorTCP(Socket socket) {
             super(socket);
         }
 
@@ -66,7 +64,7 @@ public class RemoteConnector {
 
         @Override
         public void callBack() {
-            logger.info("[Connector]: TCP connection is broken.");
+            logger.info("[AppConnector]: TCP connection is broken.");
             if (app != null) {
                 app.stopGetValueThread();
 //                app = null;
@@ -74,12 +72,20 @@ public class RemoteConnector {
         }
     }
 
+    public TCP getTCP() {
+        return tcp;
+    }
+
+    public String getAppName() {
+        return app.appName;
+    }
+
     public boolean connectPlatform(String ip, int port) {
         JSONObject jo = new JSONObject(1);
         jo.put("api", "connect");
         boolean state = false;
         try {
-            tcp = new RemoteConnectorTCP(new Socket(ip, port));
+            tcp = new AppRemoteConnectorTCP(new Socket(ip, port));
             tcp.send(jo.toJSONString());
 
             String recv = tcp.recv();
@@ -91,7 +97,7 @@ public class RemoteConnector {
             e.printStackTrace();
             tcp.close();
         }
-        logger.info(String.format("[Connector]: connectPlatform(%s, %d) -> %s", ip, port, state));
+        logger.info(String.format("[AppConnector]: connectPlatform(%s, %d) -> %s", ip, port, state));
         return state;
     }
 
@@ -106,7 +112,7 @@ public class RemoteConnector {
             JSONObject retJson = JSON.parseObject(recv);
             state = retJson.getBooleanValue("state");
         }
-        logger.info(String.format("[Connector]: disConnectPlatform() -> %s", state));
+        logger.info(String.format("[AppConnector]: disConnectPlatform() -> %s", state));
         if (state && app != null) {
             app.stopGetValueThread();
             app = null;
@@ -125,7 +131,7 @@ public class RemoteConnector {
             JSONObject retJson = JSON.parseObject(recv);
             state = retJson.getBooleanValue("state");
         }
-        logger.info(String.format("[Connector]: checkConnected() -> %s", state));
+        logger.info(String.format("[AppConnector]: checkConnected() -> %s", state));
         return state;
     }
 
@@ -145,7 +151,7 @@ public class RemoteConnector {
                 udpPort = retJson.getIntValue("udp_port");
             }
         }
-        logger.info(String.format("[Connector]: registerApp(%s) -> %s", app.appName, state));
+        logger.info(String.format("[AppConnector]: registerApp(%s) -> %s", app.appName, state));
         return state;
     }
 
@@ -166,7 +172,7 @@ public class RemoteConnector {
                 udpPort = -1;
             }
         }
-        logger.info(String.format("[Connector]: unregisterApp(%s) -> %s", app.appName, state));
+        logger.info(String.format("[AppConnector]: unregisterApp(%s) -> %s", app.appName, state));
         return state;
     }
 
@@ -489,6 +495,11 @@ public class RemoteConnector {
     }
 
     public boolean serviceStart(ServiceType service, ServiceConfig config) {
+        if (service == ServiceType.INV || service == ServiceType.ALL) {
+            InvCheck invCheck = InvCheck.getInstance();
+            invCheck.connector = this;
+        }
+
         JSONObject jo = new JSONObject(3);
         jo.put("api", "start_service");
         jo.put("service_type", service.toString());
@@ -506,6 +517,11 @@ public class RemoteConnector {
     }
 
     public boolean serviceStop(ServiceType service) {
+        if (service == ServiceType.INV || service == ServiceType.ALL) {
+            InvCheck invCheck = InvCheck.getInstance();
+            invCheck.connector = null;
+        }
+
         JSONObject jo = new JSONObject(2);
         jo.put("api", "stop_service");
         jo.put("service_type", service.toString());
@@ -522,6 +538,16 @@ public class RemoteConnector {
     }
 
     public boolean serviceCall(ServiceType service, CmdType cmd, ServiceConfig config) {
+        if (service == ServiceType.INV || service == ServiceType.ALL) {
+            if (cmd == CmdType.START) {
+                InvCheck invCheck = InvCheck.getInstance();
+                invCheck.connector = this;
+            } else if (cmd == CmdType.STOP) {
+                InvCheck invCheck = InvCheck.getInstance();
+                invCheck.connector = null;
+            }
+        }
+
         JSONObject jo = new JSONObject(4);
         jo.put("api", "service_call");
         jo.put("service_type", service.toString());

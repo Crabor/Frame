@@ -166,7 +166,7 @@ public class KMeans {
         return grps;
     }
 
-//    public static void main(String[] args) {
+//    public static void test(String[] args) {
 //        List<SegInfo> datasource = new ArrayList<>();
 //        int len = datasource.get(0).eCxt.size();
 //        // 划分为6个簇，质心移动小于1E-8时终止迭代，重复运行7次

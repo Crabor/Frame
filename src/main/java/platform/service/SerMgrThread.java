@@ -1,11 +1,8 @@
 package platform.service;
 
 import platform.Platform;
-import platform.config.Configuration;
-import platform.config.SensorConfig;
 import platform.service.ctx.ctxServer.PlatformCtxServer;
-import platform.service.inv.CheckServer;
-import platform.config.SubConfig;
+import platform.service.inv.PlatformInvServer;
 
 public class SerMgrThread implements Runnable{
     private static SerMgrThread instance;
@@ -13,7 +10,7 @@ public class SerMgrThread implements Runnable{
 
     private static PlatformCtxServer platformCtxServer;
 
-    private static CheckServer checkServer;
+    private static PlatformInvServer platformInvServer;
 
     // 构造方法私有化
     private SerMgrThread() {}
@@ -38,8 +35,8 @@ public class SerMgrThread implements Runnable{
         //TODO:platformCtxServer初始化如何拦截所有grp?
 
 //        if (Configuration.getInvServerConfig().isServerOn()) {
-//            checkServer = CheckServer.getInstance();
-//            checkServer.start();
+//            platformInvServer = PlatformInvServer.getInstance();
+//            platformInvServer.start();
 //        }
 
         Platform.incrMgrStartFlag();
@@ -49,8 +46,8 @@ public class SerMgrThread implements Runnable{
         return platformCtxServer;
     }
 
-    public static CheckServer getCancerServer() {
-        return checkServer;
+    public static PlatformInvServer getCancerServer() {
+        return platformInvServer;
     }
 
     public void start() {

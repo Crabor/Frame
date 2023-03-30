@@ -1,4 +1,4 @@
-package sensorDriver;
+package wrapper;
 
 import common.socket.UDP;
 import platform.communication.socket.Cmd;

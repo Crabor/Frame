@@ -1,6 +1,11 @@
 package app;
 
+import app.struct.SensorInfo;
 import common.struct.SensorData;
+import common.struct.enumeration.CmdType;
+import common.struct.enumeration.SensorMode;
+
+import java.util.Map;
 
 public class AppDemo3 extends AbstractApp {
     @Override
@@ -16,13 +21,21 @@ public class AppDemo3 extends AbstractApp {
 
     public static void main(String[] args) {
         AppDemo3 app = new AppDemo3();
-        RemoteConnector connector = RemoteConnector.getInstance();
-        connector.connectPlatform("127.0.0.1", 8079);
+        AppRemoteConnector connector = AppRemoteConnector.getInstance();
+        connector.connectPlatform("127.0.0.1", 9090);
         connector.registerApp(app);
         connector.checkConnected();
 
-        while(true);
+        Map<String, SensorInfo> supportedSensors = connector.getSupportedSensors();
+        if (supportedSensors.containsKey("YellowCar")) {
+            connector.registerSensor("YellowCar", SensorMode.PASSIVE, 1);
+        }
+        connector.getMsgThread(CmdType.START);
+        while (true);
+//        connector.getSensorData("YellowCar");
+
 //        connector.unregisterApp(app);
 //        connector.disConnectPlatform();
+
     }
 }

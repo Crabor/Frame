@@ -15,6 +15,7 @@ public class AppMgrThread implements Runnable {
     private static final Map<String, Set<Integer>> portMap = new HashMap<>();
 //    private static final Set<Integer> grpIdSet = new HashSet<>();
     private static final Map<String, Integer> appGrpIdMap = new HashMap<>();
+    private static final Map<Integer, String> grpIdAppMap = new HashMap<>();
 
     // 构造方法私有化
     private AppMgrThread() {
@@ -40,7 +41,7 @@ public class AppMgrThread implements Runnable {
 //        for (AppConfig appConfig : Configuration.getAppsConfig().values()) {
 //            try {
 //                Object app = Class.forName(appConfig.getAppName()).newInstance();
-//                appGrpIds.add((App) app);
+//                appNames.add((App) app);
 //                appConfig.getSubConfigs().forEach(config -> {
 //                    ((AbstractSubscriber) app).subscribe(config);
 //                });
@@ -57,7 +58,7 @@ public class AppMgrThread implements Runnable {
         Platform.incrMgrStartFlag();
 
         try {
-            ServerSocket serverSocket = new ServerSocket(Configuration.getTcpConfig().getServerPort());
+            ServerSocket serverSocket = new ServerSocket(Configuration.getTcpConfig().getAppListenPort());
             while (true) {
                 Socket socket = serverSocket.accept();
                 new Thread(new AppDriver(socket)).start();
@@ -77,7 +78,7 @@ public class AppMgrThread implements Runnable {
     }
 
 //    public List<App> getApps() {
-//        return appGrpIds;
+//        return appNames;
 //    }
 
     public static int getNewPort(Socket socket) {
@@ -113,11 +114,22 @@ public class AppMgrThread implements Runnable {
                 max = Math.max(max, i);
             }
             appGrpIdMap.put(appName, max + 1);
+            grpIdAppMap.put(max + 1, appName);
             return max + 1;
         }
     }
 
     public static void removeGrpId(String appName) {
+        int grpId = appGrpIdMap.get(appName);
         appGrpIdMap.remove(appName);
+        grpIdAppMap.remove(grpId);
+    }
+
+    public static String getAppName(int grpId) {
+        return grpIdAppMap.get(grpId);
+    }
+
+    public static int getGrpId(String appName) {
+        return appGrpIdMap.get(appName);
     }
 }

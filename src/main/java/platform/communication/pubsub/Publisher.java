@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.CompletableFuture;
 
 public class Publisher {
     private Publisher() {}
@@ -30,7 +31,7 @@ public class Publisher {
             if (maxPrio != Integer.MIN_VALUE) {
                 Set<AbstractSubscriber> prio = grp.get(maxPrio);
                 for (AbstractSubscriber s : prio) {
-                    s.onMessage(channel.getName(), message);
+                    CompletableFuture.runAsync(() -> s.onMessage(channel.getName(), message));
                 }
             }
         }

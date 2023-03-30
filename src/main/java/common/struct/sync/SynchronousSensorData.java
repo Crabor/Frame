@@ -1,6 +1,9 @@
-package common.struct;
+package common.struct.sync;
+
+import common.struct.SensorData;
 
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class SynchronousSensorData {
     private LinkedBlockingQueue<SensorData> queue;
@@ -14,13 +17,18 @@ public class SynchronousSensorData {
     }
 
     public SensorData blockTake() {
+        return blockTake(-1);
+    }
+
+    public SensorData blockTake(long timeout) {
         try {
-            return queue.take();
+            return queue.poll(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             return null;
         }
     }
+
 
     public SensorData nonBlockTake() {
         return queue.poll();

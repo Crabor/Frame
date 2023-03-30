@@ -1,5 +1,5 @@
-import app.AbstractApp;
-import app.RemoteConnector;
+package app;
+
 import common.struct.CtxServiceConfig;
 import common.struct.SensorData;
 import common.struct.enumeration.CmdType;
@@ -8,12 +8,12 @@ import common.struct.enumeration.ServiceType;
 
 public class Test extends AbstractApp {
     public static Test app;
-    public static RemoteConnector connector = RemoteConnector.getInstance();
+    public static AppRemoteConnector connector = AppRemoteConnector.getInstance();
     public static CtxServiceConfig ctxServiceConfig = new CtxServiceConfig();
 
     @Override
     public void configApp() {
-        this.appName = "Test";
+        this.appName = "app.Test";
         this.appDescription = " ";
     }
 

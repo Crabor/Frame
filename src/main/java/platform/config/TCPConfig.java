@@ -3,20 +3,27 @@ package platform.config;
 import com.alibaba.fastjson.JSONObject;
 
 public class TCPConfig {
-    private final int serverPort;
+    private final int appListenPort;
+    private final int deviceListenPort;
 
     public TCPConfig(JSONObject object){
-        this.serverPort = object.getIntValue("serverPort");
+        appListenPort = object.getIntValue("appListenPort");
+        deviceListenPort = object.getIntValue("deviceListenPort");
     }
 
-    public int getServerPort() {
-        return serverPort;
+    public int getAppListenPort() {
+        return appListenPort;
+    }
+
+    public int getDeviceListenPort() {
+        return deviceListenPort;
     }
 
     @Override
     public String toString() {
         return "TCPConfig{" +
-                "serverPort=" + serverPort +
+                "appListenPort=" + appListenPort +
+                ", deviceListenPort=" + deviceListenPort +
                 '}';
     }
 }

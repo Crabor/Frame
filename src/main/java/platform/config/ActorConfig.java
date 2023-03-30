@@ -9,30 +9,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ActorConfig {
     private final String actorName;
     private String actorType;
-    private boolean isAlive = false;
-    private int aliveFreq;
+    private boolean isAlive = true;
     private final Set<AppConfig> apps = ConcurrentHashMap.newKeySet();
 
     public ActorConfig(JSONObject object) {
-        actorName = object.getString("actorName");
+        actorName = object.getString("name");
         try {
-            aliveFreq = object.getInteger("aliveFreq");
-        } catch (NullPointerException e) {
-            aliveFreq = 1;
-        }
-        try {
-            actorType = object.getString("actorType");
+            actorType = object.getString("valueType");
         } catch (NullPointerException e) {
             actorType = "String";
         }
-    }
-
-    public int getAliveFreq() {
-        return aliveFreq;
-    }
-
-    public void setAliveFreq(int freq) {
-        aliveFreq = freq;
     }
 
     public String getActorName() {
@@ -76,7 +62,6 @@ public class ActorConfig {
         return "ActorConfig{" +
                 "actorName='" + actorName + '\'' +
                 ", actorType='" + actorType + '\'' +
-                ", aliveFreq=" + aliveFreq +
                 '}';
     }
 }

@@ -58,10 +58,10 @@ public class Configuration {
             JSONObject obj = JSON.parseObject(str);
             JSONObject ctxObj = (JSONObject) obj.get("CtxServerConfiguration");
 //            JSONArray appObj = (JSONArray) obj.get("AppConfiguration");
-            JSONObject invObj = (JSONObject) obj.get("InvServerConfiguration");
-            JSONObject resourceObj = (JSONObject) obj.get("ResourceConfiguration");
+//            JSONObject invObj = (JSONObject) obj.get("InvServerConfiguration");
+//            JSONObject resourceObj = (JSONObject) obj.get("ResourceConfiguration");
             JSONObject redisObj = (JSONObject) obj.get("RedisConfig");
-            JSONObject udpObj = (JSONObject) obj.get("UDPConfig");
+//            JSONObject udpObj = (JSONObject) obj.get("UDPConfig");
             JSONObject tcpObj = (JSONObject) obj.get("TCPConfig");
             //System.out.println(ctxObj.toJSONString());
             ctxServerConfig  = CtxServerConfig.getInstance(ctxObj);
@@ -69,22 +69,22 @@ public class Configuration {
 //                JSONObject temp = (JSONObject) appObj.get(i);
 //                appsConfig.put(temp.getString("appName"), new AppConfig(temp));
 //            }
-            invServerConfig = new InvServerConfig(invObj);
-            resourceConfig = new ResourceConfig(resourceObj);
+//            invServerConfig = new InvServerConfig(invObj);
+            resourceConfig = new ResourceConfig();
             redisConfig = new RedisConfig(redisObj);
-            udpConfig = new UDPConfig(udpObj);
+//            udpConfig = new UDPConfig(udpObj);
             tcpConfig = new TCPConfig(tcpObj);
             logger.info(ctxServerConfig);
-            logger.info(invServerConfig);
+//            logger.info(invServerConfig);
 //            logger.info(appsConfig);
-            logger.info(resourceConfig);
+//            logger.info(resourceConfig);
             logger.info(redisConfig);
-            logger.info(udpConfig);
+//            logger.info(udpConfig);
             logger.info(tcpConfig);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        resourceConfig.getSensorsConfig().forEach((sensorName, sensorConfig) -> ctxServerConfig.addSensorConfig(sensorConfig));
+//        resourceConfig.getSensorsConfig().forEach((sensorName, sensorConfig) -> ctxServerConfig.addSensorConfig(sensorConfig));
     }
 
     public static Set<AppConfig> getAppsBySensorName(String sensorName) {
@@ -113,13 +113,13 @@ public class Configuration {
         return registeredSensors;
     }
 
-    public static boolean isSensorExists(String sensorName) {
-        return Configuration.getResourceConfig().getSensorsConfig().containsKey(sensorName);
-    }
-
-    public static void addSensorConfig(String sensorName, String sensorType, String fieldNames) {
-        SensorConfig config = new SensorConfig(sensorName, sensorType, fieldNames);
-        Configuration.getResourceConfig().getSensorsConfig().put(sensorName, config);
-        ctxServerConfig.addSensorConfig(config);
-    }
+//    public static boolean isSensorExists(String sensorName) {
+//        return Configuration.getResourceConfig().getSensorsConfig().containsKey(sensorName);
+//    }
+//
+//    public static void addSensorConfig(String sensorName, String sensorType, String fieldNames) {
+//        SensorConfig config = new SensorConfig(sensorName, sensorType, fieldNames);
+//        Configuration.getResourceConfig().getSensorsConfig().put(sensorName, config);
+//        ctxServerConfig.addSensorConfig(config);
+//    }
 }

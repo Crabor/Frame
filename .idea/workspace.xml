@@ -9,7 +9,66 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78115992-4503-470b-beb5-d7602ef66f8a" name="Changes" comment="update">
+      <change afterPath="$PROJECT_DIR$/src/main/java/app/InvCheck.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/common/socket/CmdMessage.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/common/socket/CmdMessageGrpIds.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/common/struct/enumeration/DeviceType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/common/struct/sync/SynchronousJsonObject.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/common/struct/sync/SynchronousString.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/platform/service/inv/AppInvServer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/platform/service/inv/struct/Inv.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/platform/service/inv/struct/InvData.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/platform/service/inv/struct/InvGroup.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/platform/service/inv/struct/InvLine.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/platform/ui/AnalogClock.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/wrapper/WrapperRemoteConnector.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/main/java/platform/testInv/test.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/main/java/platform/testother/test3.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/leetcode/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/leetcode/editor.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/leetcode/statistics.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/leetcode/statistics.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resources/configFile/ConfigurationNew" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/configFile/ConfigurationNew" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/RemoteConnector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/AppRemoteConnector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/common/struct/CheckInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/common/struct/CheckInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/common/struct/CtxServiceConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/common/struct/CtxServiceConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/common/struct/InvServiceConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/common/struct/InvServiceConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/common/struct/SynchronousSensorData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/common/struct/sync/SynchronousSensorData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/common/struct/SynchronousSetState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/common/struct/sync/SynchronousSetState.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/common/util/Util.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/common/util/Util.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/Platform.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/Platform.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/app/AppDriver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/app/AppDriver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/app/AppMgrThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/app/AppMgrThread.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/app/struct/TimeLine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/app/struct/TimeLine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/app/struct/TimeNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/app/struct/TimeNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/communication/pubsub/Publisher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/communication/pubsub/Publisher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/config/ActorConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/config/ActorConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/config/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/config/AppConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/config/Configuration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/config/Configuration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/config/ResourceConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/config/ResourceConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/config/SensorConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/config/SensorConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/config/TCPConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/config/TCPConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/resource/ResMgrThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/resource/ResMgrThread.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/resource/driver/DeviceDriver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/resource/DeviceDriver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/service/SerMgrThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/service/SerMgrThread.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/service/inv/CheckArray.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/service/inv/CheckObject.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/service/inv/CheckServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/service/inv/PlatformInvServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/service/inv/algorithm/KMeans.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/service/inv/algorithm/KMeans.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/main/java/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/main/java/app/Test.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/main/java/app/AppDemo3.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/main/java/app/AppDemo3.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/main/java/app/AppDemo4.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/main/java/app/AppDemo4.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/main/java/app/AppDemo5.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/main/java/app/AppDemo5.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/main/java/app/AppDemo6.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/main/java/app/AppDemo6.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/main/java/app/AppDemo7.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/main/java/app/AppDemo7.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/main/java/app/AppDemo8.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/main/java/app/AppDemo8.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/main/java/app/AppDemo9.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/main/java/app/AppDemo9.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/main/java/app/zlyAppDemo.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/main/java/app/zlyAppDemo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/main/java/platform/testdaikon/testdaikon.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/main/java/platform/testdaikon/testdaikon.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/main/java/sensorDriver/WrapperDemo.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/main/java/wrapper/WrapperDemo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/main/java/sensorDriver/simcar.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/main/java/wrapper/simcar.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/main/java/sensorDriver/zlyDriver.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/main/java/wrapper/zlyDriver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/main/java/sensorDriver/zshDriver.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/main/java/wrapper/zshDriver.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +78,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
+        <option value="Interface" />
         <option value="Enum" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -51,6 +111,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
     &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
     &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
     &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
@@ -69,7 +130,7 @@
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -91,14 +152,17 @@
       <recent name="$PROJECT_DIR$/src/main/java/platform/service/ctx/ctxServiceFrame" />
       <recent name="$PROJECT_DIR$/Resources/taxiTest" />
     </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="app" />
+    </key>
   </component>
-  <component name="RunManager" selected="Application.AppDemo4">
-    <configuration name="AppDemo3" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="app.AppDemo3" />
+  <component name="RunManager" selected="Application.AppDemo3">
+    <configuration name="AnalogClock" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="platform.ui.AnalogClock" />
       <module name="frame" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="app.*" />
+          <option name="PATTERN" value="platform.ui.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -106,8 +170,8 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="AppDemo4" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="app.AppDemo4" />
+    <configuration name="AppDemo3" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="app.AppDemo3" />
       <module name="frame" />
       <extension name="coverage">
         <pattern>
@@ -132,12 +196,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="simcar" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="sensorDriver.simcar" />
+    <configuration name="WrapperDemo" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="wrapper.WrapperDemo" />
       <module name="frame" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="sensorDriver.*" />
+          <option name="PATTERN" value="wrapper.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -145,12 +209,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="zshDriver" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="sensorDriver.zshDriver" />
+    <configuration name="test3" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="platform.testother.test3" />
       <module name="frame" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="sensorDriver.*" />
+          <option name="PATTERN" value="platform.testother.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -160,11 +224,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.AppDemo4" />
         <item itemvalue="Application.AppDemo3" />
-        <item itemvalue="Application.simcar" />
+        <item itemvalue="Application.WrapperDemo" />
         <item itemvalue="Application.RunPlatform" />
-        <item itemvalue="Application.zshDriver" />
+        <item itemvalue="Application.test3" />
+        <item itemvalue="Application.AnalogClock" />
       </list>
     </recent_temporary>
   </component>
@@ -209,6 +273,16 @@
       <workItem from="1678359713303" duration="2140000" />
       <workItem from="1678413295272" duration="10105000" />
       <workItem from="1678429726395" duration="6984000" />
+      <workItem from="1679205817386" duration="291000" />
+      <workItem from="1679206120157" duration="11233000" />
+      <workItem from="1679311725254" duration="4278000" />
+      <workItem from="1679374867355" duration="2002000" />
+      <workItem from="1679471617748" duration="12772000" />
+      <workItem from="1679555947508" duration="17148000" />
+      <workItem from="1679631137852" duration="4217000" />
+      <workItem from="1679827379892" duration="692000" />
+      <workItem from="1680005585892" duration="3560000" />
+      <workItem from="1680153253780" duration="20363000" />
     </task>
     <task id="LOCAL-00001" summary="setActorCmd阻塞问题">
       <created>1679029105951</created>
@@ -282,11 +356,21 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <breakpoint enabled="true" type="java-exception">
+        <breakpoint type="java-exception">
           <properties class="java.lang.NumberFormatException" package="java.lang" />
           <option name="timeStamp" value="17" />
         </breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/platform/app/AppDriver.java</url>
+          <line>84</line>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="platform.config.SensorConfig" memberName="apps" />
+      </pinned-members>
+    </pin-to-top-manager>
   </component>
 </project>

@@ -6,11 +6,11 @@ public class TimeLine {
     public static final int MAX_LEVEL = 16;
     private int levelCount = 1;
     private TimeNode head = new TimeNode();
-    //第一维为appGrpId，第二维为freq
-    private Map<Integer, Integer> appGrpId2Freq = new HashMap<>();
+    //第一维为appName，第二维为freq
+    private Map<String, Integer> appName2Freq = new HashMap<>();
 
-    public Map<Integer, Integer> getAppGrpId2Freq() {
-        return appGrpId2Freq;
+    public Map<String, Integer> getAppName2Freq() {
+        return appName2Freq;
     }
 
     public List<TimeNode> getNodes() {
@@ -49,16 +49,16 @@ public class TimeLine {
 //            p = p.forwards[0];
 //        }
 //        return size;
-        return appGrpId2Freq.size();
+        return appName2Freq.size();
     }
 
-    public void insert(long time, String appGrpId) {
+    public void insert(long time, String appName) {
         TimeNode node = find(time);
         if (node != null) {
-            node.appGrpIds.add(appGrpId);
+            node.appNames.add(appName);
         } else {
             int level = randomLevel();
-            TimeNode newNode = new TimeNode(time, appGrpId);
+            TimeNode newNode = new TimeNode(time, appName);
             newNode.maxLevel = level;
 
             TimeNode[] update = new TimeNode[level];
@@ -85,11 +85,11 @@ public class TimeLine {
         }
     }
 
-    public void delete(long time, String appGrpId) {
+    public void delete(long time, String appName) {
         TimeNode node = find(time);
         if (node != null) {
-            node.appGrpIds.remove(appGrpId);
-            if (node.appGrpIds.isEmpty()) {
+            node.appNames.remove(appName);
+            if (node.appNames.isEmpty()) {
                 TimeNode[] update = new TimeNode[levelCount];
                 TimeNode p = head;
                 for (int i = levelCount - 1; i >= 0; i--) {
@@ -110,27 +110,27 @@ public class TimeLine {
         }
     }
 
-    public void deleteAppGrpId(int appGrpId, int freq) {
-        if (appGrpId2Freq.containsKey(appGrpId)) {
+    public void deleteAppName(String appName, int freq) {
+        if (appName2Freq.containsKey(appName)) {
             double sleepTime = 1000 / (double) freq;
             for (int i = 1; i <= freq; i++) {
                 long time = Math.round(sleepTime * i);
-                delete(time, String.valueOf(appGrpId));
+                delete(time, String.valueOf(appName));
             }
-            appGrpId2Freq.remove(appGrpId);
+            appName2Freq.remove(appName);
         }
     }
 
-    public void insertAppGrpId(int appGrpId, int freq) {
-        if (appGrpId2Freq.containsKey(appGrpId)) {
-            deleteAppGrpId(appGrpId, appGrpId2Freq.get(appGrpId));
+    public void insertAppName(String appName, int freq) {
+        if (appName2Freq.containsKey(appName)) {
+            deleteAppName(appName, appName2Freq.get(appName));
         }
         double sleepTime = 1000 / (double) freq;
         for (int i = 1; i <= freq; i++) {
             long time = Math.round(sleepTime * i);
-            insert(time, String.valueOf(appGrpId));
+            insert(time, String.valueOf(appName));
         }
-        appGrpId2Freq.put(appGrpId, freq);
+        appName2Freq.put(appName, freq);
     }
 
     private int randomLevel() {
@@ -145,7 +145,7 @@ public class TimeLine {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("appGrpId2Freq: ").append(appGrpId2Freq).append("\ntimeLine: ");
+        sb.append("appName2Freq: ").append(appName2Freq).append("\ntimeLine: ");
         TimeNode p = head.forwards[0];
         while (p != null) {
             sb.append(p);

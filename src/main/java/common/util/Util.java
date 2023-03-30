@@ -213,27 +213,25 @@ public class Util {
 //        }
 //        return ret;
 //    }
-    private static final String REPLACE_LINE_FEED = "//huanhang";
-
-    public static String readFileContent(String fileName) {
+    public static String readFileContent(String fileName, String replace_line_feed) {
         Path path = Paths.get(fileName);
         String content = null;
         try {
-            content = Files.lines(path).collect(Collectors.joining(REPLACE_LINE_FEED));
+            content = Files.lines(path).collect(Collectors.joining(replace_line_feed));
         } catch (IOException e) {
             e.printStackTrace();
         }
         return content;
     }
 
-    public static void writeFileContent(String dir, String name, String content) {
+    public static void writeFileContent(String dir, String name, String content, String replace_line_feed) {
         File file = new File(dir);
 //        System.out.println(dir);
         if (!file.exists()) {
             file.mkdirs();
         }
         Path filePath = Path.of(dir + "/" + name);
-        String realContent = content.replace(REPLACE_LINE_FEED, "\n");
+        String realContent = content.replace(replace_line_feed, "\n");
         try {
             Files.writeString(filePath, realContent,
                     StandardCharsets.UTF_8,
@@ -286,6 +284,43 @@ public class Util {
             ret = lcm(ret, num);
         }
         return ret;
+    }
+
+    public static double distance(double[] a, double[] b) {
+        double ret = 0;
+        for (int i = 0; i < a.length; i++) {
+            ret += Math.pow(a[i] - b[i], 2);
+        }
+        return Math.sqrt(ret);
+    }
+
+    public static double[] toDoubleArray(Collection<Object> collection) {
+        double[] ret = new double[collection.size()];
+        int i = 0;
+        for (Object o : collection) {
+            ret[i++] = Double.parseDouble(o.toString());
+        }
+        return ret;
+    }
+
+    public static List<Integer> toIntegerList(String str, String delimiter) {
+        List<Integer> ret = new ArrayList<>();
+        String[] strs = str.split(delimiter);
+        for (String s : strs) {
+            ret.add(Integer.parseInt(s));
+        }
+        return ret;
+    }
+
+    public static String toString(List<Integer> list, String delimiter) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            sb.append(list.get(i));
+            if (i != list.size() - 1) {
+                sb.append(delimiter);
+            }
+        }
+        return sb.toString();
     }
 
     public static void main(String[] args) {

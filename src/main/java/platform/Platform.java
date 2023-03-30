@@ -1,16 +1,13 @@
 package platform;
 
 import common.struct.CtxServiceConfig;
+import common.struct.InvServiceConfig;
 import common.struct.ServiceConfig;
 import platform.config.Configuration;
 import platform.app.AppMgrThread;
-import platform.communication.pubsub.Channel;
 import platform.resource.ResMgrThread;
-import platform.communication.pubsub.Publisher;
-import platform.communication.pubsub.AbstractSubscriber;
-import io.lettuce.core.RedisClient;
 import platform.service.ctx.ctxServer.PlatformCtxServer;
-import platform.service.inv.CheckServer;
+import platform.service.inv.PlatformInvServer;
 import common.struct.enumeration.CmdType;
 import common.struct.enumeration.ServiceType;
 import common.util.Util;
@@ -106,11 +103,11 @@ public class Platform {
                 ret = PlatformCtxServer.call(appName, cmd, (CtxServiceConfig) config);
                 break;
             case INV:
-                ret = CheckServer.call(appName, cmd, config);
+                ret = PlatformInvServer.call(appName, cmd, (InvServiceConfig) config);
                 break;
             case ALL:
                 ret = PlatformCtxServer.call(appName, cmd, (CtxServiceConfig) config);
-                ret = CheckServer.call(appName, cmd, config) && ret;
+                ret = PlatformInvServer.call(appName, cmd, (InvServiceConfig) config) && ret;
                 break;
         }
         return ret;

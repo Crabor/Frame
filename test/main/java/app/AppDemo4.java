@@ -3,7 +3,7 @@ package app;
 import app.struct.SensorInfo;
 import common.struct.State;
 import common.struct.SensorData;
-import common.struct.SynchronousSensorData;
+import common.struct.sync.SynchronousSensorData;
 import common.struct.enumeration.CmdType;
 import common.struct.enumeration.SensorMode;
 
@@ -27,7 +27,7 @@ public class AppDemo4 extends AbstractApp {
 
     public static void main(String[] args) {
         AppDemo4 demo = new AppDemo4();
-        RemoteConnector connector = RemoteConnector.getInstance();
+        AppRemoteConnector connector = AppRemoteConnector.getInstance();
         connector.connectPlatform("127.0.0.1", 8079);
         connector.registerApp(demo);
         String sensorName = "GPS_001";

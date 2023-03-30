@@ -3,6 +3,7 @@ package platform.config;
 import com.sun.tools.javac.Main;
 import common.struct.CtxServiceConfig;
 import common.struct.enumeration.CtxValidator;
+import common.struct.sync.SynchronousString;
 import common.util.Util;
 import platform.service.ctx.ctxServer.AppCtxServer;
 
@@ -25,25 +26,32 @@ public class AppConfig {
     private String mfuncFile;
     private CtxValidator ctxValidator = CtxValidator.ECC_IMD;
 
+    //request
+    private Map<String, SynchronousString> requestMap = new ConcurrentHashMap<>();
+
+    public Map<String, SynchronousString> getRequestMap() {
+        return requestMap;
+    }
+
     public void setCtxServiceConfig(CtxServiceConfig config) {
         String dir = "Resources/configFile/ctxFile/" + appName;
         if (config.getRuleFileContent() != null) {
-            Util.writeFileContent(dir, "rules_yellow.xml", config.getRuleFileContent());
+            Util.writeFileContent(dir, "rules_yellow.xml", config.getRuleFileContent(), "//huanhang");
             ruleFile = dir + "/rules_yellow.xml";
         }
         if (config.getPatternFileContent() != null) {
-            Util.writeFileContent(dir, "patterns_yellow.xml", config.getPatternFileContent());
+            Util.writeFileContent(dir, "patterns_yellow.xml", config.getPatternFileContent(), "//huanhang");
             patternFile = dir + "/patterns_yellow.xml";
         }
         if (config.getBfuncFileContent() != null) {
-            Util.writeFileContent(dir, "bfuncs.java", config.getBfuncFileContent());
+            Util.writeFileContent(dir, "bfuncs.java", config.getBfuncFileContent(), "//huanhang");
             String[] args = new String[] {dir + "/bfuncs.java"};
             if (Main.compile(args) == 0) {
                 bfuncFile = dir + "/bfuncs.class";
             }
         }
         if (config.getMfuncFileContent() != null) {
-            Util.writeFileContent(dir, "mfuncs.java", config.getMfuncFileContent());
+            Util.writeFileContent(dir, "mfuncs.java", config.getMfuncFileContent(), "//huanhang");
             String[] args = new String[] {dir + "/mfuncs.java"};
             if (Main.compile(args) == 0) {
                 mfuncFile = dir + "/mfuncs.class";

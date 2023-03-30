@@ -1,22 +1,22 @@
 package platform.config;
 
+import app.struct.ValueType;
 import com.alibaba.fastjson.JSONObject;
+import common.socket.CmdMessageGrpIds;
+import common.struct.sync.SynchronousString;
+import platform.app.AppMgrThread;
 import platform.app.struct.TimeLine;
 import platform.app.struct.TimeNode;
-import platform.communication.socket.Cmd;
-import platform.communication.socket.PlatformUDP;
+import platform.communication.pubsub.Publisher;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class SensorConfig {
-    private String sensorType;
+    private ValueType sensorType;
     private String sensorName;
     private List<String> fieldNames;
-    private boolean isAlive = false;
-    private int aliveFreq; //定时ping
+    private boolean isAlive = true;
     private long MIN_VALUE_FREQ;
     private long MAX_VALUE_FREQ;
     private ValueThread valueThread = null;
@@ -24,22 +24,17 @@ public class SensorConfig {
     private final TimeLine timeLine = new TimeLine();
 
     public SensorConfig(JSONObject object){
-        sensorName = object.getString("sensorName");
+        sensorName = object.getString("name");
         try {
-            sensorType = object.getString("sensorType");
-        } catch (NullPointerException e) {
-            sensorType = "String";
+            sensorType = ValueType.fromString(object.getString("valueType"));
+        } catch (Exception e) {
+            sensorType = ValueType.STRING;
         }
         try {
-            fieldNames = Arrays.asList(object.getString("fieldNames").split(","));
+            fieldNames = object.getJSONArray("fields").toJavaList(String.class);
         } catch (NullPointerException e) {
             fieldNames = new ArrayList<>();
             fieldNames.add("default");
-        }
-        try {
-            aliveFreq = object.getInteger("aliveFreq");
-        } catch (NullPointerException e) {
-            aliveFreq = 1;
         }
         try {
             MIN_VALUE_FREQ = object.getLong("minValueFreq");
@@ -53,11 +48,11 @@ public class SensorConfig {
         }
     }
 
-    public SensorConfig(String sensorName, String sensorType, String fieldNames) {
-        this.sensorName = sensorName;
-        this.sensorType = sensorType;
-        this.fieldNames = Arrays.asList(fieldNames.split(","));
-    }
+//    public SensorConfig(String sensorName, String sensorType, String fieldNames) {
+//        this.sensorName = sensorName;
+//        this.sensorType = sensorType;
+//        this.fieldNames = Arrays.asList(fieldNames.split(","));
+//    }
 
     public TimeLine getTimeLine() {
         return timeLine;
@@ -71,7 +66,7 @@ public class SensorConfig {
 //        return timeLineLock;
 //    }
 
-    public String getSensorType() {
+    public ValueType getSensorType() {
         return sensorType;
     }
 
@@ -89,14 +84,6 @@ public class SensorConfig {
 
     public void setAlive(boolean isAlive) {
         this.isAlive = isAlive;
-    }
-
-    public int getAliveFreq() {
-        return aliveFreq;
-    }
-
-    public void setAliveFreq(int freq) {
-        aliveFreq = freq;
     }
 
     public boolean isGetValueRunning() {
@@ -136,7 +123,6 @@ public class SensorConfig {
                 "sensorType='" + sensorType + '\'' +
                 ", sensorName='" + sensorName + '\'' +
                 ", fieldNames=" + fieldNames +
-                ", aliveFreq=" + aliveFreq +
                 ", MIN_VALUE_FREQ=" + MIN_VALUE_FREQ +
                 ", MAX_VALUE_FREQ=" + MAX_VALUE_FREQ +
                 '}';
@@ -149,6 +135,7 @@ public class SensorConfig {
         @Override
         public void run() {
             stopped = false;
+            Map<String, AppConfig> appConfigMap = Configuration.getAppsConfig();
             while (!shouldStop) {
 //                System.out.println(timeLine);
                 List<TimeNode> nodes;
@@ -171,7 +158,7 @@ public class SensorConfig {
 //                        timestamp = p.time;
 //
 //                        Cmd cmd = new Cmd("sensor_get",
-//                                sensorName + " " + String.join(" ", p.appGrpIds));
+//                                sensorName + " " + String.join(" ", p.appNames));
 //                        PlatformUDP.send(cmd);
 //
 //                        p = p.forwards[0];
@@ -186,9 +173,24 @@ public class SensorConfig {
                         throw new RuntimeException(e);
                     }
 
-                    Cmd cmd = new Cmd("sensor_get",
-                            sensorName + " " + String.join(" ", node.appGrpIds));
-                    PlatformUDP.send(cmd);
+//                    Cmd cmd = new Cmd("sensor_get",
+//                            sensorName + " " + String.join(" ", node.appNames));
+//                    PlatformUDP.send(cmd);
+                    List<Integer> grpIds = new ArrayList<>();
+                    for (String appName : node.appNames) {
+                       grpIds.add(AppMgrThread.getGrpId(appName));
+                    }
+                    CmdMessageGrpIds send = new CmdMessageGrpIds("sensory_request",
+                            null, grpIds);
+                    for (String appName : node.appNames) {
+                        Map<String, SynchronousString> requestMap = appConfigMap.get(appName).getRequestMap();
+                        if (!requestMap.containsKey(sensorName)) {
+                            requestMap.put(sensorName, new SynchronousString());
+                        }
+                        requestMap.get(sensorName).put("passiveGetSensorData");
+                    }
+                    Publisher.publish(sensorName + "_request", send.toString());
+
                     timestamp = node.time;
                 }
             }

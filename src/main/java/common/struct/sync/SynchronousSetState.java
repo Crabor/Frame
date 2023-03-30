@@ -1,6 +1,9 @@
-package common.struct;
+package common.struct.sync;
+
+import common.struct.SetState;
 
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class SynchronousSetState {
     private LinkedBlockingQueue<SetState> queue;
@@ -18,6 +21,15 @@ public class SynchronousSetState {
             return queue.take();
         } catch (InterruptedException e) {
             e.printStackTrace();
+            return null;
+        }
+    }
+
+    public SetState blockTake(long timeout) {
+        try {
+            return queue.poll(timeout, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+//            e.printStackTrace();
             return null;
         }
     }

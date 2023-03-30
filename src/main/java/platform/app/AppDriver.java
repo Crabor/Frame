@@ -4,13 +4,16 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import common.socket.AbstractTCP;
+import common.socket.CmdMessageGrpIds;
 import common.socket.TCP;
 import common.socket.UDP;
 import common.struct.*;
 import common.struct.enumeration.SensorMode;
+import common.struct.sync.SynchronousSensorData;
+import common.struct.sync.SynchronousString;
 import platform.Platform;
-import common.struct.SetState;
 import platform.communication.pubsub.AbstractSubscriber;
+import platform.communication.pubsub.Publisher;
 import platform.communication.socket.Cmd;
 import platform.communication.socket.PlatformUDP;
 import platform.config.ActorConfig;
@@ -19,11 +22,13 @@ import platform.config.Configuration;
 import common.struct.enumeration.CmdType;
 import common.struct.enumeration.ServiceType;
 import platform.config.SensorConfig;
+import platform.service.inv.AppInvServer;
+import platform.service.inv.PlatformInvServer;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class AppDriver extends AbstractSubscriber implements Runnable {
     private TCP tcp;
@@ -32,9 +37,9 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
     private int grpId = -1;
     private boolean getMsgThreadState = false;
     private AppConfig appConfig = null;
-    private final ConcurrentHashMap<String, SynchronousSensorData> sensorValues = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, Boolean> getSensorDataFlag = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, SynchronousSetState> actorSetState = new ConcurrentHashMap<>();
+    private final SynchronousString _getSensorData = new SynchronousString();
+    private final SynchronousSensorData _invGetSensorData = new SynchronousSensorData();
+    private final SynchronousString _setActorCmd = new SynchronousString();
 
     public AppDriver(Socket socket) {
         this.tcp = new AppDriverTCP(socket, false);
@@ -77,31 +82,45 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
     @Override
     public void onMessage(String channel, String msg) {
 //        logger.info(String.format("appDriver onmessage: %s, %s", channel, msg));
-        if (appConfig.getSensorsName().contains(channel)) {
-            if (!getSensorDataFlag.containsKey(channel)) {
-                getSensorDataFlag.put(channel, false);
-            }
-            if (getMsgThreadState && !getSensorDataFlag.get(channel)) {
-                //TODO: udp通信触发
-                JSONObject jo = new JSONObject(2);
-                jo.put("channel", channel);
-                jo.put("msg", msg);
-                UDP.send(clientIP, clientUDPPort, jo.toJSONString());
-            } else {
-                //getSensorData
-                if (!sensorValues.containsKey(channel)) {
-                    sensorValues.put(channel, new SynchronousSensorData(1));
-                }
-                sensorValues.get(channel).put(SensorData.fromJSONString(msg));
-                getSensorDataFlag.put(channel, false);
-            }
-        } else {
-            //actorSetCmd
-            if (!actorSetState.containsKey(channel)) {
-                actorSetState.put(channel, new SynchronousSetState(1));
-            }
-            actorSetState.get(channel).put(SetState.fromString(msg));
+        String flag = appConfig.getRequestMap().get(channel).nonBlockTake();
+//        logger.info(flag);
+        if (flag.equalsIgnoreCase("getSensorData")) {
+            _getSensorData.put(msg);
+        } else if (flag.equalsIgnoreCase("invGetSensorData")) {
+            _invGetSensorData.put(SensorData.fromJSONString(msg));
+        } else if (flag.equalsIgnoreCase("passiveGetSensorData")) {
+            JSONObject jo = new JSONObject(2);
+            jo.put("channel", channel);
+            jo.put("msg", msg);
+            UDP.send(clientIP, clientUDPPort, jo.toJSONString());
+        } else if (flag.equalsIgnoreCase("setActorCmd")) {
+            _setActorCmd.put(msg);
         }
+
+
+//        logger.info(String.format("appDriver onmessage: %s, %s", channel, msg));
+//        if (appConfig.getSensorsName().contains(channel)) {
+//            if (!getSensorDataFlag.containsKey(channel)) {
+//                getSensorDataFlag.put(channel, false);
+//            }
+//            if (getMsgThreadState && !getSensorDataFlag.get(channel)) {
+//                //TODO: udp通信触发
+//
+//            } else {
+//                //getSensorData
+//                if (!sensorValues.containsKey(channel)) {
+//                    sensorValues.put(channel, new SynchronousSensorData(1));
+//                }
+//                sensorValues.get(channel).put(SensorData.fromJSONString(msg));
+//                getSensorDataFlag.put(channel, false);
+//            }
+//        } else {
+//            //actorSetCmd
+//            if (!actorSetState.containsKey(channel)) {
+//                actorSetState.put(channel, new SynchronousSetState(1));
+//            }
+//            actorSetState.get(channel).put(SetState.fromString(msg));
+//        }
     }
 
     private static final String CTX_FILE_PATH = "Resources/configFile/ctxFile";
@@ -112,9 +131,9 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
         while ((msgFromClient = tcp.recv()) != null) {
             JSONObject jo = JSON.parseObject(msgFromClient);
             if (appConfig != null) {
-                logger.info(String.format("[%s] <- %s", appConfig.getAppName(), jo.toJSONString()));
+                logger.info(String.format("[%s -> Platform]: %s", appConfig.getAppName(), jo.toJSONString()));
             } else {
-                logger.info(String.format("[AppDriver] <- %s", jo.toJSONString()));
+                logger.info(String.format("[AppDriver -> Platform]: %s", jo.toJSONString()));
             }
 
             String api = jo.getString("api");
@@ -199,12 +218,18 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
                     config = InvServiceConfig.fromJSONString(jo.getString("config"));
                 }
                 ret = serviceCall(service, cmd, config);
+            } else if (api.equalsIgnoreCase("inv_monitor")) {
+                ret = monitor(jo.getJSONArray("objs"));
+            } else if (api.equalsIgnoreCase("inv_is_monitored")) {
+                ret = isMonitored(jo.getJSONArray("objs"));
+            } else if (api.equalsIgnoreCase("inv_check")) {
+                ret = check(jo);
             }
             tcp.send(ret);
             if (appConfig != null) {
-                logger.info(String.format("[%s] -> %s", appConfig.getAppName(), ret));
+                logger.info(String.format("[Platform -> %s]: %s", appConfig.getAppName(), ret));
             } else {
-                logger.info(String.format("[AppDriver] -> %s", ret));
+                logger.info(String.format("[Platform -> AppDriver]: %s", ret));
             }
             if (api.equalsIgnoreCase("disconnect")) {
                 break;
@@ -284,7 +309,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
 //        actorConfigMap.forEach((s, config) -> {
 //            logger.info(s + " -> " + config.getAppsName());
 //        });
-//        logger.info("appGrpIds:");
+//        logger.info("appNames:");
 //        appConfigMap.forEach((s, config) -> {
 //            logger.info(s + " -> sensors:" + config.getSensorsName() + ", actors:" + config.getActorsName());
 //        });
@@ -342,17 +367,14 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
             subscribe(sensorName, grpId);
         }
 
-        sensorValues.put(sensorName, new SynchronousSensorData(1));
-        getSensorDataFlag.put(sensorName, false);
-
 //        if (sensorConfig.getTimeLine().size() != 0) {
 //            sensorConfig.getTimeLineLock().lock();
 //        }
         synchronized (sensorConfig.getTimeLine()) {
             if (mode == SensorMode.ACTIVE) {
-                sensorConfig.getTimeLine().deleteAppGrpId(grpId, freq);
+                sensorConfig.getTimeLine().deleteAppName(appConfig.getAppName(), freq);
             } else {
-                sensorConfig.getTimeLine().insertAppGrpId(grpId, freq);
+                sensorConfig.getTimeLine().insertAppName(appConfig.getAppName(), freq);
             }
             if (sensorConfig.getTimeLine().size() != 0) {
                 sensorConfig.getTimeLine().notify();
@@ -393,20 +415,14 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
             unsubscribe(sensorName);
         }
 
-        if (sensorValues.containsKey(sensorName)) {
-            sensorValues.get(sensorName).put(SensorData.defaultErrorData());
-        }
-        sensorValues.remove(sensorName);
-        getSensorDataFlag.remove(sensorName);
-
 //        if (sensorConfig.getTimeLine().size() != 0) {
 //            sensorConfig.getTimeLineLock().lock();
 //        }
         synchronized (sensorConfig.getTimeLine()) {
-            if (sensorConfig.getTimeLine().getAppGrpId2Freq().containsKey(grpId)) {
-                int freq = sensorConfig.getTimeLine().getAppGrpId2Freq().get(grpId);
-                sensorConfig.getTimeLine().deleteAppGrpId(grpId, freq);
-                sensorConfig.getTimeLine().getAppGrpId2Freq().remove(grpId);
+            if (sensorConfig.getTimeLine().getAppName2Freq().containsKey(appConfig.getAppName())) {
+                int freq = sensorConfig.getTimeLine().getAppName2Freq().get(appConfig.getAppName());
+                sensorConfig.getTimeLine().deleteAppName(appConfig.getAppName(), freq);
+                sensorConfig.getTimeLine().getAppName2Freq().remove(appConfig.getAppName());
             }
 //            if (sensorConfig.getTimeLine().size() != 0) {
 //                logger.info(sensorConfig.getTimeLine());
@@ -439,13 +455,20 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
     private String getSensorData(String sensorName) {
         String value = "{\"default\":\"@#$%\"}";
         if (appConfig != null && appConfig.getSensorsName().contains(sensorName)) {
-            Cmd cmd = new Cmd("sensor_get", sensorName + " " + grpId);
-            PlatformUDP.send(cmd);
-            getSensorDataFlag.put(sensorName, true);
-            if (!sensorValues.containsKey(sensorName)) {
-                sensorValues.put(sensorName, new SynchronousSensorData(1));
+//            Cmd cmd = new Cmd("sensor_get", sensorName + " " + grpId);
+//            PlatformUDP.send(cmd);
+//            getSensorDataFlag.put(sensorName, true);
+//            if (!sensorValues.containsKey(sensorName)) {
+//                sensorValues.put(sensorName, new SynchronousSensorData(1));
+//            }
+//            value = sensorValues.get(sensorName).blockTake().toString();
+            CmdMessageGrpIds send = new CmdMessageGrpIds("sensory_request", null, List.of(grpId));
+            if (!appConfig.getRequestMap().containsKey(sensorName)) {
+                appConfig.getRequestMap().put(sensorName, new SynchronousString());
             }
-            value = sensorValues.get(sensorName).blockTake().toString();
+            appConfig.getRequestMap().get(sensorName).put("getSensorData");
+            Publisher.publish(sensorName + "_request", send.toString());
+            value = _getSensorData.blockTake();
         }
         return value;
     }
@@ -534,7 +557,6 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
             appConfig.getActors().add(actorConfig);
             actorConfig.getApps().add(appConfig);
             subscribe(actorName, grpId);
-            actorSetState.put(actorName, new SynchronousSetState(1));
             retJson.put("state", true);
         } else {
             retJson.put("state", false);
@@ -550,10 +572,6 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
             appConfig.getActors().remove(actorConfig);
             actorConfig.getApps().remove(appConfig);
             unsubscribe(actorName);
-            if (actorSetState.containsKey(actorName)) {
-                actorSetState.get(actorName).put(new SetState(false));
-            }
-            actorSetState.remove(actorName);
             retJson.put("state", true);
         } else {
             retJson.put("state", false);
@@ -588,11 +606,14 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
         if (appConfig != null
                 && appConfig.getActorsName().contains(actorName)
                 && actorConfigMap.get(actorName).isAlive()) {
-            PlatformUDP.send(new Cmd("actor_set", actorName + " " + grpId + " " + action));
-            if (!actorSetState.containsKey(actorName)) {
-                actorSetState.put(actorName, new SynchronousSetState(1));
-            }
+//            PlatformUDP.send(new Cmd("actor_set", actorName + " " + grpId + " " + action));
 //            boolean state = actorSetState.get(actorName).blockTake().get();
+            CmdMessageGrpIds send = new CmdMessageGrpIds("action_request", null, List.of(grpId));
+            if (!appConfig.getRequestMap().containsKey(actorName)) {
+                appConfig.getRequestMap().put(actorName, new SynchronousString());
+            }
+            appConfig.getRequestMap().get(actorName).put("setActorCmd");
+            Publisher.publish(actorName + "_request", send.toString());
             retJson.put("state", true);
         } else {
             retJson.put("state", false);
@@ -627,5 +648,32 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
             retJson.put("state", ret);
         }
         return retJson.toJSONString();
+    }
+
+    private String monitor(JSONArray objs) {
+        AppInvServer appInvServer = PlatformInvServer.getAppInvServer(appConfig.getAppName());
+        boolean ret = false;
+        if (appInvServer != null) {
+            ret = appInvServer.monitor(objs.toJavaList(String.class));
+        }
+        return "{\"state\":" + ret + "}";
+    }
+
+    private String isMonitored(JSONArray objs) {
+        AppInvServer appInvServer = PlatformInvServer.getAppInvServer(appConfig.getAppName());
+        boolean ret = false;
+        if (appInvServer != null) {
+            ret = appInvServer.isMonitored(objs.toJavaList(String.class));
+        }
+        return "{\"state\":" + ret + "}";
+    }
+
+    private String check(JSONObject jo) {
+        AppInvServer appInvServer = PlatformInvServer.getAppInvServer(appConfig.getAppName());
+        boolean ret = false;
+        if (appInvServer != null) {
+            ret = appInvServer.check(jo);
+        }
+        return "{\"state\":" + ret + "}";
     }
 }

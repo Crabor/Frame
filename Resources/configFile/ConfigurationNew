@@ -7,115 +7,12 @@
     "basePatternFile": "Resources/platform/platformPatterns.xml",
     "baseMfuncFile": "",
   },
-  "InvServerConfiguration": {
-    "serverOn": false,
-    "groupThro": 10,
-    "kMeansGroupSize": 1,
-    "dosThro": 0.5,
-    "groupTraceType": "csv",
-    "invGenMode": "total",
-    "invGenType": "numeric",
-  },
-  "ResourceConfiguration": {
-    "deviceDriver": {
-      "subscribe": [
-        {
-          "channel": "actor",
-        },
-        {
-          "channel": "check",
-        }
-      ],
-    },
-    "databaseDriver": {
-      "subscribe": [
-        {
-          "channel": "sensor",
-        },
-        {
-          "channel": "actor",
-        },
-        {
-          "channel": "check",
-        },
-        {
-          "channel": "ctxStat",
-        },
-      ],
-    },
-    "SensorConfiguration": [
-      {
-        "sensorName": "GPS_001",
-        "sensorType": "Double",
-      },
-      {
-        "sensorName": "GPS_002",
-        "sensorType": "Double",
-      },
-      {
-        "sensorName": "GPS_003",
-        "sensorType": "Double",
-      },
-      {
-        "sensorName": "GPS_004",
-        "sensorType": "Double",
-      },
-      {
-        "sensorName": "GPS_005",
-        "sensorType": "Double",
-      },
-      {
-        "sensorName": "GPS_006",
-        "sensorType": "Double",
-      },
-      {
-        "sensorName": "GPS_007",
-        "sensorType": "Double",
-      },
-      {
-        "sensorName": "GPS_008",
-        "sensorType": "Double",
-      },
-      {
-        "sensorName": "GPS_009",
-        "sensorType": "Double",
-      },
-      {
-        "sensorName": "GPS_0010",
-        "sensorType": "Double",
-      },
-    ],
-    "ActorConfiguration": [
-      {
-        "actorName": "xSpeed",
-        "actorType": "Double",
-      },
-      {
-        "actorName": "ySpeed",
-        "actorType": "Double",
-      },
-      {
-        "actorName": "zSpeed",
-        "actorType": "Double",
-      },
-    ],
-  },
   "RedisConfig": {
     "serverAddress": "127.0.0.1",
     "serverPort": "6379",
   },
-  "UDPConfig": {
-    "serverPort": 8080,
-    "clientPort": [
-      {
-        "port": 8081,
-      },
-      {
-        "port": 8082,
-      },
-    ]
-  },
   "TCPConfig": {
-    "serverPort": 8079,
+    "appListenPort": 9090,
+    "deviceListenPort": 9091,
   },
 }
