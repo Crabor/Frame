@@ -8,7 +8,7 @@ public class InvGroup {
     public List<InvData> datas;
     public final double[] centroid;
     public double radius;
-    public Inv inv;
+    public Inv inv = null;
 
     public InvGroup(int len) {
         datas = new ArrayList<>();

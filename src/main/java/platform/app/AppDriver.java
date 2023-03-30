@@ -38,11 +38,19 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
     private boolean getMsgThreadState = false;
     private AppConfig appConfig = null;
     private final SynchronousString _getSensorData = new SynchronousString();
-    private final SynchronousSensorData _invGetSensorData = new SynchronousSensorData();
+//    private final SynchronousSensorData _invGetSensorData = new SynchronousSensorData();
     private final SynchronousString _setActorCmd = new SynchronousString();
 
     public AppDriver(Socket socket) {
         this.tcp = new AppDriverTCP(socket, false);
+    }
+
+    public String getClientIP() {
+        return clientIP;
+    }
+
+    public int getClientUDPPort() {
+        return clientUDPPort;
     }
 
     public class AppDriverTCP extends AbstractTCP {
@@ -87,7 +95,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
         if (flag.equalsIgnoreCase("getSensorData")) {
             _getSensorData.put(msg);
         } else if (flag.equalsIgnoreCase("invGetSensorData")) {
-            _invGetSensorData.put(SensorData.fromJSONString(msg));
+            appConfig.getInvServer().getInvGetSensorData().put(SensorData.fromJSONString(msg));
         } else if (flag.equalsIgnoreCase("passiveGetSensorData")) {
             JSONObject jo = new JSONObject(2);
             jo.put("channel", channel);
@@ -274,6 +282,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
             grpId = AppMgrThread.getNewGrpId(appName);
             appConfig = new AppConfig(appName);
             appConfig.setGrpId(grpId);
+            appConfig.setAppDriver(this);
             Configuration.getAppsConfig().put(appName, appConfig);
             retJson.put("state", true);
             retJson.put("udp_port", clientUDPPort);

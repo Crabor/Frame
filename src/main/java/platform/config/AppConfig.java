@@ -5,7 +5,9 @@ import common.struct.CtxServiceConfig;
 import common.struct.enumeration.CtxValidator;
 import common.struct.sync.SynchronousString;
 import common.util.Util;
+import platform.app.AppDriver;
 import platform.service.ctx.ctxServer.AppCtxServer;
+import platform.service.inv.AppInvServer;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,6 +18,7 @@ public class AppConfig {
     private int grpId;
     private Set<SensorConfig> sensors = ConcurrentHashMap.newKeySet();
     private Set<ActorConfig> actors = ConcurrentHashMap.newKeySet();
+    private AppDriver appDriver = null;
 
     //ctxService related
     private AppCtxServer ctxServer = null;
@@ -25,6 +28,9 @@ public class AppConfig {
     private String patternFile;
     private String mfuncFile;
     private CtxValidator ctxValidator = CtxValidator.ECC_IMD;
+
+    //inv related
+    private AppInvServer invServer = null;
 
     //request
     private Map<String, SynchronousString> requestMap = new ConcurrentHashMap<>();
@@ -272,6 +278,14 @@ public class AppConfig {
         return false;
     }
 
+    public AppInvServer getInvServer() {
+        return invServer;
+    }
+
+    public void setInvServer(AppInvServer invServer) {
+        this.invServer = invServer;
+    }
+
     @Override
     public String toString() {
         return "AppConfig{" +
@@ -286,5 +300,13 @@ public class AppConfig {
                 ", mfuncFile='" + mfuncFile + '\'' +
                 ", ctxValidator='" + ctxValidator + '\'' +
                 '}';
+    }
+
+    public void setAppDriver(AppDriver appDriver) {
+        this.appDriver = appDriver;
+    }
+
+    public AppDriver getAppDriver() {
+        return appDriver;
     }
 }

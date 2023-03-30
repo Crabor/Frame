@@ -55,6 +55,7 @@ public class PlatformInvServer {
             } else if (cmd == CmdType.START) {
                 AppInvServer appInvServer = new AppInvServer(appConfig, config);
                 appInvServerMap.put(appName, appInvServer);
+                appConfig.setInvServer(appInvServer);
                 appInvServer.start();
                 return true;
             }

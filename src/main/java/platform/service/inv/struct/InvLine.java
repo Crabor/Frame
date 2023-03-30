@@ -29,7 +29,6 @@ public class InvLine {
             double minDist = Double.MAX_VALUE;
             InvGroup nearestGroup = null;
 
-
             for (InvGroup group : invGroups) {
                 double dist = Util.distance(group.centroid, data.envCtxVals);
                 if (dist < minDist && dist <= group.radius) {

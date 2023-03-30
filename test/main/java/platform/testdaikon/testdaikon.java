@@ -19,18 +19,18 @@ public class testdaikon {
         File file = new File(fileName);
         if (!file.exists()) {
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true)));
-            out.write("DECLARE\naprogram.point:::POINT\n");
+            out.write("DECLARE\nhello:::POINT\n");
             for (String varName : varNames) {
-                out.write(varName + "\nint\nint\n1\n");
+                out.write(varName + "\ndouble\ndouble\n1\n");
             }
             out.close();
         }
     }
 
-    protected void printValues(List<String> values) throws IOException{
+    protected void printValues(List<String> values) throws IOException {
         String fileName = "output/input.dtrace";
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, true)));
-        out.write("aprogram.point:::POINT\n");
+        out.write("hello:::POINT\n");
         for (int i = 0; i < varNames.size(); i++) {
             out.write(varNames.get(i) + "\n" + values.get(i) + "\n1\n");
         }

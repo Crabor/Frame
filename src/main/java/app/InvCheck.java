@@ -23,6 +23,7 @@ public class InvCheck {
     private Map<Integer, List<String>> checkMap;
     private Map<Integer, List<String>> monitorMap;
     private Map<Integer, List<String>> isMonitoredMap;
+    private Map<Integer, Integer> iterIdMap;
 
     public static InvCheck getInstance() {
         if (instance == null) {
@@ -138,6 +139,13 @@ public class InvCheck {
                     isMonitoredMap.get(lineNumber), false));
             return false;
         }
+
+        if (!iterIdMap.containsKey(lineNumber)) {
+            iterIdMap.put(lineNumber, 1);
+        }
+        int iterId = iterIdMap.get(lineNumber);
+        iterIdMap.put(lineNumber, iterId + 1);
+
         List<String> params = checkMap.get(lineNumber);
         JSONObject jo = new JSONObject(2);
         jo.put("api", "inv_check");
@@ -148,6 +156,7 @@ public class InvCheck {
         jo.put("objs", joo);
         jo.put("line_number", lineNumber);
         jo.put("check_time", System.currentTimeMillis());
+        jo.put("iter_id", iterId);
         connector.getTCP().send(jo.toJSONString());
 
         boolean state = false;
