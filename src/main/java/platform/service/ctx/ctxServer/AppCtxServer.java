@@ -136,7 +136,7 @@ public class AppCtxServer extends AbstractCtxServer{
                     serverStatistics.increaseSentMsgNum();
                 }
                 itemManager.removeValidatedItem(sendIndex);
-                itemManager.removeItem(sendIndex);
+                //itemManager.removeItem(sendIndex);
                 indexQue.poll();
             }
         }

@@ -156,34 +156,42 @@ public class CheckerStarter {
                         }
                     }
 
-                    //当curContext不再存在于pattern中后，可以被发送
-                    HashMap<Context, Set<String>> activateCtxMap = contextPool.getActivateCtxMap();
-                    Iterator<Context> iterator = activateCtxMap.keySet().iterator();
-                    while(iterator.hasNext()) {
-                        Context curContext = iterator.next();
-                        Set<String> patternIdSets = activateCtxMap.get(curContext);
-                        if(patternIdSets.isEmpty()){
-                            if(droppedContextIdSet.contains(curContext.getContextId())){
-                                ctxServer.getItemManager().addValidatedItem(Long.parseLong(curContext.getContextId().split("_")[1]), null);
-
-                            }
-                            else{
-                                ctxServer.getItemManager().addValidatedItem(Long.parseLong(curContext.getContextId().split("_")[1]), curContext);
-                            }
-                            iterator.remove();
-                        }
+                    //Intime： 检测完后应当立即发送context，而不是等待context被delete之后
+                    if(droppedContextIdSet.contains(context.getContextId())){
+                        ctxServer.getItemManager().addValidatedItem(Long.parseLong(context.getContextId().split("_")[1]), null);
                     }
+                    else{
+                        ctxServer.getItemManager().addValidatedItem(Long.parseLong(context.getContextId().split("_")[1]), context);
+                    }
+
+//                    //当curContext不再存在于pattern中后，可以被发送
+//                    HashMap<Context, Set<String>> activateCtxMap = contextPool.getActivateCtxMap();
+//                    Iterator<Context> iterator = activateCtxMap.keySet().iterator();
+//                    while(iterator.hasNext()) {
+//                        Context curContext = iterator.next();
+//                        Set<String> patternIdSets = activateCtxMap.get(curContext);
+//                        if(patternIdSets.isEmpty()){
+//                            if(droppedContextIdSet.contains(curContext.getContextId())){
+//                                ctxServer.getItemManager().addValidatedItem(Long.parseLong(curContext.getContextId().split("_")[1]), null);
+//
+//                            }
+//                            else{
+//                                ctxServer.getItemManager().addValidatedItem(Long.parseLong(curContext.getContextId().split("_")[1]), curContext);
+//                            }
+//                            iterator.remove();
+//                        }
+//                    }
                 }
                 else{
                     //TODO: overdue的Batch产生的incs如何resolve? 目前是不处理.
-                    //当curContext不再存在于pattern中后，可以被发送
+                    //当curContext不再存在于pattern中后，需要从originalItemMap中删除对应的item
                     HashMap<Context, Set<String>> activateCtxMap = contextPool.getActivateCtxMap();
                     Iterator<Context> iterator = activateCtxMap.keySet().iterator();
                     while(iterator.hasNext()) {
                         Context curContext = iterator.next();
                         Set<String> patternIdSets = activateCtxMap.get(curContext);
                         if(patternIdSets.isEmpty()){
-                            ctxServer.getItemManager().addValidatedItem(Long.parseLong(curContext.getContextId().split("_")[1]), curContext);
+                            ctxServer.getItemManager().removeItem(Long.parseLong(curContext.getContextId().split("_")[1]));
                             iterator.remove();
                         }
                     }
