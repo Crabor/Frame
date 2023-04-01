@@ -1,6 +1,8 @@
 package platform.service.inv;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import common.socket.CmdMessageGrpIds;
 import common.socket.UDP;
 import common.struct.CheckInfo;
@@ -41,17 +43,17 @@ public class AppInvServer implements Runnable {
     }
 
     public void start() {
-        File dir = new File("output/platform/service/inv/" + appConfig.getAppName());
+        File dir = new File("output/platform/service/invDaikon/" + appConfig.getAppName());
         Util.deleteDir(dir);
         dir.mkdirs();
-        File traceDir = new File("output/platform/service/inv/" + appConfig.getAppName() + "/trace");
+        File traceDir = new File("output/platform/service/invDaikon/" + appConfig.getAppName() + "/trace");
         traceDir.mkdirs();
-        File invDir = new File("output/platform/service/inv/" + appConfig.getAppName() + "/inv");
+        File invDir = new File("output/platform/service/invDaikon/" + appConfig.getAppName() + "/invDaikon");
         invDir.mkdirs();
     }
 
     public void stop() {
-        File dir = new File("output/platform/service/inv/" + appConfig.getAppName());
+        File dir = new File("output/platform/service/invDaikon/" + appConfig.getAppName());
         Util.deleteDir(dir);
     }
 
@@ -82,7 +84,7 @@ public class AppInvServer implements Runnable {
 
             if (!lines.containsKey(lineNumber)) {
                 String[] checkNames = objs.keySet().toArray(new String[0]);
-                lines.put(lineNumber, new InvLine(config, checkNames));
+                lines.put(lineNumber, new InvLine(config, checkNames, appConfig.getAppName(), lineNumber));
             }
 
             InvLine line = lines.get(lineNumber);
@@ -99,7 +101,8 @@ public class AppInvServer implements Runnable {
             });
             double[] envCtxVals = tmp.stream().mapToDouble(Double::doubleValue).toArray();
             double[] checkVals = Util.toDoubleArray(objs.values());
-            CheckResult result = line.check(new InvData(envCtxVals, checkVals));
+            CheckResult result = line.check(new InvData(envCtxVals, JSON.parseObject(objs.toJSONString(),
+                    new TypeReference<Map<String, Double>>(){})));
             String name = objs.keySet().toString();
 
             //TODO:返回checkInfo给appDriver并传递给app

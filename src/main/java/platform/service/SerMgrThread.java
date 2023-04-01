@@ -31,7 +31,7 @@ public class SerMgrThread implements Runnable{
 
     @Override
     public void run() {
-        //init cxt & inv
+        //init cxt & invDaikon
         //TODO:platformCtxServer初始化如何拦截所有grp?
 
 //        if (Configuration.getInvServerConfig().isServerOn()) {

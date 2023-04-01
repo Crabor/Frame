@@ -63,7 +63,7 @@ public class AppRemoteConnector {
         }
 
         @Override
-        public void callBack() {
+        public void callback() {
             logger.info("[AppConnector]: TCP connection is broken.");
             if (app != null) {
                 app.stopGetValueThread();

@@ -7,19 +7,19 @@
 
 一个pattern是上层应用感兴趣的环境感知数据（称为环境上下文）的一个集合。pattern文件采用xml格式，其中对每一个pattern的描述包含四个部分
 
-- `id`: 一个pattern唯一的标识。
+- `grpId`: 一个pattern唯一的标识。
 - `freshness`：该pattern中环境上下文的有效期。
 - `dataSource`：该pattern中的环境上下文从何处获取。
 - `matcher(option)`：如何匹配dataSource中数据源的环境上下文。 
 
 接下来依次介绍这四个部分。
 
-### id
+### grpId
 
 id是一个字符串，我们建议以`pat_`开头，以下是示例代码。
 
 ```xml
-<id>pat_car</id>
+<grpId>pat_car</grpId>
 ```
 
 ### freshness
@@ -132,7 +132,7 @@ matcher分为`primaryKey` matcher和`function` matcher，下面分别介绍。
 <patterns>
     
     <pattern>
-        <id>pat_x</id>
+        <grpId>pat_x</grpId>
         <freshness>
             <type>number</type>
             <value>2</value>
@@ -153,7 +153,7 @@ matcher分为`primaryKey` matcher和`function` matcher，下面分别介绍。
     </pattern>
 
     <pattern>
-        <id>pat_y</id>
+        <grpId>pat_y</grpId>
         <freshness>
             <type>number</type>
             <value>2</value>
@@ -219,18 +219,18 @@ public class mfuncs {
 
 一条rule是上层应用期望环境上下文所满足的某种约束。rule文件采用xml的格式。每一条rule包含三个部分：
 
-- `id`: 一条rule的唯一标识。
+- `grpId`: 一条rule的唯一标识。
 - `formula`: 以基于一阶逻辑的约束语言写成的规则语义。
 - `resolver`：如何处理违反这条规则的环境上下文。
 
 接下来依次介绍这三部分。
 
-### id
+### grpId
 
 id是一个字符串，我们建议以`rule_`开头，以下是示例代码。
 
 ```xml
-<id>rule_1</id>
+<grpId>rule_1</grpId>
 ```
 
 ### formula
@@ -357,7 +357,7 @@ strategy共有三种，分别为`drop-latest`, `drop-all`和`customized`。
 <rules>
 
     <rule>
-        <id>rule_1</id>
+        <grpId>rule_1</grpId>
         <formula>
             <forall var = "v1" in = "pat_x">
                 <not>

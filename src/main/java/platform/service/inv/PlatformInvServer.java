@@ -9,10 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import platform.config.AppConfig;
 import platform.config.Configuration;
 import platform.communication.pubsub.Publisher;
-import platform.service.inv.algorithm.*;
-import platform.service.inv.struct.*;
-import platform.service.inv.struct.inv.InvAbstract;
-import platform.service.inv.struct.trace.Trace;
 import common.struct.enumeration.CmdType;
 import common.util.Util;
 
@@ -26,7 +22,7 @@ public class PlatformInvServer {
     private static final Map<String, AppInvServer> appInvServerMap = new HashMap<>();
 
     static {
-        File dir = new File("output/platform/service/inv/");
+        File dir = new File("output/platform/service/invDaikon/");
         Util.deleteDir(dir);
         dir.mkdirs();
     }

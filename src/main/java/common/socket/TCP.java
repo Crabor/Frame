@@ -7,5 +7,5 @@ public interface TCP {
     void send(String str);
     String recv();
     void close();
-    void callBack();
+    void callback();
 }

@@ -29,7 +29,7 @@ public class AppConfig {
     private String mfuncFile;
     private CtxValidator ctxValidator = CtxValidator.ECC_IMD;
 
-    //inv related
+    //invDaikon related
     private AppInvServer invServer = null;
 
     //request
@@ -272,7 +272,7 @@ public class AppConfig {
         return true;
     }
 
-    //inv related
+    //invDaikon related
     public boolean isInvServerOn() {
         //TODO
         return false;

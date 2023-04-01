@@ -4,7 +4,7 @@
 
     <!-- 一个pattern对应一个sensor -->
     <pattern>
-        <id>pat_template1</id>
+        <grpId>pat_template1</grpId>
         <freshness>
             <type>number</type>
             <value>10</value>
@@ -28,7 +28,7 @@
 
     <!-- 一个pattern对应多个sensor, 应该保证多个sensor的field是相同的 -->
     <pattern>
-        <id>pat_template2</id>
+        <grpId>pat_template2</grpId>
         <freshness>
             <type>time</type> <!--可选项有time(ms)和number(#)-->
             <value>2000</value> <!--2000ms-->
@@ -41,7 +41,7 @@
         </dataSource>
         <matcher> <!-- 可选项 -->
             <type>primaryKey</type>
-            <primaryKey>id</primaryKey>
+            <primaryKey>grpId</primaryKey>
             <optionalValueList>
                 <value>orange_car</value>
                 <value>black_car</value>

@@ -1,10 +1,12 @@
 package platform.service.inv.struct;
 
+import java.util.Map;
+
 public class InvData {
     double[] envCtxVals;
-    double[] checkVals;
+    Map<String, Double> checkVals;
 
-    public InvData(double[] envCtxVals, double[] checkVals) {
+    public InvData(double[] envCtxVals, Map<String, Double> checkVals) {
         this.envCtxVals = envCtxVals;
         this.checkVals = checkVals;
     }

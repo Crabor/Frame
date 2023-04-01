@@ -19,6 +19,7 @@ import platform.config.SensorConfig;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.List;
 
 import static java.lang.Thread.sleep;
@@ -57,7 +58,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
         }
 
         @Override
-        public void callBack() {
+        public void callback() {
             //TODO
             logger.error(String.format("[%s]: TCP connection is broken. Set the status to off", deviceName));
             if (deviceType == DeviceType.SENSOR) {
@@ -112,6 +113,33 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
             tcp.send(ret.toString());
             logger.info(String.format("[Platform -> %s]: %s", deviceName, ret));
         }
+//
+//        try {
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//        tcp.recv();
+
+//        while(true) {
+//            try {
+//                Thread.sleep(1000);
+//                logger.info(tcp.getSocket().getKeepAlive());
+//            } catch (SocketException e) {
+//                throw new RuntimeException(e);
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//            logger.info(String.format("[%s]: %s", deviceName, tcp.getSocket().isClosed()));
+//        }
+//        while (true) {
+//            try {
+//                sleep(1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            logger.info(String.format("[%s]: %s", deviceName, tcp.getSocket().isClosed()));
+//        }
         //receive msg from car than publish to sensor channel
 //        try {
 //            InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream("Resources/taxiTest/testdata.txt"), StandardCharsets.UTF_8);

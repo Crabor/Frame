@@ -3,7 +3,7 @@
 <rules>
 
 	<rule>
-		<id>rule_front</id>
+		<grpId>rule_front</grpId>
 		<formula>
 			<forall var = "v1" in = "pat_front">
 				<bfunction name = "isValid">
@@ -20,7 +20,7 @@
 	</rule>
 
 	<rule>
-		<id>rule_back</id>
+		<grpId>rule_back</grpId>
 		<formula>
 			<forall var = "v1" in = "pat_back">
 				<bfunction name = "isValid">
@@ -37,7 +37,7 @@
 	</rule>
 
 	<rule>
-		<id>rule_left</id>
+		<grpId>rule_left</grpId>
 		<formula>
 			<forall var = "v1" in = "pat_left">
 				<bfunction name = "isValid">
@@ -54,7 +54,7 @@
 	</rule>
 
 	<rule>
-		<id>rule_right</id>
+		<grpId>rule_right</grpId>
 		<formula>
 			<forall var = "v1" in = "pat_right">
 				<bfunction name = "isValid">

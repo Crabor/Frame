@@ -39,7 +39,7 @@ public class testdaikon {
     }
 
     public static void main(String[] args) throws IOException {
-        //删除output/input.decls和output/input.dtrace文件和output/output.inv.gz文件
+        //删除output/input.decls和output/input.dtrace文件和output/output.invDaikon.gz文件
         File file = new File("output/input.decls");
         if (file.exists()) {
             file.delete();
@@ -48,7 +48,7 @@ public class testdaikon {
         if (file.exists()) {
             file.delete();
         }
-        file = new File("output/output.inv.gz");
+        file = new File("output/output.invDaikon.gz");
         if (file.exists()) {
             file.delete();
         }
@@ -66,12 +66,12 @@ public class testdaikon {
         }
 
 //        EltUpperBoundFloat.dkconfig_minimal_interesting = Long.MAX_VALUE;
-//        daikon.config.Configuration.getInstance().apply("daikon.inv.unary.sequence.EltUpperBoundFloat" +
+//        daikon.config.Configuration.getInstance().apply("daikon.invDaikon.unary.sequence.EltUpperBoundFloat" +
 //                ".maximal_interesting", String.valueOf(Long.MAX_VALUE));
-//        daikon.config.Configuration.getInstance().apply("daikon.inv.unary.sequence.EltUpperBoundFloat" +
+//        daikon.config.Configuration.getInstance().apply("daikon.invDaikon.unary.sequence.EltUpperBoundFloat" +
 //                ".minimal_interesting", String.valueOf(Long.MIN_VALUE));
 
-        String outputFile = "output/output.inv.gz";
+        String outputFile = "output/output.invDaikon.gz";
         String[] daikonArgs = new String[] {
 //                "--nohierarchy",
                 "output/input.dtrace",
@@ -85,22 +85,28 @@ public class testdaikon {
         daikon.Daikon.main(daikonArgs);
         //遍历输出生成的不变式
         PptMap all_ppts = Daikon.all_ppts;
+//        all_ppts.get("hello:::POINT").getInvariants().forEach(invDaikon -> {
+//            System.out.println(invDaikon.format() + " " + invDaikon.getClass().getName() + " (" + invDaikon.ppt.num_samples() + " " +
+//                    "samples)" +
+//                    " " + invDaikon.getConfidence());
+//        });
         for (daikon.PptTopLevel ppt : all_ppts.pptIterable()) {
             System.out.println(ppt.name() + " (" + ppt.num_samples() + " samples)");
             for (daikon.inv.Invariant inv : ppt.getInvariants()) {
                     System.out.println(inv.format() + " " + inv.getClass().getName() + " (" + inv.ppt.num_samples() + " " +
                             "samples)" +
                             " " + inv.getConfidence());
-//                    if (inv instanceof daikon.inv.unary.UnaryInvariant) {
-//                        System.out.println("\tcheck 1000: " + ((daikon.inv.unary.UnaryInvariant) inv).check(1000L, 1,
-//                                1));
-//                    } else if (inv instanceof daikon.inv.binary.BinaryInvariant) {
-//                        System.out.println("\tcheck 1000 1001: " + ((daikon.inv.binary.BinaryInvariant) inv).check(1000L
-//                                , 1001L,  1, 1));
-//                    } else if (inv instanceof daikon.inv.ternary.TernaryInvariant) {
-//                        System.out.println("\tcheck 1000 1001 1002: " + ((daikon.inv.ternary.TernaryInvariant) inv).check(1000L
-//                                , 1001L, 1002L, 1, 1));
-//                    }
+                    System.out.println(inv.varNames());
+                    if (inv instanceof daikon.inv.unary.UnaryInvariant) {
+                        System.out.println("\tcheck 1000: " + ((daikon.inv.unary.UnaryInvariant) inv).check(1000.0, 1,
+                                1));
+                    } else if (inv instanceof daikon.inv.binary.BinaryInvariant) {
+                        System.out.println("\tcheck 1000 1001: " + ((daikon.inv.binary.BinaryInvariant) inv).check(1000.0
+                                , 1001.0,  1, 1));
+                    } else if (inv instanceof daikon.inv.ternary.TernaryInvariant) {
+                        System.out.println("\tcheck 1000 1001 1002: " + ((daikon.inv.ternary.TernaryInvariant) inv).check(1000.0
+                                , 1001.0, 1002.0, 1, 1));
+                    }
             }
         }
         System.out.println("Daikon analysis completed successfully!");

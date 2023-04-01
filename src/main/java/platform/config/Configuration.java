@@ -17,7 +17,7 @@ public class Configuration {
     private static final Log logger = LogFactory.getLog(Configuration.class);
     private static final Map<String, AppConfig> appsConfig  = new HashMap<>();
     private static CtxServerConfig ctxServerConfig;
-    private static InvServerConfig invServerConfig;
+//    private static InvServerConfig invServerConfig;
     private static ResourceConfig resourceConfig;
     private static RedisConfig redisConfig;
     private static UDPConfig udpConfig;
@@ -31,9 +31,9 @@ public class Configuration {
         return ctxServerConfig;
     }
 
-    public static InvServerConfig getInvServerConfig() {
-        return invServerConfig;
-    }
+//    public static InvServerConfig getInvServerConfig() {
+//        return invServerConfig;
+//    }
 
     public static ResourceConfig getResourceConfig() {
         return resourceConfig;

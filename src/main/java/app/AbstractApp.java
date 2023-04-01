@@ -479,7 +479,7 @@ public abstract class AbstractApp implements App {
 //        return state;
 //    }
 
-    //inv:
+    //invDaikon:
     //see CheckObject
     //TODO: 所有CheckObject.XXX 底层得改成网络通信形式而不是直接的函数调用
 }

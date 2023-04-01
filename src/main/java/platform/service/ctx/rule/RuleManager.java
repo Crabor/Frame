@@ -45,7 +45,7 @@ public class RuleManager {
             for(Element eRule: eRuleList){
                 List<Element> eLabelList = eRule.elements();
                 assert eLabelList.size() == 3;
-                //id
+                //grpId
                 assert eLabelList.get(0).getName().equals("id");
                 Rule newRule = new Rule(eLabelList.get(0).getText());
                 // formula

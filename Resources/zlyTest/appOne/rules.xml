@@ -3,7 +3,7 @@
 <rules>
 
     <rule>
-        <id>rule_taxis</id>
+        <grpId>rule_taxis</grpId>
         <formula>
             <forall var = "v1" in = "pat_001">
                 <forall var="v2" in="pat_002">

@@ -1,9 +1,6 @@
 package common.socket;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -48,7 +45,7 @@ public abstract class AbstractTCP implements TCP {
             }
             out.writeBytes(str + '\n');
         } catch (IOException e) {
-            callBack();
+            callback();
             if (lockFlag) {
                 lock.unlock();
             }
@@ -68,7 +65,7 @@ public abstract class AbstractTCP implements TCP {
             ret = in.readLine();
         } catch (IOException e) {
 //            e.printStackTrace();
-            callBack();
+            callback();
             try {
                 socket.close();
             } catch (IOException ee) {

@@ -34,7 +34,11 @@ public class WrapperRemoteConnector {
     }
 
     public CmdMessage recv() {
-        return new CmdMessage(tcp.recv());
+        String recv = tcp.recv();
+        if (recv != null) {
+            return new CmdMessage(recv);
+        }
+        return null;
     }
 
     public void send(String str) {
@@ -65,7 +69,7 @@ public class WrapperRemoteConnector {
         }
 
         @Override
-        public void callBack() {
+        public void callback() {
             logger.info("[WrapperConnector]: TCP connection is broken.");
         }
     }

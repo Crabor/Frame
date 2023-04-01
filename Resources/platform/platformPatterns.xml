@@ -3,7 +3,7 @@
 <patterns>
 
 	<pattern>
-		<id>pat_front</id>
+		<grpId>pat_front</grpId>
 		<freshness>
 			<type>time</type>
 			<value>50</value>
@@ -17,7 +17,7 @@
 	</pattern>
 
 	<pattern>
-		<id>pat_back</id>
+		<grpId>pat_back</grpId>
 		<freshness>
 			<type>time</type>
 			<value>50</value>
@@ -31,7 +31,7 @@
 	</pattern>
 
 	<pattern>
-		<id>pat_left</id>
+		<grpId>pat_left</grpId>
 		<freshness>
 			<type>time</type>
 			<value>50</value>
@@ -45,7 +45,7 @@
 	</pattern>
 
 	<pattern>
-		<id>pat_right</id>
+		<grpId>pat_right</grpId>
 		<freshness>
 			<type>time</type>
 			<value>50</value>

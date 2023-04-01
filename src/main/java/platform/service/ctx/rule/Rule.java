@@ -76,7 +76,7 @@ public class Rule {
 
     //functional methods
     public void Output(){
-        System.out.println("rule id: " + this.rule_id);
+        System.out.println("rule grpId: " + this.rule_id);
         System.out.println("varPatternMap: " + this.varPatternMap);
         System.out.println("incPlusSet: " + incPlusSet);
         System.out.println("incMinusSet: " + incMinusSet);

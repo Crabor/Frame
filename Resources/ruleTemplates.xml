@@ -4,7 +4,7 @@
 <rules>
 
     <rule>
-        <id>rule_02</id>
+        <grpId>rule_02</grpId>
         <formula>
             <forall var = "v1" in = "pat_001">
                 <forall var="v2" in="pat_002">

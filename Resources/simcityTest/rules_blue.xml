@@ -2,7 +2,7 @@
 
 <rules>
     <rule>
-        <id>rule_still</id>
+        <grpId>rule_still</grpId>
         <formula>
             <forall var = "v1" in = "latest">
                 <bfunction name="notStill">
@@ -18,7 +18,7 @@
     </rule>
 
     <rule>
-        <id>rule_order_blue</id>
+        <grpId>rule_order_blue</grpId>
         <formula>
             <forall var = "v1" in = "bluecar1">
                 <not>
@@ -49,7 +49,7 @@
     </rule>
 
     <rule>
-        <id>rule_double_blue</id>
+        <grpId>rule_double_blue</grpId>
         <formula>
             <forall var = "v1" in = "bluecar4">
                 <not>

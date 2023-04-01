@@ -73,7 +73,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
         }
 
         @Override
-        public void callBack() {
+        public void callback() {
             String name = "AppDriver";
             if (appConfig != null) {
                 name = appConfig.getAppName();

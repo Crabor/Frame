@@ -13,11 +13,21 @@ public class InvLine {
     List<InvGroup> invGroups;
     InvGroup newGroup;
 
-    public InvLine(InvServiceConfig config ,String[] checkNames) {
+    String appName;
+    int lindId;
+
+    public InvLine(InvServiceConfig config ,String[] checkNames, String appName, int lindId) {
         this.config = config;
         this.checkNames = checkNames;
         this.invGroups = new ArrayList<>();
         this.newGroup = null;
+
+        this.appName = appName;
+        this.lindId = lindId;
+    }
+
+    public String[] getCheckNames() {
+        return checkNames;
     }
 
     public CheckResult check(InvData data) {
@@ -38,7 +48,7 @@ public class InvLine {
             }
 
             if (nearestGroup == null) {
-                newGroup = InvGroup.makeGroup(data);
+                newGroup = InvGroup.makeGroup(appName, lindId,  invGroups.size() + 1, data);
                 invGroups.add(newGroup);
             } else {
                 if (nearestGroup.size() == config.getGenThro()) {

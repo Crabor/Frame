@@ -2,7 +2,7 @@
 
 <patterns>
     <pattern>
-        <id>latest</id>
+        <grpId>latest</grpId>
         <freshness>
             <type>number</type>
             <value>1</value>
@@ -16,7 +16,7 @@
     </pattern>
 
     <pattern>
-        <id>yellowcar1</id>
+        <grpId>yellowcar1</grpId>
         <freshness>
             <type>number</type>
             <value>2</value>
@@ -36,7 +36,7 @@
         </matcher>
     </pattern>
     <pattern>
-        <id>yellowcar2</id>
+        <grpId>yellowcar2</grpId>
         <freshness>
             <type>number</type>
             <value>2</value>
@@ -56,7 +56,7 @@
         </matcher>
     </pattern>
     <pattern>
-        <id>yellowcar3</id>
+        <grpId>yellowcar3</grpId>
         <freshness>
             <type>number</type>
             <value>2</value>
@@ -76,7 +76,7 @@
         </matcher>
     </pattern>
     <pattern>
-        <id>yellowcar4</id>
+        <grpId>yellowcar4</grpId>
         <freshness>
             <type>number</type>
             <value>2</value>
@@ -96,7 +96,7 @@
         </matcher>
     </pattern>
     <pattern>
-        <id>yellowcar5</id>
+        <grpId>yellowcar5</grpId>
         <freshness>
             <type>number</type>
             <value>2</value>

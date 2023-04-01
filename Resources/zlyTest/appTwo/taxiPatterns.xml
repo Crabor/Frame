@@ -3,7 +3,7 @@
 <patterns>
 
     <pattern>
-        <id>pat_001</id>
+        <grpId>pat_001</grpId>
         <freshness>
             <type>number</type>
             <value>2</value>
@@ -24,7 +24,7 @@
     </pattern>
 
     <pattern>
-        <id>pat_002</id>
+        <grpId>pat_002</grpId>
         <freshness>
             <type>number</type> <!--可选项有time(ms)和number(#)-->
             <value>2</value> <!--2000ms-->

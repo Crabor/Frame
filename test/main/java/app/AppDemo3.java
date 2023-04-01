@@ -19,7 +19,7 @@ public class AppDemo3 extends AbstractApp {
         this.appDescription = "This is Demo3";
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         AppDemo3 app = new AppDemo3();
         AppRemoteConnector connector = AppRemoteConnector.getInstance();
         connector.connectPlatform("127.0.0.1", 9090);
@@ -31,7 +31,10 @@ public class AppDemo3 extends AbstractApp {
             connector.registerSensor("YellowCar", SensorMode.PASSIVE, 1);
         }
         connector.getMsgThread(CmdType.START);
-        while (true);
+        while (true) {
+            Thread.sleep(1000);
+            connector.getSupportedSensors();
+        }
 //        connector.getSensorData("YellowCar");
 
 //        connector.unregisterApp(app);

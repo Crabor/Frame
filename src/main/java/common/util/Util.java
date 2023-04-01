@@ -246,7 +246,7 @@ public class Util {
         ServiceType ret = null;
         if (type.equalsIgnoreCase("ctx")) {
             ret = ServiceType.CTX;
-        } else if (type.equalsIgnoreCase("inv")) {
+        } else if (type.equalsIgnoreCase("invDaikon")) {
             ret = ServiceType.INV;
         }
         return ret;
