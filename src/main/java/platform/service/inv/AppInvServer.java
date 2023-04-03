@@ -45,7 +45,7 @@ public class AppInvServer{
     }
 
     public void start() {
-        File dir = new File("output/platform/service/inv/" + appConfig.getAppName());
+        File dir = new File("output/platform/inv/" + appConfig.getAppName());
         Util.deleteDir(dir);
         dir.mkdirs();
 //        File traceDir = new File("output/platform/service/inv/" + appConfig.getAppName() + "/trace");
@@ -55,7 +55,7 @@ public class AppInvServer{
     }
 
     public void stop() {
-        File dir = new File("output/platform/service/inv/" + appConfig.getAppName());
+        File dir = new File("output/platform/inv/" + appConfig.getAppName());
         Util.deleteDir(dir);
     }
 

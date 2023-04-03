@@ -1,0 +1,6 @@
+{
+  "name": "YellowCar",
+  "deviceType": "Sensor",
+  "valueType": "Double",
+  "fields": ["speed", "longitude", "latitude"]
+}

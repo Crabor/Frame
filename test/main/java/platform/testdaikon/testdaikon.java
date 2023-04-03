@@ -76,7 +76,7 @@ public class testdaikon {
                 "output/input.dtrace",
                 "output/input.decls",
                 "--config",
-                "Resources/configFile/platform/inv/config.txt",
+                "Resources/config/platform/inv/config.txt",
         };
 //        Daikon.dkconfig_calc_possible_invs = true;
         daikon.Daikon.main(daikonArgs);

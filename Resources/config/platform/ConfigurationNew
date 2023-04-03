@@ -2,9 +2,9 @@
   "CtxServerConfiguration": {
     "serverOn": true,
     "CtxValidator": "ECC+IMD",
-    "baseRuleFile": "Resources/platform/platformRules.xml",
-    "baseBfuncFile": "Resources/platform/platformBfunction.class",
-    "basePatternFile": "Resources/platform/platformPatterns.xml",
+    "baseRuleFile": "Resources/config/platform/ctx/platform/platformRules.xml",
+    "baseBfuncFile": "Resources/config/platform/ctx/platform/platformBfunction.class",
+    "basePatternFile": "Resources/config/platform/ctx/platform/platformPatterns.xml",
     "baseMfuncFile": "",
   },
   "RedisConfig": {

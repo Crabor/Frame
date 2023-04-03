@@ -131,8 +131,6 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
 //        }
     }
 
-    private static final String CTX_FILE_PATH = "Resources/configFile/ctxFile";
-
     @Override
     public void run() {
         String msgFromClient;

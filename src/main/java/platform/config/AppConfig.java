@@ -40,7 +40,7 @@ public class AppConfig {
     }
 
     public void setCtxServiceConfig(CtxServiceConfig config) {
-        String dir = "Resources/configFile/ctxFile/" + appName;
+        String dir = "Resources/config/platform/ctx/" + appName;
         if (config.getRuleFileContent() != null) {
             Util.writeFileContent(dir, "rules_yellow.xml", config.getRuleFileContent(), "//huanhang");
             ruleFile = dir + "/rules_yellow.xml";

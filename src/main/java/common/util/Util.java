@@ -224,6 +224,10 @@ public class Util {
         return content;
     }
 
+    public static String readFileContent(String fileName) {
+        return readFileContent(fileName, "");
+    }
+
     public static void writeFileContent(String dir, String name, String content, String replace_line_feed) {
         File file = new File(dir);
 //        System.out.println(dir);

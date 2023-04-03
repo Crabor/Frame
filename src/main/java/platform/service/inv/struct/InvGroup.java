@@ -29,7 +29,7 @@ public class InvGroup {
 
     public void invGen() {
         //TODO
-        File dir = new File("output/platform/service/inv/" + appName + "/line" + lineId);
+        File dir = new File("output/platform/inv/" + appName + "/line" + lineId);
         if (!dir.exists()) {
             dir.mkdirs();
         }
@@ -90,7 +90,7 @@ public class InvGroup {
                 "-o",
                 invGzFileName,
                 "--config",
-                "Resources/configFile/platform/inv/config.txt",
+                "Resources/config/platform/inv/config.txt",
         };
         PlatformInvServer.lockDaikon();
         daikon.Daikon.main(daikonArgs);

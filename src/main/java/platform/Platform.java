@@ -112,4 +112,9 @@ public class Platform {
         }
         return ret;
     }
+
+    public static void main(String[] args) {
+        Init("Resources/config/platform/ConfigurationNew");
+        Start();
+    }
 }

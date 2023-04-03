@@ -24,7 +24,7 @@ public class PlatformInvServer {
     private static final ReentrantLock lock = new ReentrantLock();
 
     static {
-        File dir = new File("output/platform/service/inv/");
+        File dir = new File("output/platform/inv/");
         Util.deleteDir(dir);
         dir.mkdirs();
     }
