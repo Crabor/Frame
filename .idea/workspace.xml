@@ -9,70 +9,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78115992-4503-470b-beb5-d7602ef66f8a" name="Changes" comment="不变式服务调试成功">
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/simcityTest/CtxServerOutput.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/simcityTest/bfuncs.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/simcityTest/contextData_blue.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/simcityTest/contextData_yellow.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/simcityTest/patterns_blue.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/simcityTest/patterns_yellow.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/simcityTest/rules_blue.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/simcityTest/rules_yellow.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/zlyTest/appOne/bfuncs.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/zlyTest/appOne/mfuncs.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/zlyTest/appOne/patterns.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/zlyTest/appOne/rules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/zlyTest/appTwo/taxiBfunction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/zlyTest/appTwo/taxiMfunction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/zlyTest/appTwo/taxiPatterns.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/zlyTest/appTwo/taxiRules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/zlyTest/ctxService.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/zlyTest/data.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/zlyTest/testdata.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Resources/config/wrapper/config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/frame.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/frame.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/configFile/platform/Configuration" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/config/platform/Configuration" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/configFile/platform/ConfigurationNew" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/config/platform/ConfigurationNew" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/configFile/platform/Configuration_zsh" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/config/platform/Configuration_zsh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/configFile/platform/inv/config.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/config/platform/inv/config.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/configFile/platform/zlyConfiguration" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/config/platform/zlyConfiguration" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/platform/platformBfunction.class" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/platform/platformBfunction.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/platform/platformBfunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/platform/platformBfunction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/platform/platformPatterns.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/platform/platformPatterns.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/platform/platformRules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/config/platform/ctx/platform/platformRules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/simcityTest/CtxServerOutput.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/simcityTest/bfuncs.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/simcityTest/contextData_blue.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/simcityTest/contextData_yellow.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/simcityTest/patterns_blue.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/simcityTest/patterns_yellow.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/simcityTest/rules_blue.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/simcityTest/rules_yellow.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/zlyTest/appOne/bfuncs.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/zlyTest/appOne/mfuncs.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/zlyTest/appOne/patterns.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/zlyTest/appOne/rules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/zlyTest/appTwo/taxiBfunction.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/zlyTest/appTwo/taxiBfunction.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/zlyTest/appTwo/taxiMfunction.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/zlyTest/appTwo/taxiMfunction.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/zlyTest/appTwo/taxiPatterns.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/zlyTest/appTwo/taxiRules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/zlyTest/ctxService.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/zlyTest/data.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/zlyTest/testdata.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/common/util/Util.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/common/util/Util.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/platform/Platform.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/Platform.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/platform/app/AppDriver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/app/AppDriver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/platform/config/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/config/AppConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/platform/service/inv/AppInvServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/service/inv/AppInvServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/platform/service/inv/PlatformInvServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/service/inv/PlatformInvServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/platform/service/inv/struct/InvGroup.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/service/inv/struct/InvGroup.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/main/java/platform/RunPlatform.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/main/java/platform/testdaikon/testdaikon.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/main/java/platform/testdaikon/testdaikon.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/main/java/wrapper/WrapperDemo.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/main/java/wrapper/WrapperDemo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/main/java/wrapper/WrapperDemo2.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/main/java/wrapper/WrapperDemo2.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resources/config/platform/ConfigurationNew" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/config/platform/ConfigurationNew" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/config/Configuration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/config/Configuration.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,18 +28,41 @@
     </option>
   </component>
   <component name="Git.Merge.Settings">
-    <option name="BRANCH" value="dev" />
+    <option name="BRANCH" value="yr" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="yr" />
+        <entry key="$PROJECT_DIR$" value="dev" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitToolBoxStore">
     <option name="projectConfigVersion" value="5" />
+    <option name="recentBranches">
+      <RecentBranches>
+        <option name="branchesForRepo">
+          <list>
+            <RecentBranchesForRepo>
+              <option name="branches">
+                <list>
+                  <RecentBranch>
+                    <option name="branchName" value="yr" />
+                    <option name="lastUsedInstant" value="1680526625" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="dev" />
+                    <option name="lastUsedInstant" value="1680526624" />
+                  </RecentBranch>
+                </list>
+              </option>
+              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$" />
+            </RecentBranchesForRepo>
+          </list>
+        </option>
+      </RecentBranches>
+    </option>
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="jar://$PROJECT_DIR$/lib/daikon.jar!/daikon/inv/Invariant.class" root0="SKIP_INSPECTION" />
@@ -116,34 +78,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
-    "Downloaded.Files.Path.Enabled": "false",
-    "Repository.Attach.Annotations": "false",
-    "Repository.Attach.JavaDocs": "false",
-    "Repository.Attach.Sources": "false",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "database.data.extractors.current.export.id": "Comma-separated (CSV)_id",
-    "database.data.extractors.current.id": "Comma-separated (CSV)_id",
-    "git-widget-placeholder": "yr",
-    "last_opened_file_path": "/Users/zhanglingyu/Phd/project/platform/frame",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "preferences.fileTypes",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;database.data.extractors.current.export.id&quot;: &quot;Comma-separated (CSV)_id&quot;,
+    &quot;database.data.extractors.current.id&quot;: &quot;Comma-separated (CSV)_id&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;yr&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/zhanglingyu/Phd/project/platform/frame&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.fileTypes&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
@@ -237,11 +199,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.AppInvDemo" />
         <item itemvalue="Application.WrapperDemo" />
-        <item itemvalue="Application.Platform" />
-        <item itemvalue="Application.RunPlatform" />
         <item itemvalue="Application.testdaikon" />
+        <item itemvalue="Application.RunPlatform" />
+        <item itemvalue="Application.Platform" />
+        <item itemvalue="Application.AppInvDemo" />
       </list>
     </recent_temporary>
   </component>

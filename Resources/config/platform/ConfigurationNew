@@ -7,10 +7,6 @@
     "basePatternFile": "Resources/config/platform/ctx/platform/platformPatterns.xml",
     "baseMfuncFile": "",
   },
-  "RedisConfig": {
-    "serverAddress": "127.0.0.1",
-    "serverPort": "6379",
-  },
   "TCPConfig": {
     "appListenPort": 9090,
     "deviceListenPort": 9091,

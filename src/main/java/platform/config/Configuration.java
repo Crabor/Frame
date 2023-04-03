@@ -60,7 +60,7 @@ public class Configuration {
 //            JSONArray appObj = (JSONArray) obj.get("AppConfiguration");
 //            JSONObject invObj = (JSONObject) obj.get("InvServerConfiguration");
 //            JSONObject resourceObj = (JSONObject) obj.get("ResourceConfiguration");
-            JSONObject redisObj = (JSONObject) obj.get("RedisConfig");
+//            JSONObject redisObj = (JSONObject) obj.get("RedisConfig");
 //            JSONObject udpObj = (JSONObject) obj.get("UDPConfig");
             JSONObject tcpObj = (JSONObject) obj.get("TCPConfig");
             //System.out.println(ctxObj.toJSONString());
@@ -71,14 +71,14 @@ public class Configuration {
 //            }
 //            invServerConfig = new InvServerConfig(invObj);
             resourceConfig = new ResourceConfig();
-            redisConfig = new RedisConfig(redisObj);
+//            redisConfig = new RedisConfig(redisObj);
 //            udpConfig = new UDPConfig(udpObj);
             tcpConfig = new TCPConfig(tcpObj);
             logger.info(ctxServerConfig);
 //            logger.info(invServerConfig);
 //            logger.info(appsConfig);
 //            logger.info(resourceConfig);
-            logger.info(redisConfig);
+//            logger.info(redisConfig);
 //            logger.info(udpConfig);
             logger.info(tcpConfig);
         } catch (IOException e) {
