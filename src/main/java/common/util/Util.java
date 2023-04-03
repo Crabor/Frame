@@ -1,7 +1,6 @@
 package common.util;
 
 import com.alibaba.fastjson.JSONObject;
-import platform.communication.socket.CmdRet;
 import common.struct.enumeration.CmdType;
 import common.struct.enumeration.ServiceType;
 import reactor.util.function.Tuple3;
@@ -140,10 +139,6 @@ public class Util {
         jo.put("cmd", cmd);
         jo.put("args", args);
         return jo.toJSONString();
-    }
-
-    public static CmdRet decodeCommandRet(String msg) {
-        return new CmdRet(msg);
     }
 
     public static String collectionToString(Collection<String> collection, String delimiter) {

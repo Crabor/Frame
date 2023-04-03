@@ -8,21 +8,13 @@ import common.socket.CmdMessageGrpIds;
 import common.socket.TCP;
 import common.struct.enumeration.DeviceType;
 import platform.communication.pubsub.Publisher;
-import platform.communication.socket.PlatformUDP;
-import platform.communication.socket.Cmd;
 import platform.config.ActorConfig;
 import platform.config.Configuration;
 import platform.communication.pubsub.AbstractSubscriber;
-import platform.communication.socket.CmdRet;
-import common.util.Util;
 import platform.config.SensorConfig;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketException;
-import java.util.List;
-
-import static java.lang.Thread.sleep;
 
 public class DeviceDriver extends AbstractSubscriber implements Runnable {
     private Thread t;
