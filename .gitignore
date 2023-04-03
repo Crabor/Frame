@@ -32,3 +32,4 @@ out
 Resources/config/ctxFile/
 .idea/workspace.xml
 .idea/leetcode/
+/Resources/config/log/log4j-*.properties
