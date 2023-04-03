@@ -220,7 +220,7 @@ public class Util {
     }
 
     public static String readFileContent(String fileName) {
-        return readFileContent(fileName, "");
+        return readFileContent(fileName, "\n");
     }
 
     public static void writeFileContent(String dir, String name, String content, String replace_line_feed) {
@@ -239,6 +239,10 @@ public class Util {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void writeFileContent(String dir, String name, String content) {
+        writeFileContent(dir, name, content, "\n");
     }
 
     public static ServiceType parseServiceType(String type) {
@@ -320,6 +324,19 @@ public class Util {
             }
         }
         return sb.toString();
+    }
+
+    public static void createNewLog4jProperties(String name) {
+        File file = new File("Resources/config/log/log4j-" + name + ".properties");
+        if (file.exists()) {
+            return;
+        }
+        String fileContent = Util.readFileContent("Resources/config/log/log4j.properties");
+        fileContent = fileContent.replace("./output/log/platform/debug.log", "./output/log/" + name + "/debug.log");
+        fileContent = fileContent.replace("./output/log/platform/info.log", "./output/log/" + name + "/info.log");
+        fileContent = fileContent.replace("./output/log/platform/warn.log", "./output/log/" + name + "/warn.log");
+        fileContent = fileContent.replace("./output/log/platform/error.log", "./output/log/" + name + "/error.log");
+        Util.writeFileContent("Resources/config/log", "log4j-" + name + ".properties", fileContent);
     }
 
     public static void main(String[] args) {

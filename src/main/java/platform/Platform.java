@@ -3,6 +3,7 @@ package platform;
 import common.struct.CtxServiceConfig;
 import common.struct.InvServiceConfig;
 import common.struct.ServiceConfig;
+import org.apache.log4j.PropertyConfigurator;
 import platform.config.Configuration;
 import platform.app.AppMgrThread;
 import platform.resource.ResMgrThread;
@@ -28,6 +29,12 @@ public class Platform {
     private static final Lock mgrStartFlagLock = new ReentrantLock();
     private static int mgrStartFlag = 0;
     private static String runningId;
+
+    static {
+        PropertyConfigurator.configure("Resources/config/log/log4j.properties");
+        File file = new File("output/log/platform/");
+        Util.deleteDir(file);
+    }
 
     public static void incrMgrStartFlag() {
         mgrStartFlagLock.lock();

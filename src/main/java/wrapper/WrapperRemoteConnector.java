@@ -6,9 +6,12 @@ import com.alibaba.fastjson.JSONObject;
 import common.socket.AbstractTCP;
 import common.socket.CmdMessage;
 import common.socket.TCP;
+import common.util.Util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.PropertyConfigurator;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -18,8 +21,22 @@ public class WrapperRemoteConnector {
     private TCP tcp = null;
     private Log logger = LogFactory.getLog(WrapperRemoteConnector.class);
     private String wrapperName = null;
+
+    static {
+        //log set
+        String pid = "wrapper" + ProcessHandle.current().pid();
+        Util.createNewLog4jProperties(pid);
+        PropertyConfigurator.configure("Resources/config/log/log4j-" + pid + ".properties");
+        File file = new File("output/log/" + pid + "/");
+        Util.deleteDir(file);
+    }
     
     private WrapperRemoteConnector() {
+
+    }
+
+    public Log getLogger() {
+        return logger;
     }
     
     public static WrapperRemoteConnector getInstance() {
