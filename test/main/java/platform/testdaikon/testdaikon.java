@@ -71,13 +71,10 @@ public class testdaikon {
 //        daikon.config.Configuration.getInstance().apply("daikon.invDaikon.unary.sequence.EltUpperBoundFloat" +
 //                ".minimal_interesting", String.valueOf(Long.MIN_VALUE));
 
-        String outputFile = "output/output.invDaikon.gz";
         String[] daikonArgs = new String[] {
 //                "--nohierarchy",
                 "output/input.dtrace",
                 "output/input.decls",
-                "-o",
-                outputFile,
                 "--config",
                 "Resources/configFile/platform/inv/config.txt",
         };

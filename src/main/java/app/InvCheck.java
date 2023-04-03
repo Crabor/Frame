@@ -23,7 +23,7 @@ public class InvCheck {
     private Map<Integer, List<String>> checkMap;
     private Map<Integer, List<String>> monitorMap;
     private Map<Integer, List<String>> isMonitoredMap;
-    private Map<Integer, Integer> iterIdMap;
+    private Map<Integer, Integer> iterIdMap = new HashMap<>();
 
     public static InvCheck getInstance() {
         if (instance == null) {
@@ -40,7 +40,7 @@ public class InvCheck {
         checkMap = new HashMap<>();
         monitorMap = new HashMap<>();
         isMonitoredMap = new HashMap<>();
-        String fileName = "test/test/java/"
+        String fileName = "test/main/java/"
                 + Thread.currentThread().getStackTrace()[4].getClassName().replace(".", "/")
                 + ".java";
         //打印fileName中的内容
@@ -170,7 +170,7 @@ public class InvCheck {
         return state;
     }
 
-    public static CheckResult getResult(SensorData data) {
+    public CheckResult getResult(SensorData data) {
         if (data.getType() != SensorDataType.INV_REPORT) {
 //            logger.info(String.format("[%s]: getResult(data) -> null", connector.getAppName()));
             return null;
@@ -179,7 +179,7 @@ public class InvCheck {
         return CheckResult.fromString((String) data.getData("result"));
     }
 
-    public static CheckInfo getInfo(SensorData data) {
+    public CheckInfo getInfo(SensorData data) {
         if (data.getType() != SensorDataType.INV_REPORT) {
 //            logger.info(String.format("[%s]: getInfo(data) -> null", connector.getAppName()));
             return null;

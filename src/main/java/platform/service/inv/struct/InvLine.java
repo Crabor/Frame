@@ -6,6 +6,7 @@ import common.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class InvLine {
     InvServiceConfig config;
@@ -58,7 +59,7 @@ public class InvLine {
                 } else {
                     nearestGroup.add(data);
                     if (nearestGroup.size() == config.getGenThro()) {
-                        nearestGroup.invGen();
+                        CompletableFuture.runAsync(nearestGroup::invGen);
                     }
                 }
             }

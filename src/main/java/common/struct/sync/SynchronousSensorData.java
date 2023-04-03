@@ -17,14 +17,19 @@ public class SynchronousSensorData {
     }
 
     public SensorData blockTake() {
-        return blockTake(-1);
+        try {
+            return queue.take();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public SensorData blockTake(long timeout) {
         try {
             return queue.poll(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
-//            e.printStackTrace();
+            e.printStackTrace();
             return null;
         }
     }
@@ -40,6 +45,10 @@ public class SynchronousSensorData {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public int size() {
+        return queue.size();
     }
 
     public void clear() {

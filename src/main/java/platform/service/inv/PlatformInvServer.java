@@ -16,13 +16,15 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class PlatformInvServer {
     private static final Log logger = LogFactory.getLog(PlatformInvServer.class);
     private static final Map<String, AppInvServer> appInvServerMap = new HashMap<>();
+    private static final ReentrantLock lock = new ReentrantLock();
 
     static {
-        File dir = new File("output/platform/service/invDaikon/");
+        File dir = new File("output/platform/service/inv/");
         Util.deleteDir(dir);
         dir.mkdirs();
     }
@@ -43,6 +45,7 @@ public class PlatformInvServer {
             } else if (cmd == CmdType.STOP) {
 //                appInvServerMap.get(appName).stop();
                 appInvServerMap.remove(appName);
+                appConfig.setInvServer(null);
                 return true;
             }
         } else {
@@ -53,6 +56,7 @@ public class PlatformInvServer {
                 appInvServerMap.put(appName, appInvServer);
                 appConfig.setInvServer(appInvServer);
                 appInvServer.start();
+//                System.out.println("start appInvServer");
                 return true;
             }
         }
@@ -61,5 +65,13 @@ public class PlatformInvServer {
 
     public static AppInvServer getAppInvServer(String appName) {
         return appInvServerMap.get(appName);
+    }
+
+    public static void lockDaikon() {
+        lock.lock();
+    }
+
+    public static void unlockDaikon() {
+        lock.unlock();
     }
 }

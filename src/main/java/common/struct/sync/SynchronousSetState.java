@@ -46,6 +46,10 @@ public class SynchronousSetState {
         }
     }
 
+    public int size() {
+        return queue.size();
+    }
+
     public void clear() {
         queue.clear();
     }

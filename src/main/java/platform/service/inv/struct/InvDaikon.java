@@ -14,18 +14,6 @@ public class InvDaikon implements Inv {
 
     public InvDaikon(List<Invariant> invs) {
         this.invs = invs;
-        invs.forEach(inv -> {
-            System.out.println(
-                    inv.format() +
-                            " " +
-                            inv.getClass().getName() +
-                            " (" +
-                            inv.ppt.num_samples() +
-                            " " +
-                            "samples)" +
-                            " " +
-                            inv.getConfidence());
-        });
     }
 
     @Override

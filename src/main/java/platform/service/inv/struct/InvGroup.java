@@ -2,6 +2,8 @@ package platform.service.inv.struct;
 
 import common.util.Util;
 import daikon.Daikon;
+import daikon.inv.Invariant;
+import platform.service.inv.PlatformInvServer;
 
 import java.io.*;
 import java.util.*;
@@ -27,14 +29,14 @@ public class InvGroup {
 
     public void invGen() {
         //TODO
-        File dir = new File("output/" + appName + "/inv/" + lineId);
+        File dir = new File("output/platform/service/inv/" + appName + "/line" + lineId);
         if (!dir.exists()) {
             dir.mkdirs();
         }
 
         //trace output
-        String declFileName = dir.getAbsolutePath() + "/" + grpId + ".decl";
-        File declFile = new File(declFileName);
+        String declsFileName = dir.getAbsolutePath() + "/grp" + grpId + ".decls";
+        File declFile = new File(declsFileName);
         if (!declFile.exists()) {
             BufferedWriter out = null;
             try {
@@ -53,14 +55,15 @@ public class InvGroup {
                 throw new RuntimeException(e);
             }
         }
-        String varFileName = dir.getAbsolutePath() + "/" + grpId + ".dtrace";
+        String varFileName = dir.getAbsolutePath() + "/grp" + grpId + ".dtrace";
         File varFile = new File(varFileName);
         if (!varFile.exists()) {
             BufferedWriter out = null;
             try {
+                String title = appName + "-" + lineId + "-" + grpId + ":::POINT\n";
                 out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(varFile, true)));
-                out.write(appName + "-" + lineId + "-" + grpId + ":::POINT\n");
                 for (InvData data : datas) {
+                    out.write(title);
                     for (Map.Entry<String, Double> entry : data.checkVals.entrySet()) {
                         String k = entry.getKey();
                         Double v = entry.getValue();
@@ -77,17 +80,47 @@ public class InvGroup {
                 throw new RuntimeException(e);
             }
         }
+        String invGzFileName = dir.getAbsolutePath() + "/grp" + grpId + ".inv.gz";
 
         //inv gen
         String[] daikonArgs = new String[] {
                 varFileName,
-                declFileName,
-                "--no_text_output",
+                declsFileName,
+//                "--no_text_output",
+                "-o",
+                invGzFileName,
                 "--config",
                 "Resources/configFile/platform/inv/config.txt",
         };
+        PlatformInvServer.lockDaikon();
         daikon.Daikon.main(daikonArgs);
-        inv = new InvDaikon(Daikon.all_ppts.get(appName + "-" + lineId + "-" + grpId + ":::POINT").getInvariants());
+        List<Invariant> invs = Daikon.all_ppts.get(appName + "-" + lineId + "-" + grpId + ":::POINT").getInvariants();
+        PlatformInvServer.unlockDaikon();
+        inv = new InvDaikon(invs);
+
+        //inv output
+        String invFileName = dir.getAbsolutePath() + "/grp" + grpId + ".inv";
+        File invFile = new File(invFileName);
+        if (!invFile.exists()) {
+            BufferedWriter out = null;
+            try {
+                out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(invFile, true)));
+                out.write("invariant,type,samples,confidence\n");
+                for (Invariant inv : invs) {
+                    out.write(inv.format() +
+                            "," +
+                            inv.getClass().getName() +
+                            "," +
+                            inv.ppt.num_samples() +
+                            "," +
+                            inv.getConfidence() +
+                            "\n");
+                }
+                out.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public static InvGroup makeGroup(String appName, int lineId, int grpId, InvData... datas) {

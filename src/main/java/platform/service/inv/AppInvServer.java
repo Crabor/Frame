@@ -7,6 +7,7 @@ import common.socket.CmdMessageGrpIds;
 import common.socket.UDP;
 import common.struct.CheckInfo;
 import common.struct.InvServiceConfig;
+import common.struct.SensorData;
 import common.struct.enumeration.CheckResult;
 import common.struct.enumeration.SensorDataType;
 import common.struct.sync.SynchronousJsonObject;
@@ -22,8 +23,9 @@ import platform.service.inv.struct.InvLine;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
-public class AppInvServer implements Runnable {
+public class AppInvServer{
     private final AppConfig appConfig;
     private final Set<String> monitoredObjs = new HashSet<>();
     private final SynchronousJsonObject checkChannel = new SynchronousJsonObject();
@@ -43,17 +45,17 @@ public class AppInvServer implements Runnable {
     }
 
     public void start() {
-        File dir = new File("output/platform/service/invDaikon/" + appConfig.getAppName());
+        File dir = new File("output/platform/service/inv/" + appConfig.getAppName());
         Util.deleteDir(dir);
         dir.mkdirs();
-        File traceDir = new File("output/platform/service/invDaikon/" + appConfig.getAppName() + "/trace");
-        traceDir.mkdirs();
-        File invDir = new File("output/platform/service/invDaikon/" + appConfig.getAppName() + "/invDaikon");
-        invDir.mkdirs();
+//        File traceDir = new File("output/platform/service/inv/" + appConfig.getAppName() + "/trace");
+//        traceDir.mkdirs();
+//        File invDir = new File("output/platform/service/inv/" + appConfig.getAppName() + "/invDaikon");
+//        invDir.mkdirs();
     }
 
     public void stop() {
-        File dir = new File("output/platform/service/invDaikon/" + appConfig.getAppName());
+        File dir = new File("output/platform/service/inv/" + appConfig.getAppName());
         Util.deleteDir(dir);
     }
 
@@ -68,15 +70,11 @@ public class AppInvServer implements Runnable {
 
     public boolean check(JSONObject jo) {
         //TODO
-        checkChannel.put(jo);
-        return true;
-    }
-
-    @Override
-    public void run() {
-        Map<String, SensorConfig> sensorConfigMap = Configuration.getResourceConfig().getSensorsConfig();
-        while (true) {
-            JSONObject jo = checkChannel.blockTake();
+//        System.out.println("check");
+        CompletableFuture.runAsync(() -> {
+            //            System.out.println("here");
+//            JSONObject jo = checkChannel.blockTake();
+//            System.out.println("here" + jo);
             int lineNumber = jo.getIntValue("line_number");
             long checkTime = jo.getLongValue("check_time");
             int iterId = jo.getIntValue("iter_id");
@@ -91,32 +89,44 @@ public class AppInvServer implements Runnable {
             //TODO:获取环境上下文
             List<Double> tmp = new ArrayList<>();
             CmdMessageGrpIds send = new CmdMessageGrpIds("sensory_request", null, List.of(appConfig.getGrpId()));
-            sensorConfigMap.forEach((sensorName, sensorConfig) -> {
+            for (SensorConfig config : appConfig.getSensors()) {
+                String sensorName = config.getSensorName();
                 if (!appConfig.getRequestMap().containsKey(sensorName)) {
                     appConfig.getRequestMap().put(sensorName, new SynchronousString());
                 }
                 appConfig.getRequestMap().get(sensorName).put("invGetSensorData");
+//                System.out.println("here" + appConfig.getRequestMap().get(sensorName).size());
                 Publisher.publish(sensorName + "_request", send.toString());
-                _invGetSensorData.blockTake().getAllData().values().forEach(v -> tmp.add((Double) v));
-            });
+//                System.out.println("here" + appConfig.getRequestMap().get(sensorName).size());
+                SensorData sensorData = _invGetSensorData.blockTake();
+//                System.out.println("here" + sensorData);
+                for (Object v : sensorData.getAllData().values()) {
+                    //把v转换成double
+//                    System.out.println("here " + v);
+                    tmp.add(Double.parseDouble(v.toString()));
+                }
+            }
+//            System.out.println("here" + tmp);
             double[] envCtxVals = tmp.stream().mapToDouble(Double::doubleValue).toArray();
-            double[] checkVals = Util.toDoubleArray(objs.values());
+//            System.out.println("here" + Arrays.toString(envCtxVals));
+//            double[] checkVals = Util.toDoubleArray(objs.values());
             CheckResult result = line.check(new InvData(envCtxVals, JSON.parseObject(objs.toJSONString(),
                     new TypeReference<Map<String, Double>>(){})));
-            String name = objs.keySet().toString();
 
             //TODO:返回checkInfo给appDriver并传递给app
             JSONObject joo = new JSONObject();
             joo.put("sensor_data_type", SensorDataType.INV_REPORT);
-            joo.put("name", name);
+            joo.put("name", "INV_REPORT" + lineNumber);
             joo.put("line_number", lineNumber);
             joo.put("iter_id", iterId);
             joo.put("check_time", checkTime);
             joo.put("result", result);
             JSONObject jooo = new JSONObject(2);
-            jooo.put("channel", name);
+            jooo.put("channel", "INV_REPORT" + lineNumber);
             jooo.put("msg", joo);
+//            System.out.println("here" + jooo);
             UDP.send(appConfig.getAppDriver().getClientIP(), appConfig.getAppDriver().getClientUDPPort(), jooo.toJSONString());
-        }
+        });
+        return true;
     }
 }

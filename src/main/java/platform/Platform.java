@@ -51,14 +51,14 @@ public class Platform {
         }
     }
 
-    public static void Init() {
+    public static void Init(String configFile) {
         //delete output dir
         File dir = new File("output/");
         Util.deleteDir(dir);
         dir.mkdirs();
 
         //read config file
-        Configuration.analyzer("Resources/configFile/ConfigurationNew");
+        Configuration.analyzer(configFile);
 
         //init database
 //        RedisClient client = RedisClient.create(
