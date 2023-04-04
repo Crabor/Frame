@@ -9,13 +9,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78115992-4503-470b-beb5-d7602ef66f8a" name="Changes" comment="update">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources/log4j.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/config/log/log4j.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/AbstractApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/AbstractApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/common/util/Util.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/common/util/Util.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/platform/Platform.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/Platform.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resources/config/wrapper/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/config/wrapper/config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/config/ActorConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/config/ActorConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/platform/resource/DeviceDriver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/platform/resource/DeviceDriver.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/wrapper/WrapperRemoteConnector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wrapper/WrapperRemoteConnector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/main/java/wrapper/WrapperDemo.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/main/java/wrapper/WrapperDemo.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,34 +81,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
-    "Downloaded.Files.Path.Enabled": "false",
-    "Repository.Attach.Annotations": "false",
-    "Repository.Attach.JavaDocs": "false",
-    "Repository.Attach.Sources": "false",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "database.data.extractors.current.export.id": "Comma-separated (CSV)_id",
-    "database.data.extractors.current.id": "Comma-separated (CSV)_id",
-    "git-widget-placeholder": "yr",
-    "last_opened_file_path": "C:/Users/56410/Documents/IdeaProjects/frame/Resources/config/log",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "preferences.fileTypes",
-    "vue.rearranger.settings.migration": "true"
-  }
-}]]></component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
@@ -135,7 +116,20 @@
       <recent name="wrapper" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.AppInvDemo">
+  <component name="RunManager" selected="Application.AppDemo3">
+    <configuration name="AppDemo3" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="app.AppDemo3" />
+      <module name="frame" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="app.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="AppInvDemo" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="app.AppInvDemo" />
       <module name="frame" />
@@ -151,19 +145,6 @@
     </configuration>
     <configuration name="Platform" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="platform.Platform" />
-      <module name="frame" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="platform.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="RunPlatform" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="platform.RunPlatform" />
       <module name="frame" />
       <extension name="coverage">
         <pattern>
@@ -203,11 +184,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.AppInvDemo" />
+        <item itemvalue="Application.AppDemo3" />
         <item itemvalue="Application.WrapperDemo" />
         <item itemvalue="Application.Platform" />
+        <item itemvalue="Application.AppInvDemo" />
         <item itemvalue="Application.testdaikon" />
-        <item itemvalue="Application.RunPlatform" />
       </list>
     </recent_temporary>
   </component>
@@ -268,6 +249,9 @@
       <workItem from="1680497323365" duration="18308000" />
       <workItem from="1680528142346" duration="256000" />
       <workItem from="1680528416196" duration="3085000" />
+      <workItem from="1680587325906" duration="256000" />
+      <workItem from="1680587628811" duration="462000" />
+      <workItem from="1680588107382" duration="3389000" />
     </task>
     <task id="LOCAL-00001" summary="setActorCmd阻塞问题">
       <created>1679029105951</created>
@@ -332,6 +316,27 @@
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="yr" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="RECENT_FILTERS">
       <map>
         <entry key="Branch">
@@ -358,27 +363,7 @@
         </entry>
       </map>
     </option>
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State>
-              <option name="FILTERS">
-                <map>
-                  <entry key="branch">
-                    <value>
-                      <list>
-                        <option value="yr" />
-                      </list>
-                    </value>
-                  </entry>
-                </map>
-              </option>
-            </State>
-          </value>
-        </entry>
-      </map>
-    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="setActorCmd阻塞问题" />
