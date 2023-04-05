@@ -612,7 +612,7 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
                 && actorConfigMap.get(actorName).isAlive()) {
 //            PlatformUDP.send(new Cmd("actor_set", actorName + " " + grpId + " " + action));
 //            boolean state = actorSetState.get(actorName).blockTake().get();
-            CmdMessageGrpIds send = new CmdMessageGrpIds("action_request", null, List.of(grpId));
+            CmdMessageGrpIds send = new CmdMessageGrpIds("action_request", action, List.of(grpId));
             if (!appConfig.getRequestMap().containsKey(actorName)) {
                 appConfig.getRequestMap().put(actorName, new SynchronousString());
             }
