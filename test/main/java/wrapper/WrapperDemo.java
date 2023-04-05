@@ -26,7 +26,6 @@ public class WrapperDemo {
                         value.put("latitude", 30.0);
                         CmdMessage response = new CmdMessage("sensory_back", value.toJSONString());
                         connector.send(response.toString());
-                        connector.getLogger().info("[Wrapper]: " + response);
                         break;
                 }
             }

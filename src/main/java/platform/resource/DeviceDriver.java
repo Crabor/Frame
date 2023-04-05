@@ -85,7 +85,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
 
             if (cmdMessage.cmd.equalsIgnoreCase("register")) {
                 deviceName = joo.getString("name");
-                deviceType = DeviceType.fromString(joo.getString("deviceType"));
+                deviceType = DeviceType.fromString(joo.getString("type"));
                 if (deviceType == DeviceType.SENSOR) {
                     sensorConfig = new SensorConfig(joo);
                     Configuration.getResourceConfig().getSensorsConfig().put(deviceName, sensorConfig);

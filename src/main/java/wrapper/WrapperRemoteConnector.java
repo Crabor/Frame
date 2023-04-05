@@ -20,19 +20,9 @@ public class WrapperRemoteConnector {
     private static WrapperRemoteConnector instance;
     private TCP tcp = null;
     private Log logger = LogFactory.getLog(WrapperRemoteConnector.class);
-    private String wrapperName = null;
-
-    static {
-        //log set
-        String pid = "wrapper" + ProcessHandle.current().pid();
-        Util.createNewLog4jProperties(pid);
-        PropertyConfigurator.configure("Resources/config/log/log4j-" + pid + ".properties");
-        File file = new File("output/log/" + pid + "/");
-        Util.deleteDir(file);
-    }
+    private String wrapperName;
     
     private WrapperRemoteConnector() {
-
     }
 
     public Log getLogger() {
@@ -53,13 +43,16 @@ public class WrapperRemoteConnector {
     public CmdMessage recv() {
         String recv = tcp.recv();
         if (recv != null) {
+            logger.info(String.format("[%s]: recv() -> %s", wrapperName, recv));
             return new CmdMessage(recv);
         }
+        logger.info(String.format("[%s]: recv() -> null", wrapperName));
         return null;
     }
 
     public void send(String str) {
         tcp.send(str);
+        logger.info(String.format("[%s]: send(%s)", wrapperName, str));
     }
 
     public void close() {
@@ -87,11 +80,18 @@ public class WrapperRemoteConnector {
 
         @Override
         public void callback() {
-            logger.info("[WrapperConnector]: TCP connection is broken.");
+            logger.info(String.format("[%s]: TCP connection is broken.", wrapperName));
         }
     }
 
     public boolean register(String ip, int port, String deviceConfig) {
+        wrapperName = JSON.parseObject(deviceConfig).getString("name");
+        //log set
+        Util.createNewLog4jProperties(wrapperName);
+        PropertyConfigurator.configure("Resources/config/log/log4j-" + wrapperName + ".properties");
+        File file = new File("output/log/" + wrapperName + "/");
+        Util.deleteDir(file);
+
         CmdMessage send = new CmdMessage("register", deviceConfig);
         boolean state = false;
         try {
@@ -109,14 +109,13 @@ public class WrapperRemoteConnector {
             e.printStackTrace();
             tcp.close();
         }
-        logger.info(String.format("[Wrapper]: register(%s, %d, %s) -> %s", ip, port, deviceConfig, state));
-        wrapperName = JSON.parseObject(deviceConfig).getString("name");
+        logger.info(String.format("[%s]: register(%s, %d, %s) -> %b", wrapperName, ip, port, deviceConfig, state));
         return state;
     }
 
     public boolean shutdown() {
         tcp.close();
-        logger.info("[Wrapper]: shutdown() -> true");
+        logger.info(String.format("[%s]: shutdown()", wrapperName));
         return true;
     }
 }

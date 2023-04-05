@@ -1,5 +1,6 @@
 package platform.config;
 
+import app.struct.ValueType;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.HashSet;
@@ -8,16 +9,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ActorConfig {
     private final String actorName;
-    private String actorType;
+    private ValueType actorType;
     private boolean isAlive = true;
     private final Set<AppConfig> apps = ConcurrentHashMap.newKeySet();
 
     public ActorConfig(JSONObject object) {
         actorName = object.getString("name");
         try {
-            actorType = object.getString("valueType");
+            actorType = ValueType.fromString(object.getString("valueType"));
         } catch (NullPointerException e) {
-            actorType = "String";
+            actorType =ValueType.STRING;
         }
     }
 
@@ -25,7 +26,7 @@ public class ActorConfig {
         return actorName;
     }
 
-    public String getActorType() {
+    public ValueType getActorType() {
         return actorType;
     }
 
