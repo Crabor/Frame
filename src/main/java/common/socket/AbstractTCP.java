@@ -7,8 +7,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class AbstractTCP implements TCP {
     protected final Socket socket;
-    private final Lock lock;
-    private final boolean lockFlag;
+    private Lock lock;
+    private boolean lockFlag;
     private DataOutputStream out;
     private BufferedReader in;
 
@@ -35,6 +35,16 @@ public abstract class AbstractTCP implements TCP {
 
     public AbstractTCP(Socket socket) {
         this(socket, true);
+    }
+
+    @Override
+    public void setLockFlag(boolean lockFlag) {
+        this.lockFlag = lockFlag;
+        if (lockFlag) {
+            this.lock = new ReentrantLock(false);
+        } else {
+            this.lock = null;
+        }
     }
 
     @Override

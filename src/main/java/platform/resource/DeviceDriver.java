@@ -104,6 +104,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
             CmdMessage ret = new CmdMessage("register_back", "true");
             tcp.send(ret.toString());
             logger.info(String.format("[Platform -> %s]: %s", deviceName, ret));
+            tcp.setLockFlag(true);
         }
 //
 //        try {

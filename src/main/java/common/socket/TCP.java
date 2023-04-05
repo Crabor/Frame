@@ -8,4 +8,5 @@ public interface TCP {
     String recv();
     void close();
     void callback();
+    void setLockFlag(boolean lockFlag);
 }
