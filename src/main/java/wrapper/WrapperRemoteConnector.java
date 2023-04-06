@@ -43,7 +43,10 @@ public class WrapperRemoteConnector {
     public CmdMessage recv() {
         String recv = tcp.recv();
         if (recv != null) {
-            logger.info(String.format("[%s]: recv() -> %s", wrapperName, recv));
+            CmdMessage recvCmd = new CmdMessage(recv);
+            if (!recvCmd.cmd.equalsIgnoreCase("alive_request")) {
+                logger.info(String.format("[%s]: recv() -> %s", wrapperName, recv));
+            }
             return new CmdMessage(recv);
         }
         logger.info(String.format("[%s]: recv() -> null", wrapperName));

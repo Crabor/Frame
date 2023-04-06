@@ -2,6 +2,7 @@ package app;
 
 import app.struct.SensorInfo;
 import common.struct.SensorData;
+import common.struct.State;
 import common.struct.enumeration.CmdType;
 import common.struct.enumeration.SensorMode;
 
@@ -27,18 +28,11 @@ public class AppDemo3 extends AbstractApp {
         connector.checkConnected();
 
         Map<String, SensorInfo> supportedSensors = connector.getSupportedSensors();
-        if (supportedSensors.containsKey("YellowCar")) {
-            connector.registerSensor("YellowCar", SensorMode.PASSIVE, 1);
+        if (supportedSensors.containsKey("YellowCar") && supportedSensors.get("YellowCar").state == State.ON) {
+            connector.registerSensor("YellowCar", SensorMode.ACTIVE, -1);
+            connector.getSensorData("YellowCar");
         }
-        connector.getMsgThread(CmdType.START);
-        while (true) {
-            Thread.sleep(1000);
-            connector.getSupportedSensors();
-        }
-//        connector.getSensorData("YellowCar");
-
-//        connector.unregisterApp(app);
-//        connector.disConnectPlatform();
-
+        connector.unregisterApp(app);
+        connector.disConnectPlatform();
     }
 }

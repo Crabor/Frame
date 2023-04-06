@@ -2,6 +2,7 @@ package common.socket;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -14,6 +15,11 @@ public abstract class AbstractTCP implements TCP {
 
     public AbstractTCP(Socket socket, boolean lockFlag) {
         this.socket = socket;
+        try {
+            this.socket.setKeepAlive(true);
+        } catch (SocketException e) {
+            throw new RuntimeException(e);
+        }
         this.lockFlag = lockFlag;
         if (lockFlag) {
             this.lock = new ReentrantLock(false);
@@ -48,7 +54,7 @@ public abstract class AbstractTCP implements TCP {
     }
 
     @Override
-    public void send(String str) {
+    public boolean send(String str) {
         try {
             if (lockFlag) {
                 lock.lock();
@@ -64,7 +70,9 @@ public abstract class AbstractTCP implements TCP {
             } catch (IOException ee) {
                 ee.printStackTrace();
             }
+            return false;
         }
+        return true;
     }
 
     @Override
@@ -100,5 +108,12 @@ public abstract class AbstractTCP implements TCP {
     @Override
     public Socket getSocket() {
         return socket;
+    }
+
+    @Override
+    public void unlock() {
+        if (lockFlag) {
+            lock.unlock();
+        }
     }
 }

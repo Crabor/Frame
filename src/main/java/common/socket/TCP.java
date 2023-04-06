@@ -4,9 +4,10 @@ import java.net.Socket;
 
 public interface TCP {
     Socket getSocket();
-    void send(String str);
+    boolean send(String str);
     String recv();
     void close();
     void callback();
     void setLockFlag(boolean lockFlag);
+    void unlock();
 }
