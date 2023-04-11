@@ -20,7 +20,7 @@ public class ActorConfig {
         actorName = object.getString("name");
         try {
             actorType = ValueType.fromString(object.getString("valueType"));
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             actorType =ValueType.STRING;
         }
     }
