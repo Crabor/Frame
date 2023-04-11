@@ -88,16 +88,32 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                 deviceName = joo.getString("name");
                 deviceType = DeviceType.fromString(joo.getString("type"));
                 if (deviceType == DeviceType.SENSOR) {
-                    sensorConfig = new SensorConfig(joo);
-                    Configuration.getResourceConfig().getSensorsConfig().put(deviceName, sensorConfig);
+                    if (Configuration.getResourceConfig().getSensorsConfig().containsKey(deviceName)) {
+                        Configuration.getResourceConfig().getSensorsConfig().get(deviceName).setAlive(true);
+                    } else {
+                        sensorConfig = new SensorConfig(joo);
+                        Configuration.getResourceConfig().getSensorsConfig().put(deviceName, sensorConfig);
+                    }
                 } else if (deviceType == DeviceType.ACTOR) {
-                    actorConfig = new ActorConfig(joo);
-                    Configuration.getResourceConfig().getActorsConfig().put(deviceName, actorConfig);
+                    if (Configuration.getResourceConfig().getActorsConfig().containsKey(deviceName)) {
+                        Configuration.getResourceConfig().getActorsConfig().get(deviceName).setAlive(true);
+                    } else {
+                        actorConfig = new ActorConfig(joo);
+                        Configuration.getResourceConfig().getActorsConfig().put(deviceName, actorConfig);
+                    }
                 } else if (deviceType == DeviceType.HYBRID) {
-                    sensorConfig = new SensorConfig(joo);
-                    actorConfig = new ActorConfig(joo);
-                    Configuration.getResourceConfig().getSensorsConfig().put(deviceName, sensorConfig);
-                    Configuration.getResourceConfig().getActorsConfig().put(deviceName, actorConfig);
+                    if (Configuration.getResourceConfig().getSensorsConfig().containsKey(deviceName)) {
+                        Configuration.getResourceConfig().getSensorsConfig().get(deviceName).setAlive(true);
+                    } else {
+                        sensorConfig = new SensorConfig(joo);
+                        Configuration.getResourceConfig().getSensorsConfig().put(deviceName, sensorConfig);
+                    }
+                    if (Configuration.getResourceConfig().getActorsConfig().containsKey(deviceName)) {
+                        Configuration.getResourceConfig().getActorsConfig().get(deviceName).setAlive(true);
+                    } else {
+                        actorConfig = new ActorConfig(joo);
+                        Configuration.getResourceConfig().getActorsConfig().put(deviceName, actorConfig);
+                    }
                 }
                 subscribe(deviceName + "_request");
             }

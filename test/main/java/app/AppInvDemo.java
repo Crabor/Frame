@@ -3,6 +3,7 @@ package app;
 import app.struct.SensorInfo;
 import common.struct.InvServiceConfig;
 import common.struct.SensorData;
+import common.struct.State;
 import common.struct.enumeration.*;
 import common.struct.sync.SynchronousSensorData;
 
@@ -35,7 +36,7 @@ public class AppInvDemo extends AbstractApp {
         connector.serviceStart(ServiceType.INV, config);
         InvCheck checker = InvCheck.getInstance();
         Map<String, SensorInfo> supportedSensors = connector.getSupportedSensors();
-        if (supportedSensors.containsKey("YellowCar")) {
+        if (supportedSensors.containsKey("YellowCar") && supportedSensors.get("YellowCar").state == State.ON) {
             connector.registerSensor("YellowCar", SensorMode.ACTIVE, -1);
         }
         connector.getMsgThread(CmdType.START);
@@ -52,7 +53,7 @@ public class AppInvDemo extends AbstractApp {
             Thread.sleep(10);
 
             SensorData data =
-                    app.invReport.computeIfAbsent("INV_REPORT51", k -> new SynchronousSensorData()).blockTake();
+                    app.invReport.computeIfAbsent("INV_REPORT52", k -> new SynchronousSensorData()).blockTake();
             CheckResult result = checker.getResult(data);
             System.out.println(result);
             if (result != CheckResult.INV_GENERATING) {
