@@ -89,27 +89,31 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
                 deviceType = DeviceType.fromString(joo.getString("type"));
                 if (deviceType == DeviceType.SENSOR) {
                     if (Configuration.getResourceConfig().getSensorsConfig().containsKey(deviceName)) {
-                        Configuration.getResourceConfig().getSensorsConfig().get(deviceName).setAlive(true);
+                        sensorConfig = Configuration.getResourceConfig().getSensorsConfig().get(deviceName);
+                        sensorConfig.setAlive(true);
                     } else {
                         sensorConfig = new SensorConfig(joo);
                         Configuration.getResourceConfig().getSensorsConfig().put(deviceName, sensorConfig);
                     }
                 } else if (deviceType == DeviceType.ACTOR) {
                     if (Configuration.getResourceConfig().getActorsConfig().containsKey(deviceName)) {
-                        Configuration.getResourceConfig().getActorsConfig().get(deviceName).setAlive(true);
+                        actorConfig = Configuration.getResourceConfig().getActorsConfig().get(deviceName);
+                        actorConfig.setAlive(true);
                     } else {
                         actorConfig = new ActorConfig(joo);
                         Configuration.getResourceConfig().getActorsConfig().put(deviceName, actorConfig);
                     }
                 } else if (deviceType == DeviceType.HYBRID) {
                     if (Configuration.getResourceConfig().getSensorsConfig().containsKey(deviceName)) {
-                        Configuration.getResourceConfig().getSensorsConfig().get(deviceName).setAlive(true);
+                        sensorConfig = Configuration.getResourceConfig().getSensorsConfig().get(deviceName);
+                        sensorConfig.setAlive(true);
                     } else {
                         sensorConfig = new SensorConfig(joo);
                         Configuration.getResourceConfig().getSensorsConfig().put(deviceName, sensorConfig);
                     }
                     if (Configuration.getResourceConfig().getActorsConfig().containsKey(deviceName)) {
-                        Configuration.getResourceConfig().getActorsConfig().get(deviceName).setAlive(true);
+                        actorConfig = Configuration.getResourceConfig().getActorsConfig().get(deviceName);
+                        actorConfig.setAlive(true);
                     } else {
                         actorConfig = new ActorConfig(joo);
                         Configuration.getResourceConfig().getActorsConfig().put(deviceName, actorConfig);

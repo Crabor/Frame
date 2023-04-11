@@ -458,7 +458,9 @@ public class AppDriver extends AbstractSubscriber implements Runnable {
 
     private String getSensorData(String sensorName) {
         String value = "{\"default\":\"@#$%\"}";
-        if (appConfig != null && appConfig.getSensorsName().contains(sensorName)) {
+        if (appConfig != null
+                && appConfig.getSensorsName().contains(sensorName)
+                && Configuration.getResourceConfig().getSensorsConfig().get(sensorName).isAlive()) {
 //            Cmd cmd = new Cmd("sensor_get", sensorName + " " + grpId);
 //            PlatformUDP.send(cmd);
 //            getSensorDataFlag.put(sensorName, true);
