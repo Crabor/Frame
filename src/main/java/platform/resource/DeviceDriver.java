@@ -80,6 +80,7 @@ public class DeviceDriver extends AbstractSubscriber implements Runnable {
     public void run() {
         String msgFromClient;
         if ((msgFromClient = tcp.recv()) != null) {
+//            logger.info(msgFromClient);
             CmdMessage cmdMessage = new CmdMessage(msgFromClient);
             logger.info(String.format("[Wrapper -> Platform]: %s", cmdMessage));
             JSONObject joo = JSON.parseObject(cmdMessage.message);

@@ -1,5 +1,6 @@
 package app;
 
+import app.struct.ActorInfo;
 import app.struct.SensorInfo;
 import common.struct.SensorData;
 import common.struct.State;
@@ -28,9 +29,15 @@ public class AppDemo3 extends AbstractApp {
         connector.checkConnected();
 
         Map<String, SensorInfo> supportedSensors = connector.getSupportedSensors();
-        if (supportedSensors.containsKey("YellowCar") && supportedSensors.get("YellowCar").state == State.ON) {
-            connector.registerSensor("YellowCar", SensorMode.ACTIVE, -1);
-            connector.getSensorData("YellowCar");
+        if (supportedSensors.containsKey("unitycar") && supportedSensors.get("unitycar").state == State.ON) {
+            connector.registerSensor("unitycar", SensorMode.ACTIVE, -1);
+            connector.getSensorData("unitycar");
+        }
+
+        Map<String, ActorInfo> supportedActors = connector.getSupportedActors();
+        if (supportedActors.containsKey("unitycar") && supportedActors.get("unitycar").state == State.ON) {
+            connector.registerActor("unitycar");
+            connector.setActorCmd("unitycar", "xSpeed 5");
         }
         connector.unregisterApp(app);
         connector.disConnectPlatform();

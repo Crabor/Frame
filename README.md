@@ -159,6 +159,473 @@ public class AppDemo extends AbstractApp {
 }
 ```
 
+### java版本wrapper
+
+```java
+import com.alibaba.fastjson.JSONObject;
+import common.socket.CmdMessage;
+import common.util.Util;
+import java.io.IOException;
+
+public class WrapperDemo {
+    public static void main(String[] args) throws IOException {
+        String config = Util.readFileContent("Resources/config/wrapper/config.json");
+        WrapperRemoteConnector connector = WrapperRemoteConnector.getInstance();
+        if (connector.register("127.0.0.1", 9091, config)) {
+            while (true) {
+                CmdMessage msg = connector.recv();
+                switch (msg.cmd) {
+                    case "sensory_request":
+                        JSONObject value = new JSONObject();
+                        value.put("speed", 10.0);
+                        value.put("longitude", 20.0);
+                        value.put("latitude", 30.0);
+                        CmdMessage response = new CmdMessage("sensory_back", value.toJSONString());
+                        connector.send(response.toString());
+                        break;
+                }
+            }
+//            connector.close();
+        }
+    }
+}
+```
+
+### c#版本wrapper
+
+```c#
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Net.Sockets;
+using System.Net;
+using System.Threading;
+using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+namespace WrapperDemo
+{
+    class Program
+    {
+        string recv(Socket socket) 
+        {
+            byte[] buffer = new byte[1024 * 1024 * 2];
+            int r = socket.Receive(buffer);
+            if (r == 0)
+            {
+                return null;
+            }
+            string data = Encoding.UTF8.GetString(buffer, 0, r);
+            return data;
+        }
+        
+        void send(Socket socket, string data)
+        {
+            socket.Send(Encoding.UTF8.GetBytes(data));
+        }
+        
+        void task(string config)
+        {
+            //创建一个socket
+            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            //创建一个ip地址对象
+            IPAddress ip = IPAddress.Parse("127.0.0.1");
+            //创建一个端口对象
+            IPEndPoint point = new IPEndPoint(ip, 9091);
+            //连接服务器
+            socket.Connect(point);
+            //发送数据
+            socket.Send(Encoding.UTF8.GetBytes(config));
+            //接收数据
+            string register_back = recv(socket);
+            if (register_back == null)
+            {
+                return;
+            }
+            JObject obj = (JObject)JsonConvert.DeserializeObject(register_back);
+            if (obj["cmd"].ToString() != "register_back" || obj["message"].ToString() != "true")
+            {
+                return;
+            }
+            while (true)
+            {
+                string request = recv(socket);
+                if (request == null)
+                {
+                    return;
+                }
+                obj = (JObject)JsonConvert.DeserializeObject(request);
+                switch (obj["cmd"].ToString())
+                {
+                    case "sensory_request":
+                        JObject value = new JObject();
+                        value.Add("speed", 10.0);
+                        value.Add("longitude", 20.0);
+                        value.Add("latitude", 30.0);
+                        JObject response = new JObject();
+                        response.Add("cmd", "sensory_back");
+                        response.Add("message", value.ToString());
+                        send(socket, response.ToString());
+                        break;
+                    case "action_request":
+                        JObject action_back = new JObject();
+                        action_back.Add("cmd", "action_back");
+                        action_back.Add("message", "true");
+                        send(socket, action_back.ToString());
+                        break;
+                }
+            }
+        }
+        
+        static void Main(string[] args)
+        {
+            string config = File.ReadAllText("Resources/config/wrapper/config.json");
+            Program program = new Program();
+            Thread thread = new Thread(() => program.task(config));
+            thread.Start();
+        }
+    }
+}       
+```
+
+### unity版本wrapper
+
+```c#
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using UnityEngine.SceneManagement;
+using System.Threading;
+using Newtonsoft.Json;
+using Random = System.Random;
+using Newtonsoft.Json.Linq;
+
+public class cube_move : MonoBehaviour
+{
+    private string[] paths = {"Assets/Scripts/sensor_car.json", "Assets/Scripts/actor_car.json"};
+    private string serverIP = "127.0.0.1";
+    private int serverPort = 9091;
+    private List<Thread> threads = new List<Thread>();
+
+    private Mutex sensorMutex = new Mutex();
+    private Sensor sensor = new Sensor();
+    private Mutex actorMutex = new Mutex();
+    private Actor actor = new Actor();
+    private Color[] colors = new Color[4] { Color.yellow, Color.yellow, Color.yellow, Color.yellow };
+
+    private bool noiseFlag = false;
+    private Random random = new Random();
+    private bool collisionFlag = false;
+
+    public class Sensor
+    {
+        public Sensor()
+        {
+            front = 0;
+            back = 0;
+            left = 0;
+            right = 0;
+        }
+        public float front;
+        public float back;
+        public float left;
+        public float right;
+
+        public float get(string name)
+        {
+            float ret = 0.0f;
+            if (name == "front")
+            {
+                ret = front;
+            }
+            else if (name == "back")
+            {
+                ret = back;
+            }
+            else if (name == "left")
+            {
+                ret = left;
+            }
+            else if (name == "right")
+            {
+                ret = right;
+            }
+            return ret;
+        }
+    }
+
+    public class Actor
+    {
+        public Actor()
+        {
+            xSpeed = 0;
+            ySpeed = 0;
+            zSpeed = 0;
+        }
+        public double xSpeed;
+        public double ySpeed;
+        public double zSpeed;
+
+        public void set(string name, string value)
+        {
+            if (name == "xSpeed")
+            {
+                xSpeed = Double.Parse(value);
+            }
+            else if (name == "ySpeed")
+            {
+                ySpeed = Double.Parse(value);
+            }
+            else if (name == "zSpeed")
+            {
+                zSpeed = Double.Parse(value);
+            }
+        }
+    }
+
+
+    int ConvertToInt(double value)
+    {
+        int ret;
+        if (value > 0)
+        {
+            ret = (int)Math.Ceiling(value);
+        }
+        else
+        {
+            ret = (int)Math.Floor(value);
+        }
+        return ret;
+    }
+
+    public class CmdMessage
+    {
+        public CmdMessage(string cmd, string message)
+        {
+            this.cmd = cmd;
+            this.message = message == null ? null : message.Replace("\r\n", "").Replace("\n", "").Replace("\r", "");
+        }
+        public String cmd;
+        public String message;
+    }
+
+    CmdMessage recv(StreamReader reader)
+    {
+        string response = reader.ReadLine();
+        if (response == null)
+        {
+            return null;
+        }
+        CmdMessage ret = JsonConvert.DeserializeObject<CmdMessage>(response);
+        if (ret.cmd != "alive_request")
+        {
+            Debug.Log("recv: " + response);
+        }
+        return ret;
+    }
+
+    void send(StreamWriter writer, CmdMessage data)
+    {
+        string str = JsonConvert.SerializeObject(data);
+        Debug.Log("send: " + str);
+        writer.WriteLine(str);
+        writer.Flush();
+    }
+
+    void task(object obj)
+    {
+        if (obj != null)
+        {
+            string path = (string)obj;
+            string config = File.ReadAllText(path);
+
+            TcpClient client = new TcpClient(serverIP, serverPort);
+            StreamWriter writer = new StreamWriter(client.GetStream());
+            StreamReader reader = new StreamReader(client.GetStream());
+            //发送数据
+            CmdMessage register = new CmdMessage("register", config);
+            //Debug.Log(register.ToString());
+            send(writer, register);
+            //接收数据
+            CmdMessage register_back = recv(reader);
+            if (register_back == null || register_back.cmd != "register_back" || register_back.message != "true")
+            {
+                return;
+            }
+
+            while (true)
+            {
+                CmdMessage request = recv(reader);
+                if (request == null)
+                {
+                    return;
+                }
+                switch (request.cmd)
+                {
+                    case "sensory_request":
+                        JObject value = new JObject();
+                        sensorMutex.WaitOne();
+                        value.Add("left", sensor.get("left").ToString());
+                        value.Add("right", sensor.get("right").ToString());
+                        value.Add("front", sensor.get("front").ToString());
+                        value.Add("back", sensor.get("back").ToString());
+                        sensorMutex.ReleaseMutex();
+                        CmdMessage sensory_back = new CmdMessage("sensory_back", value.ToString());
+                        send(writer, sensory_back);
+                        break;
+                    case "action_request":
+                        string[] actions = request.message.Split(' ');
+                        actorMutex.WaitOne();
+                        actor.set(actions[0], actions[1]);
+                        actorMutex.ReleaseMutex();
+                        CmdMessage action_back = new CmdMessage("action_back", "true");
+                        send(writer, action_back);
+                        break;
+                }
+            }
+        }
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        // 建立多个子线程
+        for (int i = 0; i < paths.Length; i++)
+        {
+            Thread t = new Thread(new ParameterizedThreadStart(task));
+            t.Start(paths[i]);
+            threads.Add(t);
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (!collisionFlag)
+        {
+            actorMutex.WaitOne();
+            transform.Translate(Vector3.forward * ConvertToInt(actor.xSpeed) * Time.deltaTime);
+            transform.Translate(Vector3.right * ConvertToInt(actor.ySpeed) * Time.deltaTime);
+            transform.Rotate(Vector3.up * ConvertToInt(actor.zSpeed) * Time.deltaTime);
+            actorMutex.ReleaseMutex();
+
+            RaycastHit[] hits = new RaycastHit[4];
+            Vector3[] directions = {
+                transform.TransformDirection(Vector3.forward),
+                transform.TransformDirection(Vector3.back),
+                transform.TransformDirection(Vector3.left),
+                transform.TransformDirection(Vector3.right)
+            };
+            for (int i = 0;i < directions.Length; i++){
+                directions[i][1] = 0;
+            }
+            float[] distances = new float[4];
+            for (int i = 0;i < directions.Length; i++){
+                if (Physics.Raycast(transform.position, directions[i], out hits[i])){
+                    Debug.DrawRay(transform.position, directions[i] * hits[i].distance, colors[i]); 
+                    distances[i] = hits[i].distance;
+                }else{
+                     distances[i] = float.MaxValue;
+                }
+            }
+            sensorMutex.WaitOne();
+            sensor.front = distances[0];
+            sensor.back = distances[1];
+            sensor.left = noiseFlag ? (random.Next(1, 100) < 10 ? 200 * (random.Next(0, 2) == 0 ? -1 : 1) : distances[2]) : distances[2];
+            sensor.right = noiseFlag ? (random.Next(1, 100) < 10 ? 200 * (random.Next(0, 2) == 0 ? -1 : 1) : distances[3]) : distances[3];
+            sensorMutex.ReleaseMutex();
+        }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        collisionFlag = true;
+    }
+
+    void OnDestroy()
+    {
+        // 停止所有子线程
+        foreach (Thread t in threads)
+        {
+            t.Abort();
+        }
+    }
+}
+
+```
+
+### python版本wrapper
+
+```python
+import socket
+import json
+import threading
+import time
+
+def recv(socket):
+    buffer = bytearray(1024)
+    r = socket.recv_into(buffer)
+    if r == 0:
+        return None
+    data = buffer[:r].decode("utf-8")
+    return data
+    
+def send(socket, data):
+    socket.send(data.encode("utf-8"))
+    
+def task(config):
+    #创建一个socket
+    socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #创建一个ip地址对象
+    ip = "127.0.0.1"
+    #创建一个端口对象
+    point = 9091
+    #连接服务器
+    socket.connect((ip, point))
+    #发送数据
+    socket.send(config.encode("utf-8"))
+    #接收数据
+    register_back = recv(socket)
+    if register_back == None:
+        return
+    obj = json.loads(register_back)
+    if obj["cmd"] != "register_back" or obj["message"] != "true":
+        return
+        
+    while True:
+        request = recv(socket)
+        if request == None:
+            return
+        obj = json.loads(request)
+        if obj["cmd"] == "sensory_request":
+            value = {}
+            value["speed"] = 10.0
+            value["longitude"] = 20.0
+            value["latitude"] = 30.0
+            response = {}
+            response["cmd"] = "sensory_back"
+            response["message"] = json.dumps(value)
+            send(socket, json.dumps(response))
+        elif obj["cmd"] == "action_request":
+            action_back = {}
+            action_back["cmd"] = "action_back"
+            action_back["message"] = "true"
+            send(socket, json.dumps(action_back))
+            
+if __name__ == "__main__":
+    config = open("config.json", "r").read()
+    thread = threading.Thread(target=task, args=(config,))
+    thread.start()
+```
+
 ## app
 
 app与平台通信为tcp通信，具体支持的api及对应的明文协议如下：
