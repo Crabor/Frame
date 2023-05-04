@@ -7,7 +7,7 @@ import platform.communication.pubsub.Publisher;
 
 public class testpubsub {
     public static void main(String[] args) {
-        //H2DatabaseExample2 pubsub
+        //test pubsub
         Channel c1 = Channel.get("c1");
         Channel c2 = Channel.get("c2");
         AbstractSubscriber s1 = new AbstractSubscriber() {
