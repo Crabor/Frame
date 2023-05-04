@@ -693,6 +693,89 @@ InvServiceConfig
 }
 ```
 
+## database
+
+database我们经过对项目的考量，决定采用H2数据库，理由如下：
+
+1. H2数据库是一个嵌入式数据库，可以直接将其打包到项目中，不需要单独安装，使用方便。
+2. H2数据库支持TCP连接及多线程访问，可以通过TCP连接进行远程访问，方便我们进行远程调试。
+3. H2数据库支持内存模式，可以将数据库存储在内存中，提升访问速度，方便我们进行性能测试。
+4. 当H2数据库同时开启TCP模式和内存模式时，数据库存在一个引用计数，当最后一个连接断开时，数据库会自动关闭，数据历史数据自动清除。方便平台断连时UI依旧能够访问数据库，而且不会造成数据库数据冗余。
+
+### 启动步骤
+
+转到`Resources/config/database`目录下，执行`java -cp h2-2.1.214.jar org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort 9092`，启动数据库。
+
+### java连接数据库示例
+
+```java
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class H2DatabaseExample {
+    public static void main(String[] args) {
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            // 加载H2数据库的驱动程序
+            Class.forName("org.h2.Driver");
+
+            // 连接到H2数据库，test如果不存在则自动创建
+            conn = DriverManager.getConnection("jdbc:h2:tcp://localhost:9092/mem:test", "sa", "");
+
+            // 创建一个Statement对象
+            stmt = conn.createStatement();
+
+            // 执行SQL查询语句
+            rs = stmt.executeQuery("SELECT * FROM customers");
+
+            // 处理查询结果
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String email = rs.getString("email");
+                System.out.println("ID: " + id + ", Name: " + name + ", Email: " + email);
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // 关闭ResultSet对象
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // 关闭Statement对象
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // 关闭Connection对象
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+}
+```
+
 
 
 

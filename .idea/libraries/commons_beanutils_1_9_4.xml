@@ -26,6 +26,7 @@
       <root url="jar://$PROJECT_DIR$/lib/netty-handler-4.1.72.Final.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/log4j-1.2.17.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/jfreechart-1.5.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/h2-2.1.214.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

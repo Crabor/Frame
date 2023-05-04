@@ -108,9 +108,9 @@ public class testdaikon {
         }
         System.out.println("Daikon analysis completed successfully!");
 
-//        daikon.PrintInvariants.test(new String[] {outputFile});
-//        daikon.DynComp.test(new String[] {"Resources.java-examples.StackAr.DataStructures.StackArTester"});
-//        daikon.Chicory.test(new String[] {"--daikon", "--comparability-file=StackArTester.decls-DynComp", "Resources.java-examples.StackAr.DataStructures.StackArTester"});
+//        daikon.PrintInvariants.H2DatabaseExample2(new String[] {outputFile});
+//        daikon.DynComp.H2DatabaseExample2(new String[] {"Resources.java-examples.StackAr.DataStructures.StackArTester"});
+//        daikon.Chicory.H2DatabaseExample2(new String[] {"--daikon", "--comparability-file=StackArTester.decls-DynComp", "Resources.java-examples.StackAr.DataStructures.StackArTester"});
 
     }
 }
