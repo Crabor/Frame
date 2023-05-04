@@ -1,11 +1,13 @@
 package common.util;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import common.struct.enumeration.CmdType;
 import common.struct.enumeration.ServiceType;
 import reactor.util.function.Tuple3;
 import reactor.util.function.Tuples;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -13,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 // 工具类
@@ -337,6 +340,54 @@ public class Util {
         fileContent = fileContent.replace("./output/log/platform/warn.log", "./output/log/" + name + "/warn.log");
         fileContent = fileContent.replace("./output/log/platform/error.log", "./output/log/" + name + "/error.log");
         Util.writeFileContent("Resources/config/log", "log4j-" + name + ".properties", fileContent);
+    }
+
+    public static int[] jsonArrayToIntArray(JSONArray jsonArray) {
+        int[] ret = new int[jsonArray.size()];
+        for (int i = 0; i < jsonArray.size(); i++) {
+            ret[i] = jsonArray.getIntValue(i);
+        }
+        return ret;
+    }
+
+    public static String[] jsonArrayToStringArray(JSONArray jsonArray) {
+        String[] ret = new String[jsonArray.size()];
+        for (int i = 0; i < jsonArray.size(); i++) {
+            ret[i] = jsonArray.getString(i);
+        }
+        return ret;
+    }
+
+    public static Color parseColor(String color) {
+        Color ret = null;
+        if (color.charAt(0) == '#') {
+            ret = Color.decode(color);
+        } else {
+            if (color.equalsIgnoreCase("red")) {
+                ret = Color.RED;
+            } else if (color.equalsIgnoreCase("green")) {
+                ret = Color.GREEN;
+            } else if (color.equalsIgnoreCase("blue")) {
+                ret = Color.BLUE;
+            } else if (color.equalsIgnoreCase("yellow")) {
+                ret = Color.YELLOW;
+            } else if (color.equalsIgnoreCase("black")) {
+                ret = Color.BLACK;
+            } else if (color.equalsIgnoreCase("white")) {
+                ret = Color.WHITE;
+            } else if (color.equalsIgnoreCase("gray")) {
+                ret = Color.GRAY;
+            } else if (color.equalsIgnoreCase("cyan")) {
+                ret = Color.CYAN;
+            } else if (color.equalsIgnoreCase("magenta")) {
+                ret = Color.MAGENTA;
+            } else if (color.equalsIgnoreCase("orange")) {
+                ret = Color.ORANGE;
+            } else if (color.equalsIgnoreCase("pink")) {
+                ret = Color.PINK;
+            }
+        }
+        return ret;
     }
 
     public static void main(String[] args) {
