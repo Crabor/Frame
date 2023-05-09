@@ -1,7 +1,7 @@
-package platform.ui.component;
+package ui.component;
 
 import com.alibaba.fastjson.JSONObject;
-import platform.ui.struct.ComponentType;
+import ui.struct.ComponentType;
 
 public class Image extends AbstractComponent {
 

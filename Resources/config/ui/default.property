@@ -8,7 +8,8 @@
 	},
 	{
 		"type": "Tree",
-		"id": "NavigateTree"
+		"id": "NavigateTree",
+		"dirs": ["App", "Resource", "Service"]
 	},
 	{
 		"type": "Panel",
@@ -34,6 +35,7 @@
 	},
 	{
 		"type": "Table",
-		"id": "AppTable"
+		"id": "AppTable",
+		"columns": ["id", "AppName", "Description", "Service", "Resource"]
 	}
 ]

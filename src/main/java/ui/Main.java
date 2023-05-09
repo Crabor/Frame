@@ -1,4 +1,4 @@
-package platform.ui;
+package ui;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;

@@ -1,9 +1,7 @@
-package platform.ui.component;
+package ui.component;
 
 import com.alibaba.fastjson.JSONObject;
-import platform.ui.struct.ComponentType;
-
-import java.awt.*;
+import ui.struct.ComponentType;
 
 public class PieChart extends AbstractComponent {
     public PieChart(ComponentType type, String id) {

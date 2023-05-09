@@ -1,8 +1,8 @@
-package platform.ui.component;
+package ui.component;
 
-import platform.ui.struct.AlignType;
-import platform.ui.struct.ComponentType;
-import platform.ui.struct.ScrollType;
+import ui.struct.AlignType;
+import ui.struct.ComponentType;
+import ui.struct.ScrollType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -67,13 +67,11 @@ public abstract class AbstractLayout extends AbstractComponent {
         gbc.weightx = gridWidth;
         gbc.gridheight = gridHeight;
         gbc.weighty = gridHeight;
-        if (component.getBaseComponent() instanceof JScrollPane ||
-                component.getBaseComponent() instanceof JPanel) {
+        if (component instanceof Table) {
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+        } else if (component instanceof Panel) {
             gbc.fill = GridBagConstraints.BOTH;
         }
-//        else if (component.getBaseComponent() instanceof JTextArea) {
-//            gbc.fill = GridBagConstraints.HORIZONTAL;
-//        }
         //System.out.println("gbc:" + gbc.gridx + " " + gbc.gridy + " " + gbc.gridwidth + " " + gbc.gridheight);
         panel.add(component.getBaseComponent(), gbc);
         if (logFlag) {

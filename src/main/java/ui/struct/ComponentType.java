@@ -1,4 +1,4 @@
-package platform.ui.struct;
+package ui.struct;
 
 public enum ComponentType {
     WINDOW,

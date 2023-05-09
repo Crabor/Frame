@@ -1,4 +1,4 @@
-package platform.ui;
+package ui;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -7,9 +7,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
-import platform.ui.component.*;
-import platform.ui.struct.AlignType;
-import platform.ui.struct.ComponentType;
+import ui.struct.AlignType;
+import ui.struct.ComponentType;
+import ui.component.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -125,7 +125,7 @@ public class UI {
 
     public static void main(String[] args) {
         try {
-            UI.Start("Resources/config/platform/ui/default.layout", "Resources/config/platform/ui/default.property");
+            UI.Start("Resources/config/ui/default.layout", "Resources/config/ui/default.property");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

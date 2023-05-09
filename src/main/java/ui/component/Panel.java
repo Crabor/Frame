@@ -1,10 +1,10 @@
-package platform.ui.component;
+package ui.component;
 
 import com.alibaba.fastjson.JSONObject;
 import common.util.Util;
-import platform.ui.struct.AlignType;
-import platform.ui.struct.ComponentType;
-import platform.ui.struct.ScrollType;
+import ui.struct.AlignType;
+import ui.struct.ComponentType;
+import ui.struct.ScrollType;
 
 import javax.swing.*;
 import java.awt.*;

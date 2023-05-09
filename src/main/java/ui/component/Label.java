@@ -1,9 +1,9 @@
-package platform.ui.component;
+package ui.component;
 
 import com.alibaba.fastjson.JSONObject;
 import common.util.Util;
-import platform.ui.struct.ComponentType;
-import platform.ui.struct.FontStyleType;
+import ui.struct.ComponentType;
+import ui.struct.FontStyleType;
 
 import javax.swing.*;
 import java.awt.*;

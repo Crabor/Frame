@@ -32,24 +32,24 @@
 	{
 		"type": "Panel",
 		"id": "AppPanel",
-		"size": [1, 3],
+		"size": [3, 5],
 		"components": [
 			{
 				"type": "Label",
 				"id": "App",
-				"position": [0, 0, 1, 1],
+				"position": [1, 0, 1, 1],
 				"align": "South"
 			},
 			{
 				"type": "TextField",
 				"id": "Description",
-				"position": [0, 1, 1, 1],
+				"position": [1, 1, 1, 1],
 				"align": "North"
 			},
 			{
 				"type": "Table",
 				"id": "AppTable",
-				"position": [0, 2, 1, 1]
+				"position": [1, 2, 1, 3]
 			}
 		]
 	}

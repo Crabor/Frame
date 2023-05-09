@@ -1,9 +1,9 @@
-package platform.ui.component;
+package ui.component;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import platform.ui.struct.ComponentType;
+import ui.struct.ComponentType;
 
 import java.awt.*;
 
