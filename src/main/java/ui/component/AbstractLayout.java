@@ -1,14 +1,19 @@
 package ui.component;
 
+import ui.UI;
 import ui.struct.AlignType;
 import ui.struct.ComponentType;
 import ui.struct.ScrollType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Stack;
 
 public abstract class AbstractLayout extends AbstractComponent {
-    protected int[][] blankGrid;
+    protected AbstractComponent[][] children;
     protected JPanel panel;
     protected JScrollPane scrollPane;
     protected GridBagLayout layout;
@@ -18,26 +23,28 @@ public abstract class AbstractLayout extends AbstractComponent {
     }
 
     public void setGridSize(int gridWidth, int gridHeight) {
-        if (gridWidth <= 0 || gridHeight <= 0 || blankGrid != null) {
+        if (gridWidth <= 0 || gridHeight <= 0 || children != null) {
             logger.error(String.format("%s.setGridSize(%d, %d)", this, gridWidth, gridHeight));
             return;
         }
         logger.info(String.format("%s.setGridSize(%d, %d)", this, gridWidth, gridHeight));
-        blankGrid = new int[gridHeight][gridWidth];
+        children = new AbstractComponent[gridHeight][gridWidth];
     }
 
     private boolean canComponentSet(int gridX, int gridY, int gridWidth, int gridHeight) {
         if (gridX < 0 || gridY < 0 || gridWidth < 0 || gridHeight < 0 ||
-                gridX + gridWidth > blankGrid[0].length || gridY + gridHeight > blankGrid.length) {
+                gridX + gridWidth > children[0].length || gridY + gridHeight > children.length) {
             return false;
         }
+        AbstractComponent component = children[gridY][gridX];
         for (int i = gridY; i < gridY + gridHeight; i++) {
             for (int j = gridX; j < gridX + gridWidth; j++) {
-                if (blankGrid[i][j] == 1) {
+                if (children[i][j] != component && !isBlankPanel(children[i][j])) {
                     return false;
                 }
             }
         }
+
         return true;
     }
 
@@ -56,6 +63,17 @@ public abstract class AbstractLayout extends AbstractComponent {
             }
             return;
         }
+        //print children
+//        System.out.printf("before setComponent(%s)%n", component);
+//        for (int i = 0; i < children.length; i++) {
+//            for (int j = 0; j < children[0].length; j++) {
+//                System.out.print(children[i][j] + " ");
+//            }
+//            System.out.println();
+//        }
+
+        removeComponent(gridX, gridY, gridWidth, gridHeight);
+        removeBlank(gridX, gridY, gridWidth, gridHeight);
 
         component.setParent(this);
 
@@ -67,9 +85,10 @@ public abstract class AbstractLayout extends AbstractComponent {
         gbc.weightx = gridWidth;
         gbc.gridheight = gridHeight;
         gbc.weighty = gridHeight;
-        if (component instanceof Table) {
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-        } else if (component instanceof Panel) {
+//        if (component instanceof Table) {
+//            gbc.fill = GridBagConstraints.HORIZONTAL;
+//        } else
+            if (component instanceof Panel) {
             gbc.fill = GridBagConstraints.BOTH;
         }
         //System.out.println("gbc:" + gbc.gridx + " " + gbc.gridy + " " + gbc.gridwidth + " " + gbc.gridheight);
@@ -81,13 +100,14 @@ public abstract class AbstractLayout extends AbstractComponent {
 
         for (int i = gridY; i < gridY + gridHeight; i++) {
             for (int j = gridX; j < gridX + gridWidth; j++) {
-                blankGrid[i][j] = 1;
+                children[i][j] = component;
             }
         }
-        //print blankGrid
-//        for (int i = 0; i < blankGrid.length; i++) {
-//            for (int j = 0; j < blankGrid[0].length; j++) {
-//                System.out.print(blankGrid[i][j] + " ");
+        //print children
+//        System.out.printf("after setComponent(%s)%n", component);
+//        for (int i = 0; i < children.length; i++) {
+//            for (int j = 0; j < children[0].length; j++) {
+//                System.out.print(children[i][j] + " ");
 //            }
 //            System.out.println();
 //        }
@@ -110,50 +130,137 @@ public abstract class AbstractLayout extends AbstractComponent {
     }
 
     public void removeComponent(AbstractComponent component, boolean logFlag) {
+        if (component == null) {
+            return;
+        }
+        //print children
+//        System.out.printf("before removeComponent(%s)%n", component);
+//        for (int i = 0; i < children.length; i++) {
+//            for (int j = 0; j < children[0].length; j++) {
+//                System.out.print(children[i][j] + " ");
+//            }
+//            System.out.println();
+//        }
         int[] position = getComponentPosition(component);
         panel.remove(component.getBaseComponent());
         component.setParent(null);
         for (int i = position[1]; i < position[1] + position[3]; i++) {
             for (int j = position[0]; j < position[0] + position[2]; j++) {
-                blankGrid[i][j] = 0;
+                if (isBlankPanel(children[i][j])) {
+                    blankCollection.push((Panel) children[i][j]);
+                }
+                children[i][j] = null;
             }
         }
-        if (logFlag) {
+        setBlank(position[0], position[1], position[2], position[3]);
+        if (logFlag && !component.getId().contains(blankPrefix)) {
             logger.info(String.format("%s.removeComponent(%s)", this, component));
         }
-        //print blankGrid
-//        for (int i = 0; i < blankGrid.length; i++) {
-//            for (int j = 0; j < blankGrid[0].length; j++) {
-//                System.out.print(blankGrid[i][j] + " ");
+        //print children
+//        System.out.printf("after removeComponent(%s)%n", component);
+//        for (int i = 0; i < children.length; i++) {
+//            for (int j = 0; j < children[0].length; j++) {
+//                System.out.print(children[i][j] + " ");
 //            }
 //            System.out.println();
 //        }
     }
 
-    public void paintBlank() {
-        if (blankGrid != null) {
+    public void removeComponent(int gridX, int gridY, int gridWidth, int gridHeight) {
+        for (int i = gridY; i < gridY + gridHeight; i++) {
+            for (int j = gridX; j < gridX + gridWidth; j++) {
+                removeComponent(children[i][j]);
+            }
+        }
+    }
+
+    static Stack<Panel> blankCollection = new Stack<>();
+    public void setBlank(int gridX, int gridY, int gridWidth, int gridHeight) {
+        if (children != null) {
+            //print children
+//            System.out.printf("before setBlank(%d,%d,%d,%d)%n", gridX, gridY, gridWidth, gridHeight);
+//            for (int i = 0; i < children.length; i++) {
+//                for (int j = 0; j < children[0].length; j++) {
+//                    System.out.print(children[i][j] + " ");
+//                }
+//                System.out.println();
+//            }
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.fill = GridBagConstraints.BOTH;
             gbc.weightx = 1;
             gbc.gridwidth = 1;
             gbc.weighty = 1;
             gbc.gridheight = 1;
-            for (int i = 0; i < blankGrid.length; i++) {
-                for (int j = 0; j < blankGrid[0].length; j++) {
-                    if (blankGrid[i][j] == 0) {
-                        JPanel blankPanel = new JPanel();
-                        blankPanel.setBackground(Color.WHITE);
+            for (int i = gridY; i < gridY + gridHeight; i++) {
+                for (int j = gridX; j < gridX + gridWidth; j++) {
+                    if (children[i][j] == null) {
                         gbc.gridx = j;
                         gbc.gridy = i;
-                        panel.add(blankPanel, gbc);
-//                        AbstractComponent blankPanel = UI.getComponent(ComponentType.PANEL,
-//                                getId() + "_blank_" + j + "_" + i);
-////                        blankPanel.setProperty(JSONObject.parseObject("{\"background\":\"green\"}"));
-//                        setComponentPosition(blankPanel, j, i, 1, 1);
+                        Panel blank;
+//                        System.out.println("blankCollection.size():" + blankCollection.size());
+                        if (!blankCollection.isEmpty()) {
+                            blank = blankCollection.pop();
+                        } else {
+                            blank = getBlankPanel();
+                        }
+                        panel.add(blank.baseComponent, gbc);
+                        children[i][j] = blank;
                     }
                 }
             }
+            //print children
+//            System.out.printf("after setBlank(%d,%d,%d,%d)%n", gridX, gridY, gridWidth, gridHeight);
+//            for (int i = 0; i < children.length; i++) {
+//                for (int j = 0; j < children[0].length; j++) {
+//                    System.out.print(children[i][j] + " ");
+//                }
+//                System.out.println();
+//            }
         }
+    }
+
+    public void removeBlank(int gridX, int gridY, int gridWidth, int gridHeight) {
+        if (children != null) {
+            //print children
+//            System.out.printf("before removeBlank(%d,%d,%d,%d)%n", gridX, gridY, gridWidth, gridHeight);
+//            for (int i = 0; i < children.length; i++) {
+//                for (int j = 0; j < children[0].length; j++) {
+//                    System.out.print(children[i][j] + " ");
+//                }
+//                System.out.println();
+//            }
+            for (int i = gridY; i < gridY + gridHeight; i++) {
+                for (int j = gridX; j < gridX + gridWidth; j++) {
+                    if (isBlankPanel(children[i][j])) {
+                        panel.remove(children[i][j].baseComponent);
+                        blankCollection.push((Panel) children[i][j]);
+                        children[i][j] = null;
+                    }
+                }
+            }
+            //print children
+//            System.out.printf("after removeBlank(%d,%d,%d,%d)%n", gridX, gridY, gridWidth, gridHeight);
+//            for (int i = 0; i < children.length; i++) {
+//                for (int j = 0; j < children[0].length; j++) {
+//                    System.out.print(children[i][j] + " ");
+//                }
+//                System.out.println();
+//            }
+        }
+    }
+
+    public static String blankPrefix = "blank_";
+    static int blankIndex = 1;
+    public static Panel getBlankPanel() {
+        Panel blankPanel = (Panel) UI.getComponent(ComponentType.PANEL, blankPrefix + blankIndex);
+        blankIndex++;
+//        blankPanel.setBackground(Color.GREEN);
+//        ((JPanel)blankPanel.baseComponent).setBorder(BorderFactory.createLineBorder(Color.black));
+        return blankPanel;
+    }
+
+    public static boolean isBlankPanel(AbstractComponent component) {
+        return component != null && component.getId().contains(blankPrefix);
     }
 
     public void setScrollBar(ScrollType type) {
@@ -167,5 +274,26 @@ public abstract class AbstractLayout extends AbstractComponent {
             scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
             scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         }
+    }
+
+    public void repaint() {
+//        if (scrollPane != null) {
+//            scrollPane.validate();
+//            scrollPane.repaint();
+//        }
+        panel.validate();
+        panel.repaint();
+//        Set<AbstractComponent> visited = new HashSet<>();
+//        //所有children都要repaint
+//        for (int i = 0; i < children.length; i++) {
+//            for (int j = 0; j < children[0].length; j++) {
+//                if (children[i][j] != null
+//                        && children[i][j] instanceof AbstractLayout
+//                        && !visited.contains(children[i][j])) {
+//                    ((AbstractLayout)children[i][j]).repaint();
+//                    visited.add(children[i][j]);
+//                }
+//            }
+//        }
     }
 }

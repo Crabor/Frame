@@ -3,6 +3,7 @@ package ui;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import common.util.Util;
+import database.Database;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,7 +39,9 @@ public class UI {
         Map<String, AbstractComponent> components = componentsMap.get(type);
         AbstractComponent ret = components.get(id);
         if (ret == null) {
-            logger.info("<" + type + "," + id + "> is created");
+            if (!id.contains(AbstractLayout.blankPrefix)) {
+                logger.info("<" + type + "," + id + "> is created");
+            }
             ret = createComponent(type, id);
             components.put(id, ret);
         }
@@ -83,18 +86,20 @@ public class UI {
             AbstractLayout layout = (AbstractLayout) getComponent(jo);
             int[] gridSize = Util.jsonArrayToIntArray(jo.getJSONArray("size"));
             layout.setGridSize(gridSize[0], gridSize[1]);
-            JSONArray components = jo.getJSONArray("components");
-            for (Object o1 : components) {
-                JSONObject jo1 = (JSONObject) o1;
-                AbstractComponent component = getComponent(jo1);
-                int[] position = Util.jsonArrayToIntArray(jo1.getJSONArray("position"));
-                AlignType align = AlignType.CENTER;
-                try {
-                    align = AlignType.fromString(jo1.getString("align"));
-                } catch (Exception ignored) {}
-                layout.setComponent(component, position[0], position[1], position[2], position[3], align);
-            }
-            layout.paintBlank();
+            try {
+                JSONArray components = jo.getJSONArray("components");
+                for (Object o1 : components) {
+                    JSONObject jo1 = (JSONObject) o1;
+                    AbstractComponent component = getComponent(jo1);
+                    int[] position = Util.jsonArrayToIntArray(jo1.getJSONArray("position"));
+                    AlignType align = AlignType.CENTER;
+                    try {
+                        align = AlignType.fromString(jo1.getString("align"));
+                    } catch (Exception ignored) {}
+                    layout.setComponent(component, position[0], position[1], position[2], position[3], align);
+                }
+            } catch (Exception ignored) {}
+            layout.setBlank(0, 0, gridSize[0], gridSize[1]);
         }
     }
 
@@ -107,6 +112,8 @@ public class UI {
     }
 
     public static void Start(String layoutFile, String propertyFile) throws IOException {
+        //连接数据库
+        Database.Init();
         //读取配置文件
         JSONArray layout = JSONObject.parseArray(FileUtils.readFileToString(new File(layoutFile), "UTF-8"));
         JSONArray property = JSONObject.parseArray(FileUtils.readFileToString(new File(propertyFile), "UTF-8"));
@@ -125,7 +132,7 @@ public class UI {
 
     public static void main(String[] args) {
         try {
-            UI.Start("Resources/config/ui/default.layout", "Resources/config/ui/default.property");
+            UI.Start("Resources/config/ui/demo.layout", "Resources/config/ui/demo.property");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

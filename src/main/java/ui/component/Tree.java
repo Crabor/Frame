@@ -21,18 +21,13 @@ public class Tree extends AbstractComponent {
     }
 
     @Override
-    public void setProperty(JSONObject jo) {
-        //dirs
-        try {
-            String[] dirs = Util.jsonArrayToStringArray(jo.getJSONArray("dirs"));
-            for (String dir : dirs) {
-                root.add(new DefaultMutableTreeNode(dir));
-            }
-            tree.setModel(new DefaultTreeModel(root));
-            for (int i = 0; i < tree.getRowCount(); i++) {
-                tree.expandRow(i);
-            }
-            logger.info(String.format("<%s,%s>.setDirs(%s)", type, id, jo.getString("dirs")));
-        } catch (Exception ignored) {}
+    public void setDirs(String[] dirs) {
+        for (String dir : dirs) {
+            root.add(new DefaultMutableTreeNode(dir));
+        }
+        tree.setModel(new DefaultTreeModel(root));
+        for (int i = 0; i < tree.getRowCount(); i++) {
+            tree.expandRow(i);
+        }
     }
 }

@@ -22,20 +22,16 @@ public class H2DatabaseExample2 {
             stmt = conn.createStatement();
 
             // 创建表
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS customers(id INT PRIMARY KEY, name VARCHAR(255), email VARCHAR(255))");
-
-            // 查询表的最大ID
-            rs = stmt.executeQuery("SELECT MAX(id) FROM customers");
-            int maxId = 0;
-            if (rs.next()) {
-                maxId = rs.getInt(1) + 1;
-            }
+            //["id", "AppName", "Description", "Service", "Resource"]
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS AppTable(id int primary key, AppName varchar(255), Description varchar(255), Service varchar(255), Resource varchar(255))");
 
             // 定时插入数据
+            int maxId = 0;
             while (true) {
-                System.out.println("INSERT INTO customers(id, name, email) VALUES(" + maxId + ", 'name" + maxId + "', '" + maxId + "@163.com')");
-                stmt.executeUpdate(String.format("INSERT INTO customers(id, name, email) VALUES(%d, '%s', '%d@163" +
-                        ".com')", maxId, "name" + maxId, maxId));
+                System.out.println("INSERT INTO AppTable(id, AppName, Description, Service, Resource) VALUES(" + maxId + ", 'name" + maxId + "', 'desc" + maxId + "', 'service" + maxId + "', 'resource" + maxId + "')");
+                stmt.executeUpdate(String.format("INSERT INTO AppTable(id, AppName, Description, Service, Resource) " +
+                        "VALUES(%d, 'App%d', 'This is App%d', 'Service%d', 'Resource%d')", maxId, maxId, maxId, maxId,
+                        maxId));
                 maxId++;
                 Thread.sleep(2000);
             }

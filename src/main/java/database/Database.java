@@ -1,8 +1,14 @@
 package database;
 
+import org.h2.jdbc.JdbcSQLNonTransientException;
+import org.h2.jdbc.JdbcSQLSyntaxErrorException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Database {
 //    public static void main(String[] args) {
@@ -29,4 +35,56 @@ public class Database {
 //            e.printStackTrace();
 //        }
 //    }
+    static Connection conn = null;
+    static Statement stmt = null;
+    static Lock lock = new ReentrantLock();
+
+    public static void Init() {
+        try {
+            // 加载H2数据库的驱动程序
+            Class.forName("org.h2.Driver");
+
+            // 连接到H2数据库，test如果不存在则自动创建
+            conn = DriverManager.getConnection("jdbc:h2:tcp://localhost:9092/mem:test", "sa", "");
+
+            // 创建一个Statement对象
+            stmt = conn.createStatement();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static ResultSet Get(String sql) {
+        if (conn == null || stmt == null) {
+            return null;
+        }
+        ResultSet rs = null;
+        try {
+            lock.lock();
+            rs = stmt.executeQuery(sql);
+        } catch (SQLException e) {
+            if (!(e instanceof JdbcSQLSyntaxErrorException)) {
+                e.printStackTrace();
+            }
+        } finally {
+            lock.unlock();
+        }
+        return rs;
+    }
+
+    public static boolean Set(String sql) {
+        if (conn == null || stmt == null) {
+            return false;
+        }
+        boolean result = false;
+        try {
+            lock.lock();
+            result = stmt.execute(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+        return result;
+    }
 }
