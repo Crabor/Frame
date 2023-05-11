@@ -158,11 +158,12 @@ public abstract class AbstractComponent {
         //listeners
         try {
             JSONArray listeners = jo.getJSONArray("listeners");
-            for (int i = 0; i < listeners.size(); i++) {
-                ListenerType listenerType = ListenerType.fromString(listeners.getJSONObject(i).getString("type"));
-                JSONObject action = listeners.getJSONObject(i).getJSONObject("action");
+            for (Object o : listeners) {
+                JSONObject listener = (JSONObject) o;
+                ListenerType listenerType = ListenerType.fromString(listener.getString("type"));
+                JSONObject action = listener.getJSONObject("action");
                 String actionType = action.getString("type");
-                setListener(listenerType, action);
+                setListener(listener);
                 logger.info(String.format("<%s,%s>.setListener(%s,%s)", type, id, listenerType, actionType));
             }
         } catch (Exception ignored) {}
@@ -184,7 +185,9 @@ public abstract class AbstractComponent {
         baseComponent.setSize(width, height);
     }
 
-    public void setListener(ListenerType listenerType, JSONObject actionObj) {
+    public void setListener(JSONObject listener) {
+        ListenerType listenerType = ListenerType.fromString(listener.getString("type"));
+        JSONObject actionObj = listener.getJSONObject("action");
         Action action = null;
         ActionType actionType = ActionType.fromString(actionObj.getString("type"));
         switch (actionType) {
@@ -200,7 +203,7 @@ public abstract class AbstractComponent {
                 baseComponent.addMouseListener(new MouseClick(action));
                 break;
             case TIMER:
-                int sleepTime = 1000 / actionObj.getInteger("freq");
+                int sleepTime = 1000 / listener.getInteger("freq");
                 Timer timer = new Timer(sleepTime, new TimerJob(action));
                 timer.start();
                 break;

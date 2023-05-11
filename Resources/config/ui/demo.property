@@ -79,9 +79,9 @@
 		"listeners": [
 			{
 				"type": "Timer",
+				"freq": 1,
 				"action": {
 					"type": "DatabaseGet",
-					"freq": 1,
 					"component_type": "Table",
 					"component_id": "AppTable",
 					"property": "content",
