@@ -1,0 +1,31 @@
+[
+	{
+		"type": "Window",
+		"id": "main",
+		"size": [3, 4],
+		"components": [
+			{
+				"type": "Label",
+				"id": "label1",
+				"position": [0, 1, 2, 3]
+			},
+			{
+				"type": "Panel",
+				"id": "panel1",
+				"position": [2, 0, 1, 4]
+			}
+		]
+	},
+	{
+		"type": "Panel",
+		"id": "panel1",
+		"size": [3, 6],
+		"components": [
+			{
+				"type": "Button",
+				"id": "button1",
+				"position": [0, 0, 1, 1]
+			}
+		]
+	}
+]
