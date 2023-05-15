@@ -44,6 +44,7 @@ UI.Start("Resources/config/ui/default.uc");
     "database_port": 9092,
     "layout_file": "Resources/config/ui/default.ul",
     "property_file": "Resources/config/ui/default.up",
+    "theme": "MistSilver",
     "grid_visible": true
 }
 ```
@@ -54,6 +55,7 @@ uc文件是UI的配置文件(UI configuration)，它的格式为json，包含了
 * `database_port`: 数据库端口号。
 * `layout_file`: 页面布局文件的路径。
 * `property_file`: 组件属性文件的路径。
+* `theme`: UI的[外观主题](#外观主题)。
 * `grid_visible`: 是否让UI的格栅布局可视化。
     
   不可视化(`false`):
@@ -122,7 +124,7 @@ ul文件是UI的页面布局文件(UI layout)，它的格式为json，包含了�
 
   * `align`: 组件的[对齐方式](#对齐方式)，例如`Center`、`North`、`NorthWest`等等。 
 
-    例如`NORTH`表示组件向上对齐:
+    例如`North`表示组件向上对齐:
 
     ![](img/Snipaste_2023-05-15_22-16-02.png)
 
@@ -130,7 +132,7 @@ ul文件是UI的页面布局文件(UI layout)，它的格式为json，包含了�
 
 ## xxx.up
 
-## 结构体
+## 数据结构
 
 ### 组件类型
 
@@ -181,5 +183,59 @@ ul文件是UI的页面布局文件(UI layout)，它的格式为json，包含了�
 `West`: 左对齐。
 
 `NorthWest`: 右上对齐。
+
+### 外观主题
+
+    //Light themes
+    BUSINESS("Business"),
+    BUSINESS_BLUE_STEEL("BusinessBlueSteel"),
+    BUSINESS_BLACK_STEEL("BusinessBlackSteel"),
+    CREME("Creme"),
+    CREME_COFFEE("CremeCoffee"),
+    SAHARA("Sahara"),
+    MODERATE("Moderate"),
+    NEBULA("Nebula"),
+    NEBULA_AMETHYST("NebulaAmethyst"),
+    NEBULA_BRICK_WALL("NebulaBrickWall"),
+    AUTUMN("Autumn"),
+    MIST_SILVER("MistSilver"),
+    MIST_AQUA("MistAqua"),
+    DUST("Dust"),
+    DUST_COFFEE("DustCoffee"),
+    GEMINI("Gemini"),
+    MARINER("Mariner"),
+    SENTINEL("Sentinel"),
+    CERULEAN("Cerulean"),
+    GREEN_MAGIC("GreenMagic"),
+    //Dark themes
+    TWILIGHT("Twilight"),
+    NIGHT_SHADE("NightShade"),
+    MAGELLAN("Magellan"),
+    GRAPHITE("Graphite"),
+    GRAPHITE_CHALK("GraphiteChalk"),
+    GRAPHITE_AQUA("GraphiteAqua"),
+    GRAPHITE_ELECTRIC("GraphiteElectric"),
+    GRAPHITE_GOLD("GraphiteGold"),
+    GRAPHITE_SIENNA("GraphiteSienna"),
+    GRAPHITE_SUNSET("GraphiteSunset"),
+    GRAPHITE_GLASS("GraphiteGlass"),
+    RAVEN("Raven");
+
+#### 亮色主题
+
+`Business`:
+
+<div style="display: flex;">
+    <img src="img/business1.png" alt="Image 1" width="50%" />
+    <img src="img/business2.png" alt="Image 2" width="50%" />
+</div>
+
+`BusinessBlueSteel`:
+
+<div style="display: flex;">
+    <img src="img/businessbluesteel1.png" alt="Image 1" width="50%" />
+    <img src="img/businessbluesteel2.png" alt="Image 2" width="50%" />
+</div>
+
 
 ## 常见问题

@@ -8,10 +8,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
+import org.pushingpixels.radiance.theming.api.skin.*;
 import ui.struct.AlignType;
 import ui.struct.ComponentType;
 import ui.component.*;
+import ui.struct.ThemeType;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -142,6 +145,12 @@ public class UI {
         } catch (Exception ignored) {}
         logger.info("GridVisible: " + gridVisible);
 
+        ThemeType theme = ThemeType.MIST_SILVER;
+        try {
+            theme = ThemeType.fromString(config.getString("theme"));
+        } catch (Exception ignored) {}
+        logger.info("Theme: " + theme);
+
         String layoutFile = config.getString("layout_file");
         if (layoutFile == null) {
             logger.error("LayoutFile is not set");
@@ -155,14 +164,20 @@ public class UI {
             exit(1);
         }
         logger.info("PropertyFile: " + propertyFile);
+        logger.info("");
+
+        //设置主题
+        try {
+            UIManager.setLookAndFeel("org.pushingpixels.radiance.theming.api.skin.Radiance" + theme.getValue() + "LookAndFeel");
+        } catch (Exception e) {
+            System.out.println("Radiance Graphite failed to initialize");
+        }
 
         //设置grid可见性
         AbstractLayout.setGridVisible(gridVisible);
 
         //连接数据库
         Database.Init(databasePort, databaseName);
-        logger.info("Connected to database");
-        logger.info("");
 
         //读取layout
         JSONArray layout = null;
@@ -195,10 +210,12 @@ public class UI {
 
 
     public static void main(String[] args) {
-        try {
-            UI.Start("Resources/config/ui/test.uc");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        SwingUtilities.invokeLater(() -> {
+            try {
+                UI.Start("Resources/config/ui/demo.uc");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }
