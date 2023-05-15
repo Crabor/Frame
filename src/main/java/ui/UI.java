@@ -196,7 +196,7 @@ public class UI {
 
     public static void main(String[] args) {
         try {
-            UI.Start("Resources/config/ui/default.uc");
+            UI.Start("Resources/config/ui/test.uc");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

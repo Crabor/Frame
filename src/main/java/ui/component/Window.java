@@ -34,6 +34,18 @@ public class Window extends AbstractLayout {
        frame.add(scrollPane, BorderLayout.CENTER);
    }
 
+    @Override
+    public void setSize(int width, int height) {
+        frame.setSize(width, height);
+        // 获取屏幕的尺寸
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        Rectangle screenBounds = ge.getMaximumWindowBounds();
+        // 计算窗口的坐标使其居中
+        int x = (screenBounds.width - frame.getWidth()) / 2;
+        int y = (screenBounds.height - frame.getHeight()) / 2;
+        frame.setLocation(x, y);
+    }
+
     public void show() {
         frame.setVisible(true);
     }

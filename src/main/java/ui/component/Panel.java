@@ -14,7 +14,6 @@ public class Panel extends AbstractLayout {
         super(type, id);
         layout = new GridBagLayout();
         panel = new JPanel(layout);
-        panel.setBackground(Color.WHITE);
         setBaseComponent(panel);
     }
 

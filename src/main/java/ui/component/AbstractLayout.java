@@ -256,9 +256,11 @@ public abstract class AbstractLayout extends AbstractComponent {
     public static Panel getBlankPanel() {
         Panel blankPanel = (Panel) UI.getComponent(ComponentType.PANEL, blankPrefix + blankIndex);
         blankIndex++;
+//        blankPanel.setBackground(Color.GRAY);
+        blankPanel.baseComponent.setBackground(new Color(0, 0, 0, 0));
         if (gridVisible) {
-//            blankPanel.setBackground(Color.GRAY);
-            ((JPanel)blankPanel.baseComponent).setBorder(BorderFactory.createLineBorder(Color.black));
+            //设置边框
+            ((JPanel)blankPanel.baseComponent).setBorder(BorderFactory.createLineBorder(Color.GRAY));
         }
         return blankPanel;
     }

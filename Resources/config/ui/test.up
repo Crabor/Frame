@@ -3,16 +3,11 @@
 		"type": "Window",
 		"id": "main",
 		"title": "Platform",
-		"size": [800, 600]
-	},
-	{
-		"type": "Button",
-		"id": "button1",
-		"text": "hello"
+		"size": [400, 300]
 	},
 	{
 		"type": "Label",
 		"id": "label1",
-		"text": "world"
+		"text": "hello world"
 	}
 ]
