@@ -7,9 +7,6 @@ import ui.struct.ScrollType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Stack;
 
 public abstract class AbstractLayout extends AbstractComponent {
@@ -249,13 +246,20 @@ public abstract class AbstractLayout extends AbstractComponent {
         }
     }
 
+    static boolean gridVisible = false;
+    public static void setGridVisible(boolean visible) {
+        gridVisible = visible;
+    }
+
     public static String blankPrefix = "blank_";
     static int blankIndex = 1;
     public static Panel getBlankPanel() {
         Panel blankPanel = (Panel) UI.getComponent(ComponentType.PANEL, blankPrefix + blankIndex);
         blankIndex++;
-//        blankPanel.setBackground(Color.GRAY);
-//        ((JPanel)blankPanel.baseComponent).setBorder(BorderFactory.createLineBorder(Color.black));
+        if (gridVisible) {
+//            blankPanel.setBackground(Color.GRAY);
+            ((JPanel)blankPanel.baseComponent).setBorder(BorderFactory.createLineBorder(Color.black));
+        }
         return blankPanel;
     }
 

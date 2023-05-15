@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.lang.System.exit;
+
 public class UI {
     private static final Log logger = LogFactory.getLog(UI.class);
     private static Map<ComponentType, Map<String, AbstractComponent>> componentsMap;
@@ -111,15 +113,77 @@ public class UI {
         }
     }
 
-    public static void Start(String layoutFile, String propertyFile) throws IOException {
+    public static void Start(String configFile) throws IOException {
+
+        JSONObject config = null;
+        try {
+            config = JSONObject.parseObject(FileUtils.readFileToString(new File(configFile), "UTF-8"));
+        } catch (Exception e) {
+            logger.error("ConfigFile is not found");
+            exit(1);
+        }
+
+        String databaseName = "test";
+        String tmp = config.getString("database_name");
+        if (tmp != null) {
+            databaseName = tmp;
+        }
+        logger.info("DatabaseName: " + databaseName);
+
+        int databasePort = 9092;
+        try {
+            databasePort = config.getInteger("database_port");
+        } catch (Exception ignored) {}
+        logger.info("DatabasePort: " + databasePort);
+
+        boolean gridVisible = false;
+        try {
+            gridVisible = config.getBoolean("grid_visible");
+        } catch (Exception ignored) {}
+        logger.info("GridVisible: " + gridVisible);
+
+        String layoutFile = config.getString("layout_file");
+        if (layoutFile == null) {
+            logger.error("LayoutFile is not set");
+            exit(1);
+        }
+        logger.info("LayoutFile: " + layoutFile);
+
+        String propertyFile = config.getString("property_file");
+        if (propertyFile == null) {
+            logger.error("PropertyFile is not set");
+            exit(1);
+        }
+        logger.info("PropertyFile: " + propertyFile);
+
+        //设置grid可见性
+        AbstractLayout.setGridVisible(gridVisible);
+
         //连接数据库
-        Database.Init();
-        //读取配置文件
-        JSONArray layout = JSONObject.parseArray(FileUtils.readFileToString(new File(layoutFile), "UTF-8"));
-        JSONArray property = JSONObject.parseArray(FileUtils.readFileToString(new File(propertyFile), "UTF-8"));
+        Database.Init(databasePort, databaseName);
+        logger.info("Connected to database");
+        logger.info("");
+
+        //读取layout
+        JSONArray layout = null;
+        try {
+            layout = JSONObject.parseArray(FileUtils.readFileToString(new File(layoutFile), "UTF-8"));
+        } catch (Exception e) {
+            logger.error("LayoutFile is not found");
+            exit(1);
+        }
         logger.info("Start analyzing layout: " + layoutFile);
         analyseLayout(layout);
         logger.info("");
+
+        //读取property
+        JSONArray property = null;
+        try {
+            property = JSONObject.parseArray(FileUtils.readFileToString(new File(propertyFile), "UTF-8"));
+        } catch (Exception e) {
+            logger.error("PropertyFile is not found");
+            exit(1);
+        }
         logger.info("Start analyzing property: " + propertyFile);
         analyseProperty(property);
         logger.info("");
@@ -132,7 +196,7 @@ public class UI {
 
     public static void main(String[] args) {
         try {
-            UI.Start("Resources/config/ui/demo.layout", "Resources/config/ui/demo.property");
+            UI.Start("Resources/config/ui/default.uc");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
