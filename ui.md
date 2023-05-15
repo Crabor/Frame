@@ -186,41 +186,6 @@ ul文件是UI的页面布局文件(UI layout)，它的格式为json，包含了�
 
 ### 外观主题
 
-    //Light themes
-    BUSINESS("Business"),
-    BUSINESS_BLUE_STEEL("BusinessBlueSteel"),
-    BUSINESS_BLACK_STEEL("BusinessBlackSteel"),
-    CREME("Creme"),
-    CREME_COFFEE("CremeCoffee"),
-    SAHARA("Sahara"),
-    MODERATE("Moderate"),
-    NEBULA("Nebula"),
-    NEBULA_AMETHYST("NebulaAmethyst"),
-    NEBULA_BRICK_WALL("NebulaBrickWall"),
-    AUTUMN("Autumn"),
-    MIST_SILVER("MistSilver"),
-    MIST_AQUA("MistAqua"),
-    DUST("Dust"),
-    DUST_COFFEE("DustCoffee"),
-    GEMINI("Gemini"),
-    MARINER("Mariner"),
-    SENTINEL("Sentinel"),
-    CERULEAN("Cerulean"),
-    GREEN_MAGIC("GreenMagic"),
-    //Dark themes
-    TWILIGHT("Twilight"),
-    NIGHT_SHADE("NightShade"),
-    MAGELLAN("Magellan"),
-    GRAPHITE("Graphite"),
-    GRAPHITE_CHALK("GraphiteChalk"),
-    GRAPHITE_AQUA("GraphiteAqua"),
-    GRAPHITE_ELECTRIC("GraphiteElectric"),
-    GRAPHITE_GOLD("GraphiteGold"),
-    GRAPHITE_SIENNA("GraphiteSienna"),
-    GRAPHITE_SUNSET("GraphiteSunset"),
-    GRAPHITE_GLASS("GraphiteGlass"),
-    RAVEN("Raven");
-
 #### 亮色主题
 
 `Business`:
@@ -230,6 +195,223 @@ ul文件是UI的页面布局文件(UI layout)，它的格式为json，包含了�
     <img src="img/business2.png" alt="Image 2" width="40%" />
 </div>
 
+`BusinessBlueSteel`:
 
+<div style="display: flex;">
+    <img src="img/businessbluesteel1.png" alt="Image 1" width="40%" />
+    <img src="img/businessbluesteel2.png" alt="Image 2" width="40%" />
+</div>
+
+`BusinessBlackSteel`:
+
+<div style="display: flex;">
+    <img src="img/businessblacksteel1.png" alt="Image 1" width="40%" />
+    <img src="img/businessblacksteel2.png" alt="Image 2" width="40%" />
+</div>
+
+`Creme`:
+
+<div style="display: flex;">
+    <img src="img/creme1.png" alt="Image 1" width="40%" />
+    <img src="img/creme2.png" alt="Image 2" width="40%" />
+</div>
+
+`CremeCoffee`:
+
+<div style="display: flex;">
+    <img src="img/cremecoffee1.png" alt="Image 1" width="40%" />
+    <img src="img/cremecoffee2.png" alt="Image 2" width="40%" />
+</div>
+
+`Sahara`:
+
+<div style="display: flex;">
+    <img src="img/sahara1.png" alt="Image 1" width="40%" />
+    <img src="img/sahara2.png" alt="Image 2" width="40%" />
+</div>
+
+`Moderate`:
+
+<div style="display: flex;">
+    <img src="img/moderate1.png" alt="Image 1" width="40%" />
+    <img src="img/moderate2.png" alt="Image 2" width="40%" />
+</div>
+
+`Nebula`:
+
+<div style="display: flex;">
+    <img src="img/nebula1.png" alt="Image 1" width="40%" />
+    <img src="img/nebula2.png" alt="Image 2" width="40%" />
+</div>
+
+`NebulaAmethyst`:
+
+<div style="display: flex;">
+    <img src="img/nebulaamethyst1.png" alt="Image 1" width="40%" />
+    <img src="img/nebulaamethyst2.png" alt="Image 2" width="40%" />
+</div>
+
+`NebulaBrickWall`:
+
+<div style="display: flex;">
+    <img src="img/nebulabrickwall1.png" alt="Image 1" width="40%" />
+    <img src="img/nebulabrickwall2.png" alt="Image 2" width="40%" />
+</div>
+
+`Autumn`:
+
+<div style="display: flex;">
+    <img src="img/autumn1.png" alt="Image 1" width="40%" />
+    <img src="img/autumn2.png" alt="Image 2" width="40%" />
+</div>
+
+`MistSilver`:
+
+<div style="display: flex;">
+    <img src="img/mistsilver1.png" alt="Image 1" width="40%" />
+    <img src="img/mistsilver2.png" alt="Image 2" width="40%" />
+</div>
+
+`MistAqua`:
+
+<div style="display: flex;">
+    <img src="img/mistaqua1.png" alt="Image 1" width="40%" />
+    <img src="img/mistaqua2.png" alt="Image 2" width="40%" />
+</div>
+
+`Dust`:
+
+<div style="display: flex;">
+    <img src="img/dust1.png" alt="Image 1" width="40%" />
+    <img src="img/dust2.png" alt="Image 2" width="40%" />
+</div>
+
+`DustCoffee`:
+
+<div style="display: flex;">
+    <img src="img/dustcoffee1.png" alt="Image 1" width="40%" />
+    <img src="img/dustcoffee2.png" alt="Image 2" width="40%" />
+</div>
+
+`Gemini`:
+
+<div style="display: flex;">
+    <img src="img/gemini1.png" alt="Image 1" width="40%" />
+    <img src="img/gemini2.png" alt="Image 2" width="40%" />
+</div>
+
+`Mariner`:
+
+<div style="display: flex;">
+    <img src="img/mariner1.png" alt="Image 1" width="40%" />
+    <img src="img/mariner2.png" alt="Image 2" width="40%" />
+</div>
+
+`Sentinel`:
+
+<div style="display: flex;">
+    <img src="img/sentinel1.png" alt="Image 1" width="40%" />
+    <img src="img/sentinel2.png" alt="Image 2" width="40%" />
+</div>
+
+`Cerulean`:
+
+<div style="display: flex;">
+    <img src="img/cerulean1.png" alt="Image 1" width="40%" />
+    <img src="img/cerulean2.png" alt="Image 2" width="40%" />
+</div>
+
+`GreenMagic`:
+
+<div style="display: flex;">
+    <img src="img/greenmagic1.png" alt="Image 1" width="40%" />
+    <img src="img/greenmagic2.png" alt="Image 2" width="40%" />
+</div>
+
+#### 暗色主题
+
+`Twilight`:
+
+<div style="display: flex;">
+    <img src="img/twilight1.png" alt="Image 1" width="40%" />
+    <img src="img/twilight2.png" alt="Image 2" width="40%" />
+</div>
+
+`NightShade`:
+
+<div style="display: flex;">
+    <img src="img/nightshade1.png" alt="Image 1" width="40%" />
+    <img src="img/nightshade2.png" alt="Image 2" width="40%" />
+</div>
+
+`Magellan`:
+
+<div style="display: flex;">
+    <img src="img/magellan1.png" alt="Image 1" width="40%" />
+    <img src="img/magellan2.png" alt="Image 2" width="40%" />
+</div>
+
+`Graphite`:
+
+<div style="display: flex;">
+    <img src="img/graphite1.png" alt="Image 1" width="40%" />
+    <img src="img/graphite2.png" alt="Image 2" width="40%" />
+</div>
+
+`GraphiteChalk`:
+
+<div style="display: flex;">
+    <img src="img/graphitechalk1.png" alt="Image 1" width="40%" />
+    <img src="img/graphitechalk2.png" alt="Image 2" width="40%" />
+</div>
+
+`GraphiteAqua`:
+
+<div style="display: flex;">
+    <img src="img/graphiteaqua1.png" alt="Image 1" width="40%" />
+    <img src="img/graphiteaqua2.png" alt="Image 2" width="40%" />
+</div>
+
+`GraphiteElectric`:
+
+<div style="display: flex;">
+    <img src="img/graphiteelectric1.png" alt="Image 1" width="40%" />
+    <img src="img/graphiteelectric2.png" alt="Image 2" width="40%" />
+</div>
+
+`GraphiteGold`:
+
+<div style="display: flex;">
+    <img src="img/graphitegold1.png" alt="Image 1" width="40%" />
+    <img src="img/graphitegold2.png" alt="Image 2" width="40%" />
+</div>
+
+`GraphiteSienna`:
+
+<div style="display: flex;">
+    <img src="img/graphitesienna1.png" alt="Image 1" width="40%" />
+    <img src="img/graphitesienna2.png" alt="Image 2" width="40%" />
+</div>
+
+`GraphiteSunset`:
+
+<div style="display: flex;">
+    <img src="img/graphitesunset1.png" alt="Image 1" width="40%" />
+    <img src="img/graphitesunset2.png" alt="Image 2" width="40%" />
+</div>
+
+`GraphiteGlass`:
+
+<div style="display: flex;">
+    <img src="img/graphiteglass1.png" alt="Image 1" width="40%" />
+    <img src="img/graphiteglass2.png" alt="Image 2" width="40%" />
+</div>
+
+`Raven`:
+
+<div style="display: flex;">
+    <img src="img/raven1.png" alt="Image 1" width="40%" />
+    <img src="img/raven2.png" alt="Image 2" width="40%" />
+</div>
 
 ## 常见问题
