@@ -51,20 +51,20 @@ UI.Start("Resources/config/ui/default.uc");
 
 uc文件是UI的配置文件(UI configuration)，它的格式为json，包含了以下几个字段:
 
-* `databse_name`: 数据库名称。
-* `database_port`: 数据库端口号。
+* `databse_name`: 数据库名称。如未指定，则默认为`test`。
+* `database_port`: 数据库端口号。如未指定，则默认为`9092`。
 * `layout_file`: 页面布局文件的路径。
 * `property_file`: 组件属性文件的路径。
-* `theme`: UI的[外观主题](#外观主题)。
-* `grid_visible`: 是否让UI的格栅布局可视化。
+* `theme`: UI的[外观主题](#外观主题)。如未指定，则默认为`MistSilver`。
+* `grid_visible`: 是否让UI的格栅布局可视化。如未指定，则默认为`false`。
     
   不可视化(`false`):
 
-  ![](img/Snipaste_2023-05-15_21-38-41.png)
+  ![](img/Snipaste_2023-05-16_01-53-37.png)
 
   可视化(`true`):
 
-  ![](img/Snipaste_2023-05-15_21-40-41.png)
+  ![](img/Snipaste_2023-05-16_01-54-12.png)
 
 ## xxx.ul
 
@@ -100,7 +100,7 @@ uc文件是UI的配置文件(UI configuration)，它的格式为json，包含了
 
 它的效果如下:
 
-![](img/Snipaste_2023-05-15_22-22-23.png)
+![](img/Snipaste_2023-05-16_01-55-36.png)
 
 ul文件是UI的页面布局文件(UI layout)，它的格式为json，包含了一个json array，array中每一项都是一个页面的布局信息。每一个页面的布局信息包含了以下几个字段:
 
@@ -108,9 +108,9 @@ ul文件是UI的页面布局文件(UI layout)，它的格式为json，包含了�
 * `id`: 页面的id，用于唯一标识一个页面。
 * `size`: 页面的栅格大小，格式为`[width, height]`。
 
-  例如`[3, 2]`表示页面的宽度为3，高度为2，即占据了2行3列的格栅:
+  例如`[3, 2]`表示页面的宽度为3，高度为2，即形成了2行3列的格栅:
 
-    ![](img/Snipaste_2023-05-15_21-57-44.png)
+    ![](img/Snipaste_2023-05-16_01-56-26.png)
 
 * `components`: 页面包含的所有组件。这是一个json array，array的每一项表示一个组件。每一个组件包含了以下几个字段:
   * `type`: [组件类型](#组件类型)，例如`Button`、`Label`、`Image`等等。
@@ -120,13 +120,13 @@ ul文件是UI的页面布局文件(UI layout)，它的格式为json，包含了�
 
     例如`[0, 1, 2, 1]`表示组件位于第2行第1列的格栅中，并且宽度占据2个格栅，高度占据1个格栅:
 
-    ![](img/Snipaste_2023-05-15_22-07-58.png)
+    ![](img/Snipaste_2023-05-16_01-58-23.png)
 
   * `align`: 组件的[对齐方式](#对齐方式)，例如`Center`、`North`、`NorthWest`等等。 
 
     例如`North`表示组件向上对齐:
 
-    ![](img/Snipaste_2023-05-15_22-16-02.png)
+    ![](img/Snipaste_2023-05-16_01-59-15.png)
 
 > 注意！ul文件第一个页面type必须是Window且id必须是main，这是UI的主窗口。
 

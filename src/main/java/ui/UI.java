@@ -8,6 +8,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
+import org.pushingpixels.radiance.theming.api.RadianceThemingCortex;
+import org.pushingpixels.radiance.theming.api.RadianceThemingSlices;
 import org.pushingpixels.radiance.theming.api.skin.*;
 import ui.struct.AlignType;
 import ui.struct.ComponentType;
@@ -168,7 +170,8 @@ public class UI {
 
         //设置主题
         try {
-            UIManager.setLookAndFeel("org.pushingpixels.radiance.theming.api.skin.Radiance" + theme.getValue() + "LookAndFeel");
+            JFrame.setDefaultLookAndFeelDecorated(true);
+            RadianceThemingCortex.GlobalScope.setSkin("org.pushingpixels.radiance.theming.api.skin." + theme.getValue() + "Skin");
         } catch (Exception e) {
             System.out.println("Radiance Graphite failed to initialize");
         }
@@ -212,7 +215,7 @@ public class UI {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
-                UI.Start("Resources/config/ui/demo.uc");
+                UI.Start("Resources/config/ui/test.uc");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
