@@ -36,6 +36,18 @@ UI.Start("Resources/config/ui/default.uc");
 
 ## xxx.uc
 
+这是一个uc文件的示例:
+
+```json
+{
+    "database_name": "test",
+    "database_port": 9092,
+    "layout_file": "Resources/config/ui/default.ul",
+    "property_file": "Resources/config/ui/default.up",
+    "grid_visible": true
+}
+```
+
 uc文件是UI的配置文件(UI configuration)，它的格式为json，包含了以下几个字段:
 
 * `databse_name`: 数据库名称。
@@ -52,49 +64,9 @@ uc文件是UI的配置文件(UI configuration)，它的格式为json，包含了
 
   ![](img/Snipaste_2023-05-15_21-40-41.png)
 
-下面是一个uc文件的示例:
-
-```json
-{
-    "database_name": "test",
-    "database_port": 9092,
-    "layout_file": "Resources/config/ui/default.ul",
-    "property_file": "Resources/config/ui/default.up",
-    "grid_visible": true
-}
-```
-
 ## xxx.ul
 
-ul文件是UI的页面布局文件(UI layout)，它的格式为json，包含了一个json array，array中每一项都是一个页面的布局信息。每一个页面的布局信息包含了以下几个字段:
-
-* `type`: 页面的类型，有两种类型，一种是`Window`，一种是`Panel`。
-* `id`: 页面的id，用于唯一标识一个页面。
-* `size`: 页面的栅格大小，格式为`[width, height]`。
-
-  例如`[3, 2]`表示页面的宽度为3，高度为2，即占据了2行3列的格栅:
-
-    ![](img/Snipaste_2023-05-15_21-57-44.png)
-
-* `components`: 页面包含的所有组件。这是一个json array，array的每一项表示一个组件。每一个组件包含了以下几个字段:
-  * `type`: [组件类型](#组件类型)，例如`Button`、`Label`、`Image`等等。
-  * `id`: 组件的id，用于唯一标识一个组件。
-  * `position`: 组件的位置，格式为`[x, y, w, h]`。`x`和`y`表示组件的格栅坐标，`w`和`h`表示组件占据的格栅宽度和高度。
-    > 注意在前端的坐标系中，原点在页面的左上角，x轴向右，y轴向下。
-
-    例如`[0, 1, 2, 1]`表示组件位于第2行第1列的格栅中，并且宽度占据2个格栅，高度占据1个格栅:
-
-    ![](img/Snipaste_2023-05-15_22-07-58.png)
-
-  * `align`: 组件的[对齐方式](#对齐方式)，例如`Center`、`North`、`NorthWest`等等。 
-
-    例如`NORTH`表示组件向上对齐:
-
-    ![](img/Snipaste_2023-05-15_22-16-02.png)
-
-> 注意！ul文件第一个页面type必须是Window且id必须是main，这是UI的主窗口。
-
-下面是一个ul文件的示例:
+这是一个ul文件的示例:
 
 ```json
 [
@@ -127,6 +99,34 @@ ul文件是UI的页面布局文件(UI layout)，它的格式为json，包含了�
 它的效果如下:
 
 ![](img/Snipaste_2023-05-15_22-22-23.png)
+
+ul文件是UI的页面布局文件(UI layout)，它的格式为json，包含了一个json array，array中每一项都是一个页面的布局信息。每一个页面的布局信息包含了以下几个字段:
+
+* `type`: 页面的类型，有两种类型，一种是`Window`，一种是`Panel`。
+* `id`: 页面的id，用于唯一标识一个页面。
+* `size`: 页面的栅格大小，格式为`[width, height]`。
+
+  例如`[3, 2]`表示页面的宽度为3，高度为2，即占据了2行3列的格栅:
+
+    ![](img/Snipaste_2023-05-15_21-57-44.png)
+
+* `components`: 页面包含的所有组件。这是一个json array，array的每一项表示一个组件。每一个组件包含了以下几个字段:
+  * `type`: [组件类型](#组件类型)，例如`Button`、`Label`、`Image`等等。
+  * `id`: 组件的id，用于唯一标识一个组件。
+  * `position`: 组件的位置，格式为`[x, y, w, h]`。`x`和`y`表示组件的格栅坐标，`w`和`h`表示组件占据的格栅宽度和高度。
+    > 注意在前端的坐标系中，原点在页面的左上角，x轴向右，y轴向下。
+
+    例如`[0, 1, 2, 1]`表示组件位于第2行第1列的格栅中，并且宽度占据2个格栅，高度占据1个格栅:
+
+    ![](img/Snipaste_2023-05-15_22-07-58.png)
+
+  * `align`: 组件的[对齐方式](#对齐方式)，例如`Center`、`North`、`NorthWest`等等。 
+
+    例如`NORTH`表示组件向上对齐:
+
+    ![](img/Snipaste_2023-05-15_22-16-02.png)
+
+> 注意！ul文件第一个页面type必须是Window且id必须是main，这是UI的主窗口。
 
 ## xxx.up
 
