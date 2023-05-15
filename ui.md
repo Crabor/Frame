@@ -225,17 +225,21 @@ ul文件是UI的页面布局文件(UI layout)，它的格式为json，包含了�
 
 `Business`:
 
-<div style="display: flex;">
-    <img src="img/business1.png" alt="Image 1" width="50%" />
-    <img src="img/business2.png" alt="Image 2" width="50%" />
-</div>
+  ![](img/business1.png)
+
+  ![](img/business2.png)
 
 `BusinessBlueSteel`:
 
-<div style="display: flex;">
-    <img src="img/businessbluesteel1.png" alt="Image 1" width="50%" />
-    <img src="img/businessbluesteel2.png" alt="Image 2" width="50%" />
-</div>
+  ![](img/businessbluesteel1.png)
+    
+  ![](img/businessbluesteel2.png)
+
+`BusinessBlackSteel`:
+
+  ![](img/businessblacksteel1.png)
+    
+  ![](img/businessblacksteel2.png)
 
 
 ## 常见问题
