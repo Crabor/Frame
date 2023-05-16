@@ -327,6 +327,11 @@ ua文件是UI的组件属性文件(UI attribute)，它的格式为json，包含�
   * `scroll`
 * `List`:
 * `Tree`:
+  * `background`
+  * `visible`
+  * `font`
+  * `dirs`
+  * `content`: 大小为`[m][n]`,其中`m`等于`dirs`的长度。
 * `BarChart`:
 * `PieChart`:
 * `LineChart`:
