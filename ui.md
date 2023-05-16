@@ -66,7 +66,7 @@ uc文件是UI的配置文件(UI configuration)，它的格式为json，包含了
 
   可视化(`true`):
 
-  ![](img/Snipaste_2023-05-16_01-54-12.png)
+  ![](img/Snipaste_2023-05-16_01-58-23.png)
 
 ## xxx.ul
 
