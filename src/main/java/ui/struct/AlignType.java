@@ -12,7 +12,7 @@ public enum AlignType {
     NORTHEAST(18);
 
 
-    private int value;
+    private final int value;
 
     private AlignType(int value) {
         this.value = value;

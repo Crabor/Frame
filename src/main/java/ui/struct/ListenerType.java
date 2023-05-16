@@ -35,7 +35,7 @@ public enum ListenerType {
     TOUCH_CANCEL("TouchCancel"),
     TIMER("Timer");
 
-    private String value;
+    private final String value;
 
     ListenerType(String value) {
         this.value = value;

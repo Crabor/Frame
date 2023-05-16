@@ -1,12 +1,8 @@
 package ui.component;
 
-import com.alibaba.fastjson.JSONObject;
-import common.util.Util;
 import ui.struct.ComponentType;
-import ui.struct.FontStyleType;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class TextField extends AbstractComponent {
     JTextArea textArea;
@@ -16,6 +12,7 @@ public class TextField extends AbstractComponent {
         textArea = new JTextArea();
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
+        setLinkComponent(textArea);
         setBaseComponent(textArea);
     }
 
@@ -25,8 +22,18 @@ public class TextField extends AbstractComponent {
     }
 
     @Override
+    public String getText() {
+        return textArea.getText();
+    }
+
+    @Override
     public void setColumnWidth(int columnWidth) {
         textArea.setColumns(columnWidth);
+    }
+
+    @Override
+    public String getColumnWidth() {
+        return String.valueOf(textArea.getColumns());
     }
 
     @Override
@@ -35,7 +42,17 @@ public class TextField extends AbstractComponent {
     }
 
     @Override
+    public String getRowHeight() {
+        return String.valueOf(textArea.getRows());
+    }
+
+    @Override
     public void setEditable(boolean editable) {
         textArea.setEditable(editable);
+    }
+
+    @Override
+    public String getEditable() {
+        return String.valueOf(textArea.isEditable());
     }
 }

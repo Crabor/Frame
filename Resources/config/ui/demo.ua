@@ -84,7 +84,7 @@
 					"type": "DatabaseGet",
 					"component_type": "Table",
 					"component_id": "AppTable",
-					"property": "content",
+					"attribute": "content",
 					"sql": "SELECT * FROM AppTable"
 				}
 			}
@@ -110,12 +110,12 @@
 		"listeners": [
 			{
 				"type": "Timer",
+				"freq": 1,
 				"action": {
 					"type": "DatabaseGet",
-					"freq": 1,
 					"component_type": "Table",
 					"component_id": "AppTable",
-					"property": "content",
+					"component_attribute": "content",
 					"sql": "SELECT * FROM AppTable"
 				}
 			}

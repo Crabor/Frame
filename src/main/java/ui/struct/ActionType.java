@@ -5,7 +5,7 @@ public enum ActionType {
     DATABASE_GET("DatabaseGet"),
     LAYOUT_CHANGE("LayoutChange");
 
-    private String value;
+    private final String value;
 
     ActionType(String value) {
         this.value = value;

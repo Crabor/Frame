@@ -11,7 +11,7 @@ DataBase我们采取的是`H2`的数据库，用于存储平台运行过程中�
 
 ## 启动数据库服务器
 
-首先保证再终端里可以使用Java，在终端输入`java --version`，如果有输出那就ok。
+首先保证在终端里可以使用Java，在终端输入`java --version`，如果有输出那就ok。
 
 然后在Terminal中转到`Resources/config/database`目录下，运行`java -cp h2-2.1.214.jar org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort $port`，启动数据库服务器，其中`$port`为数据库服务器端口号，可以自行指定。当终端显示`TCP server running at tcp://192.168.137.1:$port (others can connect)`时，表示数据库服务器启动成功。
 

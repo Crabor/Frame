@@ -160,7 +160,7 @@ public class UI {
         }
         logger.info("LayoutFile: " + layoutFile);
 
-        String propertyFile = config.getString("property_file");
+        String propertyFile = config.getString("attribute_file");
         if (propertyFile == null) {
             logger.error("PropertyFile is not set");
             exit(1);

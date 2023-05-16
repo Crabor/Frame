@@ -2,24 +2,13 @@
 	{
 		"type": "Window",
 		"id": "main",
-		"size": [3, 2],
+		"size": [5, 1],
 		"components": [
 			{
-				"type": "Label",
-				"id": "label1",
-				"position": [0, 1, 2, 1],
-				"align": "North"
-			},
-//			{
-//				"type": "Panel",
-//				"id": "panel1",
-//				"position": [2, 0, 1, 2]
-//			}
+				"type": "Button",
+				"id": "button1",
+				"position": [0, 0, 1, 1]
+			}
 		]
-	},
-//	{
-//		"type": "Panel",
-//		"id": "panel1",
-//		"size": [3, 5]
-//	}
+	}
 ]

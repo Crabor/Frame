@@ -6,6 +6,7 @@ import common.struct.enumeration.CmdType;
 import common.struct.enumeration.ServiceType;
 import reactor.util.function.Tuple3;
 import reactor.util.function.Tuples;
+import tk.pratanumandal.expr4j.ExpressionEvaluator;
 
 import java.awt.*;
 import java.io.*;
@@ -390,7 +391,29 @@ public class Util {
         return ret;
     }
 
+    public static String colorToString(Color color) {
+        int r = color.getRed();
+        int g = color.getGreen();
+        int b = color.getBlue();
+        return String.format("#%02x%02x%02x", r, g, b);
+    }
+
+    public static int[] stringArrayToIntArray(String[] positions) {
+        int[] ret = new int[positions.length];
+        for (int i = 0; i < positions.length; i++) {
+            ret[i] = (int)evaluate(positions[i]);
+        }
+        return ret;
+    }
+
+    public static ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator();
+    public static double evaluate(String expression) {
+        return expressionEvaluator.evaluate(expression);
+    }
+
     public static void main(String[] args) {
         System.out.println(lcmOfCollection(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)));
     }
+
+
 }

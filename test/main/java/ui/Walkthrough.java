@@ -25,6 +25,12 @@ public class Walkthrough extends JFrame {
                 SwingUtilities.updateComponentTreeUI(Walkthrough.this);
             }
         });
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("button clicked");
+            }
+        });
         this.add(button);
         this.add(new JCheckBox("check"));
         this.add(new JLabel("label"));

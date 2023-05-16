@@ -3,7 +3,8 @@ package ui.struct;
 public enum ScrollType {
     VERTICAL,
     HORIZONTAL,
-    BOTH;
+    BOTH,
+    NONE;
 
     public static ScrollType fromString(String typeStr) {
         for (ScrollType type : ScrollType.values()) {

@@ -14,4 +14,13 @@ public enum FontStyleType {
         }
         throw new IllegalArgumentException("No constant with text " + typeStr + " found");
     }
+
+    public static FontStyleType fromInt(int typeInt) {
+        for (FontStyleType type : FontStyleType.values()) {
+            if (type.ordinal() == typeInt) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("No constant with text " + typeInt + " found");
+    }
 }

@@ -6,40 +6,38 @@ import ui.UI;
 import ui.component.AbstractComponent;
 import ui.component.Table;
 import ui.struct.ComponentType;
-import ui.struct.PropertyType;
+import ui.struct.AttributeType;
 
-import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Locale;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class DatabaseGet implements Action {
-    AbstractComponent component;
-    PropertyType propertyType;
-    String sql;
+public class DatabaseGet extends AbstractAction {
     Lock lock = new ReentrantLock();
 
-    public DatabaseGet(JSONObject action) {
-        ComponentType componentType = ComponentType.fromString(action.getString("component_type"));
-        String componentId = action.getString("component_id");
-        component = UI.getComponent(componentType, componentId);
-        propertyType = PropertyType.fromString(action.getString("property"));
-        sql = action.getString("sql");
+    public DatabaseGet(AbstractComponent who, JSONObject action) {
+        super(who, action);
     }
 
     @Override
     public void execute() {
+        AbstractComponent component;
+        AttributeType attributeType;
+        String sql;
+        ComponentType componentType = ComponentType.fromString(who.eval(action.get("component_type").toString()));
+        String componentId = who.eval(action.get("component_id").toString());
+        component = UI.getComponent(componentType, componentId);
+        attributeType = AttributeType.fromString(who.eval(action.get("component_attribute").toString()));
+        sql = who.eval(action.get("sql").toString());
+
         lock.lock();
         ResultSet rs = Database.Get(sql);
         if (rs == null) {
             return;
         }
-        switch (propertyType) {
+        switch (attributeType) {
             case CONTENT:
                 if (component.getType() == ComponentType.TABLE) {
                     try {

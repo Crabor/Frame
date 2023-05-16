@@ -68,6 +68,9 @@ public abstract class AbstractLayout extends AbstractComponent {
 //            }
 //            System.out.println();
 //        }
+        if (component.parent != null) {
+            component.parent.removeComponent(component);
+        }
 
         removeComponent(gridX, gridY, gridWidth, gridHeight);
         removeBlank(gridX, gridY, gridWidth, gridHeight);
@@ -89,7 +92,7 @@ public abstract class AbstractLayout extends AbstractComponent {
             gbc.fill = GridBagConstraints.BOTH;
         }
         //System.out.println("gbc:" + gbc.gridx + " " + gbc.gridy + " " + gbc.gridwidth + " " + gbc.gridheight);
-        panel.add(component.getBaseComponent(), gbc);
+        panel.add(component.getLinkComponent(), gbc);
         if (logFlag) {
             logger.info(String.format("%s.setComponentPosition(%s, %d, %d, %d, %d, %s)",
                     this, component, gridX, gridY, gridWidth, gridHeight, align));
@@ -111,14 +114,14 @@ public abstract class AbstractLayout extends AbstractComponent {
     }
 
     public int[] getComponentPosition(AbstractComponent component) {
-        GridBagConstraints constraints = layout.getConstraints(component.getBaseComponent());
+        GridBagConstraints constraints = layout.getConstraints(component.getLinkComponent());
         //System.out.println("gbc:" + constraints.gridx + " " + constraints.gridy + " " + constraints.gridwidth + " "
         // + constraints.gridheight);
         return new int[]{constraints.gridx, constraints.gridy, constraints.gridwidth, constraints.gridheight};
     }
 
     public AlignType getComponentAlign(AbstractComponent component) {
-        GridBagConstraints constraints = layout.getConstraints(component.getBaseComponent());
+        GridBagConstraints constraints = layout.getConstraints(component.getLinkComponent());
         return AlignType.fromInt(constraints.anchor);
     }
 
@@ -139,7 +142,7 @@ public abstract class AbstractLayout extends AbstractComponent {
 //            System.out.println();
 //        }
         int[] position = getComponentPosition(component);
-        panel.remove(component.getBaseComponent());
+        panel.remove(component.getLinkComponent());
         component.setParent(null);
         for (int i = position[1]; i < position[1] + position[3]; i++) {
             for (int j = position[0]; j < position[0] + position[2]; j++) {
@@ -200,7 +203,7 @@ public abstract class AbstractLayout extends AbstractComponent {
                         } else {
                             blank = getBlankPanel();
                         }
-                        panel.add(blank.baseComponent, gbc);
+                        panel.add(blank.linkComponent, gbc);
                         children[i][j] = blank;
                     }
                 }
@@ -229,7 +232,7 @@ public abstract class AbstractLayout extends AbstractComponent {
             for (int i = gridY; i < gridY + gridHeight; i++) {
                 for (int j = gridX; j < gridX + gridWidth; j++) {
                     if (isBlankPanel(children[i][j])) {
-                        panel.remove(children[i][j].baseComponent);
+                        panel.remove(children[i][j].linkComponent);
                         blankCollection.push((Panel) children[i][j]);
                         children[i][j] = null;
                     }
@@ -258,7 +261,7 @@ public abstract class AbstractLayout extends AbstractComponent {
         blankIndex++;
         if (gridVisible) {
             //设置边框
-            ((JPanel)blankPanel.baseComponent).setBorder(BorderFactory.createLineBorder(Color.GRAY));
+            ((JPanel)blankPanel.linkComponent).setBorder(BorderFactory.createLineBorder(Color.GRAY));
         }
         return blankPanel;
     }
@@ -277,6 +280,9 @@ public abstract class AbstractLayout extends AbstractComponent {
         } else if (type == ScrollType.BOTH) {
             scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
             scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        } else if (type == ScrollType.NONE) {
+            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+            scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         }
     }
 
