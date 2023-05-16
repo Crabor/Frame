@@ -6,7 +6,6 @@ import common.struct.enumeration.CmdType;
 import common.struct.enumeration.ServiceType;
 import reactor.util.function.Tuple3;
 import reactor.util.function.Tuples;
-import tk.pratanumandal.expr4j.ExpressionEvaluator;
 
 import java.awt.*;
 import java.io.*;
@@ -401,15 +400,20 @@ public class Util {
     public static int[] stringArrayToIntArray(String[] positions) {
         int[] ret = new int[positions.length];
         for (int i = 0; i < positions.length; i++) {
-            ret[i] = (int)evaluate(positions[i]);
+            ret[i] = Integer.parseInt(positions[i]);
         }
         return ret;
     }
 
-    public static ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator();
-    public static double evaluate(String expression) {
-        return expressionEvaluator.evaluate(expression);
-    }
+//    public static ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator();
+//    public static double evaluate(String expression) {
+//        return expressionEvaluator.evaluate(expression);
+//    }
+
+//    public static JEP jep = new JEP();
+//    public static String evaluate(String expression) {
+//
+//    }
 
     public static void main(String[] args) {
         System.out.println(lcmOfCollection(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)));

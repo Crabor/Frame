@@ -6,11 +6,10 @@ import common.util.Util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.checkerframework.checker.units.qual.A;
-import tk.pratanumandal.expr4j.ExpressionEvaluator;
+import org.mvel2.MVEL;
 import ui.UI;
+import ui.action.*;
 import ui.action.Action;
-import ui.action.DatabaseGet;
-import ui.action.LayoutChange;
 import ui.listener.MouseClick;
 import ui.listener.TimerJob;
 import ui.struct.*;
@@ -18,8 +17,10 @@ import ui.struct.*;
 import javax.swing.*;
 import java.awt.*;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,7 +70,6 @@ public abstract class AbstractComponent {
         this.parent = parent;
     }
 
-    public static ExpressionEvaluator expr = new ExpressionEvaluator();
     public void setProperty(JSONObject jo) {
         //scroll
         try {
@@ -136,14 +136,14 @@ public abstract class AbstractComponent {
 
         //columnWidth
         try {
-            int columnWidth = (int)expr.evaluate(eval(jo.get("column_width").toString()));
+            int columnWidth = Integer.parseInt(eval(jo.get("column_width").toString()));
             setColumnWidth(columnWidth);
             logger.info(String.format("<%s,%s>.setColumnWidth(%s)", type, id, columnWidth));
         } catch (Exception ignored) {}
 
         //rowHeight
         try {
-            int rowHeight = (int)expr.evaluate(eval(jo.get("row_height").toString()));
+            int rowHeight = Integer.parseInt(eval(jo.get("row_height").toString()));
             setRowHeight(rowHeight);
             logger.info(String.format("<%s,%s>.setRowHeight(%s)", type, id, rowHeight));
         } catch (Exception ignored) {}
@@ -168,7 +168,7 @@ public abstract class AbstractComponent {
         try {
             String[] dirs = eval(Util.jsonArrayToStringArray(jo.getJSONArray("dirs")));
             setDirs(dirs);
-            logger.info(String.format("<%s,%s>.setDirs(%s)", type, id, Arrays.toString(dirs)));
+            logger.info(String.format("<%s,%s>.setDirs%s", type, id, Arrays.toString(dirs)));
         } catch (Exception ignored) {}
 
         //listeners
@@ -230,13 +230,22 @@ public abstract class AbstractComponent {
             case DATABASE_GET:
                 action = new DatabaseGet(this, actionObj);
                 break;
+            case DATABASE_SET:
+                action = new DatabaseSet(this, actionObj);
+                break;
+            case ATTRIBUTE_CHANGE:
+                action = new AttributeChange(this, actionObj);
+                break;
         }
         switch (listenerType) {
             case MOUSE_CLICK:
                 baseComponent.addMouseListener(new MouseClick(action));
                 break;
             case TIMER:
-                int sleepTime = 1000 / listener.getInteger("freq");
+                int sleepTime = 1000;
+                try {
+                    sleepTime = 1000 / listener.getInteger("freq");
+                } catch (Exception ignored) {}
                 Timer timer = new Timer(sleepTime, new TimerJob(action));
                 timer.start();
                 break;
@@ -324,7 +333,8 @@ public abstract class AbstractComponent {
             vars.add(matcher.group());
         }
         ArrayList<String> replace = new ArrayList<>();
-        vars.forEach(var -> {
+        boolean evaluate = true;
+        for (String var : vars) {
             String[] split = var.substring(2, var.length() - 1).split("\\.");
             AbstractComponent component = null;
             int index = 0;
@@ -335,10 +345,19 @@ public abstract class AbstractComponent {
             } catch (Exception e) {
                 component = this;
             }
+
             if (split[index].equalsIgnoreCase("type")) {
                 replace.add(component.type.toString());
             } else if (split[index].equalsIgnoreCase("id")) {
                 replace.add(component.id);
+            } else if (split[index].equalsIgnoreCase("systime")) {
+                //HH:MM:SS
+                replace.add(new SimpleDateFormat("HH:mm:ss").format(new Date()));
+                evaluate = false;
+            } else if (split[index].equalsIgnoreCase("systime_ms")) {
+                //HH:MM:SS:MS
+                replace.add(new SimpleDateFormat("HH:mm:ss:SSS").format(new Date()));
+                evaluate = false;
             } else {
                 AttributeType attributeType = AttributeType.fromString(split[index]);
                 switch (attributeType) {
@@ -392,10 +411,16 @@ public abstract class AbstractComponent {
                         break;
                 }
             }
-        });
+        }
         for (int i = 0; i < vars.size(); i++) {
             str = str.replace(vars.get(i), replace.get(i));
         }
-        return str;
+        String ret = str;
+        try {
+            if (evaluate) {
+                ret = String.valueOf(MVEL.eval(str));
+            }
+        } catch (Exception ignored) {}
+        return ret;
     }
 }

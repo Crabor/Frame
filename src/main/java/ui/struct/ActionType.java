@@ -3,7 +3,8 @@ package ui.struct;
 public enum ActionType {
     DATABASE_SET("DatabaseSet"),
     DATABASE_GET("DatabaseGet"),
-    LAYOUT_CHANGE("LayoutChange");
+    LAYOUT_CHANGE("LayoutChange"),
+    ATTRIBUTE_CHANGE("AttributeChange");
 
     private final String value;
 

@@ -30,7 +30,7 @@
       <root url="jar://$PROJECT_DIR$/lib/radiance-theming-6.5.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/radiance-common-6.5.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/radiance-animation-6.5.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/expr4j-0.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mvel2-2.4.15.Final.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
