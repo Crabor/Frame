@@ -13,5 +13,6 @@ public class DatabaseSet extends AbstractAction {
     public void execute() {
         String sql = who.eval(action.get("sql").toString());
         Database.Set(sql);
+        logger.info(String.format("[DATABASE_SET]: \"%s\"", sql));
     }
 }

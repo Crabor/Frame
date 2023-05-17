@@ -36,6 +36,9 @@ public class DatabaseGet extends AbstractAction {
         attributeType = AttributeType.fromString(who.eval(action.get("component_attribute").toString()));
         sql = who.eval(action.get("sql").toString());
 
+        //TODO: 完善输出
+        logger.info(String.format("[DATABASE_GET]: %s.%s = \"%s\"",component, attributeType, sql));
+
         lock.lock();
         ResultSet rs = Database.Get(sql);
         if (rs == null) {

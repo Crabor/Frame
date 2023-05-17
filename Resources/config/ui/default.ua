@@ -3,51 +3,79 @@
 		"type": "Window",
 		"id": "main",
 		"title": "Platform",
-		"width": 800,
-		"height": 600
+		"size": [800, 600]
 	},
 	{
-		"type": "Button",
-		"id": "welcomeButton",
+		"type": "Label",
+		"id": "welcomeLabel",
 		"text": "Welcome",
 		"font": ["Arial", "PLAIN", 40],
-		"listeners": {
-			"type": "MouseClick",
-			"action": {
-				"type": ""
-			},
-		}
+		"listeners": [
+			{
+				"type": "MouseClick",
+				"actions": [
+					{
+						"type": "LayoutChange",
+						"layout_type": "Window",
+						"layout_id": "main",
+						"component_type": "Tree",
+						"component_id": "NavigateTree",
+						"position": [0, 0, 1, 1],
+						"align": "North"
+					},
+					{
+						"type": "LayoutChange",
+						"layout_type": "Window",
+						"layout_id": "main",
+						"component_type": "Panel",
+						"component_id": "ContentPanel",
+						"position": [2, 0, 8, 1]
+					}
+				]
+			}
+		]
 	},
 	{
 		"type": "Tree",
 		"id": "NavigateTree",
-		"dirs": ["App", "Resource", "Service"]
+		"dirs": ["App", "Resource", "Service"],
+		"listeners": [
+			{
+				"type": "Timer",
+				"freq": 1,
+				"actions": [
+					{
+						"type": "DatabaseGet",
+						"component_type": "${type}",
+						"component_id": "${id}",
+						"component_attribute": "content",
+						"sql": "SELECT dir,file FROM ${id}"
+					}
+				]
+			}
+		]
 	},
 	{
 		"type": "Panel",
-		"id": "ContentPanel"
-	},
-	{
-		"type": "Panel",
-		"id": "AppPanel",
+		"id": "ContentPanel",
 		"scroll": "vertical"
 	},
 	{
 		"type": "Label",
-		"id": "App",
+		"id": "AppLabel",
 		"text": "APP",
 		"font": ["Arial", "BOLD", 30]
 	},
 	{
 		"type": "TextField",
-		"id": "Description",
+		"id": "AppDescription",
 		"text": "  This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.",
-		"columns": 60,
+		"column_width": 60,
 		"editable": false
 	},
 	{
 		"type": "Table",
 		"id": "AppTable",
-		"columns": ["id", "AppName", "Description", "Service", "Resource"]
+		"column_names": ["id", "AppName", "Description", "Service", "Resource"]
 	}
 ]

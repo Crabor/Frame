@@ -33,8 +33,27 @@ public class test {
 //        while (rs.next()) {
 //            System.out.println(rs.getInt("id") + " " + rs.getString("dir") + " " + rs.getString("file"));
 //        }
-        Database.Set("CREATE TABLE IF NOT EXISTS time (time VARCHAR(255) PRIMARY KEY)");
-        while (true);
+        Database.Set("CREATE TABLE IF NOT EXISTS NavigateTree (id INT PRIMARY KEY, dir VARCHAR(255), file VARCHAR(255))");
+        Database.Set("INSERT INTO NavigateTree VALUES (1, 'App', 'app1')");
+        Thread.sleep(2000);
+        Database.Set("INSERT INTO NavigateTree VALUES (2, 'App', 'app2')");
+        Thread.sleep(2000);
+        Database.Set("INSERT INTO NavigateTree VALUES (3, 'App', 'app3')");
+        Thread.sleep(2000);
+        Database.Set("INSERT INTO NavigateTree VALUES (4, 'Resource', 'resource1')");
+        Thread.sleep(2000);
+        Database.Set("INSERT INTO NavigateTree VALUES (5, 'Resource', 'resource2')");
+        Thread.sleep(2000);
+        Database.Set("INSERT INTO NavigateTree VALUES (6, 'Resource', 'resource3')");
+        Thread.sleep(2000);
+        Database.Set("INSERT INTO NavigateTree VALUES (7, 'Service', 'service1')");
+        Thread.sleep(2000);
+        Database.Set("INSERT INTO NavigateTree VALUES (8, 'Service', 'service2')");
+        Thread.sleep(2000);
+        Database.Set("INSERT INTO NavigateTree VALUES (9, 'Service', 'service3')");
+        Thread.sleep(2000);
+
+//        while (true);
 //        Database.Close();
     }
 }

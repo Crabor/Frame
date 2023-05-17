@@ -8,6 +8,8 @@ import ui.component.AbstractLayout;
 import ui.struct.AlignType;
 import ui.struct.ComponentType;
 
+import java.util.Arrays;
+
 public class LayoutChange extends AbstractAction {
     public LayoutChange(AbstractComponent who, JSONObject action) {
         super(who, action);
@@ -32,7 +34,9 @@ public class LayoutChange extends AbstractAction {
         } catch (Exception ignored) {}
 
         //TODO: 原组件被剔除，新组件加入
-        layout.setComponent(component, position[0], position[1], position[2], position[3], align, true);
+        layout.setComponent(component, position[0], position[1], position[2], position[3], align, false);
         layout.repaint();
+        logger.info(String.format("[LAYOUT_CHANGE]: %s.setComponentPosition(%s, %d, %d, %d, %d, %s)", layout, component,
+                position[0], position[1], position[2], position[3], align));
     }
 }

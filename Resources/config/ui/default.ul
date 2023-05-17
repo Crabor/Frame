@@ -5,8 +5,8 @@
 		"size": [10, 1],
 		"components": [
 			{
-				"type": "Button",
-				"id": "welcomeButton",
+				"type": "Label",
+				"id": "welcomeLabel",
 				"position": [0, 0, 10, 1]
 			}
 		]
@@ -30,13 +30,13 @@
 		"components": [
 			{
 				"type": "Label",
-				"id": "App",
+				"id": "AppLabel",
 				"position": [1, 0, 1, 1],
 				"align": "South"
 			},
 			{
 				"type": "TextField",
-				"id": "Description",
+				"id": "AppDescription",
 				"position": [1, 1, 1, 1],
 				"align": "North"
 			},

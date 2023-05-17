@@ -31,7 +31,7 @@
 						"type": "AttributeChange",
 						"component_type": "${type}",
 						"component_id": "${id}",
-						"attribute": "text",
+						"component_attribute": "text",
 						"value": "${systime}"
 					}
 				]

@@ -170,7 +170,7 @@ public class UI {
 
         //设置主题
         try {
-            JFrame.setDefaultLookAndFeelDecorated(true);
+//            JFrame.setDefaultLookAndFeelDecorated(true);
             RadianceThemingCortex.GlobalScope.setSkin("org.pushingpixels.radiance.theming.api.skin." + theme.getValue() + "Skin");
         } catch (Exception e) {
             System.out.println("Radiance Graphite failed to initialize");
@@ -215,7 +215,7 @@ public class UI {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
-                UI.Start("Resources/config/ui/test.uc");
+                UI.Start("Resources/config/ui/default.uc");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

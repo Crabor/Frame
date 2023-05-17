@@ -413,16 +413,68 @@ ua文件是UI的组件属性文件(UI attribute)，它的格式为json，包含�
 
 ### 动作执行(`ActionType`)
 
+* `AttributeChange`: 更改属性值。
+  * `type`: `AttributeChange`.
+  * `component_type`: 组件类型。
+  * `component_id`: 组件id。
+  * `component_attribute`: 组件属性。详见[组件属性](#组件属性attributetype)。
+  * `value`: 属性值。
+
+这是一个示例配置，表示每隔一秒将`button1`的`text`属性设置为系统时间。
+
+```json
+{
+  "type": "Button",
+  "id": "button1",
+  "text": "${systime}",
+  "listeners": [
+    {
+      "type": "Timer",
+      "freq": 1,
+      "actions": [
+        {
+          "type": "AttributeChange",
+          "component_type": "${type}",
+          "component_id": "${id}",
+          "component_attribute": "text",
+          "value": "${systime}"
+        }
+      ]
+    }
+  ]
+}
+```
+
 * `DatabaseSet`: 往数据库写数据。
   * `type`: `DatabaseSet`.
   * `sql`: 执行的具体`插入`、`更新`、`删除`sql语句。
 
-这是一个示例配置，表示每隔一秒向`time`表中插入当前系统时间。
+这是一个示例配置，表示每隔一秒设置`label1`的`text`为系统时间，并且将`text`写入数据库。
 
 ```json
 {
-  "type": "DatabaseSet",
-  "sql": "INSERT INTO time values (${systime})"
+  "type": "Label",
+  "id": "label1",
+  "text": "${systime}",
+  "listeners": [
+    {
+      "type": "Timer",
+      "freq": 1,
+      "actions": [
+        {
+          "type": "AttributeChange",
+          "component_type": "${type}",
+          "component_id": "${id}",
+          "component_attribute": "text",
+          "value": "${systime}"
+        },
+        {
+          "type": "DatabaseSet",
+          "sql": "insert into time values('${text}')"
+        }
+      ]
+    }
+  ]
 }
 ```
 
@@ -505,7 +557,7 @@ ua文件是UI的组件属性文件(UI attribute)，它的格式为json，包含�
             }
         }
     ]
-},
+}
 ```
 
 * `LayoutChange`: 布局更改。
@@ -515,8 +567,9 @@ ua文件是UI的组件属性文件(UI attribute)，它的格式为json，包含�
   * `component_type`: 组件类型。
   * `component_id`: 组件id。
   * `position`: 让组件在页面上按照`position`重新布局。格式为`[x, y, w, h]`。
+  * `align`: 组件对齐方式。例如`North`表示组件向上对齐。详见[组件对齐方式](#对齐方式aligntype)。
 
-这是一个示例配置，表示让当前组件重新布局在`id`为`main`的`Window`页面上，位置为`[1, 0, 1, 1]`:
+这是一个示例配置，表示让当前组件重新布局在`id`为`main`的`Window`页面上，位置为`[1, 0, 1, 1]`，居中对齐:
 
 ```json
 {
@@ -525,7 +578,8 @@ ua文件是UI的组件属性文件(UI attribute)，它的格式为json，包含�
     "layout_id": "main",
     "component_type": "${type}",
     "component_id": "${id}",
-    "position": [1, 0, 1, 1]
+    "position": [1, 0, 1, 1],
+    "align": "Center"
 }
 ```
 

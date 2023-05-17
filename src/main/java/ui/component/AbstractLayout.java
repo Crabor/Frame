@@ -69,10 +69,10 @@ public abstract class AbstractLayout extends AbstractComponent {
 //            System.out.println();
 //        }
         if (component.parent != null) {
-            component.parent.removeComponent(component);
+            component.parent.removeComponent(component, logFlag);
         }
 
-        removeComponent(gridX, gridY, gridWidth, gridHeight);
+        removeComponent(gridX, gridY, gridWidth, gridHeight, logFlag);
         removeBlank(gridX, gridY, gridWidth, gridHeight);
 
         component.setParent(this);
@@ -167,9 +167,13 @@ public abstract class AbstractLayout extends AbstractComponent {
     }
 
     public void removeComponent(int gridX, int gridY, int gridWidth, int gridHeight) {
+        removeComponent(gridX, gridY, gridWidth, gridHeight, true);
+    }
+
+    public void removeComponent(int gridX, int gridY, int gridWidth, int gridHeight, boolean logFlag) {
         for (int i = gridY; i < gridY + gridHeight; i++) {
             for (int j = gridX; j < gridX + gridWidth; j++) {
-                removeComponent(children[i][j]);
+                removeComponent(children[i][j], logFlag);
             }
         }
     }

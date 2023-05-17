@@ -2,6 +2,8 @@ package ui.listener;
 
 import com.alibaba.fastjson.JSONObject;
 import common.util.Util;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ui.UI;
 import ui.action.Action;
 import ui.component.AbstractComponent;
@@ -14,6 +16,7 @@ import java.awt.event.MouseListener;
 
 public class MouseClick implements MouseListener {
     Action action;
+    Log logger = LogFactory.getLog(MouseClick.class);
 
     public MouseClick(Action action) {
         this.action = action;
@@ -22,6 +25,7 @@ public class MouseClick implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 1) {
+            logger.info("[MOUSE_CLICK]: ");
             action.execute();
         }
     }
