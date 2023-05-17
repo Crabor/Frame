@@ -83,4 +83,8 @@ public class Window extends AbstractLayout {
     public void show() {
         frame.setVisible(true);
     }
+
+    public boolean isShow() {
+        return frame.isVisible();
+    }
 }

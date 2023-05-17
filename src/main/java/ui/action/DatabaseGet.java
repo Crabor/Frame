@@ -6,6 +6,7 @@ import ui.UI;
 import ui.component.AbstractComponent;
 import ui.component.Table;
 import ui.component.Tree;
+import ui.listener.TreeSelected;
 import ui.struct.ComponentType;
 import ui.struct.AttributeType;
 
@@ -81,7 +82,9 @@ public class DatabaseGet extends AbstractAction {
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
+                    TreeSelected treeSelectedListener = ((Tree)component).removeTreeSelectedListener();
                     ((Tree)component).getTreeModel().reload();
+                    ((Tree)component).setTreeSelectedListener(treeSelectedListener);
                     JTree tree = (JTree)(component.getBaseComponent());
                     for (int i = 0; i < tree.getRowCount(); i++) {
                         tree.expandRow(i);

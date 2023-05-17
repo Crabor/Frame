@@ -14,4 +14,9 @@ public abstract class AbstractAction implements Action {
         this.who = who;
         this.action = action;
     }
+
+    @Override
+    public AbstractComponent getWho() {
+        return who;
+    }
 }

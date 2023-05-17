@@ -1,11 +1,13 @@
 package ui.component;
 
+import ui.listener.TreeSelected;
 import ui.struct.ComponentType;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.util.ArrayList;
 
 public class Tree extends AbstractComponent {
@@ -13,6 +15,7 @@ public class Tree extends AbstractComponent {
     DefaultMutableTreeNode root;
     DefaultTreeModel treeModel;
     String[] dirs;
+    TreeSelected treeSelectedListener;
 
     public Tree(ComponentType type, String id) {
         super(type, id);
@@ -23,6 +26,7 @@ public class Tree extends AbstractComponent {
         tree.setRootVisible(false);
         tree.setShowsRootHandles(true);
         tree.expandPath(new TreePath(root.getPath()));
+        tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         setLinkComponent(tree);
         setBaseComponent(tree);
     }
@@ -43,7 +47,7 @@ public class Tree extends AbstractComponent {
 
     @Override
     public String getSelectedItem() {
-        return ((DefaultMutableTreeNode)tree.getLastSelectedPathComponent()).getUserObject().toString();
+        return tree.getLastSelectedPathComponent().toString();
     }
 
     @Override
@@ -57,6 +61,10 @@ public class Tree extends AbstractComponent {
         for (int i = 1; i < treePath.getPathCount(); i++) {
             list.add(treePath.getPathComponent(i).toString());
         }
+        //TODO:添加五个空格
+        for (int i = 0; i < 5; i++) {
+            list.add("");
+        }
         return list.toArray(new String[0]);
     }
 
@@ -66,5 +74,15 @@ public class Tree extends AbstractComponent {
 
     public DefaultTreeModel getTreeModel() {
         return treeModel;
+    }
+
+    public void setTreeSelectedListener(TreeSelected treeSelectedListener) {
+        this.treeSelectedListener = treeSelectedListener;
+        tree.addTreeSelectionListener(treeSelectedListener);
+    }
+
+    public TreeSelected removeTreeSelectedListener() {
+        tree.removeTreeSelectionListener(treeSelectedListener);
+        return treeSelectedListener;
     }
 }

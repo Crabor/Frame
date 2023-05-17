@@ -13,6 +13,19 @@
 	},
 	{
 		"type": "Panel",
+		"id": "SidePanel",
+		"size": [1, 5],
+		"components": [
+			{
+				"type": "Tree",
+				"id": "NavigateTree",
+				"position": [0, 0, 1, 1],
+				"align": "West"
+			}
+		]
+	},
+	{
+		"type": "Panel",
 		"id": "ContentPanel",
 		"size": [1, 1],
 		"components": [
@@ -55,6 +68,80 @@
 			{
 				"type": "Label",
 				"id": "AppDetailLabel",
+				"position": [1, 0, 1, 1],
+				"align": "South"
+			}
+		]
+	},
+	{
+		"type": "Panel",
+		"id": "ResourcePanel",
+		"size": [3, 5],
+		"components": [
+			{
+				"type": "Label",
+				"id": "ResourceLabel",
+				"position": [1, 0, 1, 1],
+				"align": "South"
+			},
+			{
+				"type": "TextField",
+				"id": "ResourceDescription",
+				"position": [1, 1, 1, 1],
+				"align": "North"
+			},
+			{
+				"type": "Table",
+				"id": "ResourceTable",
+				"position": [1, 2, 1, 1]
+			}
+		]
+	},
+	{
+		"type": "Panel",
+		"id": "ResourceDetailPanel",
+		"size": [3, 5],
+		"components": [
+			{
+				"type": "Label",
+				"id": "ResourceDetailLabel",
+				"position": [1, 0, 1, 1],
+				"align": "South"
+			}
+		]
+	},
+	{
+		"type": "Panel",
+		"id": "ServicePanel",
+		"size": [3, 5],
+		"components": [
+			{
+				"type": "Label",
+				"id": "ServiceLabel",
+				"position": [1, 0, 1, 1],
+				"align": "South"
+			},
+			{
+				"type": "TextField",
+				"id": "ServiceDescription",
+				"position": [1, 1, 1, 1],
+				"align": "North"
+			},
+			{
+				"type": "Table",
+				"id": "ServiceTable",
+				"position": [1, 2, 1, 1]
+			}
+		]
+	},
+	{
+		"type": "Panel",
+		"id": "ServiceDetailPanel",
+		"size": [3, 5],
+		"components": [
+			{
+				"type": "Label",
+				"id": "ServiceDetailLabel",
 				"position": [1, 0, 1, 1],
 				"align": "South"
 			}
