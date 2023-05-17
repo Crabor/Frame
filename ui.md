@@ -470,7 +470,7 @@ ua文件是UI的组件属性文件(UI attribute)，它的格式为json，包含�
         },
         {
           "type": "DatabaseSet",
-          "sql": "insert into time values('${text}')"
+          "sql": "INSERT INTO time VALUES('${text}')"
         }
       ]
     }
@@ -541,22 +541,24 @@ ua文件是UI的组件属性文件(UI attribute)，它的格式为json，包含�
 
 ```json
 {
-    "type": "Table",
-    "id": "AppTable",
-    "column_names": ["id", "ResourceName", "Description", "App"],
-    "listeners": [
+  "type": "Table",
+  "id": "AppTable",
+  "column_names": ["id", "ResourceName", "Description", "App"],
+  "listeners": [
+    {
+      "type": "Timer",
+      "freq": 1,
+      "actions": [
         {
-            "type": "Timer",
-            "freq": 1,
-            "action": {
-                "type": "DatabaseGet",
-                "component_type": "Table",
-                "component_id": "AppTable",
-                "component_attribute": "content",
-                "sql": "SELECT * FROM AppTable"
-            }
+          "type": "DatabaseGet",
+          "component_type": "Table",
+          "component_id": "AppTable",
+          "component_attribute": "content",
+          "sql": "SELECT * FROM AppTable"
         }
-    ]
+      ]
+    }
+  ]
 }
 ```
 
@@ -573,13 +575,25 @@ ua文件是UI的组件属性文件(UI attribute)，它的格式为json，包含�
 
 ```json
 {
-    "type": "LayoutChange",
-    "layout_type": "Window",
-    "layout_id": "main",
-    "component_type": "${type}",
-    "component_id": "${id}",
-    "position": [1, 0, 1, 1],
-    "align": "Center"
+  "type": "Label",
+  "id": "label1",
+  "text": "hello world",
+  "listeners": [
+    {
+      "type": "MouseClick",
+      "actions": [
+        {
+          "type": "LayoutChange",
+          "layout_type": "Window",
+          "layout_id": "main",
+          "component_type": "${type}",
+          "component_id": "${id}",
+          "position": [1, 0, 1, 1],
+          "align": "Center"
+        }
+      ]
+    }
+  ]
 }
 ```
 
