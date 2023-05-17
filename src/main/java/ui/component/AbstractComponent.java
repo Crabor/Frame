@@ -31,6 +31,7 @@ public abstract class AbstractComponent {
     protected Component linkComponent;
     protected Component baseComponent;
     protected AbstractLayout parent;
+    protected ArrayList<String> userVals = new ArrayList<>();
 
     protected AbstractComponent(ComponentType type, String id) {
         this.id = id;
@@ -71,89 +72,135 @@ public abstract class AbstractComponent {
     }
 
     public void setProperty(JSONObject jo) {
-        //scroll
-        try {
-            ScrollType scroll = ScrollType.fromString(eval(jo.get("scroll").toString()));
-            setScroll(scroll);
-            logger.info(String.format("<%s,%s>.setScroll(%s)", type, id, scroll));
-        } catch (Exception ignored) {}
-
-        //background
-        try {
-            Color color = Util.parseColor(eval(jo.get("background").toString()));
-            setBackground(color);
-            logger.info(String.format("<%s,%s>.setBackground(%s)", type, id, Util.colorToString(color)));
-        } catch (Exception ignored) {}
-
-        //font
-        try {
-            String[] font = eval(Util.jsonArrayToStringArray(jo.getJSONArray("font")));
-            String fontName = font[0];
-            FontStyleType fontStyle = FontStyleType.fromString(font[1]);
-            int fontSize = Integer.parseInt(font[2]);
-            setFont(new Font(fontName, fontStyle.ordinal(), fontSize));
-            logger.info(String.format("<%s,%s>.setFont%s", type, id, Arrays.toString(font)));
-        } catch (Exception ignored) {}
-
-        //visible
-        try {
-            boolean visible = Boolean.parseBoolean(eval(jo.get("visible").toString()));
-            setVisible(visible);
-            logger.info(String.format("<%s,%s>.setVisible(%s)", type, id, visible));
-        } catch (Exception ignored) {}
-
-        //size
-        try {
-            String[] size = eval(Util.jsonArrayToStringArray(jo.getJSONArray("size")));
-            int width = Integer.parseInt(size[0]);
-            int height = Integer.parseInt(size[1]);
-            setSize(width, height);
-            logger.info(String.format("<%s,%s>.setSize%s", type, id, Arrays.toString(size)));
-        } catch (Exception ignored) {}
-
-        //title
-        try {
-            String title = eval(jo.get("title").toString());
-            setTitle(title);
-            logger.info(String.format("<%s,%s>.setTitle(%s)", type, id, title));
-        } catch (Exception ignored) {}
-
-        //text
-        try {
-            String text = eval(jo.get("text").toString());
-            if (text != null) {
-                setText(text);
-                logger.info(String.format("<%s,%s>.setText(%s)", type, id, text));
+        for (String key : jo.keySet()) {
+            if (key.equalsIgnoreCase("scroll")) {
+                //scroll
+                try {
+                    ScrollType scroll = ScrollType.fromString(eval(jo.get("scroll").toString()));
+                    setScroll(scroll);
+                    logger.info(String.format("<%s,%s>.setScroll(%s)", type, id, scroll));
+                } catch (Exception ignored) {
+                }
+            } else if (key.equalsIgnoreCase("background")) {
+                //background
+                try {
+                    Color color = Util.parseColor(eval(jo.get("background").toString()));
+                    setBackground(color);
+                    logger.info(String.format("<%s,%s>.setBackground(%s)", type, id, Util.colorToString(color)));
+                } catch (Exception ignored) {
+                }
+            } else if (key.equalsIgnoreCase("visible")) {
+                //visible
+                try {
+                    boolean visible = Boolean.parseBoolean(eval(jo.get("visible").toString()));
+                    setVisible(visible);
+                    logger.info(String.format("<%s,%s>.setVisible(%s)", type, id, visible));
+                } catch (Exception ignored) {
+                }
+            } else if (key.equalsIgnoreCase("title")) {
+                //title
+                try {
+                    String title = eval(jo.get("title").toString());
+                    setTitle(title);
+                    logger.info(String.format("<%s,%s>.setTitle(%s)", type, id, title));
+                } catch (Exception ignored) {
+                }
+            } else if (key.equalsIgnoreCase("text")) {
+                //text
+                try {
+                    String text = eval(jo.get("text").toString());
+                    if (text != null) {
+                        setText(text);
+                        logger.info(String.format("<%s,%s>.setText(%s)", type, id, text));
+                    }
+                } catch (Exception ignored) {
+                }
+            } else if (key.equalsIgnoreCase("column_width")) {
+                //columnWidth
+                try {
+                    int columnWidth = Integer.parseInt(eval(jo.get("column_width").toString()));
+                    setColumnWidth(columnWidth);
+                    logger.info(String.format("<%s,%s>.setColumnWidth(%s)", type, id, columnWidth));
+                } catch (Exception ignored) {
+                }
+            } else if (key.equalsIgnoreCase("row_height")) {
+                //rowHeight
+                try {
+                    int rowHeight = Integer.parseInt(eval(jo.get("row_height").toString()));
+                    setRowHeight(rowHeight);
+                    logger.info(String.format("<%s,%s>.setRowHeight(%s)", type, id, rowHeight));
+                } catch (Exception ignored) {
+                }
+            } else if (key.equalsIgnoreCase("editable")) {
+                //editable
+                try {
+                    boolean editable = Boolean.parseBoolean(eval(jo.get("editable").toString()));
+                    setEditable(editable);
+                    logger.info(String.format("<%s,%s>.setEditable(%s)", type, id, editable));
+                } catch (Exception ignored) {
+                }
+            } else if (key.equalsIgnoreCase("size")) {
+                //size
+                try {
+                    String[] size = eval(Util.jsonArrayToStringArray(jo.getJSONArray("size")));
+                    int width = Integer.parseInt(size[0]);
+                    int height = Integer.parseInt(size[1]);
+                    setSize(width, height);
+                    logger.info(String.format("<%s,%s>.setSize%s", type, id, Arrays.toString(size)));
+                } catch (Exception ignored) {
+                }
+            } else if (key.equalsIgnoreCase("font")) {
+                //font
+                try {
+                    String[] font = eval(Util.jsonArrayToStringArray(jo.getJSONArray("font")));
+                    String fontName = font[0];
+                    FontStyleType fontStyle = FontStyleType.fromString(font[1]);
+                    int fontSize = Integer.parseInt(font[2]);
+                    setFont(new Font(fontName, fontStyle.ordinal(), fontSize));
+                    logger.info(String.format("<%s,%s>.setFont%s", type, id, Arrays.toString(font)));
+                } catch (Exception ignored) {
+                }
+            } else if (key.equalsIgnoreCase("column_names")) {
+                //columnNames
+                try {
+                    String[] columnNames = eval(Util.jsonArrayToStringArray(jo.getJSONArray("column_names")));
+                    setColumnNames(columnNames);
+                    logger.info(String.format("<%s,%s>.setColumnNames%s", type, id, Arrays.toString(columnNames)));
+                } catch (Exception ignored) {
+                }
+            } else if (key.equalsIgnoreCase("dirs")) {
+                //dirs
+                try {
+                    String[] dirs = eval(Util.jsonArrayToStringArray(jo.getJSONArray("dirs")));
+                    setDirs(dirs);
+                    logger.info(String.format("<%s,%s>.setDirs%s", type, id, Arrays.toString(dirs)));
+                } catch (Exception ignored) {
+                }
+            } else if (key.equalsIgnoreCase("user_vals")) {
+                //userVals
+                try {
+                    String[] userVals = eval(Util.jsonArrayToStringArray(jo.getJSONArray("user_vals")));
+                    setUserVals(userVals);
+                    logger.info(String.format("<%s,%s>.setUserVals%s", type, id, Arrays.toString(userVals)));
+                } catch (Exception ignored) {
+                }
+            } else if (key.equalsIgnoreCase("listeners")) {
+                //listeners
+                try {
+                    JSONArray listeners = jo.getJSONArray("listeners");
+                    for (Object o : listeners) {
+                        JSONObject listener = (JSONObject) o;
+                        ListenerType listenerType = ListenerType.fromString(listener.getString("type"));
+                        JSONObject action = listener.getJSONObject("action");
+                        String actionType = action.getString("type");
+                        setListener(listener);
+                        logger.info(String.format("<%s,%s>.setListener(%s,%s)", type, id, listenerType, actionType));
+                    }
+                } catch (Exception ignored) {
+                }
             }
-        } catch (Exception ignored) {}
+        }
 
-        //columnNames
-        try {
-            String[] columnNames = eval(Util.jsonArrayToStringArray(jo.getJSONArray("column_names")));
-            setColumnNames(columnNames);
-            logger.info(String.format("<%s,%s>.setColumnNames%s", type, id, Arrays.toString(columnNames)));
-        } catch (Exception ignored) {}
-
-        //columnWidth
-        try {
-            int columnWidth = Integer.parseInt(eval(jo.get("column_width").toString()));
-            setColumnWidth(columnWidth);
-            logger.info(String.format("<%s,%s>.setColumnWidth(%s)", type, id, columnWidth));
-        } catch (Exception ignored) {}
-
-        //rowHeight
-        try {
-            int rowHeight = Integer.parseInt(eval(jo.get("row_height").toString()));
-            setRowHeight(rowHeight);
-            logger.info(String.format("<%s,%s>.setRowHeight(%s)", type, id, rowHeight));
-        } catch (Exception ignored) {}
-
-        //editable
-        try {
-            boolean editable = Boolean.parseBoolean(eval(jo.get("editable").toString()));
-            setEditable(editable);
-            logger.info(String.format("<%s,%s>.setEditable(%s)", type, id, editable));
-        } catch (Exception ignored) {}
 
         //content
 //        try {
@@ -164,25 +211,7 @@ public abstract class AbstractComponent {
 //            }
 //        } catch (Exception ignored) {}
 
-        //dirs
-        try {
-            String[] dirs = eval(Util.jsonArrayToStringArray(jo.getJSONArray("dirs")));
-            setDirs(dirs);
-            logger.info(String.format("<%s,%s>.setDirs%s", type, id, Arrays.toString(dirs)));
-        } catch (Exception ignored) {}
 
-        //listeners
-        try {
-            JSONArray listeners = jo.getJSONArray("listeners");
-            for (Object o : listeners) {
-                JSONObject listener = (JSONObject) o;
-                ListenerType listenerType = ListenerType.fromString(listener.getString("type"));
-                JSONObject action = listener.getJSONObject("action");
-                String actionType = action.getString("type");
-                setListener(listener);
-                logger.info(String.format("<%s,%s>.setListener(%s,%s)", type, id, listenerType, actionType));
-            }
-        } catch (Exception ignored) {}
     }
 
     public void setBackground(Color color) {
@@ -218,38 +247,44 @@ public abstract class AbstractComponent {
         return new String[]{String.valueOf(baseComponent.getWidth()), String.valueOf(baseComponent.getHeight())};
     }
 
-    public void setListener(JSONObject listener) {
-        ListenerType listenerType = ListenerType.fromString(listener.getString("type"));
-        JSONObject actionObj = listener.getJSONObject("action");
-        Action action = null;
-        ActionType actionType = ActionType.fromString(actionObj.getString("type"));
-        switch (actionType) {
-            case LAYOUT_CHANGE:
-                action = new LayoutChange(this, actionObj);
-                break;
-            case DATABASE_GET:
-                action = new DatabaseGet(this, actionObj);
-                break;
-            case DATABASE_SET:
-                action = new DatabaseSet(this, actionObj);
-                break;
-            case ATTRIBUTE_CHANGE:
-                action = new AttributeChange(this, actionObj);
-                break;
+    public void setUserVals(String[] userVals) {
+        this.userVals = new ArrayList<>(Arrays.asList(userVals));
+    }
+
+    public String[] getUserVals() {
+        return userVals.toArray(new String[0]);
+    }
+
+    public void setUserVal(int index, String val) {
+        int size = userVals.size();
+        if (index < size) {
+            userVals.set(index, val);
+        } else {
+            for (int i = size; i < index; i++) {
+                userVals.add("");
+            }
+            userVals.add(val);
         }
-        switch (listenerType) {
-            case MOUSE_CLICK:
-                baseComponent.addMouseListener(new MouseClick(action));
-                break;
-            case TIMER:
-                int sleepTime = 1000;
-                try {
-                    sleepTime = 1000 / listener.getInteger("freq");
-                } catch (Exception ignored) {}
-                Timer timer = new Timer(sleepTime, new TimerJob(action));
-                timer.start();
-                break;
+    }
+
+    public String getUserVal(int index) {
+        int size = userVals.size();
+        String ret;
+        if (index < size) {
+            ret = userVals.get(index);
+        } else {
+            for (int i = size; i <= index; i++) {
+                userVals.add("");
+            }
+            ret = "";
         }
+        return ret;
+    }
+
+    //layout attributes
+    public String[] getPosition() {
+        int[] position = parent.getComponentPosition(this);
+        return new String[]{String.valueOf(position[0]), String.valueOf(position[1]), String.valueOf(position[2]), String.valueOf(position[3])};
     }
 
     public void setScroll(ScrollType type) {}
@@ -306,10 +341,38 @@ public abstract class AbstractComponent {
         return null;
     }
 
-    //layout attributes
-    public String[] getPosition() {
-        int[] position = parent.getComponentPosition(this);
-        return new String[]{String.valueOf(position[0]), String.valueOf(position[1]), String.valueOf(position[2]), String.valueOf(position[3])};
+    public void setListener(JSONObject listener) {
+        ListenerType listenerType = ListenerType.fromString(listener.getString("type"));
+        JSONObject actionObj = listener.getJSONObject("action");
+        Action action = null;
+        ActionType actionType = ActionType.fromString(actionObj.getString("type"));
+        switch (actionType) {
+            case LAYOUT_CHANGE:
+                action = new LayoutChange(this, actionObj);
+                break;
+            case DATABASE_GET:
+                action = new DatabaseGet(this, actionObj);
+                break;
+            case DATABASE_SET:
+                action = new DatabaseSet(this, actionObj);
+                break;
+            case ATTRIBUTE_CHANGE:
+                action = new AttributeChange(this, actionObj);
+                break;
+        }
+        switch (listenerType) {
+            case MOUSE_CLICK:
+                baseComponent.addMouseListener(new MouseClick(action));
+                break;
+            case TIMER:
+                int sleepTime = 1000;
+                try {
+                    sleepTime = 1000 / listener.getInteger("freq");
+                } catch (Exception ignored) {}
+                Timer timer = new Timer(sleepTime, new TimerJob(action));
+                timer.start();
+                break;
+        }
     }
 
     @Override
@@ -404,6 +467,9 @@ public abstract class AbstractComponent {
                     case POSITION:
                         String[] position = component.getPosition();
                         replace.add(position[Integer.parseInt(split[index + 1])]);
+                        break;
+                    case USER_VALS:
+                        replace.add(getUserVal(Integer.parseInt(split[index + 1])));
                         break;
                     case CONTENT:
                         String[][] content = component.getContent();

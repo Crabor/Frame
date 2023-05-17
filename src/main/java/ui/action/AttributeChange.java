@@ -57,25 +57,29 @@ public class AttributeChange extends AbstractAction {
                 component.setEditable(editable);
                 break;
             case SIZE:
-                String[] size = who.eval(Util.jsonArrayToStringArray(action.getJSONArray("size")));
+                String[] size = who.eval(Util.jsonArrayToStringArray(action.getJSONArray("value")));
                 int width = Integer.parseInt(size[0]);
                 int height = Integer.parseInt(size[1]);
                 component.setSize(width, height);
                 break;
             case FONT:
-                String[] font = who.eval(Util.jsonArrayToStringArray(action.getJSONArray("font")));
+                String[] font = who.eval(Util.jsonArrayToStringArray(action.getJSONArray("value")));
                 String fontName = font[0];
                 FontStyleType fontStyle = FontStyleType.fromString(font[1]);
                 int fontSize = Integer.parseInt(font[2]);
                 component.setFont(new Font(fontName, fontStyle.ordinal(), fontSize));
                 break;
             case COLUMN_NAMES:
-                String[] columnNames = who.eval(Util.jsonArrayToStringArray(action.getJSONArray("column_names")));
+                String[] columnNames = who.eval(Util.jsonArrayToStringArray(action.getJSONArray("value")));
                 component.setColumnNames(columnNames);
                 break;
             case DIRS:
-                String[] dirs = who.eval(Util.jsonArrayToStringArray(action.getJSONArray("dirs")));
+                String[] dirs = who.eval(Util.jsonArrayToStringArray(action.getJSONArray("value")));
                 component.setDirs(dirs);
+                break;
+            case USER_VALS:
+                String[] userVals = who.eval(Util.jsonArrayToStringArray(action.getJSONArray("value")));
+                component.setUserVals(userVals);
                 break;
         }
     }

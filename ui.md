@@ -281,6 +281,7 @@ ua文件是UI的组件属性文件(UI attribute)，它的格式为json，包含�
 * `column_names`: 列名。格式为`[column_name1, column_name2, ...]`。
 * `dirs`: 目录。格式为`[dir1, dir2, ...]`。
 * `position`: 位置。格式为`[x, y, w, h]`。`x`和`y`表示组件的坐标,`w`和`h`表示组件的宽度和高度。详细介绍请看[xxx.ul](#xxxul)章节
+* `user_vals`: 用户值。格式为`[user_val1, user_val2, ...]`。该属性和前端无关，只是为了方便用户存储变量而已。
 
 #### Matrix属性
 
@@ -294,15 +295,18 @@ ua文件是UI的组件属性文件(UI attribute)，它的格式为json，包含�
   * `title`
   * `size`
   * `scroll`
+  * `user_vals`
 * `Panel`:
   * `background`
   * `visible`
   * `scroll`
+  * `user_vals`
 * `Label`: 
   * `background`
   * `visible`
   * `font`
   * `text`
+  * `user_vals`
 * `TextField`:
   * `background`
   * `visible`
@@ -311,13 +315,17 @@ ua文件是UI的组件属性文件(UI attribute)，它的格式为json，包含�
   * `editable`
   * `column_width`
   * `row_height`
+  * `user_vals`
 * `Button`:
   * `background`
   * `visible`
   * `font`
   * `text`
+  * `user_vals`
 * `CheckBox`:
+  * `user_vals`
 * `ComboBox`:
+  * `user_vals`
 * `Table`:
   * `background`
   * `visible`
@@ -325,17 +333,24 @@ ua文件是UI的组件属性文件(UI attribute)，它的格式为json，包含�
   * `column_names`
   * `content`: 大小为`[m][n]`,其中`n`等于`column_names`的长度。
   * `scroll`
+  * `user_vals`
 * `List`:
+  `user_vals`
 * `Tree`:
   * `background`
   * `visible`
   * `font`
   * `dirs`
   * `content`: 大小为`[m][n]`,其中`m`等于`dirs`的长度。
+  * `user_vals`
 * `BarChart`:
+  * `user_vals`
 * `PieChart`:
+  * `user_vals`
 * `LineChart`:
+  * `user_vals`
 * `Image`:
+  * `user_vals` 
 
 ### 对齐方式(`AlignType`)
 

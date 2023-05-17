@@ -18,6 +18,7 @@ public enum AttributeType {
     COLUMN_NAMES("column_names"),
     DIRS("dirs"),
     POSITION("position"),
+    USER_VALS("user_vals"),//这个属性和UI显示无关，用于存储用户变量
     //Matrix
     CONTENT("content");
 

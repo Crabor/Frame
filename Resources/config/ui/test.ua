@@ -8,8 +8,19 @@
 	{
 		"type": "Button",
 		"id": "button1",
-		"text": "${systime}",
+		"user_vals": [0],
+		"text": "${user_vals.0}",
 		"listeners": [
+			{
+				"type": "MouseClick",
+				"action": {
+					"type": "AttributeChange",
+					"component_type": "${type}",
+					"component_id": "${id}",
+					"attribute": "user_vals",
+					"value": ["${user_vals.0} + 1"]
+				}
+			},
 //			{
 //				"type": "MouseClick",
 //				"action": {
@@ -21,24 +32,34 @@
 //					"position": ["(${position.0} + 1) % 5", 0, 1, 1]
 //				}
 //			},
+//			{
+//				"type": "MouseClick",
+//				"action": {
+//					"type": "DatabaseSet",
+//					"sql": "INSERT INTO time (time) VALUES ('${systime}')"
+//				}
+//			},
 			{
 				"type": "MouseClick",
-				"action": {
-					"type": "DatabaseSet",
-					"sql": "INSERT INTO time (time) VALUES ('${systime}')"
-				}
-			},
-			{
-				"type": "Timer",
-				"freq": 1,
 				"action": {
 					"type": "AttributeChange",
 					"component_type": "${type}",
 					"component_id": "${id}",
 					"attribute": "text",
-					"value": "${systime}"
+					"value": "${user_vals.0}"
 				}
-			}
+			},
+//			{
+//				"type": "Timer",
+//				"freq": 1,
+//				"action": {
+//					"type": "AttributeChange",
+//					"component_type": "${type}",
+//					"component_id": "${id}",
+//					"attribute": "user_vals",
+//					"value": ["${user_vals.0} + 1"]
+//				}
+//			}
 		]
 	},
 //	{
@@ -59,22 +80,22 @@
 //			}
 //		]
 //	},
-	{
-		"type": "Table",
-		"id": "table1",
-		"column_names": ["time"],
-		"listeners": [
-			{
-				"type": "Timer",
-				"freq": 1,
-				"action": {
-					"type": "DatabaseGet",
-					"component_type": "${type}",
-					"component_id": "${id}",
-					"component_attribute": "content",
-					"sql": "SELECT * FROM time"
-				}
-			}
-		]
-	}
+//	{
+//		"type": "Table",
+//		"id": "table1",
+//		"column_names": ["time"],
+//		"listeners": [
+//			{
+//				"type": "Timer",
+//				"freq": 1,
+//				"action": {
+//					"type": "DatabaseGet",
+//					"component_type": "${type}",
+//					"component_id": "${id}",
+//					"component_attribute": "content",
+//					"sql": "SELECT * FROM time"
+//				}
+//			}
+//		]
+//	}
 ]
