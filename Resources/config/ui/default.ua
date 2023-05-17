@@ -52,6 +52,18 @@
 						"sql": "SELECT dir,file FROM ${id}"
 					}
 				]
+			},
+			{
+				"type": "ItemSelect",
+				"actions": [
+					{
+						"type": "AttributeChange",
+						"component_type": "Panel",
+						"component_id": "ContentPanel",
+						"component_attribute": "user_vals",
+						"value": ["(`${selected_item}` == 'App' || `${selected_item}` == 'Resource' || `${selected_item}` == 'Service') ? `${selected_item}` : (${selected_path.0})"]
+					}
+				]
 			}
 		]
 	},
@@ -77,5 +89,25 @@
 		"type": "Table",
 		"id": "AppTable",
 		"column_names": ["id", "AppName", "Description", "Service", "Resource"]
+	},
+	{
+		"type": "Label",
+		"id": "AppDetailLabel",
+		"font": ["Arial", "BOLD", 30],
+		"listeners": [
+			{
+				"type": "Timer",
+				"freq": 1,
+				"actions": [
+					{
+						"type": "AttributeChange",
+						"component_type": "${type}",
+						"component_id": "${id}",
+						"component_attribute": "text",
+						"value": "${Panel.AppDetailPanel.user_vals.0}}"
+					}
+				]
+			}
+		]
 	}
 ]

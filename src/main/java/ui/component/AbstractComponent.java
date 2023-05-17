@@ -12,6 +12,7 @@ import ui.action.*;
 import ui.action.Action;
 import ui.listener.MouseClick;
 import ui.listener.TimerJob;
+import ui.listener.TreeSelected;
 import ui.struct.*;
 
 import javax.swing.*;
@@ -286,6 +287,10 @@ public abstract class AbstractComponent {
         return null;
     }
 
+    public String getSelectedItem() {
+        return null;
+    }
+
     public void setColumnNames(String[] columnNames) {}
 
     public String[] getColumnNames() {
@@ -322,6 +327,10 @@ public abstract class AbstractComponent {
         return null;
     }
 
+    public String[] getSelectedPath() {
+        return null;
+    }
+
     public void setListener(JSONObject listener) {
         ListenerType listenerType = ListenerType.fromString(listener.getString("type"));
         JSONArray actions = listener.getJSONArray("actions");
@@ -354,6 +363,11 @@ public abstract class AbstractComponent {
                     } catch (Exception ignored) {}
                     Timer timer = new Timer(sleepTime, new TimerJob(action));
                     timer.start();
+                    break;
+                case ITEM_SELECT:
+                    if (this instanceof Tree) {
+                        ((JTree)baseComponent).addTreeSelectionListener(new TreeSelected(action));
+                    }
                     break;
             }
         }
@@ -432,6 +446,9 @@ public abstract class AbstractComponent {
                     case EDITABLE:
                         replace.add(component.getEditable());
                         break;
+                    case SELECTED_ITEM:
+                        replace.add(component.getSelectedItem());
+                        break;
                     case SIZE:
                         String[] size = component.getSize();
                         replace.add(size[Integer.parseInt(split[index + 1])]);
@@ -447,6 +464,10 @@ public abstract class AbstractComponent {
                     case DIRS:
                         String[] dirs = component.getDirs();
                         replace.add(dirs[Integer.parseInt(split[index + 1])]);
+                        break;
+                    case SELECTED_PATH:
+                        String[] selectedPath = component.getSelectedPath();
+                        replace.add(selectedPath[Integer.parseInt(split[index + 1])]);
                         break;
                     case POSITION:
                         String[] position = component.getPosition();

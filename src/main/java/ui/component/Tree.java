@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import java.util.ArrayList;
 
 public class Tree extends AbstractComponent {
     JTree tree;
@@ -38,6 +39,25 @@ public class Tree extends AbstractComponent {
     @Override
     public String[] getDirs() {
         return dirs;
+    }
+
+    @Override
+    public String getSelectedItem() {
+        return ((DefaultMutableTreeNode)tree.getLastSelectedPathComponent()).getUserObject().toString();
+    }
+
+    @Override
+    public String[] getSelectedPath() {
+        TreePath treePath = tree.getSelectionPath();
+        if (treePath == null) {
+            return null;
+        }
+        ArrayList<String> list = new ArrayList<>();
+        //把treePath中的除了根节点各个节点添加到list中
+        for (int i = 1; i < treePath.getPathCount(); i++) {
+            list.add(treePath.getPathComponent(i).toString());
+        }
+        return list.toArray(new String[0]);
     }
 
     public DefaultMutableTreeNode getRoot() {

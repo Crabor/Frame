@@ -12,6 +12,7 @@ public enum AttributeType {
     COLUMN_WIDTH("column_width"),
     ROW_HEIGHT("row_height"),
     EDITABLE("editable"),
+    SELECTED_ITEM("selected_item"),
     //List
     SIZE("size"),
     FONT("font"),
@@ -19,6 +20,7 @@ public enum AttributeType {
     DIRS("dirs"),
     POSITION("position"),
     USER_VALS("user_vals"),//这个属性和UI显示无关，用于存储用户变量
+    SELECTED_PATH("selected_path"),
     //Matrix
     CONTENT("content");
 

@@ -33,6 +33,7 @@ public enum ListenerType {
     TOUCH_MOVE("TouchMove"),
     TOUCH_END("TouchEnd"),
     TOUCH_CANCEL("TouchCancel"),
+    ITEM_SELECT("ItemSelect"),
     TIMER("Timer");
 
     private final String value;

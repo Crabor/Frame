@@ -46,5 +46,18 @@
 				"position": [1, 2, 1, 1]
 			}
 		]
+	},
+	{
+		"type": "Panel",
+		"id": "AppDetailPanel",
+		"size": [3, 5],
+		"components": [
+			{
+				"type": "Label",
+				"id": "AppDetailLabel",
+				"position": [1, 0, 1, 1],
+				"align": "South"
+			}
+		]
 	}
 ]
