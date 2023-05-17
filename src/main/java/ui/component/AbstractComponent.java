@@ -191,10 +191,12 @@ public abstract class AbstractComponent {
                     for (Object o : listeners) {
                         JSONObject listener = (JSONObject) o;
                         ListenerType listenerType = ListenerType.fromString(listener.getString("type"));
-                        JSONObject action = listener.getJSONObject("action");
-                        String actionType = action.getString("type");
+                        ArrayList<ActionType> actionTypes = new ArrayList<>();
+                        listener.getJSONArray("actions").forEach(action -> {
+                            actionTypes.add(ActionType.fromString(((JSONObject)action).getString("type")));
+                        });
                         setListener(listener);
-                        logger.info(String.format("<%s,%s>.setListener(%s,%s)", type, id, listenerType, actionType));
+                        logger.info(String.format("<%s,%s>.setListener(%s,%s)", type, id, listenerType, actionTypes));
                     }
                 } catch (Exception ignored) {
                 }
@@ -343,35 +345,38 @@ public abstract class AbstractComponent {
 
     public void setListener(JSONObject listener) {
         ListenerType listenerType = ListenerType.fromString(listener.getString("type"));
-        JSONObject actionObj = listener.getJSONObject("action");
-        Action action = null;
-        ActionType actionType = ActionType.fromString(actionObj.getString("type"));
-        switch (actionType) {
-            case LAYOUT_CHANGE:
-                action = new LayoutChange(this, actionObj);
-                break;
-            case DATABASE_GET:
-                action = new DatabaseGet(this, actionObj);
-                break;
-            case DATABASE_SET:
-                action = new DatabaseSet(this, actionObj);
-                break;
-            case ATTRIBUTE_CHANGE:
-                action = new AttributeChange(this, actionObj);
-                break;
-        }
-        switch (listenerType) {
-            case MOUSE_CLICK:
-                baseComponent.addMouseListener(new MouseClick(action));
-                break;
-            case TIMER:
-                int sleepTime = 1000;
-                try {
-                    sleepTime = 1000 / listener.getInteger("freq");
-                } catch (Exception ignored) {}
-                Timer timer = new Timer(sleepTime, new TimerJob(action));
-                timer.start();
-                break;
+        JSONArray actions = listener.getJSONArray("actions");
+        for (Object o : actions) {
+            JSONObject actionObj = (JSONObject) o;
+            Action action = null;
+            ActionType actionType = ActionType.fromString(actionObj.getString("type"));
+            switch (actionType) {
+                case LAYOUT_CHANGE:
+                    action = new LayoutChange(this, actionObj);
+                    break;
+                case DATABASE_GET:
+                    action = new DatabaseGet(this, actionObj);
+                    break;
+                case DATABASE_SET:
+                    action = new DatabaseSet(this, actionObj);
+                    break;
+                case ATTRIBUTE_CHANGE:
+                    action = new AttributeChange(this, actionObj);
+                    break;
+            }
+            switch (listenerType) {
+                case MOUSE_CLICK:
+                    baseComponent.addMouseListener(new MouseClick(action));
+                    break;
+                case TIMER:
+                    int sleepTime = 1000;
+                    try {
+                        sleepTime = 1000 / listener.getInteger("freq");
+                    } catch (Exception ignored) {}
+                    Timer timer = new Timer(sleepTime, new TimerJob(action));
+                    timer.start();
+                    break;
+            }
         }
     }
 

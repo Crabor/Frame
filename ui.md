@@ -157,7 +157,7 @@ ua文件是UI的组件属性文件(UI attribute)，它的格式为json，包含�
 * `监听属性`(这部分的属性可以不存在): 指的是组件的监听事件以及对应的触发动作。该属性是一个json array，array的每一项都是一个监听事件，具体包含以下字段:
   * `type`: 监听事件的类型，例如`MouseClick`。详见[监听事件类型](#监听事件类型listenertype)。
   * `freq`: 当`type` 为`Timer`时才需设定，该属性表示定时器的触发频率，单位为hz。
-  * `action`: 监听事件触发时的动作。该属性是一个json object:
+  * `actions`: 监听事件触发时的动作列表。该属性是一个json array，array每一个元素都是一个动作，动作包含以下字段:
     * `type`: 动作的类型，例如`LayoutChange`。详见[动作类型](#动作执行actiontype)。
     * `其他字段`: `action`的其他字段会根据`type`的不同而不同。详见[动作类型](#动作执行actiontype)。
 
@@ -194,25 +194,29 @@ ua文件是UI的组件属性文件(UI attribute)，它的格式为json，包含�
     "listeners": [
       {
         "type": "MouseClick",
-        "action": {
-          "type": "LayoutChange",
-          "layout_type": "Window",
-          "layout_id": "main",
-          "component_type": "${type}",
-          "component_id": "${id}",
-          "position": ["(${position.0} + 1) % 5", 0, 1, 1]
-        }
+        "actions": [
+          {
+            "type": "LayoutChange",
+            "layout_type": "Window",
+            "layout_id": "main",
+            "component_type": "${type}",
+            "component_id": "${id}",
+            "position": ["(${position.0} + 1) % 5", 0, 1, 1]
+          }
+        ]
       },
       {
         "type": "Timer",
         "freq": 1,
-        "action": {
-          "type": "AttributeChange",
-          "component_type": "${type}",
-          "component_id": "${id}",
-          "attribute": "text",
-          "value": "${systime}"
-        }
+        "actions": [
+          {
+            "type": "AttributeChange",
+            "component_type": "${type}",
+            "component_id": "${id}",
+            "attribute": "text",
+            "value": "${systime}"
+          }
+        ]
       }
     ]
   }

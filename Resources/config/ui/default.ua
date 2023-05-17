@@ -7,6 +7,18 @@
 		"height": 600
 	},
 	{
+		"type": "Button",
+		"id": "welcomeButton",
+		"text": "Welcome",
+		"font": ["Arial", "PLAIN", 40],
+		"listeners": {
+			"type": "MouseClick",
+			"action": {
+				"type": ""
+			},
+		}
+	},
+	{
 		"type": "Tree",
 		"id": "NavigateTree",
 		"dirs": ["App", "Resource", "Service"]
