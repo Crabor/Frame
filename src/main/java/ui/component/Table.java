@@ -4,6 +4,7 @@ import ui.struct.ComponentType;
 import ui.struct.ScrollType;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 public class Table extends AbstractComponent {
@@ -16,8 +17,10 @@ public class Table extends AbstractComponent {
         super(type, id);
         table = new JTable();
         scrollPane = new JScrollPane(table);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         setLinkComponent(scrollPane);
         setBaseComponent(table);
     }

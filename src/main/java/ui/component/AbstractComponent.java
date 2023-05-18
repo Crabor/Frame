@@ -7,11 +7,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.checkerframework.checker.units.qual.A;
 import org.mvel2.MVEL;
+import org.mvel2.integration.VariableResolverFactory;
+import org.mvel2.integration.impl.MapVariableResolverFactory;
 import ui.UI;
 import ui.action.*;
 import ui.action.Action;
 import ui.listener.MouseClick;
 import ui.listener.TimerJob;
+import ui.listener.TreeSelected;
 import ui.struct.*;
 
 import javax.swing.*;
@@ -286,6 +289,10 @@ public abstract class AbstractComponent {
         return null;
     }
 
+    public String getSelectedItem() {
+        return null;
+    }
+
     public void setColumnNames(String[] columnNames) {}
 
     public String[] getColumnNames() {
@@ -322,11 +329,16 @@ public abstract class AbstractComponent {
         return null;
     }
 
+    public String[] getSelectedPath() {
+        return null;
+    }
+
     public void setListener(JSONObject listener) {
         ListenerType listenerType = ListenerType.fromString(listener.getString("type"));
-        JSONArray actions = listener.getJSONArray("actions");
-        for (Object o : actions) {
-            JSONObject actionObj = (JSONObject) o;
+        JSONArray actionObjs = listener.getJSONArray("actions");
+        Action[] actions = new Action[actionObjs.size()];
+        for (int i = 0; i < actionObjs.size(); i++) {
+            JSONObject actionObj = actionObjs.getJSONObject(i);
             Action action = null;
             ActionType actionType = ActionType.fromString(actionObj.getString("type"));
             switch (actionType) {
@@ -343,19 +355,25 @@ public abstract class AbstractComponent {
                     action = new AttributeChange(this, actionObj);
                     break;
             }
-            switch (listenerType) {
-                case MOUSE_CLICK:
-                    baseComponent.addMouseListener(new MouseClick(action));
-                    break;
-                case TIMER:
-                    int sleepTime = 1000;
-                    try {
-                        sleepTime = 1000 / listener.getInteger("freq");
-                    } catch (Exception ignored) {}
-                    Timer timer = new Timer(sleepTime, new TimerJob(action));
-                    timer.start();
-                    break;
-            }
+            actions[i] = action;
+        }
+        switch (listenerType) {
+            case MOUSE_CLICK:
+                baseComponent.addMouseListener(new MouseClick(actions, this));
+                break;
+            case TIMER:
+                int sleepTime = 1000;
+                try {
+                    sleepTime = 1000 / listener.getInteger("freq");
+                } catch (Exception ignored) {}
+                Timer timer = new Timer(sleepTime, new TimerJob(actions, this, false));
+                timer.start();
+                break;
+            case ITEM_SELECT:
+                if (this instanceof Tree) {
+                    ((Tree)this).setTreeSelectedListener(new TreeSelected(actions, this));
+                }
+                break;
         }
     }
 
@@ -364,6 +382,28 @@ public abstract class AbstractComponent {
         return "<" + type + "," + id + ">";
     }
 
+    public boolean isDisplayed() {
+        boolean ret;
+        if (this instanceof Window) {
+            ret = ((Window) this).isShow();
+        } else {
+            AbstractComponent parent = getParent();
+            while (true) {
+                if (parent == null) {
+                    ret = false;
+                    break;
+                } else if (parent instanceof Window) {
+                    ret = ((Window) parent).isShow();
+                    break;
+                } else {
+                    parent = parent.getParent();
+                }
+            }
+        }
+        return ret;
+    }
+
+    VariableResolverFactory resolverFactory = new MapVariableResolverFactory();
     public String[] eval(String[] strs) {
         String[] ret = new String[strs.length];
         for (int i = 0; i < strs.length; i++) {
@@ -373,6 +413,7 @@ public abstract class AbstractComponent {
     }
 
     public String eval(String str) {
+//        logger.info(this + " before eval: " + str);
         String pattern = "\\$\\{[a-zA-Z0-9_]+(.[a-zA-Z0-9_]+)*}";
         ArrayList<String> vars = new ArrayList<>();
         Matcher matcher = Pattern.compile(pattern).matcher(str);
@@ -432,6 +473,9 @@ public abstract class AbstractComponent {
                     case EDITABLE:
                         replace.add(component.getEditable());
                         break;
+                    case SELECTED_ITEM:
+                        replace.add(component.getSelectedItem());
+                        break;
                     case SIZE:
                         String[] size = component.getSize();
                         replace.add(size[Integer.parseInt(split[index + 1])]);
@@ -448,12 +492,16 @@ public abstract class AbstractComponent {
                         String[] dirs = component.getDirs();
                         replace.add(dirs[Integer.parseInt(split[index + 1])]);
                         break;
+                    case SELECTED_PATH:
+                        String[] selectedPath = component.getSelectedPath();
+                        replace.add(selectedPath[Integer.parseInt(split[index + 1])]);
+                        break;
                     case POSITION:
                         String[] position = component.getPosition();
                         replace.add(position[Integer.parseInt(split[index + 1])]);
                         break;
                     case USER_VALS:
-                        replace.add(getUserVal(Integer.parseInt(split[index + 1])));
+                        replace.add(component.getUserVal(Integer.parseInt(split[index + 1])));
                         break;
                     case CONTENT:
                         String[][] content = component.getContent();
@@ -465,12 +513,14 @@ public abstract class AbstractComponent {
         for (int i = 0; i < vars.size(); i++) {
             str = str.replace(vars.get(i), replace.get(i));
         }
+//        logger.info(this + " mid eval: " + str);
         String ret = str;
         try {
             if (evaluate) {
-                ret = String.valueOf(MVEL.eval(str));
+                ret = String.valueOf(MVEL.eval(str, resolverFactory));
             }
         } catch (Exception ignored) {}
+//        logger.info(this + " after eval: " + ret);
         return ret;
     }
 }

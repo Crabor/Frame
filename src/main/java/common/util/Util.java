@@ -415,6 +415,20 @@ public class Util {
 //
 //    }
 
+    public static boolean isEqual(int[] a, int[] b) {
+        if (a.length != b.length) {
+            return false;
+        }
+        boolean ret = true;
+        for (int i = 0; i < a.length; i++) {
+            if (a[i] != b[i]) {
+                ret = false;
+                break;
+            }
+        }
+        return ret;
+    }
+
     public static void main(String[] args) {
         System.out.println(lcmOfCollection(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)));
     }

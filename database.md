@@ -47,47 +47,45 @@ DataBase我们采取的是`H2`的数据库，用于存储平台运行过程中�
 
     返回值：执行成功返回true，否则返回false
 
-* `public static ResultSet Get(String sql);`
+* `public static QueryResult Get(String sql);`
 
     描述：执行SQL语句，用于查询数据。
 
     参数：sql：SQL语句
 
-    返回值：执行成功返回查询结果，否则返回null。
+    返回值：执行成功返回查询结果，否则返回null。结构体QueryResult定义见[QueryResult.java](./src/main/java/database/struct/QueryResult.java)
 
 ## 示例
 
 代码：
 
 ```java
+import database.struct.QueryResult;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public class test {
-    public static void main(String[] args) throws SQLException {
-        Database.Init(9092, "school");
+  public static void main(String[] args) throws SQLException {
+    Database.Init(9092, "school");
 
-        Database.Set("CREATE TABLE IF NOT EXISTS student (id INT PRIMARY KEY, name VARCHAR(255))");
-        Database.Set("INSERT INTO student VALUES (1, '张三')");
-        Database.Set("INSERT INTO student VALUES (2, '李四')");
+    Database.Set("CREATE TABLE IF NOT EXISTS student (id INT PRIMARY KEY, name VARCHAR(255))");
+    Database.Set("INSERT INTO student VALUES (1, '张三')");
+    Database.Set("INSERT INTO student VALUES (2, '李四')");
 
-        ResultSet rs = Database.Get("SELECT * FROM student");
-        assert rs != null;
-        System.out.println("id name");
-        while (rs.next()) {
-            System.out.println(rs.getInt("id") + " " + rs.getString("name"));
-        }
-
-        Database.Close();
-    }
+    QueryResult qr = Database.Get("SELECT * FROM student");
+    System.out.println(qr);
+    Database.Close();
+  }
 }
 ```
 
 结果：
 
 ```text
-id name
-1 张三
-2 李四
+[ID, NAME]
+[1, 张三]
+[2, 李四]
 ```
 

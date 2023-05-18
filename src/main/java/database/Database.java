@@ -1,5 +1,6 @@
 package database;
 
+import database.struct.QueryResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.h2.jdbc.JdbcSQLNonTransientException;
@@ -13,34 +14,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Database {
-//    public static void main(String[] args) {
-//        try {
-//            // 执行命令行程序
-//            Process process = Runtime.getRuntime().exec("cmd.exe /c java -cp Resources/config/database/h2-2.1.214.jar" +
-//                    " org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort 9092");
-//
-//            // 将命令行程序的输出重定向到Java程序中
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                System.out.println(line);
-//            }
-//
-//            // 注册一个关闭钩子，当Java程序接收到 ctrl + c 信号时触发
-//            Runtime.getRuntime().addShutdownHook(new Thread() {
-//                @Override
-//                public void run() {
-//                    process.destroy();
-//                }
-//            });
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
     static Connection conn = null;
     static Statement stmt = null;
     static Lock lock = new ReentrantLock();
-    static int defaultFreq = 1;
 
     public static void Init(int port, String database) {
         try {
@@ -52,7 +28,7 @@ public class Database {
                     "sa", "");
 
             // 创建一个Statement对象
-            stmt = conn.createStatement();
+            stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -73,31 +49,24 @@ public class Database {
         }
     }
 
-    public static void setDefaultFreq(int freq) {
-        defaultFreq = freq;
-    }
-
-    public static int getDefaultFreq() {
-        return defaultFreq;
-    }
-
-    public static ResultSet Get(String sql) {
+    public static QueryResult Get(String sql) {
         if (conn == null || stmt == null) {
             return null;
         }
+        QueryResult result = null;
         ResultSet rs = null;
         try {
             lock.lock();
             rs = stmt.executeQuery(sql);
-        } catch (SQLException e) {
-//            if (!(e instanceof JdbcSQLSyntaxErrorException)) {
-//                e.printStackTrace();
-//            }
+        } catch (SQLException ignored) {
         } finally {
             lock.unlock();
         }
-        //System.out.printf("Get(%s) -> %s%n", sql, rs);
-        return rs;
+        if (rs != null) {
+            result = new QueryResult(rs);
+        }
+//        System.out.println(result);
+        return result;
     }
 
     public static boolean Set(String sql) {
@@ -109,12 +78,11 @@ public class Database {
             lock.lock();
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
-//            e.printStackTrace();
+            e.printStackTrace();
             result = false;
         } finally {
             lock.unlock();
         }
-        //System.out.printf("Set(%s) -> %b%n", sql, result);
         return result;
     }
 }

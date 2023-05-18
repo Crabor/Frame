@@ -14,19 +14,23 @@ import ui.struct.ComponentType;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class MouseClick implements MouseListener {
-    Action action;
-    Log logger = LogFactory.getLog(MouseClick.class);
+public class MouseClick extends AbstractListener implements MouseListener {
+    public MouseClick(Action[] actions, AbstractComponent who) {
+        super(actions, who);
+    }
 
-    public MouseClick(Action action) {
-        this.action = action;
+    public MouseClick(Action[] actions, AbstractComponent who, boolean logFlag) {
+        super(actions, who, logFlag);
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 1) {
-            logger.info("[MOUSE_CLICK]: ");
-            action.execute();
+            if (logFlag)
+                logger.info("[LISTENER] [MOUSE_CLICK]: " + who);
+            for (Action action : actions) {
+                action.execute(logFlag);
+            }
         }
     }
 
