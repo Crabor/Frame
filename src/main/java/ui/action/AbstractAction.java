@@ -19,4 +19,9 @@ public abstract class AbstractAction implements Action {
     public AbstractComponent getWho() {
         return who;
     }
+
+    @Override
+    public void execute() {
+        execute(true);
+    }
 }

@@ -13,12 +13,17 @@ public class TimerJob extends AbstractListener implements ActionListener {
         super(actions, who);
     }
 
+    public TimerJob(Action[] actions, AbstractComponent who, boolean logFlag) {
+        super(actions, who, logFlag);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (who.isDisplayed()) {
-            logger.info("[TIMER_JOB] " + who + " : ");
+            if (logFlag)
+                logger.info("[LISTENER] [TIMER_JOB]: " + who);
             for (Action action : actions) {
-                action.execute();
+                action.execute(logFlag);
             }
         }
     }

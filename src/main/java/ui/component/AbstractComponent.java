@@ -364,7 +364,7 @@ public abstract class AbstractComponent {
                 try {
                     sleepTime = 1000 / listener.getInteger("freq");
                 } catch (Exception ignored) {}
-                Timer timer = new Timer(sleepTime, new TimerJob(actions, this));
+                Timer timer = new Timer(sleepTime, new TimerJob(actions, this, false));
                 timer.start();
                 break;
             case ITEM_SELECT:

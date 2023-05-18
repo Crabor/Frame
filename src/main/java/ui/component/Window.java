@@ -5,6 +5,8 @@ import ui.struct.ScrollType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Window extends AbstractLayout {
     private JFrame frame;

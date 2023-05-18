@@ -10,9 +10,10 @@ public class DatabaseSet extends AbstractAction {
     }
 
     @Override
-    public void execute() {
+    public void execute(boolean logFlag) {
         String sql = who.eval(action.get("sql").toString());
         Database.Set(sql);
-        logger.info(String.format("[DATABASE_SET]: \"%s\"", sql));
+        if (logFlag)
+            logger.info(String.format("[ACTION] [DATABASE_SET]: \"%s\"", sql));
     }
 }

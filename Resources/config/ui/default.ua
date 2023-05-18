@@ -7,7 +7,7 @@
 	},
 	{
 		"type": "Label",
-		"id": "welcomeLabel",
+		"id": "WelcomeLabel",
 		"text": "Welcome",
 		"font": ["Arial", "PLAIN", 40],
 		"listeners": [
@@ -56,32 +56,33 @@
 				"type": "ItemSelect",
 				"actions": [
 					{
-						"type": "AttributeChange",
+						"type": "LayoutChange",
+						"layout_type": "Panel",
+						"layout_id": "ContentPanel",
 						"component_type": "Panel",
-						"component_id": "ContentPanel",
-						"component_attribute": "user_vals",
-						"value": ["('${selected_item}' == 'App' || '${selected_item}' == 'Resource' || '${selected_item}' == 'Service') ? ('${selected_item}' + 'Panel') : ('${selected_path.0}' == 'App' ? 'AppDetailPanel' : ('${selected_path.0}' == 'Resource' ? 'ResourceDetailPanel' : 'ServiceDetailPanel'))"]
+						"component_id": "('${selected_item}' == 'App' || '${selected_item}' == 'Resource' || '${selected_item}' == 'Service') ? ('${selected_item}' + 'Panel') : ('${selected_path.0}' == 'App' ? 'AppDetailPanel' : ('${selected_path.0}' == 'Resource' ? 'ResourceDetailPanel' : 'ServiceDetailPanel'))",
+						"position": [0, 0, 1, 1]
 					},
 					{
 						"type": "AttributeChange",
 						"component_type": "Panel",
 						"component_id": "AppDetailPanel",
 						"component_attribute": "user_vals",
-						"value": ["('${selected_path.0}' == 'App' && '${selected_path.1}' != '') ? '${selected_path.1}' : ${Panel.AppDetailPanel.user_vals.0}"]
+						"value": ["('${selected_path.0}' == 'App' && '${selected_path.1}' != '') ? '${selected_path.1}' : '${Panel.AppDetailPanel.user_vals.0}'"]
 					},
 					{
 						"type": "AttributeChange",
 						"component_type": "Panel",
 						"component_id": "ResourceDetailPanel",
 						"component_attribute": "user_vals",
-						"value": ["('${selected_path.0}' == 'Resource' && '${selected_path.1}' != '') ? '${selected_path.1}' : ${Panel.ResourceDetailPanel.user_vals.0}"]
+						"value": ["('${selected_path.0}' == 'Resource' && '${selected_path.1}' != '') ? '${selected_path.1}' : '${Panel.ResourceDetailPanel.user_vals.0}'"]
 					},
 					{
 						"type": "AttributeChange",
 						"component_type": "Panel",
 						"component_id": "ServiceDetailPanel",
 						"component_attribute": "user_vals",
-						"value": ["('${selected_path.0}' == 'Service' && '${selected_path.1}' != '') ? '${selected_path.1}' : ${Panel.ServiceDetailPanel.user_vals.0}"]
+						"value": ["('${selected_path.0}' == 'Service' && '${selected_path.1}' != '') ? '${selected_path.1}' : '${Panel.ServiceDetailPanel.user_vals.0}'"]
 					}
 				]
 			}
@@ -90,24 +91,7 @@
 	{
 		"type": "Panel",
 		"id": "ContentPanel",
-		"scroll": "vertical",
-		"user_vals": ["AppPanel"],
-		"listeners": [
-			{
-				"type": "Timer",
-				"freq": 1,
-				"actions": [
-					{
-						"type": "LayoutChange",
-						"layout_type": "Panel",
-						"layout_id": "${id}",
-						"component_type": "Panel",
-						"component_id": "${user_vals.0}",
-						"position": [0, 0, 1, 1]
-					}
-				]
-			}
-		]
+		"scroll": "vertical"
 	},
 	{
 		"type": "Label",
@@ -119,13 +103,28 @@
 		"type": "TextField",
 		"id": "AppDescription",
 		"text": "  This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.",
-		"column_width": 60,
+		"column_width": 50,
 		"editable": false
 	},
 	{
 		"type": "Table",
 		"id": "AppTable",
-		"column_names": ["id", "AppName", "Description", "Service", "Resource"]
+		"column_names": ["AppName", "Description", "Service", "Resource", "Status"],
+		"listeners": [
+			{
+				"type": "Timer",
+				"freq": 1,
+				"actions": [
+					{
+						"type": "DatabaseGet",
+						"component_type": "${type}",
+						"component_id": "${id}",
+						"component_attribute": "content",
+						"sql": "SELECT * FROM ${id}"
+					}
+				]
+			}
+		]
 	},
 	{
 		"type": "Label",
@@ -157,17 +156,32 @@
 		"type": "TextField",
 		"id": "ResourceDescription",
 		"text": "  This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.",
-		"column_width": 60,
+		"column_width": 50,
 		"editable": false
 	},
 	{
 		"type": "Table",
 		"id": "ResourceTable",
-		"column_names": ["id", "ResourceName", "Description", "App"]
+		"column_names": ["ResourceName", "Type", "App", "Status"],
+		"listeners": [
+			{
+				"type": "Timer",
+				"freq": 1,
+				"actions": [
+					{
+						"type": "DatabaseGet",
+						"component_type": "${type}",
+						"component_id": "${id}",
+						"component_attribute": "content",
+						"sql": "SELECT * FROM ${id}"
+					}
+				]
+			}
+		]
 	},
 	{
 		"type": "Label",
-		"id": "ResourceDetailLabel",
+		"id": "ResourceDetailTitle",
 		"font": ["Arial", "BOLD", 30],
 		"listeners": [
 			{
@@ -187,6 +201,106 @@
 	},
 	{
 		"type": "Label",
+		"id": "ResourceDetailType",
+		"text": "Type: "
+	},
+	{
+		"type": "Label",
+		"id": "ResourceDetailTypeValue",
+		"text": "",
+		"listeners": [
+			{
+				"type": "Timer",
+				"freq": 1,
+				"actions": [
+					{
+						"type": "DatabaseGet",
+						"component_type": "${type}",
+						"component_id": "${id}",
+						"component_attribute": "text",
+						"sql": "SELECT Type FROM ResourceTable WHERE ResourceName = '${Panel.ResourceDetailPanel.user_vals.0}'"
+					}
+				]
+			}
+		]
+	},
+	{
+		"type": "Label",
+		"id": "ResourceDetailStatus",
+		"text": "Status: "
+	},
+	{
+		"type": "Label",
+		"id": "ResourceDetailStatusValue",
+		"text": "",
+		"listeners": [
+			{
+				"type": "Timer",
+				"freq": 1,
+				"actions": [
+					{
+						"type": "DatabaseGet",
+						"component_type": "${type}",
+						"component_id": "${id}",
+						"component_attribute": "text",
+						"sql": "SELECT Status FROM ResourceTable WHERE ResourceName = '${Panel.ResourceDetailPanel.user_vals.0}'"
+					}
+				]
+			}
+		]
+	},
+	{
+		"type": "Label",
+		"id": "ResourceDetailRegisteredBy",
+		"text": "Registered By: "
+	},
+	{
+		"type": "Label",
+		"id": "ResourceDetailRegisteredByValue",
+		"text": "",
+		"listeners": [
+			{
+				"type": "Timer",
+				"freq": 1,
+				"actions": [
+					{
+						"type": "DatabaseGet",
+						"component_type": "${type}",
+						"component_id": "${id}",
+						"component_attribute": "text",
+						"sql": "SELECT App FROM ResourceTable WHERE ResourceName = '${Panel.ResourceDetailPanel.user_vals.0}'"
+					}
+				]
+			}
+		]
+	},
+	{
+		"type": "Label",
+		"id": "ResourceDetailValue",
+		"text": "Value: "
+	},
+	{
+		"type": "Label",
+		"id": "ResourceDetailValueValue",
+		"text": "",
+		"listeners": [
+			{
+				"type": "Timer",
+				"freq": 1,
+				"actions": [
+					{
+						"type": "DatabaseGet",
+						"component_type": "${type}",
+						"component_id": "${id}",
+						"component_attribute": "text",
+						"sql": "SELECT Val FROM ResourceTable WHERE ResourceName = '${Panel.ResourceDetailPanel.user_vals.0}'"
+					}
+				]
+			}
+		]
+	},
+	{
+		"type": "Label",
 		"id": "ServiceLabel",
 		"text": "SERVICE",
 		"font": ["Arial", "BOLD", 30]
@@ -195,13 +309,28 @@
 		"type": "TextField",
 		"id": "ServiceDescription",
 		"text": "  This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.This is description.",
-		"column_width": 60,
+		"column_width": 50,
 		"editable": false
 	},
 	{
 		"type": "Table",
 		"id": "ServiceTable",
-		"column_names": ["id", "ServiceName", "Description", "App"]
+		"column_names": ["ServiceName", "App"],
+		"listeners": [
+			{
+				"type": "Timer",
+				"freq": 1,
+				"actions": [
+					{
+						"type": "DatabaseGet",
+						"component_type": "${type}",
+						"component_id": "${id}",
+						"component_attribute": "content",
+						"sql": "SELECT * FROM ${id}"
+					}
+				]
+			}
+		]
 	},
 	{
 		"type": "Label",

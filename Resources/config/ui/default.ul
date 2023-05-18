@@ -6,7 +6,7 @@
 		"components": [
 			{
 				"type": "Label",
-				"id": "welcomeLabel",
+				"id": "WelcomeLabel",
 				"position": [0, 0, 10, 1]
 			}
 		]
@@ -100,13 +100,57 @@
 	{
 		"type": "Panel",
 		"id": "ResourceDetailPanel",
-		"size": [3, 5],
+		"size": [5, 8],
 		"components": [
 			{
 				"type": "Label",
-				"id": "ResourceDetailLabel",
-				"position": [1, 0, 1, 1],
+				"id": "ResourceDetailTitle",
+				"position": [1, 0, 3, 1],
 				"align": "South"
+			},
+			{
+				"type": "Label",
+				"id": "ResourceDetailType",
+				"position": [1, 1, 1, 1],
+				"align": "East"
+			},
+			{
+				"type": "Label",
+				"id": "ResourceDetailTypeValue",
+				"position": [2, 1, 1, 1]
+			},
+			{
+				"type": "Label",
+				"id": "ResourceDetailStatus",
+				"position": [1, 2, 1, 1],
+				"align": "East"
+			},
+			{
+				"type": "Label",
+				"id": "ResourceDetailStatusValue",
+				"position": [2, 2, 1, 1]
+			},
+			{
+				"type": "Label",
+				"id": "ResourceDetailRegisteredBy",
+				"position": [1, 3, 1, 1],
+				"align": "East"
+			},
+			{
+				"type": "Label",
+				"id": "ResourceDetailRegisteredByValue",
+				"position": [2, 3, 1, 1]
+			},
+			{
+				"type": "Label",
+				"id": "ResourceDetailValue",
+				"position": [1, 4, 1, 1],
+				"align": "East"
+			},
+			{
+				"type": "Label",
+				"id": "ResourceDetailValueValue",
+				"position": [2, 4, 1, 1]
 			}
 		]
 	},

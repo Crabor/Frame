@@ -13,11 +13,16 @@ public class TreeSelected extends AbstractListener implements TreeSelectionListe
         super(actions, who);
     }
 
+    public TreeSelected(Action[] actions, AbstractComponent who, boolean logFlag) {
+        super(actions, who, logFlag);
+    }
+
     @Override
     public void valueChanged(TreeSelectionEvent e) {
-        logger.info("[ITEM_SELECT] " + who + " : " + e.getPath().getLastPathComponent().toString());
+        if (logFlag)
+            logger.info("[LISTENER] [ITEM_SELECT]: " + who + " " + e.getPath().getLastPathComponent().toString());
         for (Action action : actions) {
-            action.execute();
+            action.execute(logFlag);
         }
     }
 }

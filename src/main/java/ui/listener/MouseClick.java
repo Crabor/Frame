@@ -19,12 +19,17 @@ public class MouseClick extends AbstractListener implements MouseListener {
         super(actions, who);
     }
 
+    public MouseClick(Action[] actions, AbstractComponent who, boolean logFlag) {
+        super(actions, who, logFlag);
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 1) {
-            logger.info("[MOUSE_CLICK] " + who + " : ");
+            if (logFlag)
+                logger.info("[LISTENER] [MOUSE_CLICK]: " + who);
             for (Action action : actions) {
-                action.execute();
+                action.execute(logFlag);
             }
         }
     }

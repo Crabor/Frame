@@ -88,8 +88,10 @@ public abstract class AbstractLayout extends AbstractComponent {
 //        if (component instanceof Table) {
 //            gbc.fill = GridBagConstraints.HORIZONTAL;
 //        } else
-            if (component instanceof Panel) {
+        if (component instanceof Panel) {
             gbc.fill = GridBagConstraints.BOTH;
+        } else if (component.getLinkComponent() instanceof JScrollPane) {
+            gbc.fill = GridBagConstraints.HORIZONTAL;
         }
         //System.out.println("gbc:" + gbc.gridx + " " + gbc.gridy + " " + gbc.gridwidth + " " + gbc.gridheight);
         panel.add(component.getLinkComponent(), gbc);

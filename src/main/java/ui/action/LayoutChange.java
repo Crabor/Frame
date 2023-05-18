@@ -16,7 +16,7 @@ public class LayoutChange extends AbstractAction {
     }
 
     @Override
-    public void execute() {
+    public void execute(boolean logFlag) {
         AbstractLayout layout;
         AbstractComponent component;
         int[] position;
@@ -38,12 +38,14 @@ public class LayoutChange extends AbstractAction {
             //原组件被剔除，新组件加入
             layout.setComponent(component, position[0], position[1], position[2], position[3], align, false);
             layout.repaint();
-            logger.info(String.format("[LAYOUT_CHANGE]: %s.setComponentPosition(%s, %d, %d, %d, %d, %s)", layout, component,
-                    position[0], position[1], position[2], position[3], align));
-        } else {
-            logger.info(String.format("[LAYOUT_CHANGE] [IGNORED]: %s.setComponentPosition(%s, %d, %d, %d, %d, %s)", layout,
-                    component,
-                    position[0], position[1], position[2], position[3], align));
+            if (logFlag)
+                logger.info(String.format("[ACTION] [LAYOUT_CHANGE]: %s.setComponentPosition(%s, %d, %d, %d, %d, %s)",
+                        layout, component, position[0], position[1], position[2], position[3], align));
         }
+//        else {
+//            if (logFlag)
+//                logger.info(String.format("[ACTION] [LAYOUT_CHANGE] [IGNORED]: %s.setComponentPosition(%s, %d, %d, %d, %d, %s)",
+//                        layout, component, position[0], position[1], position[2], position[3], align));
+//        }
     }
 }
