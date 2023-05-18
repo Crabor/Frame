@@ -60,29 +60,22 @@
 						"layout_type": "Panel",
 						"layout_id": "ContentPanel",
 						"component_type": "Panel",
-						"component_id": "('${selected_item}' == 'App' || '${selected_item}' == 'Resource' || '${selected_item}' == 'Service') ? ('${selected_item}' + 'Panel') : ('${selected_path.0}' == 'App' ? 'AppDetailPanel' : ('${selected_path.0}' == 'Resource' ? 'ResourceDetailPanel' : 'ServiceDetailPanel'))",
+						"component_id": "item = '${selected_item}'; path0 = '${selected_path.0}'; (item == path0) ? (path0 + 'Panel') : (path0 + 'DetailPanel')",
 						"position": [0, 0, 1, 1]
 					},
 					{
 						"type": "AttributeChange",
 						"component_type": "Panel",
-						"component_id": "AppDetailPanel",
+						"component_id": "ContentPanel",
 						"component_attribute": "user_vals",
-						"value": ["('${selected_path.0}' == 'App' && '${selected_path.1}' != '') ? '${selected_path.1}' : '${Panel.AppDetailPanel.user_vals.0}'"]
+						"value": ["${selected_path.0}"]
 					},
 					{
 						"type": "AttributeChange",
 						"component_type": "Panel",
-						"component_id": "ResourceDetailPanel",
+						"component_id": "'${Panel.ContentPanel.user_vals.0}' + 'DetailPanel'",
 						"component_attribute": "user_vals",
-						"value": ["('${selected_path.0}' == 'Resource' && '${selected_path.1}' != '') ? '${selected_path.1}' : '${Panel.ResourceDetailPanel.user_vals.0}'"]
-					},
-					{
-						"type": "AttributeChange",
-						"component_type": "Panel",
-						"component_id": "ServiceDetailPanel",
-						"component_attribute": "user_vals",
-						"value": ["('${selected_path.0}' == 'Service' && '${selected_path.1}' != '') ? '${selected_path.1}' : '${Panel.ServiceDetailPanel.user_vals.0}'"]
+						"value": ["${selected_path.1}"]
 					}
 				]
 			}

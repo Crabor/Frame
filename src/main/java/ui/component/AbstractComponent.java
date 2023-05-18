@@ -7,6 +7,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.checkerframework.checker.units.qual.A;
 import org.mvel2.MVEL;
+import org.mvel2.integration.VariableResolverFactory;
+import org.mvel2.integration.impl.MapVariableResolverFactory;
 import ui.UI;
 import ui.action.*;
 import ui.action.Action;
@@ -401,6 +403,7 @@ public abstract class AbstractComponent {
         return ret;
     }
 
+    VariableResolverFactory resolverFactory = new MapVariableResolverFactory();
     public String[] eval(String[] strs) {
         String[] ret = new String[strs.length];
         for (int i = 0; i < strs.length; i++) {
@@ -514,7 +517,7 @@ public abstract class AbstractComponent {
         String ret = str;
         try {
             if (evaluate) {
-                ret = String.valueOf(MVEL.eval(str));
+                ret = String.valueOf(MVEL.eval(str, resolverFactory));
             }
         } catch (Exception ignored) {}
 //        logger.info(this + " after eval: " + ret);
